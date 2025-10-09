@@ -1,0 +1,12 @@
+<div class="layout-wrapper" [ngClass]="{ 'sidebar-collapsed': isCollapsed }">
+
+  <app-sidebar class="sidebar"></app-sidebar>
+
+  <div class="main-content-wrapper">
+    <app-header></app-header>
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+</div>

@@ -1,0 +1,34 @@
+/* src/app/layout/layout.component.css */
+.layout-wrapper {
+  position: relative;
+}
+
+.sidebar {
+  position: fixed; /* O position: absolute; dependiendo del efecto deseado */
+  top: 0;
+  left: 0;
+  width: 250px; /* Ancho del sidebar */
+  height: 100vh;
+  z-index: 1000;
+  transition: all 0.3s ease-in-out; /* Animación suave */
+}
+
+.main-content-wrapper {
+  margin-left: 250px; /* Deja espacio para el sidebar */
+  transition: margin-left 0.3s ease-in-out; /* Animación suave */
+}
+
+.content {
+  padding: 2rem;
+  background-color: #f4f7fa;
+  min-height: calc(100vh - 60px); /* Altura del viewport menos la altura del header */
+}
+
+/* ESTILOS CUANDO EL SIDEBAR ESTÁ COLAPSADO */
+.layout-wrapper.sidebar-collapsed .sidebar {
+  left: -250px; /* Esconde el sidebar fuera de la pantalla */
+}
+
+.layout-wrapper.sidebar-collapsed .main-content-wrapper {
+  margin-left: 0; /* El contenido ocupa todo el ancho */
+}

@@ -1,0 +1,17 @@
+/* src/app/layout/layout.component.css */
+.main-container {
+  display: flex;
+  height: 100vh; /* Ocupa toda la altura de la pantalla */
+  background-color: #f4f7fa; /* Un color de fondo suave */
+}
+
+.sidebar {
+  width: 250px; /* Ancho fijo para el menú lateral */
+  flex-shrink: 0; /* Evita que el sidebar se encoja */
+}
+
+.content {
+  flex-grow: 1; /* El contenido ocupa el resto del espacio */
+  padding: 2rem; /* Espaciado interno */
+  overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+}

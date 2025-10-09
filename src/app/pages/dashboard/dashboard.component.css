@@ -1,0 +1,66 @@
+.dashboard-container {
+  padding: 20px;
+}
+
+.cards-grid {
+  display: grid;
+  /* Crea columnas responsivas: se ajustarán entre 180px y 1fr */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 25px; /* Espacio entre las tarjetas */
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden; /* Para que el header no se salga del borde redondeado */
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Efecto de levantar la tarjeta */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.card-body {
+  padding: 25px 15px;
+  flex-grow: 1; /* Hace que el cuerpo ocupe el espacio disponible */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-body fa-icon {
+  font-size: 48px;
+  color: #34495e;
+}
+
+.card-footer {
+  padding: 12px;
+}
+
+.card-footer p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #777;
+}

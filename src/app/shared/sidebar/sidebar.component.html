@@ -1,0 +1,36 @@
+<div class="sidebar-container">
+  <div class="user-profile">
+    <div class="user-avatar"></div>
+    <h3>ANTONIO</h3>
+    <p>Administrador</p>
+  </div>
+
+  <nav class="menu">
+    <ul>
+      <li *ngFor="let item of menuItems"
+          routerLinkActive="active-menu-item"
+          [routerLinkActiveOptions]="{exact: false}">
+
+        <a [routerLink]="item.subMenu && item.subMenu.length > 0 ? null : item.path"
+           (click)="toggleSubMenu(item)"
+           [class.active-link]="item.active">
+
+          <span>{{ item.title }}</span>
+          <span class="arrow" *ngIf="item.subMenu && item.subMenu.length > 0"></span>
+        </a>
+
+        <ul class="sub-menu" *ngIf="item.active && item.subMenu && item.subMenu.length > 0">
+          <li *ngFor="let subItem of item.subMenu"
+              routerLinkActive="active-submenu-item"
+              [routerLinkActiveOptions]="{exact: true}">
+
+            <a [routerLink]="subItem.path">
+              <span>{{ subItem.title }}</span>
+            </a>
+          </li>
+        </ul>
+
+      </li>
+    </ul>
+  </nav>
+</div>

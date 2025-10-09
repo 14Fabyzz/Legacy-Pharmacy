@@ -1,20 +1,38 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { LoginComponent } from './pages/login/login.component';
+import { LayoutComponent } from './layout/layout.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { HeaderComponent } from './shared/header/header.component';
+import { ProductFormComponent } from './pages/products/product-form/product-form.component'; 
+
+// SidebarComponent es standalone, por lo que no se importa ni declara aquí.
+// HeaderComponent es standalone, por lo que SE IMPORTA, NO SE DECLARA.
 
 @NgModule({
+  // HeaderComponent se quita de aquí
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    
   ],
+  
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    CommonModule,
+    RouterModule,
+    HeaderComponent,
+    LayoutComponent, 
+    DashboardComponent,
+    ProductFormComponent
   ],
-  providers: [
-    provideClientHydration(withEventReplay())
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
