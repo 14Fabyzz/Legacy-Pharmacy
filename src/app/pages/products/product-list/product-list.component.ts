@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { SearchPipe } from '../../../shared/pipes/search.pipe';
 
 // Definimos la estructura de un producto
 interface Product {
@@ -22,14 +24,17 @@ interface Product {
   standalone: true,
   imports: [
     CommonModule, // Para *ngFor, *ngIf y el pipe currency
-    RouterModule  // Para routerLink en las pestañas
+    RouterModule,  // Para routerLink en las pestañas
+    FormsModule,
+    SearchPipe    // Pipe de búsqueda personalizado
+
   ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent {
-  // Ya no necesitamos las propiedades para los íconos aquí
-
+ 
+   public searchTerm: string = ''; 
   // Datos de ejemplo
   products: Product[] = [
     { id: 1, name: 'Acetaminofén 500mg', image: 'placeholder', barcode: '7702152345890', codigo: 'MED001', available: 120, sold: 350, price: 8.50, discount: 0, expiry: '2026-12-31', status: 'Habilitado' },

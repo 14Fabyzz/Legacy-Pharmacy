@@ -4,13 +4,21 @@
     <p>En el módulo PRODUCTOS podrá agregar nuevos productos al sistema, actualizar datos de los productos y mucho más.</p>
   </header>
 
+  
   <nav class="tabs-nav">
     <a routerLink="/productos/nuevo">NUEVO PRODUCTO</a>
     <a routerLink="/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACEN</a>
-    </nav>
+  </nav>
+  <div class="search-container">
+     <input 
+       type="text" 
+       class="search-input" 
+       placeholder="Buscar producto por nombre, código, SKU..."
+       [(ngModel)]="searchTerm">
+   </div>
 
   <div class="product-list-container">
-    <div class="product-card" *ngFor="let product of products">
+    <div class="product-card" *ngFor="let product of products | search:searchTerm">
       
       <div class="product-image">
         <div class="image-placeholder"></div>
@@ -44,6 +52,10 @@
         </div>
       </div>
 
+    </div>
+
+    <div class="no-results" *ngIf="(products | search:searchTerm).length === 0">
+      <p>No se encontraron productos que coincidan con "{{ searchTerm }}"</p>
     </div>
   </div>
 </div>
