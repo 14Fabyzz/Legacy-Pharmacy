@@ -1,0 +1,138 @@
+.page-container {
+  padding: 20px;
+}
+
+.page-header {
+  margin-bottom: 25px;
+}
+.page-header h2 { margin: 0 0 10px 0; }
+.page-header p { font-size: 0.9rem; color: #666; max-width: 800px; }
+
+.tabs-nav {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #eee;
+}
+.tabs-nav a {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+.tabs-nav a.active, .tabs-nav a:hover {
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
+.product-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.product-card {
+  display: flex;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 15px;
+  gap: 15px;
+  align-items: flex-start;
+  transition: box-shadow 0.2s ease;
+}
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.product-image {
+  flex-shrink: 0;
+}
+.image-placeholder {
+  width: 90px;
+  height: 90px;
+  background-color: #e9ecef;
+  background-image: url('https://i.imgur.com/qvi4a2I.png'); /* URL de un ícono de caja genérico */
+  background-size: 60%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 6px;
+}
+
+.product-info-wrapper {
+  flex-grow: 1;
+}
+
+.product-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+.product-id {
+  background-color: #34495e;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+.product-name {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #007bff;
+}
+
+.product-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px 20px;
+}
+.info-item {
+  display: flex;
+  align-items: baseline;
+  font-size: 0.85rem;
+}
+.info-item dt {
+  font-weight: 600;
+  color: #555;
+  margin-right: 8px;
+}
+.info-item dd {
+  margin: 0;
+  color: #333;
+}
+.discount-badge {
+  background-color: #28a745;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+}
+
+.product-actions {
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+}
+.action-icons {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+.action-icons a {
+  color: #34495e;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+.action-icons a:hover {
+  color: #007bff;
+}

@@ -1,0 +1,49 @@
+<div class="page-container">
+  <header class="page-header">
+    <h2>PRODUCTOS EN ALMACEN</h2>
+    <p>En el módulo PRODUCTOS podrá agregar nuevos productos al sistema, actualizar datos de los productos y mucho más.</p>
+  </header>
+
+  <nav class="tabs-nav">
+    <a routerLink="/productos/nuevo">NUEVO PRODUCTO</a>
+    <a routerLink="/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACEN</a>
+    </nav>
+
+  <div class="product-list-container">
+    <div class="product-card" *ngFor="let product of products">
+      
+      <div class="product-image">
+        <div class="image-placeholder"></div>
+      </div>
+
+      <div class="product-info-wrapper">
+        <div class="product-header">
+          <span class="product-id">{{ product.id }}</span>
+          <h3 class="product-name">{{ product.name }}</h3>
+        </div>
+
+        <div class="product-details-grid">
+          <div class="info-item"><dt>Código de barras:</dt><dd>{{ product.barcode }}</dd></div>
+          <div class="info-item"><dt>Codigo:</dt><dd>{{ product.codigo }}</dd></div>
+          <div class="info-item"><dt>Disponibles:</dt><dd>{{ product.available }}</dd></div>
+          <div class="info-item"><dt>Vendidos:</dt><dd>{{ product.sold }}</dd></div>
+          <div class="info-item"><dt>Precio:</dt><dd>{{ product.price | currency }} <span *ngIf="product.discount" class="discount-badge">{{ product.discount }}% de descuento</span></dd></div>
+          <div class="info-item"><dt>Vencimiento:</dt><dd>{{ product.expiry }}</dd></div>
+          <div class="info-item"><dt>Estado:</dt><dd>{{ product.status }}</dd></div>
+        </div>
+      </div>
+
+      <div class="product-actions">
+        <span>OPCIONES:</span>
+        <div class="action-icons">
+          <a title="Información detallada">👁️</a>
+          <a title="Gestionar imagen">🖼️</a>
+          <a title="Kardex del producto">📊</a>
+          <a title="Actualizar producto">✏️</a>
+          <a title="Eliminar producto">🗑️</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
