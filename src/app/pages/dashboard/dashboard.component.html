@@ -4,15 +4,14 @@
     <a class="card" *ngFor="let card of dashboardCards" [routerLink]="card.route">
       
       <div class="card-header">
+        <i [class]="card.icon"></i>
         <h4>{{ card.title }}</h4>
       </div>
 
-      <div><p>image 🦖</p><img src="" alt=""></div>
-
       <div class="card-footer">
-        <p *ngIf="card.count !== null">{{ card.count }} {{ card.text }}</p>
-        <p *ngIf="card.count === null">{{ card.text }}</p>
-      </div>
+      <span class="count" *ngIf="card.count !== null">{{ card.count }}</span>
+      <span class="label">{{ card.text }}</span>
+    </div>
 
     </a>
 

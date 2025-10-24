@@ -20,7 +20,7 @@ import { SearchPipe } from './shared/pipes/search.pipe';
   // HeaderComponent se quita de aquí
   declarations: [
     AppComponent,
-    LoginComponent,
+    
     
     
     
@@ -35,7 +35,8 @@ import { SearchPipe } from './shared/pipes/search.pipe';
     LayoutComponent, 
     DashboardComponent,
     ProductFormComponent,
-    SearchPipe
+    SearchPipe,
+   
     
 
   ],

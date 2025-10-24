@@ -1,32 +1,45 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-// Ya NO importamos ProductFormComponent ni ProductListComponent aquí
+// Importa tus componentes principales
 import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { LoginComponent } from './pages/login/login.component';
-
-
+import { LoginComponent } from './pages/login/login.component'; // Asegúrate de importar LoginComponent
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  // 1. Ruta para el login
+  { 
+    path: 'login', 
+    component: LoginComponent 
+  },
+  
+  // 2. Ruta para la aplicación principal (el layout y sus hijos)
   {
-    path: '',
+    path: 'app', // La app principal vive en /app
     component: LayoutComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      
-      
       {
-        path: 'productos', // Cuando la URL empiece con 'productos'...
+        path: 'productos', // Aquí se carga el módulo de productos
         loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsModule)
       },
-
-      // ... tus otras rutas
+      // ... tus otras rutas ...
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-  { path: '**', redirectTo: 'dashboard' }
+
+  // 3. Ruta de entrada: redirige la raíz ('') a '/login'
+  { 
+    path: '', 
+    redirectTo: 'login', 
+    pathMatch: 'full' 
+  },
+  
+  // 4. Ruta comodín (wildcard): cualquier otra URL redirige a '/login'
+  { 
+    path: '**', 
+    redirectTo: 'dashboard' 
+  }
 ];
 
 @NgModule({

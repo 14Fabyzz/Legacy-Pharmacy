@@ -1,66 +1,139 @@
 .dashboard-container {
-  padding: 20px;
+  padding: 25px;
+  background-color: #ffffff;
+  min-height: 100vh;
 }
 
 .cards-grid {
   display: grid;
-  /* Crea columnas responsivas: se ajustarán entre 180px y 1fr */
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 25px; /* Espacio entre las tarjetas */
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 18px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .card {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  text-align: center;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   text-decoration: none;
   color: inherit;
-  overflow: hidden; /* Para que el header no se salga del borde redondeado */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px); /* Efecto de levantar la tarjeta */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(44, 90, 160, 0.15);
+  border-color: #3b6cb5;
 }
 
 .card-header {
-  background-color: #f7f7f7;
-  padding: 10px;
-  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #3b6cb5 0%, #2c5aa0 100%);
+  padding: 18px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-header i {
+  font-size: 2.4rem;
+  color: #ffffff;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
 
 .card-header h4 {
   margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #555;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
   text-transform: uppercase;
-}
-
-.card-body {
-  padding: 25px 15px;
-  flex-grow: 1; /* Hace que el cuerpo ocupe el espacio disponible */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-body fa-icon {
-  font-size: 48px;
-  color: #34495e;
+  letter-spacing: 1px;
 }
 
 .card-footer {
-  padding: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  text-align: center;
+  border-top: 1px solid #e9ecef;
 }
 
 .card-footer p {
   margin: 0;
-  font-size: 0.85rem;
-  color: #777;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+/* Para números destacados */
+.card-footer .count {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2c5aa0;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.card-footer .label {
+  display: block;
+  font-size: 0.75rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 20px 15px;
+  }
+  
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+  }
+  
+  .card-header {
+    padding: 15px 12px;
+  }
+  
+  .card-header i {
+    font-size: 2rem;
+  }
+  
+  .card-header h4 {
+    font-size: 0.75rem;
+  }
+  
+  .card-footer {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .card-header i {
+    font-size: 1.8rem;
+  }
+  
+  .card-footer .count {
+    font-size: 1.4rem;
+  }
 }

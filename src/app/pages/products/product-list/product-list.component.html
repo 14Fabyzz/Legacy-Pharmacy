@@ -42,15 +42,17 @@
       </div>
 
       <div class="product-actions">
-        <span>OPCIONES:</span>
-        <div class="action-icons">
-          <a title="Información detallada">👁️</a>
-          <a title="Gestionar imagen">🖼️</a>
-          <a title="Kardex del producto">📊</a>
-          <a title="Actualizar producto">✏️</a>
-          <a title="Eliminar producto">🗑️</a>
-        </div>
-      </div>
+  <span>OPCIONES:</span>
+  <div class="action-icons">
+    <a title="Información detallada">👁️</a>
+    <a title="Gestionar imagen">🖼️</a>
+    <a title="Kardex del producto">📊</a>
+    
+    <a title="Actualizar producto" [routerLink]="['/productos/editar', product.id]">✏️</a>
+    
+    <a title="Eliminar producto">🗑️</a>
+  </div>
+</div>
 
     </div>
 
