@@ -1,22 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SearchPipe } from '../../../shared/pipes/search.pipe';
+import { ProductService } from '../product.service';
+import { Observable } from 'rxjs';
+
 
 // Definimos la estructura de un producto
 interface Product {
-  id: number;
-  name: string;
-  image: string; // URL de la imagen
-  barcode: string;
-  codigo: string;
-  available: number;
-  sold: number;
-  price: number;
-  discount?: number;
-  expiry: string;
-  status: 'Habilitado' | 'Deshabilitado';
+  idCodigo: string;       // Corresponde a id_codigo VARCHAR(50)
+  nombre: string;         // Corresponde a nombre VARCHAR(255)
+  codigoBarras: string;   // Corresponde a codigo_barras VARCHAR(10...)
+  precioVenta: number;    // Corresponde a precio_venta DECIMAL(10,2)
+  ivaPorcentaje: number;  // Corresponde a iva_porcentaje DECIMAL(4,2)
+  laboratorioId: number;
 }
 
 @Component({
@@ -32,13 +30,18 @@ interface Product {
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit {
  
-   public searchTerm: string = ''; 
-  // Datos de ejemplo
-  products: Product[] = [
-    { id: 1, name: 'Acetaminofén 500mg', image: 'placeholder', barcode: '7702152345890', codigo: 'MED001', available: 120, sold: 350, price: 8.50, discount: 0, expiry: '2026-12-31', status: 'Habilitado' },
-    { id: 2, name: 'Loratadina 10mg', image: 'placeholder', barcode: '7709876543211', codigo: 'MED002', available: 85, sold: 210, price: 15.20, discount: 10, expiry: '2025-11-20', status: 'Habilitado' },
-    { id: 3, name: 'Vitamina C 1000mg', image: 'placeholder', barcode: '7701122334455', codigo: 'SUP001', available: 200, sold: 540, price: 22.00, discount: 5, expiry: '2027-05-10', status: 'Habilitado' }
-  ];
+ public searchTerm: string = '';
+  
+  // 3. Reemplaza el array por un Observable
+  public products$!: Observable<any[]>;
+
+  constructor(private productService: ProductService) {} // <-- 4. Inyecta el servicio
+
+  ngOnInit(): void {
+    // 5. Llama al servicio para obtener los datos
+    this.products$ = this.productService.getProducts();
+  }
+
 }

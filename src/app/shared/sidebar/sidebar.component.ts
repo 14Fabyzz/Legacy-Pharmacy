@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service'; // 1. Importa el AuthService
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,6 +16,16 @@ import { RouterModule } from '@angular/router';
 })
 export class SidebarComponent {
 
+  public currentUser$: Observable<any | null>;
+
+  // 4. Inyecta el AuthService
+  constructor(private authService: AuthService) {
+    // 5. Conecta la variable local al "canal" del servicio
+    this.currentUser$ = this.authService.currentUser$;
+  }
+
+
+  
   // El array ahora es más simple, solo con la información esencial
   menuItems = [
     { path: '/app/dashboard', title: 'Dashboard', active: false, subMenu: [] },
@@ -46,7 +58,7 @@ export class SidebarComponent {
     { path: '/app/configuraciones', title: 'Configuraciones', active: false, subMenu: [] }
   ];
 
-  constructor() { }
+  
 
   toggleSubMenu(item: any) {
     this.menuItems.forEach(i => {
@@ -56,4 +68,10 @@ export class SidebarComponent {
     });
     item.active = !item.active;
   }
+
+  // 6. (Opcional) Añade un método para cerrar sesión
+  logout(): void {
+    this.authService.logout();
+  }
+  
 }

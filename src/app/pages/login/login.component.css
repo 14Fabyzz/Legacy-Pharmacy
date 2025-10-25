@@ -176,3 +176,12 @@
     height: 28px;
   }
 }
+
+.login-error-message {
+  color: #D32F2F; /* Un color rojo oscuro */
+  background-color: #FFCDD2; /* Un fondo rojo claro */
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 20px;
+  font-weight: 500;
+}

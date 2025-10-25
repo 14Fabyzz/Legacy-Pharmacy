@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class SearchPipe implements PipeTransform {
 
-  transform(items: any[], searchText: string): any[] {
+  transform(items: any[] | null, searchText: string): any[] {
     // Si no hay items o no hay texto de búsqueda, devuelve la lista original
     if (!items) {
       return [];

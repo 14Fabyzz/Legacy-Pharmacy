@@ -6,9 +6,10 @@
 
   
   <nav class="tabs-nav">
-    <a routerLink="/productos/nuevo">NUEVO PRODUCTO</a>
-    <a routerLink="/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACEN</a>
+    <a routerLink="/app/productos/nuevo">NUEVO PRODUCTO</a>
+    <a routerLink="/app/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACEN</a>
   </nav>
+
   <div class="search-container">
      <input 
        type="text" 
@@ -17,47 +18,61 @@
        [(ngModel)]="searchTerm">
    </div>
 
-  <div class="product-list-container">
-    <div class="product-card" *ngFor="let product of products | search:searchTerm">
+  <ng-container *ngIf="products$ | async | search:searchTerm as filteredProducts">
+    
+    <div class="product-list-container">
       
-      <div class="product-image">
-        <div class="image-placeholder"></div>
-      </div>
-
-      <div class="product-info-wrapper">
-        <div class="product-header">
-          <span class="product-id">{{ product.id }}</span>
-          <h3 class="product-name">{{ product.name }}</h3>
+      <!-- Iteramos sobre los productos filtrados -->
+      <div *ngFor="let product of filteredProducts" class="product-card">
+        
+        <div class="product-image">
+          <div class="image-placeholder"></div>
         </div>
 
-        <div class="product-details-grid">
-          <div class="info-item"><dt>Código de barras:</dt><dd>{{ product.barcode }}</dd></div>
-          <div class="info-item"><dt>Codigo:</dt><dd>{{ product.codigo }}</dd></div>
-          <div class="info-item"><dt>Disponibles:</dt><dd>{{ product.available }}</dd></div>
-          <div class="info-item"><dt>Vendidos:</dt><dd>{{ product.sold }}</dd></div>
-          <div class="info-item"><dt>Precio:</dt><dd>{{ product.price | currency }} <span *ngIf="product.discount" class="discount-badge">{{ product.discount }}% de descuento</span></dd></div>
-          <div class="info-item"><dt>Vencimiento:</dt><dd>{{ product.expiry }}</dd></div>
-          <div class="info-item"><dt>Estado:</dt><dd>{{ product.status }}</dd></div>
+        <div class="product-info-wrapper">
+          <div class="product-header">
+            <!-- CORREGIDO: Usamos 'idCodigo' en lugar de 'id' -->
+            <span class="product-id">{{ product.idCodigo }}</span>
+            <!-- CORREGIDO: Usamos 'nombre' en lugar de 'name' -->
+            <h3 class="product-name">{{ product.nombre }}</h3>
+          </div>
+
+          <div class="product-details-grid">
+            <!-- CORREGIDO: Usamos 'codigoBarras' en lugar de 'barcode' -->
+            <div class="info-item"><dt>Código de barras:</dt><dd>{{ product.codigoBarras }}</dd></div>
+            
+            <!-- CORREGIDO: Usamos 'precioVenta' en lugar de 'price' -->
+            <div class="info-item"><dt>Precio:</dt><dd>{{ product.precioVenta | currency }}</dd></div>
+            
+            <!-- AÑADIDO: Mostramos las propiedades que sí existen -->
+            <div class="info-item"><dt>IVA:</dt><dd>{{ product.ivaPorcentaje }}%</dd></div>
+            <div class="info-item"><dt>Laboratorio ID:</dt><dd>{{ product.laboratorioId }}</dd></div>
+
+            <!-- ELIMINADOS: Los campos 'codigo', 'available', 'sold', 'discount', 'expiry' y 'status'
+                 no existen en tu 'interface', por lo que han sido removidos. -->
+          </div>
+        </div>
+
+        <div class="product-actions">
+          <span>OPCIONES:</span>
+          <div class="action-icons">
+            <a title="Información detallada">👁️</a>
+            <a title="Gestionar imagen">🖼️</a>
+            <a title="Kardex del producto">📊</a>
+            
+            <!-- CORREGIDO: El enlace de editar debe usar el 'idCodigo' -->
+            <a title="Actualizar producto" [routerLink]="['/app/productos/editar', product.idCodigo]">✏️</a>
+            
+            <a title="Eliminar producto">🗑️</a>
+          </div>
         </div>
       </div>
-
-      <div class="product-actions">
-  <span>OPCIONES:</span>
-  <div class="action-icons">
-    <a title="Información detallada">👁️</a>
-    <a title="Gestionar imagen">🖼️</a>
-    <a title="Kardex del producto">📊</a>
-    
-    <a title="Actualizar producto" [routerLink]="['/productos/editar', product.id]">✏️</a>
-    
-    <a title="Eliminar producto">🗑️</a>
-  </div>
-</div>
-
     </div>
 
-    <div class="no-results" *ngIf="(products | search:searchTerm).length === 0">
+    <!-- Mensaje de no resultados (sin cambios, esto está bien) -->
+    <div class="no-results" *ngIf="filteredProducts.length === 0">
       <p>No se encontraron productos que coincidan con "{{ searchTerm }}"</p>
     </div>
-  </div>
+  </ng-container>
+
 </div>
