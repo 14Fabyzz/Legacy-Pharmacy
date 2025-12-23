@@ -32,17 +32,16 @@ export interface Producto {
   presentacion?: string;
   registro_invima?: string;
   
-  // Relaciones (IDs)
+  // Relaciones
   categoria_id: number;
   laboratorio_id: number;
   principio_activo_id?: number;
   
-  // Datos expandidos (útiles para mostrar en tablas sin hacer más peticiones)
   categoria_nombre?: string;
   laboratorio_nombre?: string;
   principio_activo_nombre?: string;
 
-  // Precios y Configuración
+  // Precios
   precio_compra_referencia?: number;
   precio_venta_base: number;
   iva_porcentaje: number;
@@ -53,6 +52,10 @@ export interface Producto {
   es_controlado: boolean;
   refrigerado: boolean;
   estado: 'ACTIVO' | 'DESCONTINUADO' | 'AGOTADO';
+
+  // --- NUEVO: Para el Semáforo ---
+  // Esta fecha vendría de tu backend (del lote que vence más pronto)
+  proximo_vencimiento?: string | Date; 
 }
 
 export interface Lote {

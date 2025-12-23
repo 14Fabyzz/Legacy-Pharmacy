@@ -14,54 +14,51 @@ export class ProductService {
 
   // Cambiamos 'any[]' por 'Producto[]' para asegurar que los datos sean correctos
   getProducts(): Observable<Producto[]> {
-    
-    // Estos datos simulados ahora coinciden EXACTAMENTE con tu interfaz y base de datos
     const mockProducts: Producto[] = [
       { 
         id: 1, 
         codigo_interno: 'PROD-001', 
-        codigo_barras: '7702152', 
-        nombre_comercial: 'Acetaminofén 500mg', 
-        principio_activo_id: 1,
-        laboratorio_id: 1, 
-        categoria_id: 1,
-        presentacion: 'Caja x 30',
+        nombre_comercial: 'Dolex', 
         concentracion: '500mg',
-        precio_venta_base: 8500, 
+        // ... otros campos ...
+        precio_venta_base: 8000, 
         stock_minimo: 10,
         iva_porcentaje: 0,
-        margen_minimo_porcentaje: 40,
-        es_controlado: false, 
-        refrigerado: false, 
         estado: 'ACTIVO',
-        // Campos opcionales para mostrar en la tabla sin hacer más consultas
-        laboratorio_nombre: 'Genfar',
-        categoria_nombre: 'Analgésicos'
+        // CASO ROJO: Vence pronto (menos de 3 meses)
+        proximo_vencimiento: '2024-04-15' 
       },
       { 
         id: 2, 
         codigo_interno: 'PROD-002', 
-        codigo_barras: '7709876', 
-        nombre_comercial: 'Loratadina 10mg', 
-        principio_activo_id: 2,
-        laboratorio_id: 2, 
-        categoria_id: 3,
-        presentacion: 'Caja x 10',
-        concentracion: '10mg',
+        nombre_comercial: 'Advil', 
+        concentracion: '400mg',
+        // ... otros campos ...
         precio_venta_base: 15200, 
         stock_minimo: 5,
         iva_porcentaje: 19,
-        margen_minimo_porcentaje: 40,
-        es_controlado: false, 
-        refrigerado: false, 
         estado: 'ACTIVO',
-        laboratorio_nombre: 'MK',
-        categoria_nombre: 'Antigripales'
+        // CASO AMARILLO: Vence en 5 meses
+        proximo_vencimiento: '2024-09-01' 
+      },
+      { 
+        id: 3, 
+        codigo_interno: 'PROD-003', 
+        nombre_comercial: 'Vitamina C', 
+        concentracion: '1g',
+        // ... otros campos ...
+        precio_venta_base: 22000, 
+        stock_minimo: 20,
+        iva_porcentaje: 5,
+        estado: 'ACTIVO',
+        // CASO VERDE: Vence en más de 6 meses
+        proximo_vencimiento: '2025-12-31' 
       }
-    ];
+    ] as any[]; // Cast as any[] temporalmente para evitar errores de campos faltantes en el mock rápido
 
     return of(mockProducts);
   }
+
 
   getProductById(id: number): Observable<Producto> {
     // Simulamos un producto individual con la estructura correcta
@@ -83,13 +80,30 @@ export class ProductService {
     });
   }
 
-  createProduct(product: Producto): Observable<any> {
-    console.log('Servicio: Creando producto (Mock)', product);
-    return of({ success: true, id: Math.floor(Math.random() * 1000) });
-  }
-
-  updateProduct(id: number, product: Producto): Observable<any> {
-    console.log(`Servicio: Actualizando producto ${id} (Mock)`, product);
+  // Soft Delete: Cambiar estado a DESCONTINUADO o INACTIVO
+  deleteProduct(id: number): Observable<any> {
+    console.log(`Servicio: Desactivando producto ID ${id} (Soft Delete)`);
+    // Aquí harías: return this.http.delete(...) o put(...)
     return of({ success: true });
   }
+
+  // Gestionar Imagen
+  updateProductImage(id: number, file: File): Observable<any> {
+    console.log(`Servicio: Subiendo imagen para producto ID ${id}`, file);
+    return of({ success: true, imageUrl: 'nueva-url.jpg' });
+  }
+
+  // Obtener Kardex (Movimientos)
+  getProductKardex(id: number): Observable<any[]> {
+    console.log(`Servicio: Obteniendo kardex del producto ID ${id}`);
+    // Mock de movimientos
+    return of([
+      { fecha: '2024-10-20', tipo: 'ENTRADA', cantidad: 50, saldo: 50, detalle: 'Compra Fact. 123' },
+      { fecha: '2024-10-21', tipo: 'SALIDA', cantidad: 5, saldo: 45, detalle: 'Venta #998' },
+      { fecha: '2024-10-22', tipo: 'SALIDA', cantidad: 10, saldo: 35, detalle: 'Venta #1002' }
+    ]);
+  }
+
+  createProduct(product: Producto): Observable<any> { return of(true); }
+  updateProduct(id: number, product: Producto): Observable<any> { return of(true); }
 }

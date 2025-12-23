@@ -1,9 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductService } from '../../products/product.service';
-import { OnInit } from '@angular/core';
-import { Producto, EntradaMercanciaRequest } from '../../../core/models/inventory.model';
+// Importamos las interfaces correctas
+import { Producto } from '../../../core/models/inventory.model';
+
+// Definimos una interfaz local para los items de la tabla (coincide con lo que usas en addItem)
+interface EntradaItem {
+  productoId: number;
+  nombreProducto: string;
+  codigo: string;
+  numeroLote: string;
+  fechaVencimiento: string;
+  cantidad: number;
+  costoCompra: number;
+  subtotal: number;
+}
 
 @Component({
   selector: 'app-purchase-entry',
@@ -16,54 +28,78 @@ export class PurchaseEntryComponent implements OnInit {
   entryForm!: FormGroup;
   itemForm!: FormGroup;
   
-  addedItems: any[] = []; // Lista temporal de items
-  products: Producto[] = []; // Lista para el autocompletado
-  selectedProduct: Producto | null = null;
+  // Usamos la interfaz EntradaItem para tipado fuerte
+  addedItems: EntradaItem[] = []; 
+  products: Producto[] = []; 
+  filteredProducts: Producto[] = []; 
+  selectedProduct: Producto | null = null; 
 
   totalCompra = 0;
 
   constructor(private fb: FormBuilder, private productService: ProductService) { }
 
   ngOnInit(): void {
-    // 1. Formulario Principal (Cabecera)
+    // Datos de la cabecera (Factura / Sucursal)
     this.entryForm = this.fb.group({
-      sucursalId: [1, Validators.required], // Valor por defecto o traer de config
+      sucursalId: [1, Validators.required],
       observaciones: ['Entrada de Mercancía']
     });
 
-    // 2. Formulario para agregar items individuales
+    // Datos del producto a ingresar
     this.itemForm = this.fb.group({
-      productoBusqueda: [''], // Campo para buscar
+      productoBusqueda: [''], 
       numeroLote: ['', Validators.required],
       fechaVencimiento: ['', Validators.required],
       cantidad: [1, [Validators.required, Validators.min(1)]],
-      costoCompra: [0, [Validators.required, Validators.min(0.01)]]
+      costoCompra: [0, [Validators.required, Validators.min(0)]]
     });
 
-    // Cargar productos para el buscador (idealmente usar un typeahead)
     this.loadProducts();
+
+    // Lógica del buscador (filtra mientras escribes)
+    this.itemForm.get('productoBusqueda')?.valueChanges.subscribe(value => {
+      this.filterProducts(value);
+    });
   }
 
   loadProducts() {
     this.productService.getProducts().subscribe(data => this.products = data);
   }
 
-  // Simulación de selección de producto (en la vida real usarías un autocomplete)
-  selectProduct(product: any) {
+  filterProducts(value: string) {
+    if (!value || typeof value !== 'string') {
+      this.filteredProducts = [];
+      return;
+    }
+    const filterValue = value.toLowerCase();
+    // Buscamos por nombre o por código
+    this.filteredProducts = this.products.filter(product => 
+      product.nombre_comercial.toLowerCase().includes(filterValue) ||
+      product.codigo_interno.toLowerCase().includes(filterValue)
+    );
+  }
+
+  selectProduct(product: Producto) {
     this.selectedProduct = product;
+    this.filteredProducts = []; // Ocultamos la lista
+    
+    // Rellenamos el campo de búsqueda y sugerimos el último costo
     this.itemForm.patchValue({ 
       productoBusqueda: product.nombre_comercial,
-      costoCompra: product.precio_compra_referencia || 0 // Sugerir último costo
+      costoCompra: product.precio_compra_referencia || 0
     });
   }
 
   addItem() {
-    if (this.itemForm.invalid || !this.selectedProduct) return;
+    if (this.itemForm.invalid || !this.selectedProduct) {
+      this.itemForm.markAllAsTouched();
+      return;
+    }
 
     const formVal = this.itemForm.value;
-    const subtotal = formVal.cantidad * formVal.costoCompra;
-
-    const newItem = {
+    
+    // Creamos el objeto exactamente como lo definimos en el modelo
+    const newItem: EntradaItem = {
       productoId: this.selectedProduct.id,
       nombreProducto: this.selectedProduct.nombre_comercial,
       codigo: this.selectedProduct.codigo_interno,
@@ -71,15 +107,17 @@ export class PurchaseEntryComponent implements OnInit {
       fechaVencimiento: formVal.fechaVencimiento,
       cantidad: formVal.cantidad,
       costoCompra: formVal.costoCompra,
-      subtotal: subtotal
+      subtotal: formVal.cantidad * formVal.costoCompra
     };
 
     this.addedItems.push(newItem);
     this.calculateTotal();
     
-    // Resetear solo el formulario de item, manteniendo la cabecera
-    this.itemForm.reset({ cantidad: 1 });
-    this.selectedProduct = null;
+    // Reseteamos solo cantidad y costo para seguir agregando rápido
+    this.itemForm.patchValue({ cantidad: 1, costoCompra: 0, numeroLote: '', fechaVencimiento: '' });
+    // Mantenemos el producto seleccionado por si quiere agregar otro lote del mismo, 
+    // o puedes descomentar la siguiente línea para limpiar todo:
+    // this.selectedProduct = null; this.itemForm.patchValue({ productoBusqueda: '' });
   }
 
   removeItem(index: number) {
@@ -93,14 +131,20 @@ export class PurchaseEntryComponent implements OnInit {
 
   processEntry() {
     if (this.addedItems.length === 0) return;
-
-    const entryData = {
-      ...this.entryForm.value,
+    
+    const requestData = {
+      header: this.entryForm.value,
       items: this.addedItems
     };
 
-    console.log('Enviando al Backend:', entryData);
-    // Aquí llamarías a tu servicio que a su vez llama al SP `registrar_entrada_mercancia`
-    // Como tu SP es por item, el servicio tendría que hacer un loop o el backend recibir el array.
+    console.log('📦 ENVIANDO AL BACKEND:', requestData);
+    alert('✅ Entrada de mercancía procesada correctamente (Simulación)');
+    
+    // Limpiamos todo al finalizar
+    this.addedItems = [];
+    this.calculateTotal();
+    this.entryForm.reset({ sucursalId: 1, observaciones: 'Entrada de Mercancía' });
+    this.itemForm.reset({ cantidad: 1 });
+    this.selectedProduct = null;
   }
 }

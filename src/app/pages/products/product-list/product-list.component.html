@@ -7,107 +7,162 @@
   <nav class="tabs-nav">
     <a routerLink="/app/productos/nuevo">NUEVO PRODUCTO</a>
     <a routerLink="/app/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACÉN</a>
+    <a routerLink="/app/productos/entrada-mercancia">ENTRADA MERCANCÍA</a>
   </nav>
 
   <div class="search-container">
-     <input 
-       type="text" 
-       class="search-input" 
-       placeholder="Buscar por nombre, código, laboratorio..."
-       [(ngModel)]="searchTerm">
+     <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm">
    </div>
 
-  <!-- Usamos el pipe async y search -->
   <ng-container *ngIf="products$ | async | search:searchTerm as filteredProducts">
     
     <div class="product-list-container">
-      
       <div *ngFor="let product of filteredProducts" class="product-card">
         
-        <!-- Imagen (Placeholder) -->
+        <!-- === SEMÁFORO DE VENCIMIENTO (FLOTANTE) === -->
+        <div class="expiry-badge" 
+             [class.red]="getVencimientoStatus(product.proximo_vencimiento) === 'red'"
+             [class.yellow]="getVencimientoStatus(product.proximo_vencimiento) === 'yellow'"
+             [class.green]="getVencimientoStatus(product.proximo_vencimiento) === 'green'"
+             *ngIf="product.proximo_vencimiento">
+          <span class="expiry-icon">⏰</span>
+          <span class="expiry-date">{{ getVencimientoLabel(product.proximo_vencimiento) }}</span>
+        </div>
+        <!-- ========================================== -->
+         
+        <!-- Imagen -->
         <div class="product-image">
-          <div class="image-placeholder">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>
-          </div>
+          <div class="image-placeholder">💊</div>
         </div>
 
-        <!-- Información del Producto -->
+        <!-- Info Producto -->
         <div class="product-info-wrapper">
           <div class="product-header">
             <span class="product-id">ID: {{ product.id }}</span>
-            <!-- CORREGIDO: nombre_comercial -->
-            <h3 class="product-name">{{ product.nombre_comercial }}</h3>
-            <!-- Badge de estado -->
-            <span class="status-badge" [class.active]="product.estado === 'ACTIVO'">
-              {{ product.estado }}
-            </span>
+            <h3 class="product-name">{{ product.nombre_comercial }} <small>{{ product.concentracion }}</small></h3>
+            <span class="status-badge" [class.active]="product.estado === 'ACTIVO'">{{ product.estado }}</span>
           </div>
 
           <div class="product-details-grid">
-            
-            <div class="info-item">
-              <dt>Código Interno:</dt>
-              <!-- CORREGIDO: codigo_interno -->
-              <dd>{{ product.codigo_interno }}</dd>
-            </div>
-
-            <div class="info-item">
-              <dt>Código Barras:</dt>
-              <!-- CORREGIDO: codigo_barras -->
-              <dd>{{ product.codigo_barras || 'N/A' }}</dd>
-            </div>
-            
-            <div class="info-item">
-              <dt>Precio Venta:</dt>
-              <!-- CORREGIDO: precio_venta_base -->
-              <dd class="price-text">{{ product.precio_venta_base | currency }}</dd>
-            </div>
-
-            <div class="info-item">
-              <dt>Laboratorio:</dt>
-              <!-- CORREGIDO: laboratorio_nombre (si viene del mock) o laboratorio_id -->
-              <dd>{{ product.laboratorio_nombre || product.laboratorio_id }}</dd>
-            </div>
-
-            <div class="info-item">
-              <dt>Stock Mínimo:</dt>
-              <!-- CORREGIDO: stock_minimo -->
-              <dd>{{ product.stock_minimo }}</dd>
-            </div>
-
-            <div class="info-item">
-              <dt>IVA:</dt>
-              <!-- CORREGIDO: iva_porcentaje -->
-              <dd>{{ product.iva_porcentaje }}%</dd>
-            </div>
-
+            <div class="info-item"><dt>Código:</dt><dd>{{ product.codigo_interno }}</dd></div>
+            <div class="info-item"><dt>Precio:</dt><dd class="price-text">{{ product.precio_venta_base | currency }}</dd></div>
+            <div class="info-item"><dt>Lab:</dt><dd>{{ product.laboratorio_nombre || 'N/A' }}</dd></div>
+            <div class="info-item"><dt>Mínimo:</dt><dd>{{ product.stock_minimo }}</dd></div>
           </div>
         </div>
 
-        <!-- Botones de Acción -->
+        <!-- ACCIONES -->
         <div class="product-actions">
           <span>ACCIONES</span>
           <div class="action-icons">
-            <a title="Ver Detalles">👁️</a>
-            <a title="Gestionar Imagen">🖼️</a>
-            <a title="Kardex / Movimientos">📊</a>
+            <a title="Ver Detalles" (click)="openDetailModal(product)">👁️</a>
+            <a title="Gestionar Imagen" (click)="openImageModal(product)">🖼️</a>
+            <a title="Kardex / Movimientos" (click)="openKardexModal(product)">📊</a>
             
-            <!-- Enlace para editar usando el ID -->
-            <a title="Editar Producto" [routerLink]="['/app/productos/editar', product.id]" class="btn-edit">
-              ✏️
-            </a>
+            <a title="Editar" [routerLink]="['/app/productos/editar', product.id]" class="btn-edit">✏️</a>
             
-            <a title="Eliminar/Desactivar" class="btn-delete">🗑️</a>
+            <a title="Eliminar" (click)="openDeleteModal(product)" class="btn-delete">🗑️</a>
           </div>
         </div>
 
-      </div> <!-- Fin product-card -->
+      </div> 
     </div>
 
-    <!-- Estado Vacío -->
     <div class="no-results" *ngIf="filteredProducts.length === 0">
-      <p>No se encontraron productos que coincidan con "{{ searchTerm }}"</p>
+      <p>No se encontraron productos.</p>
     </div>
-
   </ng-container>
+
+  <!-- ================= MODALES ================= -->
+
+  <!-- 1. MODAL ELIMINAR (Confirmación segura) -->
+  <div class="modal-overlay" *ngIf="showDeleteModal && selectedProduct">
+    <div class="modal-content danger">
+      <h3>⚠️ Desactivar Producto</h3>
+      <p>Estás a punto de desactivar <strong>{{ selectedProduct.nombre_comercial }}</strong>.</p>
+      <p class="warning-text">Esta acción sacará el producto de la venta. Para confirmar, escribe el nombre del producto abajo:</p>
+      
+      <input type="text" class="confirm-input" 
+             [(ngModel)]="deleteConfirmationName" 
+             [placeholder]="selectedProduct.nombre_comercial">
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeModals()">Cancelar</button>
+        <button class="btn-confirm-delete" 
+                [disabled]="deleteConfirmationName !== selectedProduct.nombre_comercial"
+                (click)="confirmDelete()">
+          Confirmar Desactivación
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MODAL DETALLES -->
+  <div class="modal-overlay" *ngIf="showDetailModal && selectedProduct">
+    <div class="modal-content">
+      <h3>Detalles del Producto</h3>
+      <div class="detail-list">
+        <p><strong>Nombre:</strong> {{ selectedProduct.nombre_comercial }}</p>
+        <p><strong>Código:</strong> {{ selectedProduct.codigo_interno }}</p>
+        <p><strong>Presentación:</strong> {{ selectedProduct.presentacion }}</p>
+        <p><strong>INVIMA:</strong> {{ selectedProduct.registro_invima || 'N/A' }}</p>
+        <p><strong>Controlado:</strong> {{ selectedProduct.es_controlado ? 'SÍ' : 'NO' }}</p>
+        <p><strong>Refrigerado:</strong> {{ selectedProduct.refrigerado ? 'SÍ' : 'NO' }}</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" (click)="closeModals()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MODAL IMAGEN -->
+  <div class="modal-overlay" *ngIf="showImageModal && selectedProduct">
+    <div class="modal-content">
+      <h3>Gestionar Imagen</h3>
+      <div class="image-upload-area">
+        <div class="current-image">
+          <!-- Aquí iría la imagen real -->
+          <div class="image-placeholder large">💊</div>
+        </div>
+        <label class="btn-upload">
+          Subir Nueva Imagen
+          <input type="file" (change)="onImageSelected($event)" hidden accept="image/*">
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeModals()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. MODAL KARDEX -->
+  <div class="modal-overlay" *ngIf="showKardexModal && selectedProduct">
+    <div class="modal-content large">
+      <h3>Kardex: {{ selectedProduct.nombre_comercial }}</h3>
+      <table class="kardex-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Movimiento</th>
+            <th>Detalle</th>
+            <th>Cant.</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mov of kardexData">
+            <td>{{ mov.fecha }}</td>
+            <td><span class="badge" [class.in]="mov.tipo=='ENTRADA'" [class.out]="mov.tipo=='SALIDA'">{{ mov.tipo }}</span></td>
+            <td>{{ mov.detalle }}</td>
+            <td>{{ mov.cantidad }}</td>
+            <td><strong>{{ mov.saldo }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="modal-actions">
+        <button class="btn-primary" (click)="closeModals()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
 </div>
