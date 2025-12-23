@@ -1,71 +1,109 @@
 <div class="page-container">
   <header class="page-header">
-    <h2>NUEVO PRODUCTO</h2>
-    <p>Este módulo PRODUCTOS podrá agregar nuevos productos al sistema, actualizar datos de los productos, eliminar o actualizar la imagen de los productos, imprimir códigos de barras o SKU de cada producto, buscar productos en el sistema, ver todos los productos en almacén, ver los productos más vendidos y filtrar productos por categoría.</p>
+    <h2 *ngIf="!isEditMode">NUEVO PRODUCTO</h2>
+    <h2 *ngIf="isEditMode">ACTUALIZAR PRODUCTO</h2>
+    <p>Registre la ficha técnica del medicamento. El stock y los lotes se gestionan en el módulo de "Compras".</p>
   </header>
 
   <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="product-form">
     
+    <!-- SECCIÓN 1: Identificación -->
     <fieldset class="form-section">
-      <legend>Código y Código de barras</legend>
+      <legend>Identificación</legend>
       <div class="form-row">
         <div class="form-group">
-          <label for="codigoBarras">Código de barras</label>
-          <input id="codigoBarras" type="text" formControlName="codigoBarras">
+          <label>Código Interno / SKU *</label>
+          <input type="text" formControlName="codigo_interno" placeholder="Ej: DOLEX-500">
         </div>
         <div class="form-group">
-          <label for="sku">SKU</label>
-          <input id="sku" type="text" formControlName="sku">
+          <label>Código de Barras</label>
+          <input type="text" formControlName="codigo_barras">
         </div>
-      </div>
-    </fieldset>
-
-    <fieldset class="form-section">
-      <legend>Información del producto</legend>
-      <div class="form-row">
         <div class="form-group full-width">
-          <label for="nombre">Nombre</label>
-          <input id="nombre" type="text" formControlName="nombre">
+          <label>Nombre Comercial *</label>
+          <input type="text" formControlName="nombre_comercial" placeholder="Ej: Dolex Forte">
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group"><label for="stock">Stock o existencias</label><input id="stock" type="number" formControlName="stock"></div>
-        <div class="form-group"><label for="stockMinimo">Stock mínimo</label><input id="stockMinimo" type="number" formControlName="stockMinimo"></div>
-        <div class="form-group"><label for="presentacion">Presentación del producto</label><select id="presentacion" formControlName="presentacion"><option [ngValue]="null" disabled>Seleccione una opción</option></select></div>
-      </div>
-      </fieldset>
+    </fieldset>
 
-    <fieldset class="form-section" formGroupName="vencimiento">
-      <legend>Vencimiento del producto</legend>
+    <!-- SECCIÓN 2: Datos Farmacéuticos -->
+    <fieldset class="form-section">
+      <legend>Detalles Farmacéuticos</legend>
       <div class="form-row">
-        <div class="form-group radio-group">
-          <label><input type="radio" [value]="true" formControlName="aplica"> Sí vence</label>
-          <label><input type="radio" [value]="false" formControlName="aplica"> No vence</label>
+        <div class="form-group">
+          <label>Principio Activo *</label>
+          <select formControlName="principio_activo_id">
+            <option [ngValue]="null">Seleccione...</option>
+            <option *ngFor="let pa of principiosActivos" [value]="pa.id">{{ pa.nombre }}</option>
+          </select>
         </div>
         <div class="form-group">
-          <label for="fechaVencimiento">Fecha de vencimiento (día/mes/Año)</label>
-          <input id="fechaVencimiento" type="date" formControlName="fecha">
+          <label>Laboratorio *</label>
+          <select formControlName="laboratorio_id">
+            <option [ngValue]="null">Seleccione...</option>
+            <option *ngFor="let lab of laboratorios" [value]="lab.id">{{ lab.nombre }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Categoría *</label>
+          <select formControlName="categoria_id">
+            <option [ngValue]="null">Seleccione...</option>
+            <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Concentración</label>
+          <input type="text" formControlName="concentracion" placeholder="Ej: 500mg">
+        </div>
+        <div class="form-group">
+          <label>Presentación</label>
+          <input type="text" formControlName="presentacion" placeholder="Ej: Caja x 10 Tabletas">
+        </div>
+        <div class="form-group">
+          <label>Registro INVIMA</label>
+          <input type="text" formControlName="registro_invima">
         </div>
       </div>
     </fieldset>
 
+    <!-- SECCIÓN 3: Comercial y Control -->
     <fieldset class="form-section">
-      <legend>Proveedor, categoría & estado</legend>
+      <legend>Comercial y Control</legend>
       <div class="form-row">
-        <div class="form-group"><label for="proveedor">Proveedor</label><select id="proveedor" formControlName="proveedor"><option [ngValue]="null" disabled>Seleccione una opción</option></select></div>
-        <div class="form-group"><label for="categoria">Categoría</label><select id="categoria" formControlName="categoria"><option [ngValue]="null" disabled>Seleccione una opción</option></select></div>
-        <div class="form-group"><label for="estado">Estado del producto</label><input id="estado" type="text" formControlName="estado" readonly></div>
+        <div class="form-group">
+          <label>Precio Venta Base ($) *</label>
+          <input type="number" formControlName="precio_venta_base">
+        </div>
+        <div class="form-group">
+          <label>IVA (%)</label>
+          <input type="number" formControlName="iva_porcentaje">
+        </div>
+        <div class="form-group">
+          <label>Stock Mínimo (Alerta)</label>
+          <input type="number" formControlName="stock_minimo">
+        </div>
       </div>
-    </fieldset>
-    
-    <fieldset class="form-section">
-      <legend>Foto o imagen del producto</legend>
-      <input type="file" formControlName="imagen">
+
+      <div class="form-row checkboxes-row">
+        <div class="checkbox-group">
+          <input type="checkbox" id="es_controlado" formControlName="es_controlado">
+          <label for="es_controlado">Es Medicamento Controlado</label>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="refrigerado" formControlName="refrigerado">
+          <label for="refrigerado">Requiere Refrigeración</label>
+        </div>
+      </div>
     </fieldset>
 
     <div class="form-actions">
       <button type="button" class="btn btn-secondary" (click)="limpiarFormulario()">Limpiar</button>
-      <button type="submit" class="btn btn-primary">Guardar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">
+        {{ isEditMode ? 'Actualizar Ficha' : 'Crear Ficha Técnica' }}
+      </button>
     </div>
   </form>
 </div>
