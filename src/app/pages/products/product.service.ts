@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+// Importamos la interfaz correcta
+import { Producto } from '../../core/models/inventory.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,47 +12,83 @@ export class ProductService {
 
   constructor(private http: HttpClient) { }
 
-  getProducts(): Observable<any[]> {
-    // Datos de lista
-    return of([
-      { idCodigo: '1', nombre: 'Acetaminofén 500mg', codigoBarras: '7702152', sku: 'MED001', precioVenta: 8.50, stock: 120, estado: 'Habilitado' },
-      { idCodigo: '2', nombre: 'Loratadina 10mg', codigoBarras: '7709876', sku: 'MED002', precioVenta: 15.20, stock: 85, estado: 'Habilitado' },
-      { idCodigo: '3', nombre: 'Vitamina C 1000mg', codigoBarras: '7701122', sku: 'SUP001', precioVenta: 22.00, stock: 200, estado: 'Habilitado' }
-    ]);
+  // Cambiamos 'any[]' por 'Producto[]' para asegurar que los datos sean correctos
+  getProducts(): Observable<Producto[]> {
+    
+    // Estos datos simulados ahora coinciden EXACTAMENTE con tu interfaz y base de datos
+    const mockProducts: Producto[] = [
+      { 
+        id: 1, 
+        codigo_interno: 'PROD-001', 
+        codigo_barras: '7702152', 
+        nombre_comercial: 'Acetaminofén 500mg', 
+        principio_activo_id: 1,
+        laboratorio_id: 1, 
+        categoria_id: 1,
+        presentacion: 'Caja x 30',
+        concentracion: '500mg',
+        precio_venta_base: 8500, 
+        stock_minimo: 10,
+        iva_porcentaje: 0,
+        margen_minimo_porcentaje: 40,
+        es_controlado: false, 
+        refrigerado: false, 
+        estado: 'ACTIVO',
+        // Campos opcionales para mostrar en la tabla sin hacer más consultas
+        laboratorio_nombre: 'Genfar',
+        categoria_nombre: 'Analgésicos'
+      },
+      { 
+        id: 2, 
+        codigo_interno: 'PROD-002', 
+        codigo_barras: '7709876', 
+        nombre_comercial: 'Loratadina 10mg', 
+        principio_activo_id: 2,
+        laboratorio_id: 2, 
+        categoria_id: 3,
+        presentacion: 'Caja x 10',
+        concentracion: '10mg',
+        precio_venta_base: 15200, 
+        stock_minimo: 5,
+        iva_porcentaje: 19,
+        margen_minimo_porcentaje: 40,
+        es_controlado: false, 
+        refrigerado: false, 
+        estado: 'ACTIVO',
+        laboratorio_nombre: 'MK',
+        categoria_nombre: 'Antigripales'
+      }
+    ];
+
+    return of(mockProducts);
   }
 
-  getProductById(id: number): Observable<any> {
-    // Simulamos que encontramos el producto y devolvemos UN OBJETO CON TODOS LOS CAMPOS
-    // Esto es vital para que patchValue llene el formulario completo
+  getProductById(id: number): Observable<Producto> {
+    // Simulamos un producto individual con la estructura correcta
     return of({
-      idCodigo: id,
-      nombre: 'Producto Simulado ' + id,
-      codigoBarras: '77000' + id,
-      sku: 'SKU-' + id + '00',
-      stock: 50,
-      stockMinimo: 5,
-      presentacion: 'Caja', // Debe coincidir con un value de tu <select>
-      precioVenta: 15000,
-      precioCompra: 12000,
-      ivaPorcentaje: 19,
-      laboratorioId: 1,
-      marca: 'Genérico',
-      proveedor: '1', // ID del proveedor (value del select)
-      categoria: '1', // ID de la categoría (value del select)
-      estado: 'Habilitado',
-      vencimiento: {
-        aplica: true,
-        fecha: '2025-12-31'
-      }
+      id: id,
+      codigo_interno: 'PROD-' + id,
+      codigo_barras: '77000' + id,
+      nombre_comercial: 'Producto Simulado ' + id,
+      principio_activo_id: 1,
+      laboratorio_id: 1,
+      categoria_id: 1,
+      precio_venta_base: 12000,
+      iva_porcentaje: 19,
+      margen_minimo_porcentaje: 30,
+      stock_minimo: 5,
+      es_controlado: false,
+      refrigerado: false,
+      estado: 'ACTIVO'
     });
   }
 
-  createProduct(product: any): Observable<any> {
+  createProduct(product: Producto): Observable<any> {
     console.log('Servicio: Creando producto (Mock)', product);
     return of({ success: true, id: Math.floor(Math.random() * 1000) });
   }
 
-  updateProduct(id: number, product: any): Observable<any> {
+  updateProduct(id: number, product: Producto): Observable<any> {
     console.log(`Servicio: Actualizando producto ${id} (Mock)`, product);
     return of({ success: true });
   }

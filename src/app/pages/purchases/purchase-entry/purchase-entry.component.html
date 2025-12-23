@@ -1,0 +1,131 @@
+<div class="page-container">
+  <header class="page-header">
+    <h2>ENTRADA DE MERCANCÍA</h2>
+    <p>Registre los productos que ingresan al inventario físico.</p>
+  </header>
+
+  <div class="entry-layout">
+    
+    <!-- PANEL IZQUIERDO: Formulario de Ingreso -->
+    <div class="entry-form-panel card">
+      <h3>Datos del Ingreso</h3> 
+      
+      <form [formGroup]="entryForm" class="header-form">
+        <div class="form-group">
+          <label>Sucursal Destino</label>
+          <select formControlName="sucursalId" class="form-control">
+            <option value="1">Sucursal Centro</option>
+            <!-- Iterar sucursales -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Observaciones / No. Factura</label>
+          <textarea formControlName="observaciones" class="form-control" rows="2"></textarea>
+        </div>
+      </form>
+
+      <hr class="divider">
+
+      <h3>Agregar Producto</h3>
+      <form [formGroup]="itemForm" (ngSubmit)="addItem()">
+        
+        <!-- Buscador de Producto -->
+        <div class="form-group">
+          <label>Buscar Producto (Nombre / Código)</label>
+        <input type="text" class="form-control search-input" 
+       placeholder="Escribe para buscar..." 
+       formControlName="productoBusqueda">
+          
+          <!-- Lista de sugerencias (simulada) -->
+          <div class="suggestions-list" *ngIf="products.length > 0 && !selectedProduct">
+            <div *ngFor="let p of products" (click)="selectProduct(p)" class="suggestion-item">
+              <strong>{{ p.nombre_comercial }}</strong> - {{ p.concentracion }}
+              <small>{{ p.laboratorio_id }}</small>
+            </div> 
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Lote *</label>
+            <input type="text" formControlName="numeroLote" class="form-control" placeholder="L-..." uppercase>
+          </div>
+          <div class="form-group">
+            <label>Vence *</label>
+            <input type="date" formControlName="fechaVencimiento" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cantidad</label>
+            <input type="number" formControlName="cantidad" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Costo Unitario ($)</label>
+            <input type="number" formControlName="costoCompra" class="form-control">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="itemForm.invalid || !selectedProduct">
+          + Agregar a la Lista
+        </button>
+      </form>
+    </div>
+
+    <!-- PANEL DERECHO: Tabla de Resumen -->
+    <div class="entry-summary-panel card">
+      <div class="summary-header">
+        <h3>Resumen de Entrada</h3>
+        <span class="total-badge">Total: {{ totalCompra | currency }}</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Lote / Vence</th>
+              <th>Cant.</th>
+              <th>Costo</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of addedItems; let i = index">
+              <td>
+                <div class="product-cell">
+                  <span class="p-name">{{ item.nombreProducto }}</span>
+                  <span class="p-code">{{ item.codigo }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="batch-cell">
+                  <span>{{ item.numeroLote }}</span>
+                  <span class="date">{{ item.fechaVencimiento }}</span>
+                </div>
+              </td>
+              <td>{{ item.cantidad }}</td>
+              <td>{{ item.costoCompra | currency }}</td>
+              <td>{{ item.subtotal | currency }}</td>
+              <td>
+                <button class="btn-icon delete" (click)="removeItem(i)">🗑️</button>
+              </td>
+            </tr>
+            <tr *ngIf="addedItems.length === 0">
+              <td colspan="6" class="empty-state">No hay productos agregados a esta entrada.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="summary-footer">
+        <button class="btn btn-success btn-lg btn-block" (click)="processEntry()" [disabled]="addedItems.length === 0">
+          ✅ Procesar Entrada al Inventario
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

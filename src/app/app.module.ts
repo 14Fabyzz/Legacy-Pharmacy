@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +16,7 @@ import { ProductFormComponent } from './pages/products/product-form/product-form
 import { ProductListComponent } from './pages/products/product-list/product-list.component';
 import { SearchPipe } from './shared/pipes/search.pipe'; 
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { PurchaseEntryComponent } from './pages/purchases/purchase-entry/purchase-entry.component';
 
 
 // SidebarComponent es standalone, por lo que no se importa ni declara aquí.
@@ -36,8 +38,10 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
     LayoutComponent, 
     DashboardComponent,
     ProductFormComponent,
+    PurchaseEntryComponent,
     SearchPipe,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
  
    
     

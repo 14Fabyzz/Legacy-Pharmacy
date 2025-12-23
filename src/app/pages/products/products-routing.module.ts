@@ -4,6 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 // Solo importamos los componentes de PRODUCTOS
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductFormComponent } from './product-form/product-form.component';
+import { PurchaseEntryComponent } from '../purchases/purchase-entry/purchase-entry.component';
+
 
 const routes: Routes = [
   {
@@ -17,6 +19,10 @@ const routes: Routes = [
   {
     path: 'editar/:id', // Ruta: /productos/editar/123
     component: ProductFormComponent
+  },
+  {
+    path: 'entrada-mercancia',
+    component: PurchaseEntryComponent
   },
   {
     path: '', // Si solo escriben /productos

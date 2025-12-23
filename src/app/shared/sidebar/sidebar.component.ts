@@ -34,7 +34,7 @@ export class SidebarComponent {
     { path: '/app/proveedores', title: 'Proveedores', active: false, subMenu: [] },
     { path: '/app/compras', title: 'Compras', active: false, subMenu: [] },
     { path: '/app/usuarios', title: 'Usuarios', active: false, subMenu: [] },
-    { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },
+    { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },      
     {
       path: '/app/productos',
       title: 'Productos',
@@ -47,6 +47,7 @@ export class SidebarComponent {
         { path: '/app/productos/por-vencimiento', title: 'Productos por vencimiento' },
         { path: '/app/productos/stock-minimo', title: 'Productos en stock mínimo' },
         { path: '/app/productos/buscar', title: 'Buscar productos' },
+        { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' }
       ]
     },
    { path: '/app/ventas', title: 'Ventas', active: false, subMenu: [] },

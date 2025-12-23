@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { LoginComponent } from './pages/login/login.component'; // Asegúrate de importar LoginComponent
+import { PurchaseEntryComponent } from './pages/purchases/purchase-entry/purchase-entry.component';
 
 const routes: Routes = [
   // 1. Ruta para el login
@@ -22,6 +23,11 @@ const routes: Routes = [
       {
         path: 'productos', // Aquí se carga el módulo de productos
         loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsModule)
+      },
+
+      { 
+        path: 'purchases/purchase-entry', 
+        component: PurchaseEntryComponent 
       },
       // ... tus otras rutas ...
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

@@ -1,78 +1,113 @@
 <div class="page-container">
   <header class="page-header">
-    <h2>PRODUCTOS EN ALMACEN</h2>
-    <p>En el módulo PRODUCTOS podrá agregar nuevos productos al sistema, actualizar datos de los productos y mucho más.</p>
+    <h2>PRODUCTOS EN ALMACÉN</h2>
+    <p>Gestión general del inventario, precios y estado de productos.</p>
   </header>
 
-  
   <nav class="tabs-nav">
     <a routerLink="/app/productos/nuevo">NUEVO PRODUCTO</a>
-    <a routerLink="/app/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACEN</a>
+    <a routerLink="/app/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACÉN</a>
   </nav>
 
   <div class="search-container">
      <input 
        type="text" 
        class="search-input" 
-       placeholder="Buscar producto por nombre, código, SKU..."
+       placeholder="Buscar por nombre, código, laboratorio..."
        [(ngModel)]="searchTerm">
    </div>
 
+  <!-- Usamos el pipe async y search -->
   <ng-container *ngIf="products$ | async | search:searchTerm as filteredProducts">
     
     <div class="product-list-container">
       
-      <!-- Iteramos sobre los productos filtrados -->
       <div *ngFor="let product of filteredProducts" class="product-card">
         
+        <!-- Imagen (Placeholder) -->
         <div class="product-image">
-          <div class="image-placeholder"></div>
+          <div class="image-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>
+          </div>
         </div>
 
+        <!-- Información del Producto -->
         <div class="product-info-wrapper">
           <div class="product-header">
-            <!-- CORREGIDO: Usamos 'idCodigo' en lugar de 'id' -->
-            <span class="product-id">{{ product.idCodigo }}</span>
-            <!-- CORREGIDO: Usamos 'nombre' en lugar de 'name' -->
-            <h3 class="product-name">{{ product.nombre }}</h3>
+            <span class="product-id">ID: {{ product.id }}</span>
+            <!-- CORREGIDO: nombre_comercial -->
+            <h3 class="product-name">{{ product.nombre_comercial }}</h3>
+            <!-- Badge de estado -->
+            <span class="status-badge" [class.active]="product.estado === 'ACTIVO'">
+              {{ product.estado }}
+            </span>
           </div>
 
           <div class="product-details-grid">
-            <!-- CORREGIDO: Usamos 'codigoBarras' en lugar de 'barcode' -->
-            <div class="info-item"><dt>Código de barras:</dt><dd>{{ product.codigoBarras }}</dd></div>
             
-            <!-- CORREGIDO: Usamos 'precioVenta' en lugar de 'price' -->
-            <div class="info-item"><dt>Precio:</dt><dd>{{ product.precioVenta | currency }}</dd></div>
-            
-            <!-- AÑADIDO: Mostramos las propiedades que sí existen -->
-            <div class="info-item"><dt>IVA:</dt><dd>{{ product.ivaPorcentaje }}%</dd></div>
-            <div class="info-item"><dt>Laboratorio ID:</dt><dd>{{ product.laboratorioId }}</dd></div>
+            <div class="info-item">
+              <dt>Código Interno:</dt>
+              <!-- CORREGIDO: codigo_interno -->
+              <dd>{{ product.codigo_interno }}</dd>
+            </div>
 
-            <!-- ELIMINADOS: Los campos 'codigo', 'available', 'sold', 'discount', 'expiry' y 'status'
-                 no existen en tu 'interface', por lo que han sido removidos. -->
+            <div class="info-item">
+              <dt>Código Barras:</dt>
+              <!-- CORREGIDO: codigo_barras -->
+              <dd>{{ product.codigo_barras || 'N/A' }}</dd>
+            </div>
+            
+            <div class="info-item">
+              <dt>Precio Venta:</dt>
+              <!-- CORREGIDO: precio_venta_base -->
+              <dd class="price-text">{{ product.precio_venta_base | currency }}</dd>
+            </div>
+
+            <div class="info-item">
+              <dt>Laboratorio:</dt>
+              <!-- CORREGIDO: laboratorio_nombre (si viene del mock) o laboratorio_id -->
+              <dd>{{ product.laboratorio_nombre || product.laboratorio_id }}</dd>
+            </div>
+
+            <div class="info-item">
+              <dt>Stock Mínimo:</dt>
+              <!-- CORREGIDO: stock_minimo -->
+              <dd>{{ product.stock_minimo }}</dd>
+            </div>
+
+            <div class="info-item">
+              <dt>IVA:</dt>
+              <!-- CORREGIDO: iva_porcentaje -->
+              <dd>{{ product.iva_porcentaje }}%</dd>
+            </div>
+
           </div>
         </div>
 
+        <!-- Botones de Acción -->
         <div class="product-actions">
-          <span>OPCIONES:</span>
+          <span>ACCIONES</span>
           <div class="action-icons">
-            <a title="Información detallada">👁️</a>
-            <a title="Gestionar imagen">🖼️</a>
-            <a title="Kardex del producto">📊</a>
+            <a title="Ver Detalles">👁️</a>
+            <a title="Gestionar Imagen">🖼️</a>
+            <a title="Kardex / Movimientos">📊</a>
             
-            <!-- CORREGIDO: El enlace de editar debe usar el 'idCodigo' -->
-            <a title="Actualizar producto" [routerLink]="['/app/productos/editar', product.idCodigo]">✏️</a>
+            <!-- Enlace para editar usando el ID -->
+            <a title="Editar Producto" [routerLink]="['/app/productos/editar', product.id]" class="btn-edit">
+              ✏️
+            </a>
             
-            <a title="Eliminar producto">🗑️</a>
+            <a title="Eliminar/Desactivar" class="btn-delete">🗑️</a>
           </div>
         </div>
-      </div>
+
+      </div> <!-- Fin product-card -->
     </div>
 
-    <!-- Mensaje de no resultados (sin cambios, esto está bien) -->
+    <!-- Estado Vacío -->
     <div class="no-results" *ngIf="filteredProducts.length === 0">
       <p>No se encontraron productos que coincidan con "{{ searchTerm }}"</p>
     </div>
-  </ng-container>
 
+  </ng-container>
 </div>
