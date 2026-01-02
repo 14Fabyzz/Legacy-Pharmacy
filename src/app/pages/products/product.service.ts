@@ -15,46 +15,108 @@ export class ProductService {
   // Cambiamos 'any[]' por 'Producto[]' para asegurar que los datos sean correctos
   getProducts(): Observable<Producto[]> {
     const mockProducts: Producto[] = [
-      { 
-        id: 1, 
-        codigo_interno: 'PROD-001', 
-        nombre_comercial: 'Dolex', 
+      {
+        id: 1,
+        codigo_interno: 'PROD-001',
+        codigo_barras: '7701001001',
+        nombre_comercial: 'Dolex',
         concentracion: '500mg',
-        // ... otros campos ...
-        precio_venta_base: 8000, 
-        stock_minimo: 10,
+        presentacion: 'Caja x 20 Tab',
+        laboratorio_nombre: 'GSK',
+        precio_venta_base: 8000,
         iva_porcentaje: 0,
+        stock_minimo: 10,
+        es_controlado: false,
+        refrigerado: false,
         estado: 'ACTIVO',
-        // CASO ROJO: Vence pronto (menos de 3 meses)
-        proximo_vencimiento: '2024-04-15' 
+        proximo_vencimiento: '2024-04-15', // ROJO (< 90 días desde Enero 2024? No, depende de la fecha actual. Asumimos fecha futura o pasada según necesidad de prueba)
+
+        // Campos adicionales para compatibilidad
+        categoria_id: 1,
+        laboratorio_id: 1,
+        precio_compra_referencia: 5000
       },
-      { 
-        id: 2, 
-        codigo_interno: 'PROD-002', 
-        nombre_comercial: 'Advil', 
+      {
+        id: 2,
+        codigo_interno: 'PROD-002',
+        codigo_barras: '7701001002',
+        nombre_comercial: 'Advil',
         concentracion: '400mg',
-        // ... otros campos ...
-        precio_venta_base: 15200, 
-        stock_minimo: 5,
+        presentacion: 'Caja x 10 Caps',
+        laboratorio_nombre: 'Pfizer',
+        precio_venta_base: 15200,
         iva_porcentaje: 19,
+        stock_minimo: 5,
+        es_controlado: false,
+        refrigerado: false,
         estado: 'ACTIVO',
-        // CASO AMARILLO: Vence en 5 meses
-        proximo_vencimiento: '2024-09-01' 
+        proximo_vencimiento: '2024-09-01', // AMARILLO
+
+        categoria_id: 1,
+        laboratorio_id: 2,
+        precio_compra_referencia: 11000
       },
-      { 
-        id: 3, 
-        codigo_interno: 'PROD-003', 
-        nombre_comercial: 'Vitamina C', 
+      {
+        id: 3,
+        codigo_interno: 'PROD-003',
+        codigo_barras: '7701001003',
+        nombre_comercial: 'Vitamina C',
         concentracion: '1g',
-        // ... otros campos ...
-        precio_venta_base: 22000, 
-        stock_minimo: 20,
+        presentacion: 'Frasco x 30 Tab',
+        laboratorio_nombre: 'MK',
+        precio_venta_base: 22000,
         iva_porcentaje: 5,
+        stock_minimo: 20,
+        es_controlado: false,
+        refrigerado: false,
         estado: 'ACTIVO',
-        // CASO VERDE: Vence en más de 6 meses
-        proximo_vencimiento: '2025-12-31' 
+        proximo_vencimiento: '2025-12-31', // VERDE
+
+        categoria_id: 2,
+        laboratorio_id: 3,
+        precio_compra_referencia: 15000
+      },
+      {
+        id: 4,
+        codigo_interno: 'PROD-004',
+        codigo_barras: '7701001004',
+        nombre_comercial: 'Acetaminofén',
+        concentracion: '500mg',
+        presentacion: 'Caja x 100 Tab',
+        laboratorio_nombre: 'La Santé',
+        precio_venta_base: 12000,
+        iva_porcentaje: 0,
+        stock_minimo: 50,
+        es_controlado: false,
+        refrigerado: false,
+        estado: 'ACTIVO',
+        proximo_vencimiento: '2023-12-01', // VENCIDO (ROJO)
+
+        categoria_id: 1,
+        laboratorio_id: 4,
+        precio_compra_referencia: 8000
+      },
+      {
+        id: 5,
+        codigo_interno: 'PROD-005',
+        codigo_barras: '7701001005',
+        nombre_comercial: 'Insulina Glargina',
+        concentracion: '100 UI/ml',
+        presentacion: 'Lapicero Prellenado',
+        laboratorio_nombre: 'Sanofi',
+        precio_venta_base: 85000,
+        iva_porcentaje: 0,
+        stock_minimo: 5,
+        es_controlado: false,
+        refrigerado: true,
+        estado: 'ACTIVO',
+        proximo_vencimiento: '2024-07-20', // AMARILLO/VERDE dependiento fecha
+
+        categoria_id: 3,
+        laboratorio_id: 5,
+        precio_compra_referencia: 60000
       }
-    ] as any[]; // Cast as any[] temporalmente para evitar errores de campos faltantes en el mock rápido
+    ];
 
     return of(mockProducts);
   }
@@ -67,6 +129,9 @@ export class ProductService {
       codigo_interno: 'PROD-' + id,
       codigo_barras: '77000' + id,
       nombre_comercial: 'Producto Simulado ' + id,
+      concentracion: 'N/A',
+      presentacion: 'Unidad',
+      laboratorio_nombre: 'Genérico',
       principio_activo_id: 1,
       laboratorio_id: 1,
       categoria_id: 1,
@@ -78,6 +143,51 @@ export class ProductService {
       refrigerado: false,
       estado: 'ACTIVO'
     });
+  }
+
+  // Lógica de Negocio: Semáforo de Vencimientos
+  classifyByExpiration(products: Producto[]): { vencidos: Producto[], porVencer: Producto[], seguros: Producto[] } {
+    const now = new Date();
+    // Normalizamos 'hoy' a media noche para comparaciones de fecha pura si fuera necesario,
+    // pero para vencimiento suele importar el momento exacto o final del día. 
+    // Usaremos la fecha actual simple.
+
+    const result = {
+      vencidos: [] as Producto[],
+      porVencer: [] as Producto[],
+      seguros: [] as Producto[]
+    };
+
+    products.forEach(p => {
+      // Si no tiene fecha, lo consideramos seguro o lo ignoramos. 
+      // Asumiremos que si no tiene fecha, no aplica vencimiento (seguro).
+      if (!p.proximo_vencimiento) {
+        result.seguros.push(p);
+        return;
+      }
+
+      const expiryDate = new Date(p.proximo_vencimiento);
+      // Calculamos la diferencia en milisegundos
+      const diffTime = expiryDate.getTime() - now.getTime();
+      // Convertimos a días
+      const diffDays = diffTime / (1000 * 3600 * 24);
+
+      // Calculamos días restantes redondeado para UI (helper)
+      p.daysUntilExpiry = Math.ceil(diffDays);
+
+      if (diffDays < 0) {
+        // ROJO: Ya pasó la fecha (Vencido)
+        result.vencidos.push(p);
+      } else if (diffDays <= 30) {
+        // AMARILLO: Hoy o en los próximos 30 días
+        result.porVencer.push(p);
+      } else {
+        // VERDE: Más de 30 días
+        result.seguros.push(p);
+      }
+    });
+
+    return result;
   }
 
   // Soft Delete: Cambiar estado a DESCONTINUADO o INACTIVO

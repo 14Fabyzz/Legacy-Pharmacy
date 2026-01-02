@@ -1,0 +1,272 @@
+/* Modal Overlay - Glassmorphism */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(100, 116, 139, 0.4);
+    /* Slate with opacity */
+    backdrop-filter: blur(4px);
+    /* Blur effect */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Container - Pure White & Clean */
+.modal-container {
+    background-color: #FFFFFF;
+    /* Pure White */
+    width: 90%;
+    max-width: 1200px;
+    height: 80vh;
+    border-radius: 16px;
+    /* More rounded */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    /* Soft, wide shadow */
+    overflow: hidden;
+    color: #334155;
+    /* Slate-700 for general text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background-color: #FFFFFF;
+    /* White */
+    border-bottom: 1px solid #E2E8F0;
+    /* Slate-200 */
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #334155;
+    /* Slate-700 */
+    font-weight: 700;
+}
+
+.close-btn {
+    background: transparent;
+    border: 1px solid #CBD5E1;
+    /* Slate-300 */
+    color: #64748B;
+    /* Slate-500 */
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.close-btn:hover {
+    background-color: #F1F5F9;
+    /* Slate-100 */
+    color: #334155;
+    /* Slate-700 */
+    border-color: #94A3B8;
+    /* Slate-400 */
+}
+
+/* Columns Container */
+.columns-container {
+    display: flex;
+    flex: 1;
+    padding: 1.5rem;
+    gap: 1.5rem;
+    overflow-y: hidden;
+    background-color: #F8FAFC;
+    /* Slate-50 (Very light background for container) */
+}
+
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    padding: 1rem;
+    overflow-y: auto;
+    border: 1px solid #E2E8F0;
+    /* Default border */
+    background-color: white;
+    /* Default bg */
+}
+
+.column-title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+/* --- PALETA DE COLORES ESPECÍFICA --- */
+
+/* 🔴 Zona Vencidos */
+.vencidos {
+    background-color: #FEF2F2;
+    /* Red-50 */
+    border: 1px solid #FECACA;
+    /* Red-200 */
+}
+
+.vencidos .column-title {
+    color: #991B1B;
+    /* Red-800 */
+}
+
+/* 🟡 Zona Por Vencer */
+.por-vencer {
+    background-color: #FFFBEB;
+    /* Amber-50 */
+    border: 1px solid #FDE68A;
+    /* Amber-200 */
+}
+
+.por-vencer .column-title {
+    color: #92400E;
+    /* Amber-800 */
+}
+
+/* 🟢 Zona Segura */
+.seguros {
+    background-color: #ECFDF5;
+    /* Emerald-50 */
+    border: 1px solid #A7F3D0;
+    /* Emerald-200 */
+}
+
+.seguros .column-title {
+    color: #065F46;
+    /* Emerald-800 */
+}
+
+
+/* Product Cards within Columns */
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.product-card {
+    background-color: #FFFFFF;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid transparent;
+    /* Status indicator */
+    transition: transform 0.2s ease, box-shadow 0.2s;
+}
+
+/* Hover Effect */
+.product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Border Colors matching column theme */
+.vencidos .product-card {
+    border-left-color: #EF4444;
+    /* Red-500 */
+}
+
+.por-vencer .product-card {
+    border-left-color: #F59E0B;
+    /* Amber-500 */
+}
+
+.seguros .product-card {
+    border-left-color: #10B981;
+    /* Emerald-500 */
+}
+
+/* Text Styles inside Card */
+.product-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: #334155;
+    /* Slate-700 */
+    font-weight: 600;
+}
+
+.product-card p {
+    margin: 0.25rem 0;
+    font-size: 0.875rem;
+    /* 14px */
+    color: #64748B;
+    /* Slate-500 */
+}
+
+.product-card strong {
+    color: #475569;
+    /* Slate-600 */
+    font-weight: 600;
+}
+
+/* Price Styling */
+.product-card .price {
+    font-weight: 700;
+    color: #334155;
+    /* Slate-700 */
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+/* Expiry Message - Contextual Color */
+.vencidos .product-card .expiry-msg {
+    color: #DC2626;
+    /* Red-600 */
+    font-weight: 500;
+}
+
+.por-vencer .product-card .expiry-msg {
+    color: #D97706;
+    /* Amber-600 */
+    font-weight: 500;
+}
+
+.seguros .product-card .expiry-msg {
+    color: #059669;
+    /* Emerald-600 */
+    font-weight: 500;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #94A3B8;
+    /* Slate-400 */
+    font-style: italic;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+/* Scrollbar Styling - Soft & Thin */
+.column::-webkit-scrollbar {
+    width: 6px;
+}
+
+.column::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.column::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    /* Slate-300 */
+    border-radius: 3px;
+}
+
+.column::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+    /* Slate-400 */
+}

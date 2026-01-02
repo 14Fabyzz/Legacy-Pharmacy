@@ -1,0 +1,5 @@
+<div class="traffic-light-container" [title]="tooltipText" *ngIf="status !== 'none'">
+    <span class="light" [ngClass]="status"></span>
+    <span class="days-text" *ngIf="status !== 'green'">
+        {{ daysLeft !== undefined && daysLeft < 0 ? (daysLeft * -1) + 'd prev' : daysLeft + 'd' }} </span>
+</div>

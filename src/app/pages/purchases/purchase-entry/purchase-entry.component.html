@@ -5,11 +5,11 @@
   </header>
 
   <div class="entry-layout">
-    
+
     <!-- PANEL IZQUIERDO: Formulario de Ingreso -->
     <div class="entry-form-panel card">
-      <h3>Datos del Ingreso</h3> 
-      
+      <h3>Datos del Ingreso</h3>
+
       <form [formGroup]="entryForm" class="header-form">
         <div class="form-group">
           <label>Sucursal Destino</label>
@@ -28,20 +28,19 @@
 
       <h3>Agregar Producto</h3>
       <form [formGroup]="itemForm" (ngSubmit)="addItem()">
-        
+
         <!-- Buscador de Producto -->
         <div class="form-group">
           <label>Buscar Producto (Nombre / Código)</label>
-        <input type="text" class="form-control search-input" 
-       placeholder="Escribe para buscar..." 
-       formControlName="productoBusqueda">
-          
+          <input type="text" class="form-control search-input" placeholder="Escribe para buscar..."
+            formControlName="productoBusqueda">
+
           <!-- Lista de sugerencias (simulada) -->
-          <div class="suggestions-list" *ngIf="products.length > 0 && !selectedProduct">
-            <div *ngFor="let p of products" (click)="selectProduct(p)" class="suggestion-item">
+          <div class="suggestions-list" *ngIf="showSuggestions && filteredProducts.length > 0">
+            <div *ngFor="let p of filteredProducts" (click)="selectProduct(p)" class="suggestion-item">
               <strong>{{ p.nombre_comercial }}</strong> - {{ p.concentracion }}
-              <small>{{ p.laboratorio_id }}</small>
-            </div> 
+              <small>{{ p.laboratorio_nombre }}</small>
+            </div>
           </div>
         </div>
 

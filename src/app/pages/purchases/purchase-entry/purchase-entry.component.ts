@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductService } from '../../products/product.service';
-// Importamos las interfaces correctas
 import { Producto } from '../../../core/models/inventory.model';
 
-// Definimos una interfaz local para los items de la tabla (coincide con lo que usas en addItem)
 interface EntradaItem {
   productoId: number;
   nombreProducto: string;
@@ -27,27 +25,27 @@ interface EntradaItem {
 export class PurchaseEntryComponent implements OnInit {
   entryForm!: FormGroup;
   itemForm!: FormGroup;
-  
-  // Usamos la interfaz EntradaItem para tipado fuerte
-  addedItems: EntradaItem[] = []; 
-  products: Producto[] = []; 
-  filteredProducts: Producto[] = []; 
-  selectedProduct: Producto | null = null; 
+
+  addedItems: EntradaItem[] = [];
+  products: Producto[] = [];
+  filteredProducts: Producto[] = [];
+  selectedProduct: Producto | null = null;
+
+  // Control visibility of suggestions
+  showSuggestions = false;
 
   totalCompra = 0;
 
   constructor(private fb: FormBuilder, private productService: ProductService) { }
 
   ngOnInit(): void {
-    // Datos de la cabecera (Factura / Sucursal)
     this.entryForm = this.fb.group({
       sucursalId: [1, Validators.required],
       observaciones: ['Entrada de Mercancía']
     });
 
-    // Datos del producto a ingresar
     this.itemForm = this.fb.group({
-      productoBusqueda: [''], 
+      productoBusqueda: [''],
       numeroLote: ['', Validators.required],
       fechaVencimiento: ['', Validators.required],
       cantidad: [1, [Validators.required, Validators.min(1)]],
@@ -56,35 +54,43 @@ export class PurchaseEntryComponent implements OnInit {
 
     this.loadProducts();
 
-    // Lógica del buscador (filtra mientras escribes)
     this.itemForm.get('productoBusqueda')?.valueChanges.subscribe(value => {
       this.filterProducts(value);
     });
   }
 
   loadProducts() {
-    this.productService.getProducts().subscribe(data => this.products = data);
+    this.productService.getProducts().subscribe(data => {
+      this.products = data;
+    });
   }
 
   filterProducts(value: string) {
-    if (!value || typeof value !== 'string') {
+    // Reset selection if user types again
+    if (this.selectedProduct && value !== this.selectedProduct.nombre_comercial) {
+      this.selectedProduct = null;
+    }
+
+    if (!value || value.length < 2) {
       this.filteredProducts = [];
+      this.showSuggestions = false;
       return;
     }
+
     const filterValue = value.toLowerCase();
-    // Buscamos por nombre o por código
-    this.filteredProducts = this.products.filter(product => 
+    this.filteredProducts = this.products.filter(product =>
       product.nombre_comercial.toLowerCase().includes(filterValue) ||
-      product.codigo_interno.toLowerCase().includes(filterValue)
+      product.codigo_interno.toLowerCase().includes(filterValue) ||
+      (product.codigo_barras && product.codigo_barras.toLowerCase().includes(filterValue))
     );
+    this.showSuggestions = this.filteredProducts.length > 0;
   }
 
   selectProduct(product: Producto) {
     this.selectedProduct = product;
-    this.filteredProducts = []; // Ocultamos la lista
-    
-    // Rellenamos el campo de búsqueda y sugerimos el último costo
-    this.itemForm.patchValue({ 
+    this.showSuggestions = false;
+
+    this.itemForm.patchValue({
       productoBusqueda: product.nombre_comercial,
       costoCompra: product.precio_compra_referencia || 0
     });
@@ -97,8 +103,9 @@ export class PurchaseEntryComponent implements OnInit {
     }
 
     const formVal = this.itemForm.value;
-    
-    // Creamos el objeto exactamente como lo definimos en el modelo
+
+    // Check if item already exists (optional logic, but good for UX - here we allow duplicates with different lots)
+
     const newItem: EntradaItem = {
       productoId: this.selectedProduct.id,
       nombreProducto: this.selectedProduct.nombre_comercial,
@@ -112,12 +119,18 @@ export class PurchaseEntryComponent implements OnInit {
 
     this.addedItems.push(newItem);
     this.calculateTotal();
-    
-    // Reseteamos solo cantidad y costo para seguir agregando rápido
-    this.itemForm.patchValue({ cantidad: 1, costoCompra: 0, numeroLote: '', fechaVencimiento: '' });
-    // Mantenemos el producto seleccionado por si quiere agregar otro lote del mismo, 
-    // o puedes descomentar la siguiente línea para limpiar todo:
-    // this.selectedProduct = null; this.itemForm.patchValue({ productoBusqueda: '' });
+
+    // Reset item fields but keep product search cleared
+    this.itemForm.patchValue({
+      cantidad: 1,
+      costoCompra: 0,
+      numeroLote: '',
+      fechaVencimiento: '',
+      productoBusqueda: ''
+    });
+    this.selectedProduct = null;
+    this.showSuggestions = false;
+    this.filteredProducts = [];
   }
 
   removeItem(index: number) {
@@ -131,7 +144,7 @@ export class PurchaseEntryComponent implements OnInit {
 
   processEntry() {
     if (this.addedItems.length === 0) return;
-    
+
     const requestData = {
       header: this.entryForm.value,
       items: this.addedItems
@@ -139,8 +152,7 @@ export class PurchaseEntryComponent implements OnInit {
 
     console.log('📦 ENVIANDO AL BACKEND:', requestData);
     alert('✅ Entrada de mercancía procesada correctamente (Simulación)');
-    
-    // Limpiamos todo al finalizar
+
     this.addedItems = [];
     this.calculateTotal();
     this.entryForm.reset({ sucursalId: 1, observaciones: 'Entrada de Mercancía' });

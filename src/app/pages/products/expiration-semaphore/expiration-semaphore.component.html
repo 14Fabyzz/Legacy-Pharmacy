@@ -1,0 +1,59 @@
+<div class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Semáforo de Vencimientos</h2>
+            <button class="close-btn" (click)="onClose()">Cerrar</button>
+        </div>
+
+        <div class="columns-container">
+            <!-- Columna ROJA: Vencidos -->
+            <div class="column vencidos">
+                <h3 class="column-title">⛔ VENCIDOS</h3>
+                <div class="cards-list">
+                    <div class="product-card" *ngFor="let p of vencidos">
+                        <h4>{{ p.nombre_comercial }}</h4>
+                        <p><strong>Código:</strong> {{ p.codigo_interno }}</p>
+                        <p><strong>Vence:</strong> {{ p.proximo_vencimiento | date:'dd/MM/yyyy' }}</p>
+                        <p class="price">{{ p.precio_venta_base | currency }}</p>
+                        <p class="expiry-msg">Vencido hace {{ (p.daysUntilExpiry || 0) * -1 }} días</p>
+                    </div>
+                    <div *ngIf="vencidos.length === 0" class="empty-msg">No hay productos vencidos.</div>
+                </div>
+            </div>
+
+            <!-- Columna AMARILLA: Próximos a Vencer -->
+            <div class="column por-vencer">
+                <h3 class="column-title">⚠️ PRÓXIMOS A VENCER (30 días)</h3>
+                <div class="cards-list">
+                    <div class="product-card" *ngFor="let p of porVencer">
+                        <h4>{{ p.nombre_comercial }}</h4>
+                        <p><strong>Código:</strong> {{ p.codigo_interno }}</p>
+                        <p><strong>Vence:</strong> {{ p.proximo_vencimiento | date:'dd/MM/yyyy' }}</p>
+                        <p class="price">{{ p.precio_venta_base | currency }}</p>
+                        <p class="expiry-msg">Vence en {{ p.daysUntilExpiry }} días</p>
+                    </div>
+                    <div *ngIf="porVencer.length === 0" class="empty-msg">No hay productos próximos a vencer.</div>
+                </div>
+            </div>
+
+            <!-- Columna VERDE: Seguros -->
+            <div class="column seguros">
+                <h3 class="column-title">✅ STOCK SEGURO</h3>
+                <div class="cards-list">
+                    <div class="product-card" *ngFor="let p of seguros">
+                        <h4>{{ p.nombre_comercial }}</h4>
+                        <p><strong>Código:</strong> {{ p.codigo_interno }}</p>
+                        <p><strong>Vence:</strong> {{ p.proximo_vencimiento ? (p.proximo_vencimiento |
+                            date:'dd/MM/yyyy') : 'N/A' }}</p>
+                        <p class="price">{{ p.precio_venta_base | currency }}</p>
+                        <div *ngIf="p.daysUntilExpiry">
+                            <p class="expiry-msg">Vence en {{ p.daysUntilExpiry }} días</p>
+                        </div>
+
+                    </div>
+                    <div *ngIf="seguros.length === 0" class="empty-msg">No hay productos seguros.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

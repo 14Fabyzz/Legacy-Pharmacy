@@ -1,7 +1,44 @@
 <div class="page-container">
   <header class="page-header">
-    <h2>PRODUCTOS EN ALMACÉN</h2>
-    <p>Gestión general del inventario, precios y estado de productos.</p>
+    <div class="header-content">
+      <div>
+        <h2>PRODUCTOS EN ALMACÉN</h2>
+        <p>Gestión general del inventario, precios y estado de productos.</p>
+      </div>
+      <div class="inventory-status-pill" [ngClass]="{
+             'status-critical': inventoryHealthStatus === 'critical',
+             'status-alert': inventoryHealthStatus === 'alert',
+             'status-healthy': inventoryHealthStatus === 'healthy'
+           }" (click)="openSemaphoreModal()">
+
+        <div class="status-icon-container">
+          <!-- Icono Dinámico -->
+          <svg *ngIf="inventoryHealthStatus === 'healthy'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            fill="currentColor" class="status-icon">
+            <path
+              d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+          </svg>
+
+          <svg *ngIf="inventoryHealthStatus === 'alert'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            fill="currentColor" class="status-icon">
+            <path fill-rule="evenodd"
+              d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+              clip-rule="evenodd" />
+          </svg>
+
+          <svg *ngIf="inventoryHealthStatus === 'critical'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            fill="currentColor" class="status-icon">
+            <path fill-rule="evenodd"
+              d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+
+        <span class="widget-label">Monitor de Vencimientos</span>
+
+        <span class="count-badge" *ngIf="expiredCount > 0">{{ expiredCount }}</span>
+      </div>
+    </div>
   </header>
 
   <nav class="tabs-nav">
@@ -11,25 +48,15 @@
   </nav>
 
   <div class="search-container">
-     <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm">
-   </div>
+    <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm">
+  </div>
 
   <ng-container *ngIf="products$ | async | search:searchTerm as filteredProducts">
-    
+
     <div class="product-list-container">
       <div *ngFor="let product of filteredProducts" class="product-card">
-        
-        <!-- === SEMÁFORO DE VENCIMIENTO (FLOTANTE) === -->
-        <div class="expiry-badge" 
-             [class.red]="getVencimientoStatus(product.proximo_vencimiento) === 'red'"
-             [class.yellow]="getVencimientoStatus(product.proximo_vencimiento) === 'yellow'"
-             [class.green]="getVencimientoStatus(product.proximo_vencimiento) === 'green'"
-             *ngIf="product.proximo_vencimiento">
-          <span class="expiry-icon">⏰</span>
-          <span class="expiry-date">{{ getVencimientoLabel(product.proximo_vencimiento) }}</span>
-        </div>
-        <!-- ========================================== -->
-         
+
+
         <!-- Imagen -->
         <div class="product-image">
           <div class="image-placeholder">💊</div>
@@ -44,10 +71,22 @@
           </div>
 
           <div class="product-details-grid">
-            <div class="info-item"><dt>Código:</dt><dd>{{ product.codigo_interno }}</dd></div>
-            <div class="info-item"><dt>Precio:</dt><dd class="price-text">{{ product.precio_venta_base | currency }}</dd></div>
-            <div class="info-item"><dt>Lab:</dt><dd>{{ product.laboratorio_nombre || 'N/A' }}</dd></div>
-            <div class="info-item"><dt>Mínimo:</dt><dd>{{ product.stock_minimo }}</dd></div>
+            <div class="info-item">
+              <dt>Código:</dt>
+              <dd>{{ product.codigo_interno }}</dd>
+            </div>
+            <div class="info-item">
+              <dt>Precio:</dt>
+              <dd class="price-text">{{ product.precio_venta_base | currency }}</dd>
+            </div>
+            <div class="info-item">
+              <dt>Lab:</dt>
+              <dd>{{ product.laboratorio_nombre || 'N/A' }}</dd>
+            </div>
+            <div class="info-item">
+              <dt>Mínimo:</dt>
+              <dd>{{ product.stock_minimo }}</dd>
+            </div>
           </div>
         </div>
 
@@ -58,14 +97,14 @@
             <a title="Ver Detalles" (click)="openDetailModal(product)">👁️</a>
             <a title="Gestionar Imagen" (click)="openImageModal(product)">🖼️</a>
             <a title="Kardex / Movimientos" (click)="openKardexModal(product)">📊</a>
-            
+
             <a title="Editar" [routerLink]="['/app/productos/editar', product.id]" class="btn-edit">✏️</a>
-            
+
             <a title="Eliminar" (click)="openDeleteModal(product)" class="btn-delete">🗑️</a>
           </div>
         </div>
 
-      </div> 
+      </div>
     </div>
 
     <div class="no-results" *ngIf="filteredProducts.length === 0">
@@ -80,17 +119,16 @@
     <div class="modal-content danger">
       <h3>⚠️ Desactivar Producto</h3>
       <p>Estás a punto de desactivar <strong>{{ selectedProduct.nombre_comercial }}</strong>.</p>
-      <p class="warning-text">Esta acción sacará el producto de la venta. Para confirmar, escribe el nombre del producto abajo:</p>
-      
-      <input type="text" class="confirm-input" 
-             [(ngModel)]="deleteConfirmationName" 
-             [placeholder]="selectedProduct.nombre_comercial">
+      <p class="warning-text">Esta acción sacará el producto de la venta. Para confirmar, escribe el nombre del producto
+        abajo:</p>
+
+      <input type="text" class="confirm-input" [(ngModel)]="deleteConfirmationName"
+        [placeholder]="selectedProduct.nombre_comercial">
 
       <div class="modal-actions">
         <button class="btn-cancel" (click)="closeModals()">Cancelar</button>
-        <button class="btn-confirm-delete" 
-                [disabled]="deleteConfirmationName !== selectedProduct.nombre_comercial"
-                (click)="confirmDelete()">
+        <button class="btn-confirm-delete" [disabled]="deleteConfirmationName !== selectedProduct.nombre_comercial"
+          (click)="confirmDelete()">
           Confirmar Desactivación
         </button>
       </div>
@@ -152,7 +190,8 @@
         <tbody>
           <tr *ngFor="let mov of kardexData">
             <td>{{ mov.fecha }}</td>
-            <td><span class="badge" [class.in]="mov.tipo=='ENTRADA'" [class.out]="mov.tipo=='SALIDA'">{{ mov.tipo }}</span></td>
+            <td><span class="badge" [class.in]="mov.tipo=='ENTRADA'" [class.out]="mov.tipo=='SALIDA'">{{ mov.tipo
+                }}</span></td>
             <td>{{ mov.detalle }}</td>
             <td>{{ mov.cantidad }}</td>
             <td><strong>{{ mov.saldo }}</strong></td>
@@ -164,5 +203,9 @@
       </div>
     </div>
   </div>
+
+
+  <!-- 5. MODAL SEMÁFORO -->
+  <app-expiration-semaphore *ngIf="showSemaphoreModal" (close)="closeModals()"></app-expiration-semaphore>
 
 </div>

@@ -26,36 +26,36 @@ export interface PrincipioActivo {
 export interface Producto {
   id: number;
   codigo_interno: string;
-  codigo_barras?: string;
+  codigo_barras: string; // Made required as per request (or implied)
   nombre_comercial: string;
-  concentracion?: string;
-  presentacion?: string;
-  registro_invima?: string;
-  
-  // Relaciones
-  categoria_id: number;
-  laboratorio_id: number;
-  principio_activo_id?: number;
-  
-  categoria_nombre?: string;
-  laboratorio_nombre?: string;
-  principio_activo_nombre?: string;
+  concentracion: string;
+  presentacion: string;
 
-  // Precios
-  precio_compra_referencia?: number;
+  // Optional/Nullable in SQL or UI
+  laboratorio_nombre?: string;
+
   precio_venta_base: number;
   iva_porcentaje: number;
-  margen_minimo_porcentaje: number;
   stock_minimo: number;
-  
-  // Banderas
+
   es_controlado: boolean;
   refrigerado: boolean;
-  estado: 'ACTIVO' | 'DESCONTINUADO' | 'AGOTADO';
+  estado: string; // 'ACTIVO' | 'INACTIVO' etc.
 
-  // --- NUEVO: Para el Semáforo ---
-  // Esta fecha vendría de tu backend (del lote que vence más pronto)
-  proximo_vencimiento?: string | Date; 
+  // Optional for UI logic (semaphore)
+  proximo_vencimiento?: string | Date;
+  daysUntilExpiry?: number;
+
+  // Keeping existing relations to avoid breaking other components silently, 
+  // but they can be optional if not in the new SQL requirement list.
+  categoria_id?: number;
+  laboratorio_id?: number;
+  principio_activo_id?: number;
+
+  // Other fields that might be useful
+  registro_invima?: string;
+  precio_compra_referencia?: number;
+  margen_minimo_porcentaje?: number;
 }
 
 export interface Lote {
