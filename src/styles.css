@@ -1,1 +1,42 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Typography - Inter Upgrade */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #475569;
+    /* Slate-600 */
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #1e293b;
+    /* Slate-800 */
+    font-weight: 600;
+    /* SemiBold */
+    margin-bottom: 0.75rem;
+}
+
+h1 {
+    font-size: 1.75rem;
+    letter-spacing: -0.025em;
+}
+
+h2 {
+    font-size: 1.5rem;
+    letter-spacing: -0.025em;
+}
+
+/* Numeric Data Alignment */
+td,
+th,
+.tabular-nums,
+.price {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}

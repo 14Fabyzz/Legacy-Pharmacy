@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 // Importamos la interfaz correcta
 import { Producto } from '../../core/models/inventory.model';
 
@@ -29,9 +30,9 @@ export class ProductService {
         es_controlado: false,
         refrigerado: false,
         estado: 'ACTIVO',
-        proximo_vencimiento: '2024-04-15', // ROJO (< 90 días desde Enero 2024? No, depende de la fecha actual. Asumimos fecha futura o pasada según necesidad de prueba)
+        proximo_vencimiento: '2024-04-15',
+        imagenUrl: 'https://drogueriasunoa.com/cdn/shop/files/imagen_187c3b7e-8d96-4926-bdf4-1c1c180aef02.png?v=1756355870&width=580', // Caja
 
-        // Campos adicionales para compatibilidad
         categoria_id: 1,
         laboratorio_id: 1,
         precio_compra_referencia: 5000
@@ -50,7 +51,8 @@ export class ProductService {
         es_controlado: false,
         refrigerado: false,
         estado: 'ACTIVO',
-        proximo_vencimiento: '2024-09-01', // AMARILLO
+        proximo_vencimiento: '2024-09-01',
+        imagenUrl: 'https://locatelcolombia.vtexassets.com/arquivos/ids/387522/7707397792480_1_Advil-Teens-200mg-X-10-Capsulas-Liquidas.jpg?v=638699520329200000', // Transparente
 
         categoria_id: 1,
         laboratorio_id: 2,
@@ -70,7 +72,8 @@ export class ProductService {
         es_controlado: false,
         refrigerado: false,
         estado: 'ACTIVO',
-        proximo_vencimiento: '2025-12-31', // VERDE
+        proximo_vencimiento: '2025-12-31',
+        imagenUrl: 'https://olimpica.vtexassets.com/arquivos/ids/1050317/7702057700119.jpg?v=638126776014500000', // Bote Alto
 
         categoria_id: 2,
         laboratorio_id: 3,
@@ -90,7 +93,8 @@ export class ProductService {
         es_controlado: false,
         refrigerado: false,
         estado: 'ACTIVO',
-        proximo_vencimiento: '2023-12-01', // VENCIDO (ROJO)
+        proximo_vencimiento: '2023-12-01',
+        imagenUrl: 'https://placehold.co/100x100?text=Sin+Foto', // Placeholder
 
         categoria_id: 1,
         laboratorio_id: 4,
@@ -110,7 +114,8 @@ export class ProductService {
         es_controlado: false,
         refrigerado: true,
         estado: 'ACTIVO',
-        proximo_vencimiento: '2024-07-20', // AMARILLO/VERDE dependiento fecha
+        proximo_vencimiento: '2024-07-20',
+        imagenUrl: 'https://placehold.co/100x100?text=Sin+Foto',
 
         categoria_id: 3,
         laboratorio_id: 5,
@@ -118,7 +123,7 @@ export class ProductService {
       }
     ];
 
-    return of(mockProducts);
+    return of(mockProducts).pipe(delay(100));
   }
 
 

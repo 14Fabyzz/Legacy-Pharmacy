@@ -1,11 +1,12 @@
 <div class="sidebar-container">
   <div class="user-profile" *ngIf="currentUser$ | async as user">
     <div class="user-avatar"></div>
-    
+    <h3>Bonito Hermoso</h3>
     
     <h3>{{ user.nombreCompleto | uppercase }}</h3> 
     
     <p>{{ user.rol }}</p> 
+    <p>Admin</p>
   </div>
 
   <nav class="menu">

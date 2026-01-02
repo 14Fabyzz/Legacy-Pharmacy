@@ -45,6 +45,7 @@ export interface Producto {
   // Optional for UI logic (semaphore)
   proximo_vencimiento?: string | Date;
   daysUntilExpiry?: number;
+  imagenUrl?: string;
 
   // Keeping existing relations to avoid breaking other components silently, 
   // but they can be optional if not in the new SQL requirement list.

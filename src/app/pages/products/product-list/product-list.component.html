@@ -53,58 +53,78 @@
 
   <ng-container *ngIf="products$ | async | search:searchTerm as filteredProducts">
 
-    <div class="product-list-container">
-      <div *ngFor="let product of filteredProducts" class="product-card">
+    <div class="product-table-wrapper">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th class="w-16">Producto</th> <!-- New Image Column -->
+            <th>Descripción</th> <!-- Renamed from Producto -->
+            <th>Código / ID</th>
+            <th>Precio</th>
+            <th>Laboratorio</th>
+            <th>Stock Min.</th>
+            <th>Estado</th>
+            <th class="text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of filteredProducts">
+            <!-- Col 1: Imagen -->
+            <td>
+              <div class="product-img-wrapper" (click)="openImageModal(product)" title="Click para ver/editar imagen">
+                <img [src]="product.imagenUrl || 'assets/images/no-image.png'" alt="Foto" class="product-img">
+              </div>
+            </td>
 
-
-        <!-- Imagen -->
-        <div class="product-image">
-          <div class="image-placeholder">💊</div>
-        </div>
-
-        <!-- Info Producto -->
-        <div class="product-info-wrapper">
-          <div class="product-header">
-            <span class="product-id">ID: {{ product.id }}</span>
-            <h3 class="product-name">{{ product.nombre_comercial }} <small>{{ product.concentracion }}</small></h3>
-            <span class="status-badge" [class.active]="product.estado === 'ACTIVO'">{{ product.estado }}</span>
-          </div>
-
-          <div class="product-details-grid">
-            <div class="info-item">
-              <dt>Código:</dt>
-              <dd>{{ product.codigo_interno }}</dd>
-            </div>
-            <div class="info-item">
-              <dt>Precio:</dt>
-              <dd class="price-text">{{ product.precio_venta_base | currency }}</dd>
-            </div>
-            <div class="info-item">
-              <dt>Lab:</dt>
-              <dd>{{ product.laboratorio_nombre || 'N/A' }}</dd>
-            </div>
-            <div class="info-item">
-              <dt>Mínimo:</dt>
-              <dd>{{ product.stock_minimo }}</dd>
-            </div>
-          </div>
-        </div>
-
-        <!-- ACCIONES -->
-        <div class="product-actions">
-          <span>ACCIONES</span>
-          <div class="action-icons">
-            <a title="Ver Detalles" (click)="openDetailModal(product)">👁️</a>
-            <a title="Gestionar Imagen" (click)="openImageModal(product)">🖼️</a>
-            <a title="Kardex / Movimientos" (click)="openKardexModal(product)">📊</a>
-
-            <a title="Editar" [routerLink]="['/app/productos/editar', product.id]" class="btn-edit">✏️</a>
-
-            <a title="Eliminar" (click)="openDeleteModal(product)" class="btn-delete">🗑️</a>
-          </div>
-        </div>
-
-      </div>
+            <!-- Col 2: Nombre (Descripción) -->
+            <td>
+              <div class="product-cell-main">
+                <!-- Removed old image block -->
+                <div class="product-name-wrapper">
+                  <span class="product-name-text">{{ product.nombre_comercial }}</span>
+                  <small class="product-subtext">{{ product.concentracion }}</small>
+                </div>
+              </div>
+            </td>
+            <!-- Código -->
+            <td>
+              <div class="code-cell">
+                <span class="code-text">{{ product.codigo_interno }}</span>
+                <small class="id-text">ID: {{ product.id }}</small>
+              </div>
+            </td>
+            <!-- Precio -->
+            <td>
+              <span class="price-cell">{{ product.precio_venta_base | currency }}</span>
+            </td>
+            <!-- Lab -->
+            <td>
+              {{ product.laboratorio_nombre || 'N/A' }}
+            </td>
+            <!-- Min -->
+            <td>
+              {{ product.stock_minimo }}
+            </td>
+            <!-- Estado -->
+            <td>
+              <span class="status-badge-table" [class.active]="product.estado === 'ACTIVO'">
+                {{ product.estado }}
+              </span>
+            </td>
+            <!-- Acciones -->
+            <td class="text-right">
+              <div class="table-actions">
+                <button title="Ver Detalles" (click)="openDetailModal(product)" class="btn-icon">👁️</button>
+                <button title="Gestionar Imagen" (click)="openImageModal(product)" class="btn-icon">🖼️</button>
+                <button title="Kardex" (click)="openKardexModal(product)" class="btn-icon">📊</button>
+                <button title="Editar" [routerLink]="['/app/productos/editar', product.id]"
+                  class="btn-icon edit">✏️</button>
+                <button title="Eliminar" (click)="openDeleteModal(product)" class="btn-icon delete">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="no-results" *ngIf="filteredProducts.length === 0">

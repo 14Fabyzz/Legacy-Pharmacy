@@ -38,126 +38,201 @@
   border-bottom-color: #007bff;
 }
 
-.product-list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+/* --- Data Grid Container --- */
+.product-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  /* Soft shadow for the container */
+  overflow: hidden;
+  /* Round corners for table */
+  border: 1px solid #F1F5F9;
+  /* Slate 100 */
 }
 
-.product-card {
-  display: flex;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 15px;
-  gap: 15px;
-  align-items: flex-start;
-  transition: box-shadow 0.2s ease;
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
 }
 
-.product-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+/* --- Header --- */
+.product-table thead th {
+  background-color: #F8FAFC;
+  /* Slate 50 */
+  color: #64748B;
+  /* Slate 500 */
+  font-size: 0.75rem;
+  /* 12px */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 16px 20px;
+  border-bottom: 1px solid #F1F5F9;
 }
 
-.product-image {
-  flex-shrink: 0;
+/* --- Rows & Cells --- */
+.product-table tbody tr {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #F1F5F9;
+  /* Subtle divider */
+  transition: background-color 0.2s ease;
 }
 
-.image-placeholder {
-  width: 90px;
-  height: 90px;
-  background-color: #e9ecef;
-  background-image: url('https://i.imgur.com/qvi4a2I.png');
-  /* URL de un ícono de caja genérico */
-  background-size: 60%;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 6px;
+.product-table tbody tr:last-child {
+  border-bottom: none;
 }
 
-.product-info-wrapper {
-  flex-grow: 1;
+.product-table tbody tr:hover {
+  background-color: #F0F9FF;
+  /* Sky 50 - Highlight */
 }
 
-.product-header {
+.product-table td {
+  padding: 16px 20px;
+  vertical-align: middle;
+  color: #334155;
+  /* Slate 700 */
+  font-size: 0.95rem;
+}
+
+/* --- Column Specifics --- */
+.product-cell-main {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 10px;
+  gap: 12px;
 }
 
-.product-id {
-  background-color: #34495e;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.product-name {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #007bff;
-}
-
-.product-details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px 20px;
-}
-
-.info-item {
+/* New Image Wrapper Styles (Miniatura Estática) */
+.product-img-wrapper {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
   display: flex;
-  align-items: baseline;
-  font-size: 0.85rem;
-}
-
-.info-item dt {
-  font-weight: 600;
-  color: #555;
-  margin-right: 8px;
-}
-
-.info-item dd {
-  margin: 0;
-  color: #333;
-}
-
-.discount-badge {
-  background-color: #28a745;
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  margin-left: 8px;
-}
-
-.product-actions {
-  flex-shrink: 0;
-  text-align: right;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #555;
-}
-
-.action-icons {
-  display: flex;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.action-icons a {
-  color: #34495e;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  font-size: 1rem;
-  transition: color 0.2s ease;
+  /* Clickable indication */
 }
 
-.action-icons a:hover {
-  color: #007bff;
+/* Subtle Hover Effect (Just shadow/border, no zoom) */
+.product-img-wrapper:hover {
+  border-color: #0ea5e9;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure the td/parent doesn't clip if using overflow hidden anywhere */
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+/* Adjust Helper for width control to fit new 70px base */
+.w-16 {
+  width: 90px;
+  /* Increased col width */
+  min-width: 90px;
+}
+
+
+.product-name-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name-text {
+  font-weight: 600;
+  color: #0F172A;
+  /* Slate 900 */
+}
+
+.product-subtext {
+  color: #64748B;
+  font-size: 0.8rem;
+}
+
+.code-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.code-text {
+  font-family: 'Inter', monospace;
+  font-weight: 500;
+}
+
+.id-text {
+  font-size: 0.75rem;
+  color: #94A3B8;
+}
+
+.price-cell {
+  font-weight: 600;
+  color: #1E293B;
+}
+
+/* --- Status Badge (Table Version) --- */
+.status-badge-table {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: #F1F5F9;
+  color: #64748B;
+}
+
+.status-badge-table.active {
+  background-color: #DCFCE7;
+  /* Green 100 */
+  color: #166534;
+  /* Green 800 */
+}
+
+/* --- Actions --- */
+.text-right {
+  text-align: right;
+}
+
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  opacity: 0.7;
+}
+
+.btn-icon:hover {
+  background-color: #E2E8F0;
+  opacity: 1;
+}
+
+.btn-icon.edit:hover {
+  background-color: #DBEAFE;
+  /* Blue hover */
+}
+
+.btn-icon.delete:hover {
+  background-color: #FEE2E2;
+  /* Red hover */
 }
 
 /* Estilos para el buscador */
