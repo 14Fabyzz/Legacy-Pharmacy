@@ -1,32 +1,29 @@
 <div class="sidebar-container">
   <div class="user-profile" *ngIf="currentUser$ | async as user">
-    <div class="user-avatar"></div>
-    <h3>Bonito Hermoso</h3>
-    
-    <h3>{{ user.nombreCompleto | uppercase }}</h3> 
-    
-    <p>{{ user.rol }}</p> 
-    <p>Admin</p>
+    <div class="user-avatar">
+      <!-- Placeholder for avatar image if user has one, currently using CSS bg -->
+      <img *ngIf="false" src="assets/avatar-placeholder.png" alt="User Avatar">
+    </div>
+    <div class="user-info">
+      <h3>{{ user.nombreCompleto }}</h3>
+      <p class="user-role">{{ user.rol }}</p>
+    </div>
   </div>
 
   <nav class="menu">
     <ul>
-      <li *ngFor="let item of menuItems"
-          routerLinkActive="active-menu-item"
-          [routerLinkActiveOptions]="{exact: false}">
+      <li *ngFor="let item of menuItems" routerLinkActive="active-menu-item" [routerLinkActiveOptions]="{exact: false}">
 
-        <a [routerLink]="item.subMenu && item.subMenu.length > 0 ? null : item.path"
-           (click)="toggleSubMenu(item)"
-           [class.active-link]="item.active">
+        <a [routerLink]="item.subMenu && item.subMenu.length > 0 ? null : item.path" (click)="toggleSubMenu(item)"
+          [class.active-link]="item.active">
 
           <span>{{ item.title }}</span>
           <span class="arrow" *ngIf="item.subMenu && item.subMenu.length > 0"></span>
         </a>
 
         <ul class="sub-menu" *ngIf="item.active && item.subMenu && item.subMenu.length > 0">
-          <li *ngFor="let subItem of item.subMenu"
-              routerLinkActive="active-submenu-item"
-              [routerLinkActiveOptions]="{exact: true}">
+          <li *ngFor="let subItem of item.subMenu" routerLinkActive="active-submenu-item"
+            [routerLinkActiveOptions]="{exact: true}">
 
             <a [routerLink]="subItem.path">
               <span>{{ subItem.title }}</span>
