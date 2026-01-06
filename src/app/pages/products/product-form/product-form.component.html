@@ -6,7 +6,7 @@
   </header>
 
   <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="product-form">
-    
+
     <!-- SECCIÓN 1: Identificación -->
     <fieldset class="form-section">
       <legend>Identificación</legend>
@@ -17,7 +17,13 @@
         </div>
         <div class="form-group">
           <label>Código de Barras</label>
-          <input type="text" formControlName="codigo_barras">
+          <div class="input-with-icon">
+            <input type="text" formControlName="codigo_barras" #barcodeInput (change)="validateBarcode()"
+              (keyup.enter)="validateBarcode()">
+            <button type="button" class="btn-icon-inside" (click)="focusBarcodeInput()" title="Escanear">
+              <span class="icon-barcode">|||</span>
+            </button>
+          </div>
         </div>
         <div class="form-group full-width">
           <label>Nombre Comercial *</label>

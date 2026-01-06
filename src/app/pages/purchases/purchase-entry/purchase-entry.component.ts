@@ -88,12 +88,13 @@ export class PurchaseEntryComponent implements OnInit {
 
   selectProduct(product: Producto) {
     this.selectedProduct = product;
-    this.showSuggestions = false;
-
+    // Evitamos emitir evento para que no se dispare valueChanges y reabra la lista
     this.itemForm.patchValue({
       productoBusqueda: product.nombre_comercial,
       costoCompra: product.precio_compra_referencia || 0
-    });
+    }, { emitEvent: false });
+
+    this.showSuggestions = false;
   }
 
   addItem() {
@@ -140,6 +141,57 @@ export class PurchaseEntryComponent implements OnInit {
 
   calculateTotal() {
     this.totalCompra = this.addedItems.reduce((acc, item) => acc + item.subtotal, 0);
+  }
+
+  onBarcodeScan(event: any) {
+    const code = event.target.value;
+    if (!code) return;
+
+    // 1. Buscar producto
+    const product = this.products.find(p =>
+      p.codigo_barras === code ||
+      p.codigo_interno === code
+    );
+
+    if (product) {
+      // 2. Seleccionar y auto-llenar
+      this.selectedProduct = product;
+      this.itemForm.patchValue({
+        productoBusqueda: product.nombre_comercial,
+        cantidad: 1,
+        costoCompra: product.precio_compra_referencia || 0,
+        // Limpiamos lote y fecha para obligar a capturarlos
+        numeroLote: '',
+        fechaVencimiento: ''
+      });
+
+      // 3. Foco inteligente al campo Lote
+      setTimeout(() => {
+        const loteInput = document.getElementById('campoLote');
+        if (loteInput) loteInput.focus();
+      }, 100);
+
+      // 4. Limpiar escáner
+      event.target.value = '';
+    } else {
+      // No encontrado
+      alert('⚠️ Producto no encontrado con ese código.');
+      event.target.value = '';
+    }
+  }
+
+  addItemAndRefocus() {
+    // Intentar agregar (validará si faltan datos)
+    this.addItem();
+
+    // Si se agregó con éxito (el formulario se resetea en addItem), volver al escáner
+    // Verificamos si se reseteó selectedProduct como señal de éxito
+    if (!this.selectedProduct) {
+      setTimeout(() => {
+        const scannerInput = document.getElementById('scannerInput');
+        if (scannerInput) scannerInput.focus();
+      }, 100);
+    }
   }
 
   processEntry() {

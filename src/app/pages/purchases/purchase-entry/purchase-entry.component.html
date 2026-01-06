@@ -26,6 +26,12 @@
 
       <hr class="divider">
 
+      <!-- SECCIÓN ESCÁNER -->
+      <div class="scanner-section" style="margin-bottom: 20px;">
+        <input type="text" id="scannerInput" class="form-control scanner-input"
+          placeholder="🔫 Escanear Producto Aquí..." autofocus (keyup.enter)="onBarcodeScan($event)">
+      </div>
+
       <h3>Agregar Producto</h3>
       <form [formGroup]="itemForm" (ngSubmit)="addItem()">
 
@@ -47,22 +53,24 @@
         <div class="form-row">
           <div class="form-group">
             <label>Lote *</label>
-            <input type="text" formControlName="numeroLote" class="form-control" placeholder="L-..." uppercase>
+            <input type="text" id="campoLote" formControlName="numeroLote" class="form-control" placeholder="L-..."
+              uppercase (keyup.enter)="addItemAndRefocus()">
           </div>
           <div class="form-group">
             <label>Vence *</label>
-            <input type="date" formControlName="fechaVencimiento" class="form-control">
+            <input type="date" formControlName="fechaVencimiento" class="form-control"
+              (keyup.enter)="addItemAndRefocus()">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label>Cantidad</label>
-            <input type="number" formControlName="cantidad" class="form-control">
+            <input type="number" formControlName="cantidad" class="form-control" (keyup.enter)="addItemAndRefocus()">
           </div>
           <div class="form-group">
             <label>Costo Unitario ($)</label>
-            <input type="number" formControlName="costoCompra" class="form-control">
+            <input type="number" formControlName="costoCompra" class="form-control" (keyup.enter)="addItemAndRefocus()">
           </div>
         </div>
 

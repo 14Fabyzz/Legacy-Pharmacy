@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +12,7 @@ import { ProductService } from '../product.service';
   styleUrls: ['./product-form.component.css']
 })
 export class ProductFormComponent implements OnInit {
+  @ViewChild('barcodeInput') barcodeInputElement!: ElementRef;
   productForm!: FormGroup;
   isEditMode = false;
   productId: number | null = null;
@@ -22,7 +23,7 @@ export class ProductFormComponent implements OnInit {
     { id: 2, nombre: 'Antibióticos' },
     { id: 3, nombre: 'Antigripales' }
   ];
-  
+
   laboratorios = [
     { id: 1, nombre: 'Genfar' },
     { id: 2, nombre: 'MK' },
@@ -49,7 +50,7 @@ export class ProductFormComponent implements OnInit {
       codigo_interno: ['', Validators.required],
       codigo_barras: [''],
       nombre_comercial: ['', Validators.required],
-      
+
       // Farmacología
       principio_activo_id: [null, Validators.required],
       laboratorio_id: [null, Validators.required],
@@ -57,12 +58,12 @@ export class ProductFormComponent implements OnInit {
       concentracion: [''], // Ej: 500mg
       presentacion: [''],  // Ej: Caja x 10
       registro_invima: [''],
-      
+
       // Precios y Configuración
       precio_venta_base: [null, [Validators.required, Validators.min(0)]],
       iva_porcentaje: [0, [Validators.min(0), Validators.max(100)]],
       stock_minimo: [10],
-      
+
       // Banderas de control (Checkboxes)
       es_controlado: [false],
       refrigerado: [false],
@@ -111,6 +112,27 @@ export class ProductFormComponent implements OnInit {
         }
       });
     }
+  }
+
+  focusBarcodeInput(): void {
+    if (this.barcodeInputElement) {
+      this.barcodeInputElement.nativeElement.focus();
+    }
+  }
+
+  validateBarcode(): void {
+    const code = this.productForm.get('codigo_barras')?.value;
+    if (!code) return;
+
+    this.productService.getProducts().subscribe(products => {
+      const exists = products.find(p => p.codigo_barras === code);
+
+      // Si existe y NO es el mismo producto que estamos editando
+      if (exists && exists.id !== this.productId) {
+        alert(`⚠️ El código de barras "${code}" ya está registrado en el producto: ${exists.nombre_comercial}`);
+        this.productForm.patchValue({ codigo_barras: '' }); // Limpiar campo
+      }
+    });
   }
 
   limpiarFormulario(): void {
