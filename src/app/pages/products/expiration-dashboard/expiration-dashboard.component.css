@@ -14,7 +14,174 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: #1e293b;
+    color: #1e293b;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Active States */
+.kpi-card.critical.active {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+.kpi-card.warning.active {
+    border-color: #f59e0b;
+    background-color: #fffbeb;
+}
+
+.kpi-card.lowstock.active {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+}
+
+.kpi-card.healthy.active {
+    border-color: #22c55e;
+    background-color: #f0fdf4;
+}
+
+.kpi-icon {
+    font-size: 2rem;
+}
+
+.kpi-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+}
+
+.kpi-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+
+/* Layout Grid for Restock Cards */
+.cards-grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.restock-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.restock-icon {
+    font-size: 2.5rem;
+    background: #f1f5f9;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.restock-info {
+    flex: 1;
+}
+
+.restock-info h4 {
     margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.sub-info {
+    margin: 2px 0 8px 0;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.stock-metrics {
+    display: flex;
+    gap: 12px;
+    font-size: 0.85rem;
+}
+
+.badge-min {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #64748b;
+}
+
+.stock-current-red {
+    color: #ef4444;
+}
+
+.restock-alert {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.missing-text {
+    font-size: 0.8rem;
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.btn-restock {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-restock:hover {
+    background: #2563eb;
+}
+
+.empty-tab {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+    font-style: italic;
 }
 
 .page-header p {

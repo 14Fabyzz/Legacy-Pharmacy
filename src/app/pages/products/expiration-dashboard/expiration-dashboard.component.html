@@ -2,28 +2,82 @@
     <header class="page-header">
         <div class="header-content">
             <div>
-                <h2>MONITOR DE VENCIMIENTOS</h2>
-                <p>Gestión prioritaria de productos próximos a vencer o caducados.</p>
+                <h2>CENTRO DE ALERTAS E INVENTARIO</h2>
+                <p>Gestión integral de vencimientos, stock crítico y alertas sanitarias.</p>
             </div>
         </div>
     </header>
 
     <!-- Navegación Compartida -->
     <nav class="tabs-nav">
-        <a routerLink="/app/productos/nuevo">NUEVO PRODUCTO</a>
-        <a routerLink="/app/productos/almacen">PRODUCTOS EN ALMACÉN</a>
-        <a routerLink="/app/productos/entrada-mercancia">ENTRADA MERCANCÍA</a>
-        <a routerLink="/app/productos/vencimientos" routerLinkActive="active">MONITOR VENCIMIENTOS</a>
-        <a routerLink="/app/productos/consulta" routerLinkActive="active">🔍 CONSULTA PRECIOS</a>
+        <a routerLink="/app/productos/almacen" routerLinkActive="active">
+            <span class="nav-icon">📦</span> ALMACÉN
+        </a>
+
+        <a routerLink="/app/productos/consulta" routerLinkActive="active">
+            <span class="nav-icon">🔍</span> CONSULTA
+        </a>
+
+        <a routerLink="/app/productos/vencimientos" routerLinkActive="active">
+            <span class="nav-icon">🚨</span> MONITOR ALERTAS
+        </a>
+
+        <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">
+            <span class="nav-icon">🚚</span> ENTRADAS
+        </a>
+
+        <a routerLink="/app/productos/nuevo" routerLinkActive="active">
+            <span class="nav-icon">✨</span> NUEVO
+        </a>
     </nav>
 
     <div class="dashboard-content" *ngIf="!loading">
 
+        <!-- KPI CARDS SUMMARY -->
+        <div class="kpi-grid">
+            <!-- 1. Vencidos -->
+            <div class="kpi-card critical" [class.active]="activeTab === 'critical'" (click)="setActiveTab('critical')">
+                <div class="kpi-icon">🚨</div>
+                <div class="kpi-info">
+                    <span class="kpi-value">{{ expiredProducts.length }}</span>
+                    <span class="kpi-label">Vencidos</span>
+                </div>
+            </div>
+
+            <!-- 2. Por Vencer -->
+            <div class="kpi-card warning" [class.active]="activeTab === 'alert'" (click)="setActiveTab('alert')">
+                <div class="kpi-icon">⚠️</div>
+                <div class="kpi-info">
+                    <span class="kpi-value">{{ soonExpiringProducts.length }}</span>
+                    <span class="kpi-label">Por Vencer</span>
+                </div>
+            </div>
+
+            <!-- 3. Stock Bajo (NUEVO) -->
+            <div class="kpi-card lowstock" [class.active]="activeTab === 'lowstock'" (click)="setActiveTab('lowstock')">
+                <div class="kpi-icon">📉</div>
+                <div class="kpi-info">
+                    <span class="kpi-value">{{ bajoStock.length }}</span>
+                    <span class="kpi-label">Stock Bajo</span>
+                </div>
+            </div>
+
+            <!-- 4. Seguros -->
+            <div class="kpi-card healthy" [class.active]="activeTab === 'healthy'" (click)="setActiveTab('healthy')">
+                <div class="kpi-icon">✅</div>
+                <div class="kpi-info">
+                    <span class="kpi-value">OK</span>
+                    <span class="kpi-label">Saludables</span>
+                </div>
+            </div>
+        </div>
+
+
         <!-- SECCIÓN 1: VENCIDOS (CRÍTICO) -->
-        <div class="expiration-section critical-section" *ngIf="expiredProducts.length > 0">
+        <div class="expiration-section critical-section" *ngIf="activeTab === 'critical'">
             <div class="section-header">
-                <h3>🚨 Productos Vencidos ({{ expiredProducts.length }})</h3>
-                <p>Estos productos deben ser retirados de venta inmediatamente.</p>
+                <h3>🚨 Productos Vencidos</h3>
+                <p>Retirar inmediatamente de estantería.</p>
             </div>
 
             <div class="table-card">
@@ -71,14 +125,17 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="empty-tab" *ngIf="expiredProducts.length === 0">
+                    <p>No hay productos vencidos. ¡Excelente!</p>
+                </div>
             </div>
         </div>
 
         <!-- SECCIÓN 2: POR VENCER (ALERTA) -->
-        <div class="expiration-section warning-section" *ngIf="soonExpiringProducts.length > 0">
+        <div class="expiration-section warning-section" *ngIf="activeTab === 'alert'">
             <div class="section-header">
-                <h3>⚠️ Próximos a Vencer ({{ soonExpiringProducts.length }})</h3>
-                <p>Acciones recomendadas: Promociones o rotación rápida.</p>
+                <h3>⚠️ Próximos a Vencer (30 días)</h3>
+                <p>Acciones recomendadas: Gestión de precio o promoción.</p>
             </div>
 
             <div class="table-card">
@@ -125,14 +182,51 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="empty-tab" *ngIf="soonExpiringProducts.length === 0">
+                    <p>No hay alertas de vencimiento próximo.</p>
+                </div>
             </div>
         </div>
 
-        <!-- ESTADO VACÍO -->
-        <div class="empty-state" *ngIf="expiredProducts.length === 0 && soonExpiringProducts.length === 0">
-            <div class="empty-icon">✅</div>
-            <h3>Todo en orden</h3>
-            <p>No tienes productos vencidos ni próximos a vencer en los siguientes 30 días.</p>
+        <!-- SECCIÓN 3: STOCK BAJO (NUEVO) -->
+        <div class="expiration-section lowstock-section" *ngIf="activeTab === 'lowstock'">
+            <div class="section-header">
+                <h3>📉 Reposición de Inventario</h3>
+                <p>Productos con stock por debajo del mínimo permitido.</p>
+            </div>
+
+            <div class="cards-grid-view">
+                <!-- Carta de Reabastecimiento -->
+                <div class="restock-card" *ngFor="let p of bajoStock">
+                    <div class="restock-icon">
+                        📦
+                    </div>
+                    <div class="restock-info">
+                        <h4>{{ p.nombre_comercial }}</h4>
+                        <p class="sub-info">{{ p.concentracion }} - {{ p.laboratorio_nombre }}</p>
+                        <div class="stock-metrics">
+                            <span class="badge-min">Min: {{ p.stock_minimo }}</span>
+                            <span class="stock-current-red">Actual: <strong>{{ p.stock_actual }}</strong></span>
+                        </div>
+                    </div>
+                    <div class="restock-alert">
+                        <span class="missing-text">Faltan {{ p.stockDiff }} un.</span>
+                        <button class="btn-restock">Reabastecer</button>
+                    </div>
+                </div>
+            </div>
+            <div class="empty-tab" *ngIf="bajoStock.length === 0">
+                <p>Todo el inventario tiene niveles óptimos.</p>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 4: HEALTHY (Solo Informativo) -->
+        <div class="expiration-section healthy-section" *ngIf="activeTab === 'healthy'">
+            <div class="empty-state">
+                <div class="empty-icon">✅</div>
+                <h3>Sistema Saludable</h3>
+                <p>Selecciona una alerta arriba para ver detalles si existen.</p>
+            </div>
         </div>
 
     </div>

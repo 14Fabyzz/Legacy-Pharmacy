@@ -42,8 +42,7 @@ export class SidebarComponent {
       subMenu: [
         { path: '/app/productos/nuevo', title: 'Nuevo producto' },
         { path: '/app/productos/almacen', title: 'Productos en almacen' },
-        { path: '/app/productos/vencimientos', title: 'Productos por vencimiento' },
-        { path: '/app/productos/stock-minimo', title: 'Productos en stock mínimo' },
+        { path: '/app/productos/vencimientos', title: 'Centro alertas inventario' },
         { path: '/app/productos/consulta', title: 'Buscar producto' },
         { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' }
       ]

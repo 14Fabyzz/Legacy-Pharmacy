@@ -147,3 +147,40 @@
   transform: scaleX(0.8);
   display: inline-block;
 }
+
+/* Tabs Navigation (Copiado de Product List para consistencia) */
+.tabs-nav {
+  display: flex;
+  gap: 24px;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 32px;
+  padding-bottom: 0;
+}
+
+.tabs-nav a {
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  padding-bottom: 12px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  margin-bottom: -2px;
+  /* Para solapar la línea */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tabs-nav a:hover {
+  color: #3b82f6;
+}
+
+.tabs-nav a.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.nav-icon {
+  font-size: 1.1rem;
+}

@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../product.service';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })

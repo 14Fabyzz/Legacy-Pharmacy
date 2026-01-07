@@ -2,15 +2,29 @@
   <header class="page-header">
     <h2>ENTRADA DE MERCANCÍA</h2>
     <p>Registre los productos que ingresan al inventario físico.</p>
-  </header>
+    <!-- Navegación Compartida -->
+    <nav class="tabs-nav">
+      <a routerLink="/app/productos/almacen" routerLinkActive="active">
+        <span class="nav-icon">📦</span> ALMACÉN
+      </a>
 
-  <nav class="tabs-nav">
-    <a routerLink="/app/productos/nuevo" routerLinkActive="active">NUEVO PRODUCTO</a>
-    <a routerLink="/app/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACÉN</a>
-    <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">ENTRADA MERCANCÍA</a>
-    <a routerLink="/app/productos/vencimientos" routerLinkActive="active">MONITOR VENCIMIENTOS</a>
-    <a routerLink="/app/productos/consulta" routerLinkActive="active">🔍 CONSULTA PRECIOS</a>
-  </nav>
+      <a routerLink="/app/productos/consulta" routerLinkActive="active">
+        <span class="nav-icon">🔍</span> CONSULTA
+      </a>
+
+      <a routerLink="/app/productos/vencimientos" routerLinkActive="active">
+        <span class="nav-icon">🚨</span> MONITOR ALERTAS
+      </a>
+
+      <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">
+        <span class="nav-icon">🚚</span> ENTRADAS
+      </a>
+
+      <a routerLink="/app/productos/nuevo" routerLinkActive="active">
+        <span class="nav-icon">✨</span> NUEVO
+      </a>
+    </nav>
+  </header>
 
   <div class="entry-layout">
 

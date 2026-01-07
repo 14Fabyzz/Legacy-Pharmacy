@@ -41,12 +41,27 @@
     </div>
   </header>
 
+  <!-- Navegación Compartida -->
   <nav class="tabs-nav">
-    <a routerLink="/app/productos/nuevo">NUEVO PRODUCTO</a>
-    <a routerLink="/app/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACÉN</a>
-    <a routerLink="/app/productos/entrada-mercancia">ENTRADA MERCANCÍA</a>
-    <a routerLink="/app/productos/vencimientos" routerLinkActive="active">MONITOR VENCIMIENTOS</a>
-    <a routerLink="/app/productos/consulta" routerLinkActive="active">🔍 CONSULTA PRECIOS</a>
+    <a routerLink="/app/productos/almacen" routerLinkActive="active">
+      <span class="nav-icon">📦</span> ALMACÉN
+    </a>
+
+    <a routerLink="/app/productos/consulta" routerLinkActive="active">
+      <span class="nav-icon">🔍</span> CONSULTA
+    </a>
+
+    <a routerLink="/app/productos/vencimientos" routerLinkActive="active">
+      <span class="nav-icon">🚨</span> MONITOR ALERTAS
+    </a>
+
+    <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">
+      <span class="nav-icon">🚚</span> ENTRADAS
+    </a>
+
+    <a routerLink="/app/productos/nuevo" routerLinkActive="active">
+      <span class="nav-icon">✨</span> NUEVO
+    </a>
   </nav>
 
   <div class="search-container">

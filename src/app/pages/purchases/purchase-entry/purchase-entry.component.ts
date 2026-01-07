@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ProductService } from '../../products/product.service';
 import { Producto } from '../../../core/models/inventory.model';
+
 
 interface EntradaItem {
   productoId: number;
@@ -18,7 +20,7 @@ interface EntradaItem {
 @Component({
   selector: 'app-purchase-entry',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
   templateUrl: './purchase-entry.component.html',
   styleUrls: ['./purchase-entry.component.css']
 })
