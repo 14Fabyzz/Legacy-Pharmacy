@@ -7,6 +7,8 @@ import { ProductFormComponent } from './product-form/product-form.component';
 import { PurchaseEntryComponent } from '../purchases/purchase-entry/purchase-entry.component';
 import { ExpirationDashboardComponent } from './expiration-dashboard/expiration-dashboard.component';
 import { ProductSearchComponent } from './product-search/product-search.component';
+import { KardexComponent } from './kardex/kardex.component';
+import { MovementsHistoryComponent } from './movements-history/movements-history.component';
 
 
 const routes: Routes = [
@@ -30,10 +32,22 @@ const routes: Routes = [
     path: 'vencimientos',
     component: ExpirationDashboardComponent
   },
-  
+
   {
     path: 'consulta',
     component: ProductSearchComponent
+  },
+  {
+    path: 'auditoria',
+    component: MovementsHistoryComponent
+  },
+  {
+    path: 'kardex',
+    component: KardexComponent
+  },
+  {
+    path: 'kardex/:id',
+    component: KardexComponent
   },
   {
     path: '', // Si solo escriben /productos

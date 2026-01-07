@@ -292,9 +292,9 @@
 }
 
 .product-icon-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 72px;
+    height: 72px;
+    
     background-color: #f1f5f9;
     display: flex;
     align-items: center;

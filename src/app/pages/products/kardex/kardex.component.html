@@ -1,0 +1,160 @@
+<div class="page-container">
+    <header class="page-header">
+        <div class="header-content">
+            <button class="btn-back" routerLink="/app/productos/almacen">← Volver</button>
+            <div>
+                <h2>KARDEX DE PRODUCTO</h2>
+                <p>Auditoría de movimientos y trazabilidad</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="prod-identity" *ngIf="product">
+        <div class="prod-icon">💊</div>
+        <div>
+            <h1>{{ product.nombre }}</h1>
+            <span class="badge">{{ product.codigo_barras }}</span>
+        </div>
+    </div>
+
+    <div class="kpi-group">
+        <!-- Aquí podrían ir KPIs resumen si se desean -->
+    </div>
+
+    <div class="filters-toolbar">
+        <div class="filter-group">
+            <div class="input-wrapper">
+                <label>Desde:</label>
+                <input type="date" class="date-input">
+            </div>
+            <div class="input-wrapper">
+                <label>Hasta:</label>
+                <input type="date" class="date-input">
+            </div>
+            <div class="input-wrapper">
+                <label>Tipo:</label>
+                <select class="select-input">
+                    <option value="ALL">Todos los Movimientos</option>
+                    <option value="ENTRADA">Entradas / Compras</option>
+                    <option value="SALIDA">Salidas / Ventas</option>
+                    <option value="AJUSTE">Ajustes / Pérdidas</option>
+                </select>
+            </div>
+            <button class="btn-filter">Filtrar</button>
+            <div class="separator-vertical"></div>
+            <button class="btn-simulate" (click)="simulateMovement()">⚡ Simular Movimiento</button>
+        </div>
+    </div>
+
+    <div class="product-summary-card">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Fecha / Hora</th>
+                    <th>Tipo Mov.</th>
+                    <th>Documento</th>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                    <th>Saldo</th>
+                    <th>Usuario</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let m of movimientos" (click)="openDetail(m)" style="cursor: pointer;">
+                    <td>
+                        <div class="date-cell">
+                            <strong>{{ m.fecha | date:'dd MMM yyyy' }}</strong>
+                            <small>{{ m.fecha | date:'shortTime' }}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="type-badge" [ngClass]="m.tipo.toLowerCase()">{{ m.tipo }}</span>
+                    </td>
+                    <td class="doc-ref">#{{ m.documento_ref }}</td>
+
+                    <td class="text-green">{{ m.tipo === 'ENTRADA' ? '+' + m.cantidad : '-' }}</td>
+                    <td class="text-red">{{ m.tipo === 'SALIDA' ? '-' + m.cantidad : '-' }}</td>
+
+                    <td class="font-bold">{{ m.saldo_resultante }}</td>
+                    <td class="user-cell">👤 {{ m.usuario }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- DETALLE MODAL -->
+<div class="modal-overlay" *ngIf="selectedMovement" (click)="closeDetail()">
+    <div class="detail-card" (click)="$event.stopPropagation()">
+
+        <header class="detail-header" [ngClass]="selectedMovement.tipo.toLowerCase()">
+            <div class="header-icon">
+                <span *ngIf="selectedMovement.tipo === 'ENTRADA'">📥</span>
+                <span *ngIf="selectedMovement.tipo === 'SALIDA'">📤</span>
+                <span *ngIf="selectedMovement.tipo === 'AJUSTE'">🔧</span>
+            </div>
+
+            <div class="header-texts">
+                <h3 class="mov-type">{{ selectedMovement.tipo }} DE INVENTARIO</h3>
+                <h2 class="prod-name">{{ product?.nombre }}</h2>
+                <p class="mov-date">{{ selectedMovement.fecha | date:'fullDate' }} — {{ selectedMovement.fecha |
+                    date:'mediumTime' }}</p>
+            </div>
+
+            <button class="btn-close-modal" (click)="closeDetail()">✕</button>
+        </header>
+
+        <div class="detail-body">
+
+            <div class="detail-row highlight">
+                <div>
+                    <label>Documento Ref.</label>
+                    <strong>#{{ selectedMovement.documento_ref }}</strong>
+                </div>
+                <div class="text-right">
+                    <label>Cantidad</label>
+                    <strong class="qty-text"
+                        [ngClass]="selectedMovement.tipo === 'ENTRADA' ? 'text-green' : 'text-red'">
+                        {{ selectedMovement.tipo === 'ENTRADA' ? '+' : '-' }}{{ selectedMovement.cantidad }} u.
+                    </strong>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="info-grid">
+
+                <div class="info-box" *ngIf="selectedMovement.tipo === 'SALIDA'">
+                    <label>Cliente / Destino</label>
+                    <p>{{ selectedMovement.cliente || 'Cliente Mostrador' }}</p>
+                </div>
+
+                <div class="info-box" *ngIf="selectedMovement.tipo === 'ENTRADA'">
+                    <label>Proveedor</label>
+                    <p>{{ selectedMovement.proveedor || 'Laboratorios X' }}</p>
+                </div>
+
+                <div class="info-box" *ngIf="selectedMovement.tipo === 'ENTRADA'">
+                    <label>Lote Ingresado</label>
+                    <p class="batch-tag">{{ selectedMovement.lote || 'N/A' }}</p>
+                </div>
+
+                <div class="info-box">
+                    <label>Responsable</label>
+                    <p>👤 {{ selectedMovement.usuario }}</p>
+                </div>
+
+                <div class="info-box full-width" *ngIf="selectedMovement.notas">
+                    <label>Notas / Observaciones</label>
+                    <p class="notes-box">"{{ selectedMovement.notas }}"</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="detail-footer">
+            <button class="btn-secondary" style="margin-right: 10px;">📄 Ver Factura Completa</button>
+            <button class="btn-print">🖨️ Imprimir Comprobante</button>
+        </div>
+    </div>
+</div>

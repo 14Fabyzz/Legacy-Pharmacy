@@ -59,6 +59,10 @@
       <span class="nav-icon">🚚</span> ENTRADAS
     </a>
 
+    <a routerLink="/app/productos/auditoria" routerLinkActive="active">
+      <span class="nav-icon">📋</span> AUDITORÍA
+    </a>
+
     <a routerLink="/app/productos/nuevo" routerLinkActive="active">
       <span class="nav-icon">✨</span> NUEVO
     </a>
@@ -146,7 +150,7 @@
               <div class="table-actions">
                 <button title="Ver Detalles" (click)="openDetailModal(product)" class="btn-icon">👁️</button>
                 <button title="Gestionar Imagen" (click)="openImageModal(product)" class="btn-icon">🖼️</button>
-                <button title="Kardex" (click)="openKardexModal(product)" class="btn-icon">📊</button>
+                <button title="Kardex" [routerLink]="['/app/productos/kardex', product.id]" class="btn-icon">📊</button>
                 <button title="Editar" [routerLink]="['/app/productos/editar', product.id]"
                   class="btn-icon edit">✏️</button>
                 <button title="Eliminar" (click)="openDeleteModal(product)" class="btn-icon delete">🗑️</button>

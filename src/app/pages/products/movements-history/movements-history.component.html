@@ -1,0 +1,69 @@
+<div class="page-container">
+    <header class="page-header">
+        <h2>AUDITORÍA DE INVENTARIO</h2>
+        <p>Registro cronológico de todas las operaciones</p>
+    </header>
+
+    <div class="actions-bar">
+        <div class="search-box">
+            <span class="icon">🔍</span>
+            <input type="text" placeholder="Buscar por usuario, documento o producto..." class="search-input">
+        </div>
+
+        <select class="select-input">
+            <option value="ALL">Todos los Tipos</option>
+            <option value="ENTRADA">📥 Entradas</option>
+            <option value="SALIDA">📤 Salidas</option>
+            <option value="AJUSTE">🔧 Ajustes</option>
+        </select>
+
+        <button class="btn-export">Exportar Excel</button>
+    </div>
+
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Producto</th>
+                <th>Movimiento</th>
+                <th>Documento</th>
+                <th>Cantidad</th>
+                <th>Responsable</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let m of movimientos" class="hover-row">
+                <td class="time-cell">
+                    <div class="date-group">
+                        <strong>{{ m.fecha | date:'HH:mm' }}</strong>
+                        <small>{{ m.fecha | date:'dd/MM' }}</small>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="prod-cell">
+                        <div class="mini-thumb">💊</div>
+                        <div class="prod-info">
+                            <span class="p-name">{{ m.producto_nombre }}</span>
+                            <span class="p-lote">Lote: {{ m.producto_lote }}</span>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <span class="type-badge" [ngClass]="m.tipo.toLowerCase()">{{ m.tipo }}</span>
+                </td>
+
+                <td class="doc-ref">#{{ m.documento_ref }}</td>
+
+                <td [ngClass]="{'text-green': m.tipo === 'ENTRADA', 'text-red': m.tipo === 'SALIDA'}">
+                    <strong>{{ m.tipo === 'ENTRADA' ? '+' : '-' }}{{ m.cantidad }}</strong>
+                </td>
+
+                <td class="user-cell">
+                    <div class="user-badge">👤 {{ m.usuario }}</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,235 @@
+.page-container {
+    padding: 30px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    font-family: 'Satoshi', sans-serif;
+}
+
+.page-header {
+    margin-bottom: 25px;
+}
+
+.page-header h2 {
+    font-size: 1.8rem;
+    color: #0f172a;
+    font-weight: 800;
+    margin: 0;
+}
+
+.page-header p {
+    color: #6b7280;
+    margin: 5px 0 0 0;
+}
+
+.actions-bar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+/* Buscador Integrado */
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-box .icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.search-input {
+    padding-left: 36px !important;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: 'Satoshi', sans-serif;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.select-input {
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: 'Satoshi', sans-serif;
+    color: #334155;
+    outline: none;
+    background: white;
+    cursor: pointer;
+}
+
+.btn-export {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+    /* Push to right if desired, or keep inline */
+}
+
+.btn-export:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+/* TABLE STYLES */
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    text-align: left;
+}
+
+.custom-table thead th {
+    background-color: transparent;
+    color: #64748B;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0 16px 8px 16px;
+    border: none;
+}
+
+.custom-table tbody tr {
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 8px;
+}
+
+.custom-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.custom-table td {
+    padding: 16px;
+    vertical-align: middle;
+    color: #334155;
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.custom-table td:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-left: 1px solid #f1f5f9;
+}
+
+.custom-table td:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right: 1px solid #f1f5f9;
+}
+
+.date-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-group small {
+    color: #94a3b8;
+}
+
+/* Celda de Producto */
+.prod-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mini-thumb {
+    width: 36px;
+    height: 36px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.prod-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.p-name {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 13px;
+}
+
+.p-lote {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.type-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.type-badge.entrada {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.type-badge.salida {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.type-badge.ajuste {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.doc-ref {
+    font-family: monospace;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.text-green {
+    color: #166534;
+    font-weight: 700;
+}
+
+.text-red {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+/* Badges de Usuario */
+.user-badge {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #475569;
+    display: inline-block;
+    font-weight: 500;
+}
