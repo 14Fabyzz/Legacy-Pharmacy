@@ -42,10 +42,9 @@ export class SidebarComponent {
       subMenu: [
         { path: '/app/productos/nuevo', title: 'Nuevo producto' },
         { path: '/app/productos/almacen', title: 'Productos en almacen' },
-        { path: '/app/productos/mas-vendidos', title: 'Productos más vendidos' },
-        { path: '/app/productos/por-vencimiento', title: 'Productos por vencimiento' },
+        { path: '/app/productos/vencimientos', title: 'Productos por vencimiento' },
         { path: '/app/productos/stock-minimo', title: 'Productos en stock mínimo' },
-        { path: '/app/productos/buscar', title: 'Buscar productos' },
+        { path: '/app/productos/buscar', title: 'Buscar producto' },
         { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' }
       ]
     },

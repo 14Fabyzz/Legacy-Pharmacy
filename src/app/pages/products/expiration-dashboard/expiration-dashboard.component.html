@@ -1,0 +1,138 @@
+<div class="page-container">
+    <header class="page-header">
+        <div class="header-content">
+            <div>
+                <h2>MONITOR DE VENCIMIENTOS</h2>
+                <p>Gestión prioritaria de productos próximos a vencer o caducados.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación Compartida -->
+    <nav class="tabs-nav">
+        <a routerLink="/app/productos/nuevo">NUEVO PRODUCTO</a>
+        <a routerLink="/app/productos/almacen">PRODUCTOS EN ALMACÉN</a>
+        <a routerLink="/app/productos/entrada-mercancia">ENTRADA MERCANCÍA</a>
+        <a routerLink="/app/productos/vencimientos" routerLinkActive="active">MONITOR VENCIMIENTOS</a>
+    </nav>
+
+    <div class="dashboard-content" *ngIf="!loading">
+
+        <!-- SECCIÓN 1: VENCIDOS (CRÍTICO) -->
+        <div class="expiration-section critical-section" *ngIf="expiredProducts.length > 0">
+            <div class="section-header">
+                <h3>🚨 Productos Vencidos ({{ expiredProducts.length }})</h3>
+                <p>Estos productos deben ser retirados de venta inmediatamente.</p>
+            </div>
+
+            <div class="table-card">
+                <table class="expiration-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Lote / Ref</th>
+                            <th>Fecha Vencimiento</th>
+                            <th>Estado</th>
+                            <th>Stock Actual</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of expiredProducts">
+                            <td>
+                                <div class="product-info">
+                                    <div class="product-icon-circle small">
+                                        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" alt="img">
+                                        <span *ngIf="!p.imagenUrl">💊</span>
+                                    </div>
+                                    <div>
+                                        <strong>{{ p.nombre_comercial }}</strong>
+                                        <small>{{ p.concentracion }} - {{ p.laboratorio_nombre }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="ref-text">{{ p.codigo_interno }}</span>
+                            </td>
+                            <td class="date-cell">
+                                {{ p.proximo_vencimiento | date:'dd/MM/yyyy' }}
+                            </td>
+                            <td>
+                                <span class="status-tag expired">Vencido hace {{ (p.daysUntilExpiry || 0) * -1 }}
+                                    días</span>
+                            </td>
+                            <td class="stock-cell">
+                                <strong>{{ p.stock_actual }}</strong> unds
+                            </td>
+                            <td class="text-right">
+                                <button class="btn-action danger">Dar de Baja</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: POR VENCER (ALERTA) -->
+        <div class="expiration-section warning-section" *ngIf="soonExpiringProducts.length > 0">
+            <div class="section-header">
+                <h3>⚠️ Próximos a Vencer ({{ soonExpiringProducts.length }})</h3>
+                <p>Acciones recomendadas: Promociones o rotación rápida.</p>
+            </div>
+
+            <div class="table-card">
+                <table class="expiration-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Lote / Ref</th>
+                            <th>Fecha Vencimiento</th>
+                            <th>Días Restantes</th>
+                            <th>Stock Actual</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of soonExpiringProducts">
+                            <td>
+                                <div class="product-info">
+                                    <div class="product-icon-circle small">
+                                        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" alt="img">
+                                        <span *ngIf="!p.imagenUrl">💊</span>
+                                    </div>
+                                    <div>
+                                        <strong>{{ p.nombre_comercial }}</strong>
+                                        <small>{{ p.concentracion }} - {{ p.laboratorio_nombre }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="ref-text">{{ p.codigo_interno }}</span>
+                            </td>
+                            <td class="date-cell">
+                                {{ p.proximo_vencimiento | date:'dd/MM/yyyy' }}
+                            </td>
+                            <td>
+                                <span class="status-tag warning">{{ p.daysUntilExpiry }} días</span>
+                            </td>
+                            <td class="stock-cell">
+                                <strong>{{ p.stock_actual }}</strong> unds
+                            </td>
+                            <td class="text-right">
+                                <button class="btn-action promo">Promocionar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ESTADO VACÍO -->
+        <div class="empty-state" *ngIf="expiredProducts.length === 0 && soonExpiringProducts.length === 0">
+            <div class="empty-icon">✅</div>
+            <h3>Todo en orden</h3>
+            <p>No tienes productos vencidos ni próximos a vencer en los siguientes 30 días.</p>
+        </div>
+
+    </div>
+</div>

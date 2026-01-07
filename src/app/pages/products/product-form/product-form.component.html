@@ -5,6 +5,13 @@
     <p>Registre la ficha técnica del medicamento. El stock y los lotes se gestionan en el módulo de "Compras".</p>
   </header>
 
+  <nav class="tabs-nav">
+    <a routerLink="/app/productos/nuevo" routerLinkActive="active">NUEVO PRODUCTO</a>
+    <a routerLink="/app/productos/almacen" routerLinkActive="active">PRODUCTOS EN ALMACÉN</a>
+    <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">ENTRADA MERCANCÍA</a>
+    <a routerLink="/app/productos/vencimientos" routerLinkActive="active">MONITOR VENCIMIENTOS</a>
+  </nav>
+
   <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="product-form">
 
     <!-- SECCIÓN 1: Identificación -->

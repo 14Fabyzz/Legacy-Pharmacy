@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductFormComponent } from './product-form/product-form.component';
 import { PurchaseEntryComponent } from '../purchases/purchase-entry/purchase-entry.component';
+import { ExpirationDashboardComponent } from './expiration-dashboard/expiration-dashboard.component';
 
 
 const routes: Routes = [
@@ -23,6 +24,10 @@ const routes: Routes = [
   {
     path: 'entrada-mercancia',
     component: PurchaseEntryComponent
+  },
+  {
+    path: 'vencimientos',
+    component: ExpirationDashboardComponent
   },
   {
     path: '', // Si solo escriben /productos

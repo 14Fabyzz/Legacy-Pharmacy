@@ -1,0 +1,226 @@
+/* Layout & General */
+.page-container {
+    padding: 24px;
+    background-color: #f8fafc;
+    /* Fondo suave */
+    min-height: 100vh;
+}
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.page-header p {
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* Tabs Navigation (Copiado de Product List para consistencia) */
+.tabs-nav {
+    display: flex;
+    gap: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 32px;
+    padding-bottom: 0;
+}
+
+.tabs-nav a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748b;
+    padding-bottom: 12px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -2px;
+    /* Para solapar la línea */
+}
+
+.tabs-nav a:hover {
+    color: #3b82f6;
+}
+
+.tabs-nav a.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+/* Sections */
+.expiration-section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    margin-bottom: 16px;
+}
+
+.section-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+/* Critical Section (Vencidos) */
+.critical-section .section-header h3 {
+    color: #ef4444;
+    /* Red 500 */
+}
+
+/* Warning Section (Por Vencer) */
+.warning-section .section-header h3 {
+    color: #f59e0b;
+    /* Amber 500 */
+}
+
+/* Table Card */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.expiration-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.expiration-table th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.expiration-table td {
+    padding: 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+    color: #334155;
+}
+
+.expiration-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Product Cell */
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.product-icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.product-icon-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-info small {
+    display: block;
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+/* Tags & Badges */
+.status-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-tag.expired {
+    background-color: #fef2f2;
+    color: #ef4444;
+}
+
+.status-tag.warning {
+    background-color: #fffbeb;
+    color: #b45309;
+}
+
+.stock-cell {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Acciones */
+.text-right {
+    text-align: right;
+}
+
+.btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-action:hover {
+    opacity: 0.9;
+}
+
+.btn-action.danger {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.btn-action.promo {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    margin: 0 0 8px 0;
+    color: #1e293b;
+}
+
+.empty-state p {
+    color: #64748b;
+    margin: 0;
+}
