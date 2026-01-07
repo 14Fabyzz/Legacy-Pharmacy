@@ -44,7 +44,7 @@ export class SidebarComponent {
         { path: '/app/productos/almacen', title: 'Productos en almacen' },
         { path: '/app/productos/vencimientos', title: 'Productos por vencimiento' },
         { path: '/app/productos/stock-minimo', title: 'Productos en stock mínimo' },
-        { path: '/app/productos/buscar', title: 'Buscar producto' },
+        { path: '/app/productos/consulta', title: 'Buscar producto' },
         { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' }
       ]
     },

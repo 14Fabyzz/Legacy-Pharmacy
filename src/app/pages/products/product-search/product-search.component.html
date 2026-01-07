@@ -1,0 +1,94 @@
+<div class="page-container">
+    <header class="page-header">
+        <div class="header-content">
+            <div>
+                <h2>CONSULTA DE PRECIOS</h2>
+                <p>Escanee el código de barras o escriba el nombre del producto.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación Compartida -->
+    <nav class="tabs-nav">
+        <a routerLink="/app/productos/nuevo">NUEVO PRODUCTO</a>
+        <a routerLink="/app/productos/almacen">PRODUCTOS EN ALMACÉN</a>
+        <a routerLink="/app/productos/entrada-mercancia">ENTRADA MERCANCÍA</a>
+        <a routerLink="/app/productos/vencimientos">MONITOR VENCIMIENTOS</a>
+        <a routerLink="/app/productos/consulta" routerLinkActive="active">🔍 CONSULTA PRECIOS</a>
+    </nav>
+
+    <div class="search-layout">
+
+        <!-- ÁREA DE BÚSQUEDA -->
+        <div class="search-box-container">
+            <div class="input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" #searchInput class="param-search-input"
+                    placeholder="Escanee código o escriba nombre..." [(ngModel)]="searchTerm" (input)="onSearch($event)"
+                    (keyup.enter)="onEnter()">
+                <button *ngIf="searchTerm" class="clear-btn" (click)="clearSearch()">×</button>
+            </div>
+
+            <!-- LISTA DE SUGERENCIAS -->
+            <div class="suggestions-dropdown" *ngIf="filteredSuggestions.length > 0">
+                <div *ngFor="let p of filteredSuggestions" class="suggestion-item" (click)="selectProduct(p)">
+                    <div class="sugg-name">{{ p.nombre_comercial }}</div>
+                    <div class="sugg-meta">{{ p.concentracion }} - {{ p.laboratorio_nombre }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTADO: PRODUCTO ENCONTRADO -->
+        <div class="result-card bounce-in" *ngIf="selectedProduct">
+            <div class="product-detail-grid">
+
+                <!-- Imagen -->
+                <div class="product-image-col">
+                    <div class="image-box">
+                        <img *ngIf="selectedProduct.imagenUrl" [src]="selectedProduct.imagenUrl" alt="Producto">
+                        <span *ngIf="!selectedProduct.imagenUrl" class="no-img-icon">💊</span>
+                    </div>
+                </div>
+
+                <!-- Info Principal -->
+                <div class="product-info-col">
+                    <h1 class="main-title">{{ selectedProduct.nombre_comercial }}</h1>
+                    <span class="subtitle">{{ selectedProduct.concentracion }} | {{ selectedProduct.presentacion
+                        }}</span>
+
+                    <div class="meta-tags">
+                        <span class="tag lab">{{ selectedProduct.laboratorio_nombre }}</span>
+
+                        <span class="tag stock" [ngClass]="{'low': (selectedProduct.stock_actual || 0) < 5}">
+                            Stock: {{ selectedProduct.stock_actual }}
+                        </span>
+                    </div>
+
+                    <div class="price-display">
+                        <small>Precio Público</small>
+                        <div class="big-price">{{ selectedProduct.precio_venta_base | currency:'USD':'symbol':'1.0-0' }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer">
+                <button class="btn-reset" (click)="clearSearch()">Nueva Consulta (ESC)</button>
+            </div>
+        </div>
+
+        <!-- ESTADO: NO ENCONTRADO -->
+        <div class="not-found-state" *ngIf="notFound">
+            <div class="icon">🤷‍♂️</div>
+            <h3>Producto no encontrado</h3>
+            <p>Intenta con otro código o nombre.</p>
+        </div>
+
+        <!-- ESTADO: ESPERANDO (INICIAL) -->
+        <div class="waiting-state" *ngIf="!selectedProduct && !notFound">
+            <p>Esperando lectura de código...</p>
+        </div>
+
+    </div>
+</div>

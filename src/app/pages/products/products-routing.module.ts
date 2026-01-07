@@ -6,6 +6,7 @@ import { ProductListComponent } from './product-list/product-list.component';
 import { ProductFormComponent } from './product-form/product-form.component';
 import { PurchaseEntryComponent } from '../purchases/purchase-entry/purchase-entry.component';
 import { ExpirationDashboardComponent } from './expiration-dashboard/expiration-dashboard.component';
+import { ProductSearchComponent } from './product-search/product-search.component';
 
 
 const routes: Routes = [
@@ -28,6 +29,11 @@ const routes: Routes = [
   {
     path: 'vencimientos',
     component: ExpirationDashboardComponent
+  },
+  
+  {
+    path: 'consulta',
+    component: ProductSearchComponent
   },
   {
     path: '', // Si solo escriben /productos
