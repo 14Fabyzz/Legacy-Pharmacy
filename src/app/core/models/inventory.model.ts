@@ -37,6 +37,7 @@ export interface Producto {
   precio_venta_base: number;
   iva_porcentaje: number;
   stock_minimo: number;
+  stock_actual?: number; // Added per user request
 
   es_controlado: boolean;
   refrigerado: boolean;

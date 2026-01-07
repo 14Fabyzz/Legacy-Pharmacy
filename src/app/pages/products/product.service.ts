@@ -27,11 +27,12 @@ export class ProductService {
         precio_venta_base: 8000,
         iva_porcentaje: 0,
         stock_minimo: 10,
+        stock_actual: 15, // Test value
         es_controlado: false,
         refrigerado: false,
         estado: 'ACTIVO',
         proximo_vencimiento: '2024-04-15',
-        imagenUrl: 'https://drogueriasunoa.com/cdn/shop/files/imagen_187c3b7e-8d96-4926-bdf4-1c1c180aef02.png?v=1756355870&width=580', // Caja
+        imagenUrl: 'https://unidrogas.vtexassets.com/arquivos/ids/436978/7707397792626.jpg?v=638891176625900000', // Caja
 
         categoria_id: 1,
         laboratorio_id: 1,
@@ -48,11 +49,12 @@ export class ProductService {
         precio_venta_base: 15200,
         iva_porcentaje: 19,
         stock_minimo: 5,
+        stock_actual: 50, // Test value
         es_controlado: false,
         refrigerado: false,
         estado: 'ACTIVO',
         proximo_vencimiento: '2024-09-01',
-        imagenUrl: 'https://locatelcolombia.vtexassets.com/arquivos/ids/387522/7707397792480_1_Advil-Teens-200mg-X-10-Capsulas-Liquidas.jpg?v=638699520329200000', // Transparente
+        imagenUrl: 'https://ortopedicosfuturoco.vtexassets.com/arquivos/ids/159679/DOLEX-TABL-FORT-NF-500-MG-X8-81000212-1.jpg?v=638153041774300000', // Transparente
 
         categoria_id: 1,
         laboratorio_id: 2,
@@ -69,11 +71,12 @@ export class ProductService {
         precio_venta_base: 22000,
         iva_porcentaje: 5,
         stock_minimo: 20,
+        stock_actual: 0, // Test value
         es_controlado: false,
         refrigerado: false,
         estado: 'ACTIVO',
         proximo_vencimiento: '2025-12-31',
-        imagenUrl: 'https://olimpica.vtexassets.com/arquivos/ids/1050317/7702057700119.jpg?v=638126776014500000', // Bote Alto
+        imagenUrl: 'https://olimpica.vtexassets.com/arquivos/ids/1247197/7703363005554_1.jpg?v=638374772257700000', // Bote Alto
 
         categoria_id: 2,
         laboratorio_id: 3,
@@ -90,6 +93,7 @@ export class ProductService {
         precio_venta_base: 12000,
         iva_porcentaje: 0,
         stock_minimo: 50,
+        stock_actual: 100, // Test value
         es_controlado: false,
         refrigerado: false,
         estado: 'ACTIVO',
@@ -111,6 +115,7 @@ export class ProductService {
         precio_venta_base: 85000,
         iva_porcentaje: 0,
         stock_minimo: 5,
+        stock_actual: 25, // Test value
         es_controlado: false,
         refrigerado: true,
         estado: 'ACTIVO',
@@ -144,6 +149,7 @@ export class ProductService {
       iva_porcentaje: 19,
       margen_minimo_porcentaje: 30,
       stock_minimo: 5,
+      stock_actual: 20, // Test value
       es_controlado: false,
       refrigerado: false,
       estado: 'ACTIVO'
