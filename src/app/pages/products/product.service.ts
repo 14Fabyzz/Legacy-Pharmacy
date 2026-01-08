@@ -159,6 +159,13 @@ export class ProductService {
 
   // --- LOGICA DE NEGOCIO (Frontend Side) ---
 
+  getLotesDisponibles(productoId: number): Observable<any[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    // Ajustar endpoint según tu backend real
+    return this.http.get<any[]>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
+  }
+
   classifyByExpiration(products: Producto[]): { vencidos: Producto[], porVencer: Producto[], seguros: Producto[] } {
     const now = new Date();
     const result = {
@@ -197,14 +204,16 @@ export class ProductService {
       codigoInterno: p.codigo_interno,
       codigoBarras: p.codigo_barras,
       nombreComercial: p.nombre_comercial,
+      concentracion: p.concentracion || '', // Map from detailed
+      presentacion: p.presentacion || '',   // Map from detailed
       laboratorio: p.laboratorio?.nombre || 'N/A',
       categoria: p.categoria?.nombre || 'N/A',
       principioActivo: p.principioActivo?.nombre || 'N/A',
       stockTotal: p.stock_actual,
-      stockMinimo: p.stock_minimo, // [NUEVO]
+      stockMinimo: p.stock_minimo,
       precioVentaBase: p.precio_venta_base,
       nivelStock: p.stock_actual <= p.stock_minimo ? 'CRITICO' : (p.stock_actual <= p.stock_minimo * 1.5 ? 'BAJO' : 'OPTIMO'),
-      proximoVencimiento: p.proximo_vencimiento // [NUEVO]
+      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined
     };
   }
 }

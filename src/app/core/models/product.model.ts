@@ -87,15 +87,17 @@ export interface ProductoRequest {
 // Basada en v_stock_productos (JSON Backend)
 export interface ProductoCard {
     id: number;
-    nombreComercial: string;      // "nombreComercial" en vez de "nombre"
+    nombreComercial: string;
+    concentracion: string;        // [NUEVO]
+    presentacion: string;         // [NUEVO]
     principioActivo: string;
     codigoInterno: string;
     codigoBarras?: string;
     laboratorio: string;
     categoria: string;
     stockTotal: number;
-    stockMinimo: number;          // [NUEVO]
-    precioVentaBase: number;      // "precioVentaBase" en vez de "precio"
-    nivelStock: string;           // 'OPTIMO', 'BAJO', 'CRITICO'
-    proximoVencimiento?: string | Date; // [NUEVO] Fecha del lote más próximo
+    stockMinimo: number;
+    precioVentaBase: number;
+    nivelStock: string;
+    proximoVencimiento?: string;  // Change to string as requested
 }

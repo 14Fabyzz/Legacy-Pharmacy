@@ -95,24 +95,27 @@
             <td>
               <div class="product-cell-main">
                 <!-- Icono -->
-                <div class="product-icon-circle" (click)="openImageModal(product)" title="Ver imagen">
-                  <!-- Asumimos que imagenUrl no viene en la vista, o si viene se puede añadir al modelo -->
+                <div class="product-icon-circle" (click)="verImagen(product)" title="Ver imagen">
                   <span *ngIf="true">💊</span>
                 </div>
                 <div class="product-name-wrapper">
                   <span class="product-name-text">{{ product.nombreComercial }}</span>
-                  <small class="product-subtext">{{ product.principioActivo }}</small>
+                  <small class="product-subtext">{{ product.principioActivo }} {{ product.concentracion }}</small>
+                  <!-- Badge Existente (Presentación) -->
+                  <span class="status-badge-table"
+                    style="background-color: #f1f5f9; color: #64748b; font-size: 0.75rem; margin-top: 4px; align-self: flex-start;">
+                    {{ product.presentacion }}
+                  </span>
                 </div>
               </div>
             </td>
 
-            <!-- 2. Referencia (Código Barras) -->
+            <!-- 2. Referencia (Código Interno) -->
             <td>
               <div class="code-cell">
                 <span class="barcode-text">
-                  <span class="barcode-icon">🏁</span> {{ product.codigoBarras || '---' }}
+                  <span class="barcode-icon">🏁</span> {{ product.codigoInterno }}
                 </span>
-                <small class="id-text">{{ product.codigoInterno }}</small>
               </div>
             </td>
 
@@ -121,7 +124,7 @@
               <span class="lab-text">{{ product.laboratorio }}</span>
             </td>
 
-            <!-- 4. Stock Badge (Actualizado) -->
+            <!-- 4. Stock Badge -->
             <td>
               <div class="stock-badge-container" [ngClass]="{
                      'stock-low': product.nivelStock === 'CRITICO' || product.nivelStock === 'BAJO',
@@ -137,8 +140,7 @@
             <td>
               <div *ngIf="product.proximoVencimiento; else noVencimiento">
                 <span class="vencimiento-text"
-                  [ngClass]="getVencimientoStatus(product.proximoVencimiento) === 'red' ? 'text-danger' : 
-                                  (getVencimientoStatus(product.proximoVencimiento) === 'yellow' ? 'text-warning' : 'text-ok')">
+                  [ngClass]="{'text-danger': getVencimientoStatus(product.proximoVencimiento) === 'red' }">
                   <span class="icon-clock">📅</span> {{ product.proximoVencimiento | date:'dd/MM/yyyy' }}
                 </span>
               </div>
@@ -162,12 +164,11 @@
             <!-- 8. Acciones -->
             <td class="text-right">
               <div class="table-actions">
-                <button title="Ver Detalles" (click)="openDetailModal(product)" class="btn-icon">👁️</button>
-                <button title="Gestionar Imagen" (click)="openImageModal(product)" class="btn-icon">🖼️</button>
-                <button title="Kardex" [routerLink]="['/app/productos/kardex', product.id]" class="btn-icon">📊</button>
-                <button title="Editar" [routerLink]="['/app/productos/editar', product.id]"
-                  class="btn-icon edit">✏️</button>
-                <button title="Eliminar" (click)="openDeleteModal(product)" class="btn-icon delete">🗑️</button>
+                <button title="Ver Detalles (Lotes)" (click)="verDetalle(product)" class="btn-icon">👁️</button>
+                <button title="Ver Imagen" (click)="verImagen(product)" class="btn-icon">🖼️</button>
+                <button title="Kardex" (click)="verKardex(product)" class="btn-icon">📊</button>
+                <button title="Editar" (click)="editarProducto(product)" class="btn-icon edit">✏️</button>
+                <button title="Eliminar" (click)="eliminarProducto(product)" class="btn-icon delete">🗑️</button>
               </div>
             </td>
 
@@ -182,99 +183,9 @@
   </ng-container>
 
   <!-- ================= MODALES ================= -->
+  <!-- Modales nativos eliminados a favor de SweetAlert2 -->
 
-  <!-- 1. MODAL ELIMINAR (Confirmación segura) -->
-  <div class="modal-overlay" *ngIf="showDeleteModal && selectedProduct">
-    <div class="modal-content danger">
-      <h3>⚠️ Desactivar Producto</h3>
-      <p>Estás a punto de desactivar <strong>{{ selectedProduct.nombre_comercial }}</strong>.</p>
-      <p class="warning-text">Esta acción sacará el producto de la venta. Para confirmar, escribe el nombre del producto
-        abajo:</p>
-
-      <input type="text" class="confirm-input" [(ngModel)]="deleteConfirmationName"
-        [placeholder]="selectedProduct.nombre_comercial">
-
-      <div class="modal-actions">
-        <button class="btn-cancel" (click)="closeModals()">Cancelar</button>
-        <button class="btn-confirm-delete" [disabled]="deleteConfirmationName !== selectedProduct.nombre_comercial"
-          (click)="confirmDelete()">
-          Confirmar Desactivación
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 2. MODAL DETALLES -->
-  <div class="modal-overlay" *ngIf="showDetailModal && selectedProduct">
-    <div class="modal-content">
-      <h3>Detalles del Producto</h3>
-      <div class="detail-list">
-        <p><strong>Nombre:</strong> {{ selectedProduct.nombre_comercial }}</p>
-        <p><strong>Código:</strong> {{ selectedProduct.codigo_interno }}</p>
-        <p><strong>Presentación:</strong> {{ selectedProduct.presentacion }}</p>
-        <p><strong>INVIMA:</strong> {{ selectedProduct.registro_invima || 'N/A' }}</p>
-        <p><strong>Controlado:</strong> {{ selectedProduct.es_controlado ? 'SÍ' : 'NO' }}</p>
-        <p><strong>Refrigerado:</strong> {{ selectedProduct.refrigerado ? 'SÍ' : 'NO' }}</p>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-primary" (click)="closeModals()">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. MODAL IMAGEN -->
-  <div class="modal-overlay" *ngIf="showImageModal && selectedProduct">
-    <div class="modal-content">
-      <h3>Gestionar Imagen</h3>
-      <div class="image-upload-area">
-        <div class="current-image">
-          <!-- Aquí iría la imagen real -->
-          <div class="image-placeholder large">💊</div>
-        </div>
-        <label class="btn-upload">
-          Subir Nueva Imagen
-          <input type="file" (change)="onImageSelected($event)" hidden accept="image/*">
-        </label>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-cancel" (click)="closeModals()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. MODAL KARDEX -->
-  <div class="modal-overlay" *ngIf="showKardexModal && selectedProduct">
-    <div class="modal-content large">
-      <h3>Kardex: {{ selectedProduct.nombre_comercial }}</h3>
-      <table class="kardex-table">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Movimiento</th>
-            <th>Detalle</th>
-            <th>Cant.</th>
-            <th>Saldo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let mov of kardexData">
-            <td>{{ mov.fecha }}</td>
-            <td><span class="badge" [class.in]="mov.tipo=='ENTRADA'" [class.out]="mov.tipo=='SALIDA'">{{ mov.tipo
-                }}</span></td>
-            <td>{{ mov.detalle }}</td>
-            <td>{{ mov.cantidad }}</td>
-            <td><strong>{{ mov.saldo }}</strong></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="modal-actions">
-        <button class="btn-primary" (click)="closeModals()">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- 5. MODAL SEMÁFORO -->
+  <!-- MODAL SEMÁFORO (Mantenido porque es un componente angular complejo) -->
   <app-expiration-semaphore *ngIf="showSemaphoreModal" (close)="closeModals()"></app-expiration-semaphore>
 
 </div>
