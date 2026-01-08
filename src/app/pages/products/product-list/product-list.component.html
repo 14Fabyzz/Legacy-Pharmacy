@@ -82,8 +82,9 @@
             <th>Referencia</th>
             <th>Laboratorio</th>
             <th>Stock</th>
+            <th>Vencimiento</th> <!-- [NUEVO] -->
             <th>Precio</th>
-            <th>Estado</th>
+            <th>Categoría</th>
             <th class="text-right" style="padding-right: 20px;">Acciones</th>
           </tr>
         </thead>
@@ -94,14 +95,13 @@
             <td>
               <div class="product-cell-main">
                 <!-- Icono -->
-                <!-- Icono o Imagen -->
                 <div class="product-icon-circle" (click)="openImageModal(product)" title="Ver imagen">
-                  <img *ngIf="product.imagenUrl" [src]="product.imagenUrl" class="product-list-img" alt="Foto">
-                  <span *ngIf="!product.imagenUrl">💊</span>
+                  <!-- Asumimos que imagenUrl no viene en la vista, o si viene se puede añadir al modelo -->
+                  <span *ngIf="true">💊</span>
                 </div>
                 <div class="product-name-wrapper">
-                  <span class="product-name-text">{{ product.nombre_comercial }}</span>
-                  <small class="product-subtext">{{ product.concentracion }}</small>
+                  <span class="product-name-text">{{ product.nombreComercial }}</span>
+                  <small class="product-subtext">{{ product.principioActivo }}</small>
                 </div>
               </div>
             </td>
@@ -110,42 +110,56 @@
             <td>
               <div class="code-cell">
                 <span class="barcode-text">
-                  <span class="barcode-icon">🏁</span> {{ product.codigo_barras }}
+                  <span class="barcode-icon">🏁</span> {{ product.codigoBarras || '---' }}
                 </span>
-                <small class="id-text">{{ product.codigo_interno }}</small>
+                <small class="id-text">{{ product.codigoInterno }}</small>
               </div>
             </td>
 
             <!-- 3. Laboratorio -->
             <td>
-              <span class="lab-text">{{ product.laboratorio_nombre || 'N/A' }}</span>
+              <span class="lab-text">{{ product.laboratorio }}</span>
             </td>
 
-            <!-- 4. Stock Badge -->
+            <!-- 4. Stock Badge (Actualizado) -->
             <td>
               <div class="stock-badge-container" [ngClass]="{
-                     'stock-low': (product.stock_actual || 0) < product.stock_minimo,
-                     'stock-ok': (product.stock_actual || 0) >= product.stock_minimo
+                     'stock-low': product.nivelStock === 'CRITICO' || product.nivelStock === 'BAJO',
+                     'stock-ok': product.nivelStock === 'OPTIMO' || product.nivelStock === 'ALTO'
                    }">
-                <span class="stock-value">{{ product.stock_actual || 0 }}</span>
+                <span class="stock-value">{{ product.stockTotal }}</span>
                 <span class="stock-divider">/</span>
-                <span class="stock-min">{{ product.stock_minimo }} Min</span>
+                <span class="stock-min">Min: {{ product.stockMinimo }}</span>
               </div>
             </td>
 
-            <!-- 5. Precio -->
+            <!-- 5. [NUEVO] Vencimiento -->
             <td>
-              <span class="price-cell">{{ product.precio_venta_base | currency:'USD':'symbol':'1.0-0' }}</span>
+              <div *ngIf="product.proximoVencimiento; else noVencimiento">
+                <span class="vencimiento-text"
+                  [ngClass]="getVencimientoStatus(product.proximoVencimiento) === 'red' ? 'text-danger' : 
+                                  (getVencimientoStatus(product.proximoVencimiento) === 'yellow' ? 'text-warning' : 'text-ok')">
+                  <span class="icon-clock">📅</span> {{ product.proximoVencimiento | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+              <ng-template #noVencimiento>
+                <span class="text-muted">N/A</span>
+              </ng-template>
             </td>
 
-            <!-- 6. Estado -->
+            <!-- 6. Precio -->
             <td>
-              <span class="status-badge-table" [class.active]="product.estado === 'ACTIVO'">
-                {{ product.estado === 'ACTIVO' ? 'ACTIVO' : 'INACTIVO' }}
+              <span class="price-cell">{{ product.precioVentaBase | currency }}</span>
+            </td>
+
+            <!-- 7. Categoría -->
+            <td>
+              <span class="status-badge-table">
+                {{ product.categoria }}
               </span>
             </td>
 
-            <!-- 7. Acciones -->
+            <!-- 8. Acciones -->
             <td class="text-right">
               <div class="table-actions">
                 <button title="Ver Detalles" (click)="openDetailModal(product)" class="btn-icon">👁️</button>

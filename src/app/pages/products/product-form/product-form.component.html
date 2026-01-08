@@ -39,12 +39,12 @@
       <div class="form-row">
         <div class="form-group">
           <label>Código Interno / SKU *</label>
-          <input type="text" formControlName="codigo_interno" placeholder="Ej: DOLEX-500">
+          <input type="text" formControlName="codigoInterno" placeholder="Ej: DOLEX-500">
         </div>
         <div class="form-group">
           <label>Código de Barras</label>
           <div class="input-with-icon">
-            <input type="text" formControlName="codigo_barras" #barcodeInput (change)="validateBarcode()"
+            <input type="text" formControlName="codigoBarras" #barcodeInput (change)="validateBarcode()"
               (keyup.enter)="validateBarcode()">
             <button type="button" class="btn-icon-inside" (click)="focusBarcodeInput()" title="Escanear">
               <span class="icon-barcode">|||</span>
@@ -53,7 +53,7 @@
         </div>
         <div class="form-group full-width">
           <label>Nombre Comercial *</label>
-          <input type="text" formControlName="nombre_comercial" placeholder="Ej: Dolex Forte">
+          <input type="text" formControlName="nombreComercial" placeholder="Ej: Dolex Forte">
         </div>
       </div>
     </fieldset>
@@ -64,23 +64,23 @@
       <div class="form-row">
         <div class="form-group">
           <label>Principio Activo *</label>
-          <select formControlName="principio_activo_id">
+          <select formControlName="principioActivoId">
             <option [ngValue]="null">Seleccione...</option>
-            <option *ngFor="let pa of principiosActivos" [value]="pa.id">{{ pa.nombre }}</option>
+            <option *ngFor="let pa of principiosActivos" [ngValue]="pa.id">{{ pa.nombre }}</option>
           </select>
         </div>
         <div class="form-group">
           <label>Laboratorio *</label>
-          <select formControlName="laboratorio_id">
+          <select formControlName="laboratorioId">
             <option [ngValue]="null">Seleccione...</option>
-            <option *ngFor="let lab of laboratorios" [value]="lab.id">{{ lab.nombre }}</option>
+            <option *ngFor="let lab of laboratorios" [ngValue]="lab.id">{{ lab.nombre }}</option>
           </select>
         </div>
         <div class="form-group">
           <label>Categoría *</label>
-          <select formControlName="categoria_id">
+          <select formControlName="categoriaId">
             <option [ngValue]="null">Seleccione...</option>
-            <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
+            <option *ngFor="let cat of categorias" [ngValue]="cat.id">{{ cat.nombre }}</option>
           </select>
         </div>
       </div>
@@ -96,7 +96,7 @@
         </div>
         <div class="form-group">
           <label>Registro INVIMA</label>
-          <input type="text" formControlName="registro_invima">
+          <input type="text" formControlName="registroInvima">
         </div>
       </div>
     </fieldset>
@@ -107,21 +107,21 @@
       <div class="form-row">
         <div class="form-group">
           <label>Precio Venta Base ($) *</label>
-          <input type="number" formControlName="precio_venta_base">
+          <input type="number" formControlName="precioVentaBase">
         </div>
         <div class="form-group">
           <label>IVA (%)</label>
-          <input type="number" formControlName="iva_porcentaje">
+          <input type="number" formControlName="ivaPorcentaje">
         </div>
         <div class="form-group">
           <label>Stock Mínimo (Alerta)</label>
-          <input type="number" formControlName="stock_minimo">
+          <input type="number" formControlName="stockMinimo">
         </div>
       </div>
 
       <div class="form-row checkboxes-row">
         <div class="checkbox-group">
-          <input type="checkbox" id="es_controlado" formControlName="es_controlado">
+          <input type="checkbox" id="es_controlado" formControlName="esControlado">
           <label for="es_controlado">Es Medicamento Controlado</label>
         </div>
         <div class="checkbox-group">

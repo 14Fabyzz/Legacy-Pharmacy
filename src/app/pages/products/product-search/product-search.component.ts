@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ProductService } from '../product.service';
-import { Producto } from '../../../core/models/inventory.model';
+import { Producto } from '../../../core/models/product.model';
 
 @Component({
     selector: 'app-product-search',

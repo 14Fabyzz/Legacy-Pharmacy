@@ -44,7 +44,16 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<AuthResponse> {
     // Esto hará POST a: http://localhost:8080/api/usuarios/login
     // El Gateway lo transformará a: http://localhost:8082/api/login
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+      tap(response => {
+        if (response && response.token) {
+          this.saveToken(response.token);
+          if (response.user) {
+            this.saveUser(response.user);
+          }
+        }
+      })
+    );
   }
 
   // /**

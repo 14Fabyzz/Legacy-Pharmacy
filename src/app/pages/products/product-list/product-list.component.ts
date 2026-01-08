@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ProductService } from '../product.service';
 import { SearchPipe } from '../../../shared/pipes/search.pipe';
-import { Producto } from '../../../core/models/inventory.model';
+import { Producto, ProductoCard } from '../../../core/models/product.model';
 import { ExpirationSemaphoreComponent } from '../expiration-semaphore/expiration-semaphore.component';
 
 @Component({
@@ -18,7 +18,7 @@ import { ExpirationSemaphoreComponent } from '../expiration-semaphore/expiration
 })
 export class ProductListComponent implements OnInit {
   public searchTerm: string = '';
-  public products$!: Observable<Producto[]>;
+  public products$!: Observable<ProductoCard[]>;
 
   // Variables para controlar los Modales
   showDeleteModal = false;
@@ -28,7 +28,7 @@ export class ProductListComponent implements OnInit {
   showSemaphoreModal = false; // New modal state
 
   // Datos para los modales
-  selectedProduct: Producto | null = null;
+  selectedProduct: Producto | null = null; // Los modales requieren detalle completo, se pedirá por ID
   deleteConfirmationName: string = ''; // Lo que escribe el usuario para confirmar
   kardexData: any[] = []; // Para guardar el historial
 
@@ -45,36 +45,21 @@ export class ProductListComponent implements OnInit {
   expiredCount: number = 0;
 
   loadProducts() {
-    this.products$ = this.productService.getProducts().pipe(
-      tap(products => this.calculateInventoryHealth(products))
+    // Usamos el endpoint optimizado para el Dashboard (v_stock_productos)
+    this.products$ = this.productService.getProductosAlmacen().pipe(
+      tap(products => {
+        // Opcional: Si el backend enviara info de vencimiento en ProductoCard, calcularíamos salud aquí.
+        // Por ahora, asumimos que el endpoint de Dashboard ya filtra o ordena.
+        // this.calculateInventoryHealth(products); 
+      })
     );
   }
 
-  calculateInventoryHealth(products: Producto[]) {
+  calculateInventoryHealth(products: any[]) {
+    // La lógica de salud requiere fechas de vencimiento (p.proximo_vencimiento).
+    // ProductoCard actualmente no trae esa info. Se rehabilita si el backend la incluye.
     this.expiredCount = 0;
-    let nearExpiryCount = 0;
-    const now = new Date();
-
-    products.forEach(p => {
-      if (!p.proximo_vencimiento) return;
-      const expiry = new Date(p.proximo_vencimiento);
-      const diffTime = expiry.getTime() - now.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 3600 * 24));
-
-      if (diffDays < 0) {
-        this.expiredCount++;
-      } else if (diffDays <= 30) {
-        nearExpiryCount++;
-      }
-    });
-
-    if (this.expiredCount > 0) {
-      this.inventoryHealthStatus = 'critical';
-    } else if (nearExpiryCount > 0) {
-      this.inventoryHealthStatus = 'alert';
-    } else {
-      this.inventoryHealthStatus = 'healthy';
-    }
+    this.inventoryHealthStatus = 'healthy';
   }
 
   openSemaphoreModal() {
@@ -103,16 +88,20 @@ export class ProductListComponent implements OnInit {
   }
 
   // --- LÓGICA DE ELIMINAR (SOFT DELETE) ---
-  openDeleteModal(product: Producto) {
-    this.selectedProduct = product;
-    this.deleteConfirmationName = ''; // Resetear el campo
-    this.showDeleteModal = true;
+  openDeleteModal(product: ProductoCard) {
+    // Buscamos el producto completo para confirmar con su nombre exacto y tener ID seguro
+    this.productService.getProductById(product.id).subscribe(fullProduct => {
+      this.selectedProduct = fullProduct;
+      this.deleteConfirmationName = '';
+      this.showDeleteModal = true;
+    });
   }
 
   confirmDelete() {
     if (!this.selectedProduct) return;
 
     // Verificación de seguridad: El nombre debe coincidir exacto
+    // selectedProduct es tipo Producto (completo), tiene nombre_comercial
     if (this.deleteConfirmationName !== this.selectedProduct.nombre_comercial) {
       alert('El nombre no coincide. No se puede eliminar.');
       return;
@@ -126,15 +115,19 @@ export class ProductListComponent implements OnInit {
   }
 
   // --- LÓGICA DE DETALLES ---
-  openDetailModal(product: Producto) {
-    this.selectedProduct = product;
-    this.showDetailModal = true;
+  openDetailModal(product: ProductoCard) {
+    this.productService.getProductById(product.id).subscribe(fullProduct => {
+      this.selectedProduct = fullProduct;
+      this.showDetailModal = true;
+    });
   }
 
   // --- LÓGICA DE IMAGEN ---
-  openImageModal(product: Producto) {
-    this.selectedProduct = product;
-    this.showImageModal = true;
+  openImageModal(product: ProductoCard) {
+    this.productService.getProductById(product.id).subscribe(fullProduct => {
+      this.selectedProduct = fullProduct;
+      this.showImageModal = true;
+    });
   }
 
   onImageSelected(event: any) {
@@ -148,11 +141,14 @@ export class ProductListComponent implements OnInit {
   }
 
   // --- LÓGICA DE KARDEX ---
-  openKardexModal(product: Producto) {
-    this.selectedProduct = product;
-    this.productService.getProductKardex(product.id).subscribe(data => {
-      this.kardexData = data;
-      this.showKardexModal = true;
+  openKardexModal(product: ProductoCard) {
+    // Para Kardex también es mejor asegurar la info completa o solo usar ID
+    this.productService.getProductById(product.id).subscribe(fullProduct => {
+      this.selectedProduct = fullProduct;
+      this.productService.getProductKardex(product.id).subscribe(data => {
+        this.kardexData = data;
+        this.showKardexModal = true;
+      });
     });
   }
 

@@ -51,7 +51,7 @@
             <div class="suggestions-dropdown" *ngIf="filteredSuggestions.length > 0">
                 <div *ngFor="let p of filteredSuggestions" class="suggestion-item" (click)="selectProduct(p)">
                     <div class="sugg-name">{{ p.nombre_comercial }}</div>
-                    <div class="sugg-meta">{{ p.concentracion }} - {{ p.laboratorio_nombre }}</div>
+                    <div class="sugg-meta">{{ p.concentracion }} - {{ p.laboratorio.nombre }}</div>
                 </div>
             </div>
         </div>
@@ -75,7 +75,7 @@
                         }}</span>
 
                     <div class="meta-tags">
-                        <span class="tag lab">{{ selectedProduct.laboratorio_nombre }}</span>
+                        <span class="tag lab">{{ selectedProduct.laboratorio.nombre }}</span>
 
                         <span class="tag stock" [ngClass]="{'low': (selectedProduct.stock_actual || 0) < 5}">
                             Stock: {{ selectedProduct.stock_actual }}
