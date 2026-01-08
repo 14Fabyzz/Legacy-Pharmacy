@@ -9,127 +9,133 @@ import { Producto } from '../../core/models/inventory.model';
   providedIn: 'root'
 })
 export class ProductService {
-  // private apiUrl = 'http://localhost:8080';
+  private apiUrl = 'http://localhost:8080/api/inventario';
 
   constructor(private http: HttpClient) { }
 
-  // Cambiamos 'any[]' por 'Producto[]' para asegurar que los datos sean correctos
   getProducts(): Observable<Producto[]> {
-    const mockProducts: Producto[] = [
-      {
-        id: 1,
-        codigo_interno: 'PROD-001',
-        codigo_barras: '7701001001',
-        nombre_comercial: 'Dolex',
-        concentracion: '500mg',
-        presentacion: 'Caja x 20 Tab',
-        laboratorio_nombre: 'GSK',
-        precio_venta_base: 8000,
-        iva_porcentaje: 0,
-        stock_minimo: 10,
-        stock_actual: 15, // Test value
-        es_controlado: false,
-        refrigerado: false,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2024-04-15',
-        imagenUrl: 'https://unidrogas.vtexassets.com/arquivos/ids/436978/7707397792626.jpg?v=638891176625900000', // Caja
-
-        categoria_id: 1,
-        laboratorio_id: 1,
-        precio_compra_referencia: 5000
-      },
-      {
-        id: 2,
-        codigo_interno: 'PROD-002',
-        codigo_barras: '7701001002',
-        nombre_comercial: 'Advil',
-        concentracion: '400mg',
-        presentacion: 'Caja x 10 Caps',
-        laboratorio_nombre: 'Pfizer',
-        precio_venta_base: 15200,
-        iva_porcentaje: 19,
-        stock_minimo: 5,
-        stock_actual: 50, // Test value
-        es_controlado: false,
-        refrigerado: false,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2024-09-01',
-        imagenUrl: 'https://ortopedicosfuturoco.vtexassets.com/arquivos/ids/159679/DOLEX-TABL-FORT-NF-500-MG-X8-81000212-1.jpg?v=638153041774300000', // Transparente
-
-        categoria_id: 1,
-        laboratorio_id: 2,
-        precio_compra_referencia: 11000
-      },
-      {
-        id: 3,
-        codigo_interno: 'PROD-003',
-        codigo_barras: '7701001003',
-        nombre_comercial: 'Vitamina C',
-        concentracion: '1g',
-        presentacion: 'Frasco x 30 Tab',
-        laboratorio_nombre: 'MK',
-        precio_venta_base: 22000,
-        iva_porcentaje: 5,
-        stock_minimo: 20,
-        stock_actual: 0, // Test value
-        es_controlado: false,
-        refrigerado: false,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2025-12-31',
-        imagenUrl: 'https://olimpica.vtexassets.com/arquivos/ids/1247197/7703363005554_1.jpg?v=638374772257700000', // Bote Alto
-
-        categoria_id: 2,
-        laboratorio_id: 3,
-        precio_compra_referencia: 15000
-      },
-      {
-        id: 4,
-        codigo_interno: 'PROD-004',
-        codigo_barras: '7701001004',
-        nombre_comercial: 'Acetaminofén',
-        concentracion: '500mg',
-        presentacion: 'Caja x 100 Tab',
-        laboratorio_nombre: 'La Santé',
-        precio_venta_base: 12000,
-        iva_porcentaje: 0,
-        stock_minimo: 50,
-        stock_actual: 100, // Test value
-        es_controlado: false,
-        refrigerado: false,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2023-12-01',
-        imagenUrl: 'https://placehold.co/100x100?text=Sin+Foto', // Placeholder
-
-        categoria_id: 1,
-        laboratorio_id: 4,
-        precio_compra_referencia: 8000
-      },
-      {
-        id: 5,
-        codigo_interno: 'PROD-005',
-        codigo_barras: '7701001005',
-        nombre_comercial: 'Insulina Glargina',
-        concentracion: '100 UI/ml',
-        presentacion: 'Lapicero Prellenado',
-        laboratorio_nombre: 'Sanofi',
-        precio_venta_base: 85000,
-        iva_porcentaje: 0,
-        stock_minimo: 5,
-        stock_actual: 25, // Test value
-        es_controlado: false,
-        refrigerado: true,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2024-07-20',
-        imagenUrl: 'https://placehold.co/100x100?text=Sin+Foto',
-
-        categoria_id: 3,
-        laboratorio_id: 5,
-        precio_compra_referencia: 60000
-      }
-    ];
-
-    return of(mockProducts).pipe(delay(100));
+    // Angular llama a: http://localhost:8080/api/inventario
+    // Gateway traduce a: http://localhost:8081/api/v1/inventario
+    return this.http.get<Producto[]>(this.apiUrl);
   }
+
+  // // Cambiamos 'any[]' por 'Producto[]' para asegurar que los datos sean correctos
+  // getProducts(): Observable<Producto[]> {
+  //   const mockProducts: Producto[] = [
+  //     {
+  //       id: 1,
+  //       codigo_interno: 'PROD-001',
+  //       codigo_barras: '7701001001',
+  //       nombre_comercial: 'Dolex',
+  //       concentracion: '500mg',
+  //       presentacion: 'Caja x 20 Tab',
+  //       laboratorio_nombre: 'GSK',
+  //       precio_venta_base: 8000,
+  //       iva_porcentaje: 0,
+  //       stock_minimo: 10,
+  //       stock_actual: 15, // Test value
+  //       es_controlado: false,
+  //       refrigerado: false,
+  //       estado: 'ACTIVO',
+  //       proximo_vencimiento: '2024-04-15',
+  //       imagenUrl: 'https://unidrogas.vtexassets.com/arquivos/ids/436978/7707397792626.jpg?v=638891176625900000', // Caja
+  //
+  //       categoria_id: 1,
+  //       laboratorio_id: 1,
+  //       precio_compra_referencia: 5000
+  //     },
+  //     {
+  //       id: 2,
+  //       codigo_interno: 'PROD-002',
+  //       codigo_barras: '7701001002',
+  //       nombre_comercial: 'Advil',
+  //       concentracion: '400mg',
+  //       presentacion: 'Caja x 10 Caps',
+  //       laboratorio_nombre: 'Pfizer',
+  //       precio_venta_base: 15200,
+  //       iva_porcentaje: 19,
+  //       stock_minimo: 5,
+  //       stock_actual: 50, // Test value
+  //       es_controlado: false,
+  //       refrigerado: false,
+  //       estado: 'ACTIVO',
+  //       proximo_vencimiento: '2024-09-01',
+  //       imagenUrl: 'https://ortopedicosfuturoco.vtexassets.com/arquivos/ids/159679/DOLEX-TABL-FORT-NF-500-MG-X8-81000212-1.jpg?v=638153041774300000', // Transparente
+  //
+  //       categoria_id: 1,
+  //       laboratorio_id: 2,
+  //       precio_compra_referencia: 11000
+  //     },
+  //     {
+  //       id: 3,
+  //       codigo_interno: 'PROD-003',
+  //       codigo_barras: '7701001003',
+  //       nombre_comercial: 'Vitamina C',
+  //       concentracion: '1g',
+  //       presentacion: 'Frasco x 30 Tab',
+  //       laboratorio_nombre: 'MK',
+  //       precio_venta_base: 22000,
+  //       iva_porcentaje: 5,
+  //       stock_minimo: 20,
+  //       stock_actual: 0, // Test value
+  //       es_controlado: false,
+  //       refrigerado: false,
+  //       estado: 'ACTIVO',
+  //       proximo_vencimiento: '2025-12-31',
+  //       imagenUrl: 'https://olimpica.vtexassets.com/arquivos/ids/1247197/7703363005554_1.jpg?v=638374772257700000', // Bote Alto
+  //
+  //       categoria_id: 2,
+  //       laboratorio_id: 3,
+  //       precio_compra_referencia: 15000
+  //     },
+  //     {
+  //       id: 4,
+  //       codigo_interno: 'PROD-004',
+  //       codigo_barras: '7701001004',
+  //       nombre_comercial: 'Acetaminofén',
+  //       concentracion: '500mg',
+  //       presentacion: 'Caja x 100 Tab',
+  //       laboratorio_nombre: 'La Santé',
+  //       precio_venta_base: 12000,
+  //       iva_porcentaje: 0,
+  //       stock_minimo: 50,
+  //       stock_actual: 100, // Test value
+  //       es_controlado: false,
+  //       refrigerado: false,
+  //       estado: 'ACTIVO',
+  //       proximo_vencimiento: '2023-12-01',
+  //       imagenUrl: 'https://placehold.co/100x100?text=Sin+Foto', // Placeholder
+  //
+  //       categoria_id: 1,
+  //       laboratorio_id: 4,
+  //       precio_compra_referencia: 8000
+  //     },
+  //     {
+  //       id: 5,
+  //       codigo_interno: 'PROD-005',
+  //       codigo_barras: '7701001005',
+  //       nombre_comercial: 'Insulina Glargina',
+  //       concentracion: '100 UI/ml',
+  //       presentacion: 'Lapicero Prellenado',
+  //       laboratorio_nombre: 'Sanofi',
+  //       precio_venta_base: 85000,
+  //       iva_porcentaje: 0,
+  //       stock_minimo: 5,
+  //       stock_actual: 25, // Test value
+  //       es_controlado: false,
+  //       refrigerado: true,
+  //       estado: 'ACTIVO',
+  //       proximo_vencimiento: '2024-07-20',
+  //       imagenUrl: 'https://placehold.co/100x100?text=Sin+Foto',
+  //
+  //       categoria_id: 3,
+  //       laboratorio_id: 5,
+  //       precio_compra_referencia: 60000
+  //     }
+  //   ];
+  //
+  //   return of(mockProducts).pipe(delay(100));
+  // }
 
 
   getProductById(id: number): Observable<Producto> {

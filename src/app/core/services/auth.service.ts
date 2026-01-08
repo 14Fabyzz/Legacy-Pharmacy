@@ -2,14 +2,24 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 // 1. Importamos 'of' para crear respuestas falsas
-import { Observable, BehaviorSubject, tap, of } from 'rxjs'; 
+import { Observable, BehaviorSubject, tap, of } from 'rxjs';
 import { Router } from '@angular/router';
+
+export interface LoginRequest {
+  login: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: any;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // private apiUrl = 'http://localhost:8080'; // No la necesitamos por ahora
+  private apiUrl = 'http://localhost:8080/api/usuarios'; // No la necesitamos por ahora
   private isBrowser: boolean;
 
   private currentUserSubject = new BehaviorSubject<any | null>(null);
@@ -21,7 +31,7 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
-    
+
     // Mantiene la sesión si refrescas la página
     if (this.isBrowser) {
       const user = localStorage.getItem('currentUser');
@@ -31,41 +41,47 @@ export class AuthService {
     }
   }
 
-  /**
-   * SIMULACIÓN DE LOGIN (Backend desconectado)
-   */
-  login(credentials: { username: string, password: string }): Observable<any> {
-    
-    // --- CÓDIGO REAL COMENTADO ---
-    /*
-    return this.http.post(`${this.apiUrl}/api/auth/login`, credentials).pipe(
-      tap((response: any) => {
-        if (response && response.token && response.user) {
-          this.saveToken(response.token);
-          this.saveUser(response.user);
-        }
-      })
-    );
-    */
-
-    // --- CÓDIGO SIMULADO (MOCK) ---
-    const mockResponse = {
-      token: 'token-falso-simulado-123456',
-      user: {
-        // Aquí pones los datos que quieres ver en el sidebar
-        nombre_completo: 'Fabian Benjumea (Mock)', 
-        rol: 'ADMINISTRADOR',
-        email: 'fabian@ejemplo.com'
-      }
-    };
-
-    // Guardamos los datos falsos como si el servidor nos los hubiera enviado
-    this.saveToken(mockResponse.token);
-    this.saveUser(mockResponse.user);
-
-    // Retornamos la respuesta falsa como un Observable
-    return of(mockResponse);
+  login(credentials: LoginRequest): Observable<AuthResponse> {
+    // Esto hará POST a: http://localhost:8080/api/usuarios/login
+    // El Gateway lo transformará a: http://localhost:8082/api/login
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
   }
+
+  // /**
+  //  * SIMULACIÓN DE LOGIN (Backend desconectado)
+  //  */
+  // login(credentials: { username: string, password: string }): Observable<any> {
+  //   
+  //   // --- CÓDIGO REAL COMENTADO ---
+  //   /*
+  //   return this.http.post(`${this.apiUrl}/api/auth/login`, credentials).pipe(
+  //     tap((response: any) => {
+  //       if (response && response.token && response.user) {
+  //         this.saveToken(response.token);
+  //         this.saveUser(response.user);
+  //       }
+  //     })
+  //   );
+  //   */
+  //
+  //   // --- CÓDIGO SIMULADO (MOCK) ---
+  //   const mockResponse = {
+  //     token: 'token-falso-simulado-123456',
+  //     user: {
+  //       // Aquí pones los datos que quieres ver en el sidebar
+  //       nombre_completo: 'Fabian Benjumea (Mock)', 
+  //       rol: 'ADMINISTRADOR',
+  //       email: 'fabian@ejemplo.com'
+  //     }
+  //   };
+  //
+  //   // Guardamos los datos falsos como si el servidor nos los hubiera enviado
+  //   this.saveToken(mockResponse.token);
+  //   this.saveUser(mockResponse.user);
+  //
+  //   // Retornamos la respuesta falsa como un Observable
+  //   return of(mockResponse);
+  // }
 
   // --- El resto de métodos se mantienen igual ---
 

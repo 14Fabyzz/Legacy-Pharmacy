@@ -45,26 +45,31 @@ export class LoginComponent implements OnInit {
     // 1. Pasamos el valor del formulario directamente.
     //    Esto envía: { username: "...", password: "..." }
     //    Coincide con lo que espera el AuthService.
-    this.authService.login(this.loginForm.value).subscribe({
+    const credentials = {
+      login: this.loginForm.value.username,
+      password: this.loginForm.value.password
+    };
+
+    this.authService.login(credentials).subscribe({
       next: (response) => {
         console.log('Login exitoso:', response);
-        
+
         // --- CORRECCIÓN ---
         // 2. NO guardamos el token aquí manualmente.
         //    El AuthService (en su método login) ya se encargó de:
         //      a) Guardar el token en localStorage.
         //      b) Guardar el usuario en localStorage.
         //      c) Avisarle al Sidebar (vía BehaviorSubject) que muestre el nombre.
-        
+
         // Nosotros solo nos encargamos de redirigir.
         this.router.navigate(['/app/dashboard']);
       },
       error: (err) => {
         console.error('Error de login:', err);
         if (err.status === 401 || err.status === 403) {
-             this.loginError = 'Usuario o contraseña incorrectos.';
+          this.loginError = 'Usuario o contraseña incorrectos.';
         } else {
-             this.loginError = 'Error de conexión. Intente más tarde.';
+          this.loginError = 'Error de conexión. Intente más tarde.';
         }
       }
     });
