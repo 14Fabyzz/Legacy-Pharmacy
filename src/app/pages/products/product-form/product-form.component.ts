@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../product.service';
 import { forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';
 import { Categoria, Laboratorio, PrincipioActivo, ProductoRequest } from '../../../core/models/product.model';
 
 @Component({
@@ -91,64 +92,129 @@ export class ProductFormComponent implements OnInit {
     if (idParam) {
       this.productId = +idParam;
       this.isEditMode = true;
+
+      // Regla de Negocio: En edición, el stock no se toca desde aquí
+      this.productForm.get('stockActual')?.disable();
+      this.productForm.get('stockMinimo')?.enable(); // Ese sí se puede editar
+
       this.loadProductData(this.productId);
     }
   }
 
   loadProductData(id: number): void {
+    Swal.fire({
+      title: 'Cargando datos...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
     this.productService.getProductById(id).subscribe({
-      next: (data) => {
-        // Mapeamos los datos del Backend (snake_case o mixto) al formulario (camelCase)
-        this.productForm.patchValue({
-          codigoInterno: data.codigo_interno,
-          codigoBarras: data.codigo_barras,
-          nombreComercial: data.nombre_comercial,
+      // Usamos 'any' porque el backend devuelve CamelCase pero el modelo Producto tiene snake_case
+      // y no queremos refactorizar todo el modelo ahora.
+      next: (data: any) => {
+        Swal.close();
+        console.log('📦 [ProductForm] Datos recibidos del Backend:', data);
+
+        // 1. Mapeo de Objetos Anidados a IDs
+        // El backend devuelve objetos completos ( { id: 1, nombre: '...' } )
+        const _laboratorioId = data.laboratorio?.id || null;
+        const _categoriaId = data.categoria?.id || null;
+        const _principioActivoId = data.principioActivo?.id || null;
+
+        // 2. Construcción del Objeto para el Formulario (Mapeo CamelCase -> CamelCase)
+        // Como el backend YA viene en CamelCase, el mapeo es directo, excepto los IDs.
+        const formData = {
+          // Identificación
+          codigoInterno: data.codigoInterno,
+          codigoBarras: data.codigoBarras,
+          nombreComercial: data.nombreComercial,
+
+          // Farmacología (IDs extraídos)
+          principioActivoId: _principioActivoId,
+          laboratorioId: _laboratorioId,
+          categoriaId: _categoriaId,
+
           concentracion: data.concentracion,
           presentacion: data.presentacion,
-          registroInvima: data.registro_invima,
+          registroInvima: data.registroInvima,
 
-          principioActivoId: data.principioActivo?.id,
-          laboratorioId: data.laboratorio?.id,
-          categoriaId: data.categoria?.id,
+          // Precios y Stock
+          precioVentaBase: data.precioVentaBase,
+          ivaPorcentaje: data.ivaPorcentaje,
+          stockMinimo: data.stockMinimo,
+          stockActual: data.stockActual || 0, // Si viene nulo
 
-          precioVentaBase: data.precio_venta_base,
-          ivaPorcentaje: data.iva_porcentaje,
-          stockMinimo: data.stock_minimo,
-          stockActual: data.stock_actual,
-
-          esControlado: data.es_controlado,
+          // Banderas
+          esControlado: data.esControlado,
           refrigerado: data.refrigerado,
-          estado: data.estado
-        });
+          estado: data.estado || 'ACTIVO'
+        };
+
+        console.log('🛠️ [ProductForm] Datos transformados para patchValue:', formData);
+
+        // 3. Aplicar al Formulario
+        this.productForm.patchValue(formData);
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo cargar la información del producto', 'error');
+        this.router.navigate(['/app/productos/almacen']);
+      }
     });
   }
 
   submitForm(): void {
     if (this.productForm.invalid) {
       this.productForm.markAllAsTouched();
+      Swal.fire('Formulario Inválido', 'Por favor complete los campos obligatorios (*)', 'warning');
       return;
     }
 
-    // El objeto ya sale con estructura camelCase (coincide con ProductoRequest)
-    const productData: ProductoRequest = this.productForm.value;
+    // Obtenemos los valores 'raw' para incluir campos deshabilitados (como stockActual en edición)
+    // Aunque para el PUT, ¿queremos enviar stock?
+    // Si el backend ignora stock en PUT, OK. Si no, enviamos el que ya tenía.
+    const formValue = this.productForm.getRawValue();
+
+    const productData: ProductoRequest = {
+      ...formValue,
+      // Aseguramos que los IDs sean números (por si form trae strings)
+      laboratorioId: Number(formValue.laboratorioId),
+      categoriaId: Number(formValue.categoriaId),
+      principioActivoId: Number(formValue.principioActivoId),
+      // Stock: Si es edición, enviamos lo que había (o 0 si no estaba cargado, aunque debería)
+      stockActual: formValue.stockActual
+    };
+
+    console.log('🚀 [ProductForm] Enviando data:', productData);
+
+    Swal.fire({
+      title: 'Guardando...',
+      didOpen: () => Swal.showLoading()
+    });
 
     if (this.isEditMode && this.productId) {
       this.productService.updateProduct(this.productId, productData).subscribe({
         next: () => {
-          console.log('Producto actualizado');
-          this.router.navigate(['/app/productos/almacen']);
+          Swal.fire('¡Éxito!', 'Producto actualizado correctamente', 'success').then(() => {
+            this.router.navigate(['/app/productos/almacen']);
+          });
         },
-        error: (err) => alert('Error actualizando producto')
+        error: (err) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo actualizar el producto', 'error');
+        }
       });
     } else {
       this.productService.createProduct(productData).subscribe({
         next: () => {
-          console.log('Producto creado');
-          this.router.navigate(['/app/productos/almacen']);
+          Swal.fire('¡Éxito!', 'Producto creado correctamente', 'success').then(() => {
+            this.router.navigate(['/app/productos/almacen']);
+          });
         },
-        error: (err) => alert('Error creando producto')
+        error: (err) => {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo crear el producto', 'error');
+        }
       });
     }
   }
