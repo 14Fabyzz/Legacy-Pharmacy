@@ -6,11 +6,12 @@ import { ProductService } from '../product.service';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Categoria, Laboratorio, PrincipioActivo, ProductoRequest } from '../../../core/models/product.model';
+import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TabsNavComponent],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css']
 })

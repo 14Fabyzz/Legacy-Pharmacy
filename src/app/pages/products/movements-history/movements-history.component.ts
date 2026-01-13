@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-interface MovimientoGlobal {
+export interface AuditoriaItem {
     fecha: Date;
-    tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE';
+    tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE' | 'DEVOLUCION';
     cantidad: number;
     documento_ref: string;
-    usuario: string;
-    // Audit fields
+    usuario_nombre: string;
+    usuario_avatar?: string;
     producto_nombre: string;
-    producto_foto: string;
     producto_lote: string;
+    producto_foto?: string;
 }
 
 @Component({
@@ -22,51 +22,63 @@ interface MovimientoGlobal {
     styleUrls: ['./movements-history.component.css']
 })
 export class MovementsHistoryComponent implements OnInit {
-    movimientos: MovimientoGlobal[] = [];
+    movimientos: AuditoriaItem[] = [];
     loading = true;
 
     constructor() { }
 
     ngOnInit(): void {
-        // Simulate API delay
-        setTimeout(() => {
-            this.generateMockData();
-            this.loading = false;
-        }, 500);
+        this.generateMockData();
     }
 
     generateMockData() {
-        const products = [
-            { name: 'Acetaminofén 500mg', lote: 'L-2023001' },
-            { name: 'Ibuprofeno 400mg', lote: 'L-2023055' },
-            { name: 'Amoxicilina 500mg', lote: 'L-2023101' },
-            { name: 'Loratadina 10mg', lote: 'L-2023222' },
-            { name: 'Omeprazol 20mg', lote: 'L-2023333' },
-            { name: 'Gasas Estériles', lote: 'L-GASA-01' },
-            { name: 'Alcohol Antiséptico', lote: 'L-ALC-99' }
+        this.movimientos = [
+            {
+                fecha: new Date(),
+                tipo: 'ENTRADA',
+                cantidad: 150,
+                documento_ref: 'COM-001',
+                usuario_nombre: 'Carlos Ruiz',
+                producto_nombre: 'Acetaminofén 500mg',
+                producto_lote: 'L-2023001'
+            },
+            {
+                fecha: new Date(new Date().setHours(new Date().getHours() - 2)),
+                tipo: 'SALIDA',
+                cantidad: -5,
+                documento_ref: 'FAC-1024',
+                usuario_nombre: 'Ana Gomez',
+                producto_nombre: 'Ibuprofeno 400mg',
+                producto_lote: 'L-2023055'
+            },
+            {
+                fecha: new Date(new Date().setHours(new Date().getHours() - 5)),
+                tipo: 'AJUSTE',
+                cantidad: -2,
+                documento_ref: 'AJU-099',
+                usuario_nombre: 'Admin Sistema',
+                producto_nombre: 'Amoxicilina 500mg',
+                producto_lote: 'L-2023101'
+            },
+            {
+                fecha: new Date(new Date().setHours(new Date().getHours() - 24)),
+                tipo: 'DEVOLUCION',
+                cantidad: 1,
+                documento_ref: 'NCRE-055',
+                usuario_nombre: 'Luisa Fer',
+                producto_nombre: 'Loratadina 10mg',
+                producto_lote: 'L-2023222'
+            },
+            {
+                fecha: new Date(new Date().setHours(new Date().getHours() - 26)),
+                tipo: 'SALIDA',
+                cantidad: -12,
+                documento_ref: 'FAC-1020',
+                usuario_nombre: 'Ana Gomez',
+                producto_nombre: 'Acetaminofén 500mg',
+                producto_lote: 'L-2023001'
+            }
         ];
-
-        const users = ['Admin', 'Vendedor 1', 'Vendedor 2', 'Supervisor'];
-        const types: ('ENTRADA' | 'SALIDA' | 'AJUSTE')[] = ['ENTRADA', 'SALIDA', 'SALIDA', 'SALIDA', 'AJUSTE'];
-
-        this.movimientos = Array.from({ length: 20 }, (_, i) => {
-            const prod = products[Math.floor(Math.random() * products.length)];
-            const type = types[Math.floor(Math.random() * types.length)];
-
-            // Random time today/yesterday
-            const date = new Date();
-            date.setHours(date.getHours() - Math.floor(Math.random() * 48));
-
-            return {
-                fecha: date,
-                tipo: type,
-                cantidad: Math.floor(Math.random() * 50) + 1,
-                documento_ref: `${type.substring(0, 3)}-${1000 + i}`,
-                usuario: users[Math.floor(Math.random() * users.length)],
-                producto_nombre: prod.name,
-                producto_foto: '', // Placeholder in HTML
-                producto_lote: prod.lote
-            };
-        }).sort((a, b) => b.fecha.getTime() - a.fecha.getTime());
+        this.loading = false;
     }
 }

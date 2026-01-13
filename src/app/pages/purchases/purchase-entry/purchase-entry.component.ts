@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } 
 import { RouterModule } from '@angular/router';
 import { ProductService } from '../../products/product.service';
 import { Producto } from '../../../core/models/inventory.model';
+import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
 
 
 interface EntradaItem {
@@ -20,7 +21,7 @@ interface EntradaItem {
 @Component({
   selector: 'app-purchase-entry',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, TabsNavComponent],
   templateUrl: './purchase-entry.component.html',
   styleUrls: ['./purchase-entry.component.css']
 })

@@ -1,235 +1,233 @@
 .page-container {
-    padding: 30px;
-    background-color: #f8f9fa;
-    min-height: 100vh;
-    font-family: 'Satoshi', sans-serif;
-}
-
-.page-header {
-    margin-bottom: 25px;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .page-header h2 {
-    font-size: 1.8rem;
-    color: #0f172a;
-    font-weight: 800;
-    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
 }
 
 .page-header p {
-    color: #6b7280;
-    margin: 5px 0 0 0;
+    color: #64748b;
+    margin-bottom: 1.5rem;
 }
 
-.actions-bar {
+/* 1. Filter Bar Styles */
+.d-flex {
     display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
+}
+
+.gap-3 {
+    gap: 1rem;
+}
+
+.align-items-center {
     align-items: center;
 }
 
-/* Buscador Integrado */
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
 .search-box {
     position: relative;
-    flex: 1;
-    max-width: 300px;
+    display: flex;
+    align-items: center;
 }
 
 .search-box .icon {
     position: absolute;
     left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.5;
-    pointer-events: none;
+    color: #94a3b8;
 }
 
 .search-input {
-    padding-left: 36px !important;
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #cbd5e1;
+    padding: 10px 10px 10px 38px;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    font-family: 'Satoshi', sans-serif;
+    background: #ffffff;
+    font-size: 0.95rem;
     outline: none;
+    transition: box-shadow 0.2s;
 }
 
 .search-input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 .select-input {
     padding: 10px 12px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    font-family: 'Satoshi', sans-serif;
+    background: white;
     color: #334155;
     outline: none;
-    background: white;
     cursor: pointer;
 }
 
 .btn-export {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    padding: 10px 16px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 10px 20px;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 13px;
     cursor: pointer;
-    transition: all 0.2s;
-    margin-left: auto;
-    /* Push to right if desired, or keep inline */
+    transition: background 0.2s;
+    white-space: nowrap;
 }
 
 .btn-export:hover {
-    background: #e2e8f0;
-    color: #1e293b;
+    background-color: #059669;
 }
 
-/* TABLE STYLES */
+/* 2. Table Styles */
 .custom-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 8px;
-    text-align: left;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.custom-table thead th {
-    background-color: transparent;
-    color: #64748B;
+.custom-table th {
+    background: #f8fafc;
+    padding: 1rem;
     font-size: 0.75rem;
-    font-weight: 600;
     text-transform: uppercase;
+    color: #64748b;
+    font-weight: 700;
     letter-spacing: 0.05em;
-    padding: 0 16px 8px 16px;
-    border: none;
-}
-
-.custom-table tbody tr {
-    background-color: #FFFFFF;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border-radius: 8px;
-}
-
-.custom-table tbody tr:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .custom-table td {
-    padding: 16px;
-    vertical-align: middle;
-    color: #334155;
-    border-top: 1px solid #f1f5f9;
+    padding: 1rem;
     border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
 }
 
-.custom-table td:first-child {
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
-    border-left: 1px solid #f1f5f9;
+.custom-table tr:hover {
+    background-color: #f8fafc;
 }
 
-.custom-table td:last-child {
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
-    border-right: 1px solid #f1f5f9;
-}
-
-.date-group {
-    display: flex;
+/* Utilities for Table Content */
+.d-flex.flex-column {
     flex-direction: column;
 }
 
-.date-group small {
+.fw-bold {
+    font-weight: 700;
+}
+
+.text-dark {
+    color: #334155;
+}
+
+.text-muted {
     color: #94a3b8;
 }
 
-/* Celda de Producto */
-.prod-cell {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.text-success {
+    color: #10b981;
 }
 
-.mini-thumb {
-    width: 36px;
-    height: 36px;
+.text-danger {
+    color: #ef4444;
+}
+
+.font-monospace {
+    font-family: 'Roboto Mono', monospace;
+}
+
+.product-icon-small {
+    width: 32px;
+    height: 32px;
     background: #f1f5f9;
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
-.prod-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.p-name {
-    font-weight: 600;
-    color: #1e293b;
-    font-size: 13px;
-}
-
-.p-lote {
-    font-size: 11px;
-    color: #64748b;
-}
-
-.type-badge {
-    padding: 4px 10px;
-    border-radius: 20px;
+.product-badge {
     font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.type-badge.entrada {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.type-badge.salida {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.type-badge.ajuste {
-    background: #f3f4f6;
-    color: #4b5563;
-}
-
-.doc-ref {
-    font-family: monospace;
+    padding: 2px 6px;
+    border-radius: 4px;
     color: #64748b;
-    font-weight: 600;
+    background: #f1f5f9;
+    width: fit-content;
 }
 
-.text-green {
-    color: #166534;
-    font-weight: 700;
-}
-
-.text-red {
-    color: #dc2626;
-    font-weight: 700;
-}
-
-/* Badges de Usuario */
-.user-badge {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 4px 8px;
-    border-radius: 20px;
-    font-size: 12px;
-    color: #475569;
+/* Badge Styles (Soft Colors) */
+.badge {
     display: inline-block;
-    font-weight: 500;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 9999px;
+    /* Rounded pill */
+}
+
+.bg-soft-success {
+    background-color: #d1fae5;
+}
+
+.text-success {
+    color: #059669;
+}
+
+.bg-soft-danger {
+    background-color: #fee2e2;
+}
+
+.text-danger {
+    color: #dc2626;
+}
+
+.bg-soft-warning {
+    background-color: #fef3c7;
+}
+
+.text-warning {
+    color: #d97706;
+}
+
+.bg-soft-info {
+    background-color: #e0f2fe;
+}
+
+.text-info {
+    color: #0284c7;
+}
+
+/* Blue for Devolucion */
+
+/* Avatar */
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    background: #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #475569;
+    font-size: 0.85rem;
 }

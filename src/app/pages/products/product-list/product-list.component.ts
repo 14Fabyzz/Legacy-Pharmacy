@@ -10,11 +10,12 @@ import { ProductService } from '../product.service';
 import { SearchPipe } from '../../../shared/pipes/search.pipe';
 import { Producto, ProductoCard } from '../../../core/models/product.model';
 import { ExpirationSemaphoreComponent } from '../expiration-semaphore/expiration-semaphore.component';
+import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, SearchPipe, ExpirationSemaphoreComponent],
+  imports: [CommonModule, RouterModule, FormsModule, SearchPipe, ExpirationSemaphoreComponent, TabsNavComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
