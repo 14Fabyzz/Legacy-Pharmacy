@@ -1,8 +1,8 @@
 .tabs-nav {
     display: flex;
-    gap: 24px;
+    gap: 32px;
     border-bottom: 2px solid #e2e8f0;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
     padding-bottom: 0;
     overflow-x: auto;
     /* Para móviles */
@@ -10,13 +10,15 @@
 
 .tabs-nav a {
     text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: #64748b;
-    padding-bottom: 12px;
-    border-bottom: 2px solid transparent;
+    padding-bottom: 16px;
+    border-bottom: 3px solid transparent;
+    /* Borde más grueso para el hover/active también si se desea, o solo active */
     transition: all 0.2s;
-    margin-bottom: -2px;
+    margin-bottom: -3px;
+    /* Ajuste para solapamiento con el borde de 3px */
     white-space: nowrap;
     display: flex;
     align-items: center;
@@ -32,9 +34,9 @@
 
 .tabs-nav a.active {
     color: #3b82f6;
-    border-bottom-color: #3b82f6;
+    border-bottom: 3px solid #3b82f6;
 }
 
 .nav-icon {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
 }
