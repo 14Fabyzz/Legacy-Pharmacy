@@ -88,10 +88,15 @@
 
             <!-- 2. Referencia (Código Interno) -->
             <td>
-              <div class="code-cell">
-                <span class="barcode-text">
-                  <span class="barcode-icon">🏁</span> {{ product.codigoInterno }}
+              <div class="code-cell" style="display: flex; flex-direction: column; align-items: flex-start;">
+                <!-- Línea Superior: Código de Barras -->
+                <span class="barcode-text" style="font-weight: 700; color: #334155; font-size: 0.9rem;">
+                  <span class="barcode-icon">║▌</span> {{ product.codigoBarras || 'S/CB' }}
                 </span>
+                <!-- Línea Inferior: Código Interno -->
+                <small class="text-muted" style="font-size: 0.75rem; color: #94a3b8;">
+                  Ref: {{ product.codigoInterno }}
+                </small>
               </div>
             </td>
 
