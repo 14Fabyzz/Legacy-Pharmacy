@@ -13,17 +13,19 @@ export class ProductSearchComponent implements OnInit {
     @ViewChild('searchInput') searchInput!: ElementRef;
 
     searchTerm: string = '';
-    products: Producto[] = [];
-    filteredSuggestions: Producto[] = [];
-    selectedProduct: Producto | null = null;
+    products: any[] = [];
+    filteredSuggestions: any[] = [];
+    selectedProduct: any | null = null;
     notFound: boolean = false;
 
     constructor(private productService: ProductService) { }
 
     ngOnInit(): void {
         // Cargar productos en memoria para búsqueda rápida (en app real sería búsqueda server-side)
-        this.productService.getProducts().subscribe(data => {
+        // Usamos getProductosAlmacen para tener el Stock Real calculado
+        this.productService.getProductosAlmacen().subscribe(data => {
             this.products = data;
+            console.log('Productos cargados (Cards):', this.products.length);
         });
 
         // Auto-focus al iniciar
@@ -48,7 +50,7 @@ export class ProductSearchComponent implements OnInit {
 
         // 1. Intentar búsqueda exacta por Código de Barras o Interno (Simulación escáner)
         const exactMatch = this.products.find(p =>
-            p.codigo_barras === term || p.codigo_interno.toLowerCase() === term
+            p.codigoBarras === term || p.codigoInterno?.toLowerCase() === term
         );
 
         if (exactMatch) {
@@ -60,8 +62,8 @@ export class ProductSearchComponent implements OnInit {
 
         // 2. Si no es exacto, buscar coincidencias por nombre (Sugerencias)
         this.filteredSuggestions = this.products.filter(p =>
-            p.nombre_comercial.toLowerCase().includes(term) ||
-            p.codigo_interno.toLowerCase().includes(term)
+            p.nombreComercial.toLowerCase().includes(term) ||
+            p.codigoInterno?.toLowerCase().includes(term)
         ).slice(0, 5); // Max 5 sugerencias
 
         if (this.filteredSuggestions.length === 0) {
@@ -83,7 +85,7 @@ export class ProductSearchComponent implements OnInit {
         this.filteredSuggestions = [];
     }
 
-    selectProduct(product: Producto): void {
+    selectProduct(product: any): void {
         this.selectedProduct = product;
         this.notFound = false;
         this.filteredSuggestions = [];

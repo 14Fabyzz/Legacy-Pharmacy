@@ -26,8 +26,8 @@
             <!-- LISTA DE SUGERENCIAS -->
             <div class="suggestions-dropdown" *ngIf="filteredSuggestions.length > 0">
                 <div *ngFor="let p of filteredSuggestions" class="suggestion-item" (click)="selectProduct(p)">
-                    <div class="sugg-name">{{ p.nombre_comercial }}</div>
-                    <div class="sugg-meta">{{ p.concentracion }} - {{ p.laboratorio.nombre }}</div>
+                    <div class="sugg-name">{{ p.nombreComercial }}</div>
+                    <div class="sugg-meta">{{ p.concentracion }} - {{ p.laboratorio }}</div>
                 </div>
             </div>
         </div>
@@ -46,21 +46,21 @@
 
                 <!-- Info Principal -->
                 <div class="product-info-col">
-                    <h1 class="main-title">{{ selectedProduct.nombre_comercial }}</h1>
+                    <h1 class="main-title">{{ selectedProduct.nombreComercial }}</h1>
                     <span class="subtitle">{{ selectedProduct.concentracion }} | {{ selectedProduct.presentacion
                         }}</span>
 
                     <div class="meta-tags">
-                        <span class="tag lab">{{ selectedProduct.laboratorio.nombre }}</span>
+                        <span class="tag lab">{{ selectedProduct.laboratorio }}</span>
 
-                        <span class="tag stock" [ngClass]="{'low': (selectedProduct.stock_actual || 0) < 5}">
-                            Stock: {{ selectedProduct.stock_actual }}
+                        <span class="tag stock" [ngClass]="{'low': (selectedProduct.stockTotal || 0) < 5}">
+                            Stock: {{ selectedProduct.stockTotal }}
                         </span>
                     </div>
 
                     <div class="price-display">
                         <small>Precio Público</small>
-                        <div class="big-price">{{ selectedProduct.precio_venta_base | currency:'USD':'symbol':'1.0-0' }}
+                        <div class="big-price">{{ selectedProduct.precioVentaBase | currency:'USD':'symbol':'1.0-0' }}
                         </div>
                     </div>
                 </div>
