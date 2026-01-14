@@ -166,6 +166,32 @@ export class ProductService {
     return this.http.get<any[]>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
   }
 
+  // --- VENCIMIENTOS REALES (Endpoints del Usuario) ---
+
+  getLotesVencidos(): Observable<any[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<any[]>(`${this.apiUrl}/lotes/vencidos`, { headers });
+  }
+
+  getLotesPorVencer(): Observable<any[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<any[]>(`${this.apiUrl}/lotes/por-vencer`, { headers });
+  }
+
+  getLotesSeguros(): Observable<any[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<any[]>(`${this.apiUrl}/lotes/seguros`, { headers });
+  }
+
+  darDeBajaLote(loteId: number): Observable<void> {
+    const headers = this.getHeaders();
+    if (!headers) return of(void 0);
+    return this.http.delete<void>(`${this.apiUrl}/lotes/${loteId}`, { headers });
+  }
+
   classifyByExpiration(products: Producto[]): { vencidos: Producto[], porVencer: Producto[], seguros: Producto[] } {
     const now = new Date();
     const result = {
