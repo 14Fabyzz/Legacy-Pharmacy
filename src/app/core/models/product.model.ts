@@ -40,6 +40,7 @@ export interface Producto {
     principioActivo: PrincipioActivo;
 
     precio_venta_base: number;
+    precio_compra_referencia?: number; // Added for Purchase Entry
     iva_porcentaje: number;
     stock_minimo: number;
     stock_actual: number;

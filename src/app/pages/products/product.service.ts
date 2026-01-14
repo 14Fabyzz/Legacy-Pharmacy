@@ -46,7 +46,7 @@ export class ProductService {
   getProductosAlmacen(busqueda?: string): Observable<ProductoCard[]> {
     const headers = this.getHeaders();
     if (!headers) {
-      console.warn('🛑 [ProductService] Sin token o SSR. Cancelando petición a /cards');
+
       return of([]);
     }
 
@@ -180,16 +180,18 @@ export class ProductService {
     return this.http.get<any[]>(`${this.apiUrl}/lotes/por-vencer`, { headers });
   }
 
-  getLotesSeguros(): Observable<any[]> {
-    const headers = this.getHeaders();
-    if (!headers) return of([]);
-    return this.http.get<any[]>(`${this.apiUrl}/lotes/seguros`, { headers });
-  }
+
 
   darDeBajaLote(loteId: number): Observable<void> {
     const headers = this.getHeaders();
     if (!headers) return of(void 0);
     return this.http.delete<void>(`${this.apiUrl}/lotes/${loteId}`, { headers });
+  }
+
+  procesarEntradaMasiva(items: any[]): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) return of(null);
+    return this.http.post(`${this.apiUrl}/lotes/entrada-masiva`, items, { headers });
   }
 
   classifyByExpiration(products: Producto[]): { vencidos: Producto[], porVencer: Producto[], seguros: Producto[] } {

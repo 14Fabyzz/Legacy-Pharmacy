@@ -30,25 +30,42 @@
 
       <!-- SECCIÓN ESCÁNER -->
       <div class="scanner-section" style="margin-bottom: 20px;">
-        <input type="text" id="scannerInput" class="form-control scanner-input"
+        <input type="text" #scannerInput id="scannerInput" class="form-control scanner-input"
           placeholder="🔫 Escanear Producto Aquí..." autofocus (keyup.enter)="onBarcodeScan($event)">
       </div>
 
       <h3>Agregar Producto</h3>
-      <form [formGroup]="itemForm" (ngSubmit)="addItem()">
+      <form [formGroup]="itemForm" (ngSubmit)="agregarItem()">
 
         <!-- Buscador de Producto -->
+        <!-- Buscador de Producto -->
+        <!-- Buscador de Producto -->
         <div class="form-group">
-          <label>Buscar Producto (Nombre / Código)</label>
-          <input type="text" class="form-control search-input" placeholder="Escribe para buscar..."
-            formControlName="productoBusqueda">
+          <label>Buscar Producto (🔍 Escáner o Teclado)</label>
+          <input type="text" class="form-control search-input" placeholder="Escribe Nombre o Escanea Código..."
+            [(ngModel)]="terminoBusqueda" [ngModelOptions]="{standalone: true}"
+            (keyup.enter)="buscarProducto(terminoBusqueda)" (keyup)="buscarProducto(terminoBusqueda)"
+            autocomplete="off">
 
-          <!-- Lista de sugerencias (simulada) -->
-          <div class="suggestions-list" *ngIf="showSuggestions && filteredProducts.length > 0">
-            <div *ngFor="let p of filteredProducts" (click)="selectProduct(p)" class="suggestion-item">
-              <strong>{{ p.nombre_comercial }}</strong> - {{ p.concentracion }}
-              <small>{{ p.laboratorio_nombre }}</small>
+          <p class="text-danger small" *ngIf="allProducts.length === 0">⚠️ Cargando productos o lista vacía...</p>
+
+          <!-- Sugerencias -->
+          <div class="suggestions-list" *ngIf="sugerencias.length > 0">
+            <div *ngFor="let p of sugerencias" (click)="seleccionarProducto(p)" class="suggestion-item">
+              <strong>{{ p.nombreComercial }}</strong> - {{ p.concentracion }}
+              <small>{{ p.laboratorio }} - SKU: {{ p.codigoInterno }}</small>
             </div>
+          </div>
+        </div>
+
+        <!-- Producto Seleccionado (Visual Feedback) -->
+        <div class="selected-product-card" *ngIf="productoSeleccionado"
+          style="background: #e3f2fd; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #90caf9;">
+          <h4 style="margin: 0; color: #1565c0;">{{ productoSeleccionado.nombreComercial }}</h4>
+          <div style="font-size: 0.9em; display: flex; gap: 15px; margin-top: 5px;">
+            <span>💊 {{ productoSeleccionado.concentracion }}</span>
+            <span>🏭 {{ productoSeleccionado.laboratorio }}</span>
+            <span>🔢 SKU: {{ productoSeleccionado.codigoInterno }}</span>
           </div>
         </div>
 
@@ -76,7 +93,7 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block" [disabled]="itemForm.invalid || !selectedProduct">
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="itemForm.invalid || !productoSeleccionado">
           + Agregar a la Lista
         </button>
       </form>
@@ -102,7 +119,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of addedItems; let i = index">
+            <tr *ngFor="let item of itemsEntrada; let i = index">
               <td>
                 <div class="product-cell">
                   <span class="p-name">{{ item.nombreProducto }}</span>
@@ -119,10 +136,10 @@
               <td>{{ item.costoCompra | currency }}</td>
               <td>{{ item.subtotal | currency }}</td>
               <td>
-                <button class="btn-icon delete" (click)="removeItem(i)">🗑️</button>
+                <button class="btn-icon delete" (click)="eliminarItem(i)">🗑️</button>
               </td>
             </tr>
-            <tr *ngIf="addedItems.length === 0">
+            <tr *ngIf="itemsEntrada.length === 0">
               <td colspan="6" class="empty-state">No hay productos agregados a esta entrada.</td>
             </tr>
           </tbody>
@@ -130,7 +147,12 @@
       </div>
 
       <div class="summary-footer">
-        <button class="btn btn-success btn-lg btn-block" (click)="processEntry()" [disabled]="addedItems.length === 0">
+        <button class="btn btn-secondary btn-lg" (click)="cancelarEntrada()" [disabled]="itemsEntrada.length === 0"
+          style="margin-right: 10px;">
+          🗑️ Limpiar Lista
+        </button>
+        <button class="btn btn-success btn-lg btn-block" (click)="procesarEntrada()"
+          [disabled]="itemsEntrada.length === 0">
           ✅ Procesar Entrada al Inventario
         </button>
       </div>

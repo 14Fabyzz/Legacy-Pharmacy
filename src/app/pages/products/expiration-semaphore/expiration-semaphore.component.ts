@@ -23,7 +23,7 @@ export class ExpirationSemaphoreComponent implements OnInit {
     // Cargar datos reales de Lotes
     this.productService.getLotesVencidos().subscribe(data => this.expiredProducts = data);
     this.productService.getLotesPorVencer().subscribe(data => this.soonExpiringProducts = data);
-    this.productService.getLotesSeguros().subscribe(data => this.safeProducts = data);
+    
   }
 
   // Helper para mostrar días restantes/vencidos
