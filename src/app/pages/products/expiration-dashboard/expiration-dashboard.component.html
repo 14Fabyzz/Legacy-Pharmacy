@@ -19,7 +19,7 @@
             <div class="kpi-card critical" [class.active]="activeTab === 'critical'" (click)="setActiveTab('critical')">
                 <div class="kpi-icon">🚨</div>
                 <div class="kpi-info">
-                    <span class="kpi-value">{{ expiredProducts.length }}</span>
+                    <span class="kpi-value">{{ stats?.totalVencidos || 0 }}</span>
                     <span class="kpi-label">Vencidos</span>
                 </div>
             </div>
@@ -28,7 +28,7 @@
             <div class="kpi-card warning" [class.active]="activeTab === 'alert'" (click)="setActiveTab('alert')">
                 <div class="kpi-icon">⚠️</div>
                 <div class="kpi-info">
-                    <span class="kpi-value">{{ soonExpiringProducts.length }}</span>
+                    <span class="kpi-value">{{ stats?.totalPorVencer || 0 }}</span>
                     <span class="kpi-label">Por Vencer</span>
                 </div>
             </div>
@@ -37,7 +37,7 @@
             <div class="kpi-card lowstock" [class.active]="activeTab === 'lowstock'" (click)="setActiveTab('lowstock')">
                 <div class="kpi-icon">📉</div>
                 <div class="kpi-info">
-                    <span class="kpi-value">{{ bajoStock.length }}</span>
+                    <span class="kpi-value">{{ stats?.totalStockBajo || 0 }}</span>
                     <span class="kpi-label">Stock Bajo</span>
                 </div>
             </div>
@@ -46,7 +46,7 @@
             <div class="kpi-card healthy" [class.active]="activeTab === 'healthy'" (click)="setActiveTab('healthy')">
                 <div class="kpi-icon">✅</div>
                 <div class="kpi-info">
-                    <span class="kpi-value">OK</span>
+                    <span class="kpi-value">{{ stats?.totalSaludables || 0 }}</span>
                     <span class="kpi-label">Saludables</span>
                 </div>
             </div>
@@ -56,7 +56,7 @@
         <!-- SECCIÓN 1: VENCIDOS (CRÍTICO) -->
         <div class="expiration-section critical-section" *ngIf="activeTab === 'critical'">
             <div class="section-header">
-                <h3>🚨 Productos Vencidos</h3>
+                <h3>🚨 Productos Vencidos (v2)</h3>
                 <p>Retirar inmediatamente de estantería.</p>
             </div>
 
@@ -73,39 +73,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let p of expiredProducts">
+                        <tr *ngFor="let p of listaVencidos">
                             <td>
                                 <div class="product-info">
                                     <div class="product-icon-circle small">
-                                        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" alt="img">
-                                        <span *ngIf="!p.imagenUrl">💊</span>
+                                        <span class="icon-fallback">💊</span>
                                     </div>
                                     <div>
-                                        <strong>{{ p.nombre_comercial }}</strong>
-                                        <small>{{ p.concentracion }} - {{ p.laboratorio_nombre }}</small>
+                                        <strong>{{ p.producto }}</strong>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="ref-text">{{ p.codigo_interno }}</span>
+                                <span class="ref-text">{{ p.lote }}</span>
                             </td>
                             <td class="date-cell">
-                                {{ p.proximo_vencimiento | date:'dd/MM/yyyy' }}
+                                {{ p.fecha | date:'dd/MM/yyyy' }}
                             </td>
                             <td>
-                                <span class="status-tag expired">Vencido hace {{ (p.daysUntilExpiry || 0) * -1 }}
-                                    días</span>
+                                <span class="status-tag expired">Vencido</span>
                             </td>
                             <td class="stock-cell">
-                                <strong>{{ p.stock_actual }}</strong> unds
+                                <strong>{{ p.cantidad }}</strong> unds
                             </td>
                             <td class="text-right">
-                                <button class="btn-action danger">Dar de Baja</button>
+                                <button class="btn-action danger" (click)="darDeBaja(p.id)">Dar de Baja</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="empty-tab" *ngIf="expiredProducts.length === 0">
+                <div class="empty-tab" *ngIf="listaVencidos.length === 0">
                     <p>No hay productos vencidos. ¡Excelente!</p>
                 </div>
             </div>
@@ -131,7 +128,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let p of soonExpiringProducts">
+                        <tr *ngFor="let p of listaPorVencer">
                             <td>
                                 <div class="product-info">
                                     <div class="product-icon-circle small">
@@ -139,30 +136,29 @@
                                         <span *ngIf="!p.imagenUrl">💊</span>
                                     </div>
                                     <div>
-                                        <strong>{{ p.nombre_comercial }}</strong>
-                                        <small>{{ p.concentracion }} - {{ p.laboratorio_nombre }}</small>
+                                        <strong>{{ p.producto }}</strong>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="ref-text">{{ p.codigo_interno }}</span>
+                                <span class="ref-text">{{ p.lote }}</span>
                             </td>
                             <td class="date-cell">
-                                {{ p.proximo_vencimiento | date:'dd/MM/yyyy' }}
+                                {{ p.fecha | date:'dd/MM/yyyy' }}
                             </td>
                             <td>
-                                <span class="status-tag warning">{{ p.daysUntilExpiry }} días</span>
+                                <span class="status-tag warning">{{ p.diasRestantes }} días</span>
                             </td>
                             <td class="stock-cell">
-                                <strong>{{ p.stock_actual }}</strong> unds
+                                <strong>{{ p.cantidad }}</strong> unds
                             </td>
                             <td class="text-right">
-                                <button class="btn-action promo">Promocionar</button>
+                                <span class="text-muted small">Revisar</span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="empty-tab" *ngIf="soonExpiringProducts.length === 0">
+                <div class="empty-tab" *ngIf="listaPorVencer.length === 0">
                     <p>No hay alertas de vencimiento próximo.</p>
                 </div>
             </div>
@@ -177,26 +173,28 @@
 
             <div class="cards-grid-view">
                 <!-- Carta de Reabastecimiento -->
-                <div class="restock-card" *ngFor="let p of bajoStock">
+                <div class="restock-card" *ngFor="let p of listaStockBajo">
                     <div class="restock-icon">
                         📦
                     </div>
                     <div class="restock-info">
-                        <h4>{{ p.nombre_comercial }}</h4>
-                        <p class="sub-info">{{ p.concentracion }} - {{ p.laboratorio_nombre }}</p>
+                        <h4>{{ p.nombre }}</h4>
                         <div class="stock-metrics">
-                            <span class="badge-min">Min: {{ p.stock_minimo }}</span>
-                            <span class="stock-current-red">Actual: <strong>{{ p.stock_actual }}</strong></span>
+                            <span class="badge-min">Min: {{ p.stockMinimo }}</span>
+                            <span class="stock-current-red">Actual: <span class="text-danger fw-bold">{{ p.stockActual
+                                    }}</span></span>
                         </div>
                     </div>
                     <div class="restock-alert">
-                        <span class="missing-text">Faltan {{ p.stockDiff }} un.</span>
+                        <span class="missing-text">Faltan {{ p.stockMinimo - p.stockActual }} un.</span>
                         <button class="btn-restock">Reabastecer</button>
                     </div>
                 </div>
             </div>
-            <div class="empty-tab" *ngIf="bajoStock.length === 0">
-                <p>Todo el inventario tiene niveles óptimos.</p>
+            <div class="empty-tab" *ngIf="listaStockBajo.length === 0">
+                <div class="text-center p-3 border rounded bg-light">
+                    <p class="mb-0 fw-bold text-success">¡Excelente! No hay productos con stock bajo.</p>
+                </div>
             </div>
         </div>
 

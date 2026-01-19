@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService } from '../product.service';
+import { ProductService, DashboardResponse } from '../product.service';
 import { Producto } from '../../../core/models/inventory.model';
 
 @Component({
@@ -13,50 +13,51 @@ export class ExpirationDashboardComponent implements OnInit {
     expiredProducts: Producto[] = [];
     soonExpiringProducts: Producto[] = [];
     bajoStock: any[] = []; // Nueva lista para stock bajo
-    loading = true;
 
-    // Tipo actualizado para incluir 'lowstock' y 'healthy' explícitamente
+
+    stats: DashboardResponse | null = null;
+    listaVencidos: any[] = [];
+    listaPorVencer: any[] = [];
+    listaStockBajo: any[] = [];
+
     activeTab: 'critical' | 'alert' | 'lowstock' | 'healthy' = 'healthy';
+    loading: boolean = true;
+    error: string | null = null;
 
     constructor(private productService: ProductService) { }
 
     ngOnInit(): void {
-        this.productService.getProducts().subscribe(products => {
-            const classified = this.productService.classifyByExpiration(products);
-            this.expiredProducts = classified.vencidos;
-            this.soonExpiringProducts = classified.porVencer;
+        this.loadDashboardData();
+    }
 
-            // Nueva Lógica: Detectar Bajo Stock
-            this.bajoStock = [];
-            products.forEach(p => {
-                // Asegurar que stock_actual y stock_minimo sean números válidos
-                const current = p.stock_actual || 0;
-                const min = p.stock_minimo || 0;
+    loadDashboardData(): void {
+        this.loading = true;
+        this.productService.getDashboardAlertas().subscribe((data: DashboardResponse) => {
+            console.log('✅ DATA DASHBOARD:', data);
+            this.stats = data;
 
-                if (current <= min) {
-                    // Calculamos la diferencia
-                    const diff = min - current;
-                    // Agregamos al array con la propiedad extra stockDiff
-                    // Usamos spread para no mutar el objeto original si no se desea, o asignamos directo.
-                    // Para la vista necesitamos 'stockDiff'.
-                    this.bajoStock.push({ ...p, stockDiff: diff > 0 ? diff : 0 });
-                }
-            });
+            this.listaVencidos = data.vencidos || [];
+            this.listaPorVencer = data.porVencer || [];
+            this.listaStockBajo = data.stockBajo || [];
 
             // Prioridad de Pestaña
-            if (this.expiredProducts.length > 0) {
+            if (this.listaVencidos.length > 0) {
                 this.activeTab = 'critical';
-            } else if (this.soonExpiringProducts.length > 0) {
+            } else if (this.listaPorVencer.length > 0) {
                 this.activeTab = 'alert';
-            } else if (this.bajoStock.length > 0) {
+            } else if (this.listaStockBajo.length > 0) {
                 this.activeTab = 'lowstock';
             } else {
                 this.activeTab = 'healthy';
             }
 
             this.loading = false;
+        }, error => {
+            console.error('Error cargando dashboard:', error);
+            this.loading = false;
         });
     }
+
 
     // Helper para cambiar tabs desde el HTML
     setActiveTab(tab: 'critical' | 'alert' | 'lowstock' | 'healthy'): void {
@@ -68,5 +69,14 @@ export class ExpirationDashboardComponent implements OnInit {
         if (days < 0) return 'expired-tag';
         if (days <= 30) return 'warning-tag';
         return 'ok-tag';
+    }
+
+    darDeBaja(loteId: number): void {
+        if (confirm('¿Estás seguro de dar de baja este lote vencido?')) {
+            this.productService.darDeBajaLote(loteId).subscribe(() => {
+                alert('Lote dado de baja correctamente');
+                this.loadDashboardData(); // Recargar datos
+            });
+        }
     }
 }

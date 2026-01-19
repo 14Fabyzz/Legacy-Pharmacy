@@ -12,6 +12,16 @@ import {
   ProductoCard
 } from '../../core/models/product.model';
 
+export interface DashboardResponse {
+  totalVencidos: number;
+  totalPorVencer: number;
+  totalStockBajo: number;
+  totalSaludables: number;
+  vencidos: { id: number; producto: string; lote: string; fecha: string; cantidad: number }[];
+  porVencer: { id: number; producto: string; lote: string; fecha: string; cantidad: number; diasRestantes: number }[];
+  stockBajo: { id: number; nombre: string; stockActual: number; stockMinimo: number }[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -42,6 +52,24 @@ export class ProductService {
   }
 
   // --- DASHBOARD / VISTAS (Lista Principal) ---
+
+  getDashboardAlertas(): Observable<DashboardResponse> {
+    const headers = this.getHeaders();
+    if (!headers) {
+      return of({
+        totalVencidos: 0,
+        totalPorVencer: 0,
+        totalStockBajo: 0,
+        totalSaludables: 0,
+        vencidos: [],
+        porVencer: [],
+        stockBajo: []
+      });
+    }
+    // Asegurarse de que apiUrl apunte a /api/v1/inventario/dashboard/alertas
+    // Si this.apiUrl es 'http://localhost:8080/api/inventario', entonces:
+    return this.http.get<DashboardResponse>(`${this.apiUrl}/dashboard/alertas`, { headers });
+  }
 
   getProductosAlmacen(busqueda?: string): Observable<ProductoCard[]> {
     const headers = this.getHeaders();
