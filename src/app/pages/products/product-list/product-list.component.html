@@ -131,8 +131,21 @@
             </td>
 
             <!-- 6. Precio -->
+            <!-- 6. Precio -->
             <td>
-              <span class="price-cell">{{ product.precioVentaBase | currency }}</span>
+              <div *ngIf="product.esFraccionable; else precioNormal" class="price-dual">
+                <div class="price-box" style="font-weight: 700; color: #0f172a;">
+                  {{ product.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  <span style="font-size: 0.7em; font-weight: normal; color: #64748b;">/ Caja</span>
+                </div>
+                <div class="price-unit" style="font-size: 0.85em; color: #059669;">
+                  {{ product.precioVentaUnidad | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  <span style="font-size: 0.8em; font-weight: normal; color: #64748b;">/ Unidad</span>
+                </div>
+              </div>
+              <ng-template #precioNormal>
+                <span class="price-cell">{{ product.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+              </ng-template>
             </td>
 
             <!-- 7. Categoría -->

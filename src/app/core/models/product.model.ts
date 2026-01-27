@@ -45,6 +45,11 @@ export interface Producto {
     stock_minimo: number;
     stock_actual: number;
 
+    // Campos Fraccionamiento [NUEVOS]
+    unidadesPorCaja: number;
+    esFraccionable: boolean;
+    precioVentaUnidad?: number;
+
     es_controlado: boolean;
     refrigerado: boolean;
     estado: string;
@@ -74,6 +79,11 @@ export interface ProductoRequest {
     stockMinimo: number;
     stockActual: number;
 
+    // Campos Fraccionamiento [NUEVOS]
+    unidadesPorCaja: number;
+    esFraccionable: boolean;
+    precioVentaUnidad?: number;
+
     esControlado: boolean;
     refrigerado: boolean;
     estado: string; // 'ACTIVO' | 'INACTIVO'
@@ -101,4 +111,9 @@ export interface ProductoCard {
     precioVentaBase: number;
     nivelStock: string;
     proximoVencimiento?: string;  // Change to string as requested
+
+    // Campos Fraccionamiento [NUEVOS]
+    esFraccionable: boolean;
+    unidadesPorCaja: number; // [NUEVO] Required for Hints
+    precioVentaUnidad?: number;
 }

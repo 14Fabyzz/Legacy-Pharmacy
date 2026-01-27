@@ -56,6 +56,11 @@ export class ProductFormComponent implements OnInit {
       stockMinimo: [10],
       stockActual: [0],
 
+      // Fraccionamiento
+      esFraccionable: [false],
+      unidadesPorCaja: [1, [Validators.required, Validators.min(1)]],
+      precioVentaUnidad: [{ value: 0, disabled: true }],
+
       // Banderas de control (Checkboxes)
       esControlado: [false],
       refrigerado: [false],
@@ -64,6 +69,20 @@ export class ProductFormComponent implements OnInit {
 
     // Cargar Catálogos y luego datos del producto si es edición
     this.loadCatalogs();
+
+    // Listener para habilitar/deshabitlar precio unidad
+    this.productForm.get('esFraccionable')?.valueChanges.subscribe(fraccionable => {
+      const precioUnidadControl = this.productForm.get('precioVentaUnidad');
+      if (fraccionable) {
+        precioUnidadControl?.enable();
+        precioUnidadControl?.setValidators([Validators.required, Validators.min(0)]);
+      } else {
+        precioUnidadControl?.disable();
+        precioUnidadControl?.setValue(0);
+        precioUnidadControl?.clearValidators();
+      }
+      precioUnidadControl?.updateValueAndValidity();
+    });
   }
 
   loadCatalogs() {
@@ -145,6 +164,11 @@ export class ProductFormComponent implements OnInit {
           stockMinimo: data.stockMinimo,
           stockActual: data.stockActual || 0, // Si viene nulo
 
+          // Fraccionamiento
+          esFraccionable: data.esFraccionable,
+          unidadesPorCaja: data.unidadesPorCaja || 1,
+          precioVentaUnidad: data.precioVentaUnidad,
+
           // Banderas
           esControlado: data.esControlado,
           refrigerado: data.refrigerado,
@@ -175,6 +199,7 @@ export class ProductFormComponent implements OnInit {
     // Aunque para el PUT, ¿queremos enviar stock?
     // Si el backend ignora stock en PUT, OK. Si no, enviamos el que ya tenía.
     const formValue = this.productForm.getRawValue();
+    console.log('📝 [ProductForm] RAW FORM VALUE:', formValue);
 
     const productData: ProductoRequest = {
       ...formValue,
@@ -183,7 +208,11 @@ export class ProductFormComponent implements OnInit {
       categoriaId: Number(formValue.categoriaId),
       principioActivoId: Number(formValue.principioActivoId),
       // Stock: Si es edición, enviamos lo que había (o 0 si no estaba cargado, aunque debería)
-      stockActual: formValue.stockActual
+      stockActual: formValue.stockActual,
+
+      // Fraccionamiento (asegurar tipos)
+      unidadesPorCaja: Number(formValue.unidadesPorCaja),
+      precioVentaUnidad: formValue.esFraccionable ? Number(formValue.precioVentaUnidad) : undefined
     };
 
     console.log('🚀 [ProductForm] Enviando data:', productData);
@@ -249,7 +278,10 @@ export class ProductFormComponent implements OnInit {
       stockActual: 0,
       esControlado: false,
       refrigerado: false,
-      estado: 'ACTIVO'
+      estado: 'ACTIVO',
+      esFraccionable: false,
+      unidadesPorCaja: 1,
+      precioVentaUnidad: 0
     });
   }
 }

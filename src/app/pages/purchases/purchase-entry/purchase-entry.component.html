@@ -77,18 +77,26 @@
           </div>
           <div class="form-group">
             <label>Vence *</label>
-            <input type="date" formControlName="fechaVencimiento" class="form-control"
+            <input type="date" formControlName="fechaVencimiento" class="form-control" min="2024-01-01" max="2035-12-31"
               (keyup.enter)="addItemAndRefocus()">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Cantidad</label>
-            <input type="number" formControlName="cantidad" class="form-control" (keyup.enter)="addItemAndRefocus()">
+            <label>Cantidad (Cajas)</label>
+            <input type="number" formControlName="cantidad" #qtyInput class="form-control"
+              (keyup.enter)="addItemAndRefocus()">
+            <!-- Hint dinámico -->
+            <small class="text-muted" *ngIf="productoSeleccionado && itemForm.get('cantidad')?.value > 0">
+              ℹ️ Estás ingresando {{ itemForm.get('cantidad')?.value }} Cajas (x{{ productoSeleccionado.unidadesPorCaja
+              || productoSeleccionado.unidades_por_caja || 1 }} unds) =
+              <strong>{{ (itemForm.get('cantidad')?.value || 0) * (productoSeleccionado.unidadesPorCaja ||
+                productoSeleccionado.unidades_por_caja || 1) }} Unidades</strong> se sumarán al stock.
+            </small>
           </div>
           <div class="form-group">
-            <label>Costo Unitario ($)</label>
+            <label>Costo Compra (Caja) ($)</label>
             <input type="number" formControlName="costoCompra" class="form-control" (keyup.enter)="addItemAndRefocus()">
           </div>
         </div>

@@ -95,6 +95,31 @@
         </div>
       </div>
 
+      <!-- SECCIÓN FRACCIONAMIENTO -->
+      <div class="form-row" style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <!-- Toggle Switch -->
+        <div class="form-group checkbox-group"
+          style="display: flex; align-items: center; justify-content: flex-start; margin-top: 25px;">
+          <label class="switch">
+            <input type="checkbox" formControlName="esFraccionable">
+            <span class="slider round"></span>
+          </label>
+          <span style="font-weight: 600; margin-left: 10px;">¿Venta Fraccionada? (Por Unidad)</span>
+        </div>
+
+        <div class="form-group">
+          <label>Unidades por Caja</label>
+          <input type="number" formControlName="unidadesPorCaja">
+          <small class="text-muted">Cantidad de unidades que trae la caja.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Precio por Unidad ($)</label>
+          <input type="number" formControlName="precioVentaUnidad"
+            [placeholder]="productForm.get('esFraccionable')?.value ? 'Ej: 1000' : 'Deshabilitado'">
+        </div>
+      </div>
+
       <div class="form-row checkboxes-row">
         <div class="checkbox-group">
           <input type="checkbox" id="es_controlado" formControlName="esControlado">

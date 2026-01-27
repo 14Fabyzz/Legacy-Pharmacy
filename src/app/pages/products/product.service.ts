@@ -2,7 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import {
   Producto,
   ProductoRequest,
@@ -88,6 +88,10 @@ export class ProductService {
     console.log('🚀 [ProductService] Requesting:', `${this.apiUrl}/dashboard/cards`, params.toString());
 
     return this.http.get<ProductoCard[]>(`${this.apiUrl}/dashboard/cards`, { headers, params }).pipe(
+      // Ensure data integrity for fractional display
+      tap(cards => cards.forEach(c => {
+        if (!c.unidadesPorCaja || c.unidadesPorCaja < 1) c.unidadesPorCaja = 1;
+      })),
       catchError(err => {
         console.error('Error fetching dashboard cards', err);
         return of([]);
@@ -269,7 +273,12 @@ export class ProductService {
       stockMinimo: p.stock_minimo,
       precioVentaBase: p.precio_venta_base,
       nivelStock: p.stock_actual <= p.stock_minimo ? 'CRITICO' : (p.stock_actual <= p.stock_minimo * 1.5 ? 'BAJO' : 'OPTIMO'),
-      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined
+      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined,
+
+      // Fraccionamiento - Ahora usa CamelCase según nueva interfaz
+      esFraccionable: p.esFraccionable,
+      unidadesPorCaja: p.unidadesPorCaja,
+      precioVentaUnidad: p.precioVentaUnidad
     };
   }
 }
