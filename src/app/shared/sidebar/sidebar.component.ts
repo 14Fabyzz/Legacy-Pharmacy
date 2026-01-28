@@ -24,8 +24,14 @@ export class SidebarComponent {
     this.currentUser$ = this.authService.currentUser$;
   }
 
+  // Usuario por defecto para mostrar si no hay sesión iniciada (Development/Fallback)
+  public defaultUser = {
+    nombreCompleto: 'Usuario de Prueba',
+    rol: 'INVITADO'
+  };
 
-  
+
+
   // El array ahora es más simple, solo con la información esencial
   menuItems = [
     { path: '/app/dashboard', title: 'Dashboard', active: false, subMenu: [] },
@@ -34,7 +40,7 @@ export class SidebarComponent {
     { path: '/app/proveedores', title: 'Proveedores', active: false, subMenu: [] },
     { path: '/app/compras', title: 'Compras', active: false, subMenu: [] },
     { path: '/app/usuarios', title: 'Usuarios', active: false, subMenu: [] },
-    { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },      
+    { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },
     {
       path: '/app/productos',
       title: 'Productos',
@@ -47,7 +53,7 @@ export class SidebarComponent {
         { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' }
       ]
     },
-   { path: '/app/ventas', title: 'Ventas', active: false, subMenu: [] },
+    { path: '/app/ventas', title: 'Ventas', active: false, subMenu: [] },
     { path: '/app/cotizaciones', title: 'Cotizaciones', active: false, subMenu: [] },
     { path: '/app/movimientos', title: 'Movimientos en cajas', active: false, subMenu: [] },
     { path: '/app/devoluciones', title: 'Devoluciones', active: false, subMenu: [] },
@@ -56,7 +62,7 @@ export class SidebarComponent {
     { path: '/app/configuraciones', title: 'Configuraciones', active: false, subMenu: [] }
   ];
 
-  
+
 
   toggleSubMenu(item: any) {
     this.menuItems.forEach(i => {
@@ -71,5 +77,5 @@ export class SidebarComponent {
   logout(): void {
     this.authService.logout();
   }
-  
+
 }

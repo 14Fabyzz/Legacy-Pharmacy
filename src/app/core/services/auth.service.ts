@@ -12,7 +12,12 @@ export interface LoginRequest {
 
 export interface AuthResponse {
   token: string;
-  user: any;
+  user?: any;
+  // Flat structure fields
+  nombreCompleto?: string;
+  rol?: string;
+  usuarioId?: number;
+  login?: string;
 }
 
 @Injectable({
@@ -48,8 +53,12 @@ export class AuthService {
       tap(response => {
         if (response && response.token) {
           this.saveToken(response.token);
+          // Check if response has user property or IS the user object
           if (response.user) {
             this.saveUser(response.user);
+          } else if (response['nombreCompleto']) {
+            // Flat response structure handling (as seen in user screenshot)
+            this.saveUser(response);
           }
         }
       })
