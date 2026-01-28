@@ -117,3 +117,11 @@ export interface ProductoCard {
     unidadesPorCaja: number; // [NUEVO] Required for Hints
     precioVentaUnidad?: number;
 }
+
+export interface Lote {
+    id: number;
+    numeroLote: string;
+    fechaVencimiento: string | Date;
+    cantidadActual: number;
+    costoCompra: number;
+}

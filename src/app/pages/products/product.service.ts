@@ -9,8 +9,10 @@ import {
   Categoria,
   Laboratorio,
   PrincipioActivo,
-  ProductoCard
+  ProductoCard,
+  Lote
 } from '../../core/models/product.model';
+import { environment } from '../../../environments/environment';
 
 export interface DashboardResponse {
   totalVencidos: number;
@@ -28,7 +30,7 @@ export interface DashboardResponse {
 export class ProductService {
   // El Gateway traduce:
   // /api/inventario -> http://localhost:8081/api/v1/inventario
-  private apiUrl = 'http://localhost:8080/api/inventario';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -191,11 +193,11 @@ export class ProductService {
 
   // --- LOGICA DE NEGOCIO (Frontend Side) ---
 
-  getLotesDisponibles(productoId: number): Observable<any[]> {
+  getLotesDisponibles(productoId: number): Observable<Lote[]> {
     const headers = this.getHeaders();
     if (!headers) return of([]);
     // Ajustar endpoint según tu backend real
-    return this.http.get<any[]>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
+    return this.http.get<Lote[]>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
   }
 
   // --- VENCIMIENTOS REALES (Endpoints del Usuario) ---
