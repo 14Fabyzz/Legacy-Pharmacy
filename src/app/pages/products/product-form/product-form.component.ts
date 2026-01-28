@@ -13,7 +13,7 @@ import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.c
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, TabsNavComponent],
   templateUrl: './product-form.component.html',
-  styleUrls: ['./product-form.component.css']
+  styleUrls: ['./product-form.component.scss']
 })
 export class ProductFormComponent implements OnInit {
   @ViewChild('barcodeInput') barcodeInputElement!: ElementRef;

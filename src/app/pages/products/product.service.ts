@@ -10,7 +10,8 @@ import {
   Laboratorio,
   PrincipioActivo,
   ProductoCard,
-  Lote
+  Lote,
+  MovimientoKardex
 } from '../../core/models/product.model';
 import { environment } from '../../../environments/environment';
 
@@ -185,10 +186,10 @@ export class ProductService {
     return this.http.post(`${this.apiUrl}/productos/${id}/imagen`, formData, { headers });
   }
 
-  getProductKardex(id: number): Observable<any[]> {
+  getProductKardex(id: number): Observable<MovimientoKardex[]> {
     const headers = this.getHeaders();
     if (!headers) return of([]);
-    return this.http.get<any[]>(`${this.apiUrl}/productos/${id}/kardex`, { headers });
+    return this.http.get<MovimientoKardex[]>(`${this.apiUrl}/productos/${id}/kardex`, { headers });
   }
 
   // --- LOGICA DE NEGOCIO (Frontend Side) ---

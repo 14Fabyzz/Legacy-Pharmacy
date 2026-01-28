@@ -125,3 +125,16 @@ export interface Lote {
     cantidadActual: number;
     costoCompra: number;
 }
+
+export interface MovimientoKardex {
+    id: number;
+    fecha: string; // Viene como ISO string
+    tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE'; // O string general
+    cantidad: number; // Puede ser negativo (ej: -5)
+    saldo_resultante: number;
+    documento_ref: string;
+    usuario: string;
+    detalle: string; // Antes era 'motivo' o 'notas'
+    lote: string;
+    costo_unitario: number;
+}

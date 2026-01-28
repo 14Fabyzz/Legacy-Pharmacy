@@ -7,7 +7,7 @@ import { ProductoCard, Lote } from '../../../../core/models/product.model';
     standalone: true,
     imports: [CommonModule],
     templateUrl: './inventory-detail-panel.component.html',
-    styleUrls: ['./inventory-detail-panel.component.css']
+    styleUrls: ['./inventory-detail-panel.component.scss']
 })
 export class InventoryDetailPanelComponent {
     @Input() isVisible = false;
