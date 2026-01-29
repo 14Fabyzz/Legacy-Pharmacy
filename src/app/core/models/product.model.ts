@@ -82,7 +82,7 @@ export interface ProductoRequest {
     // Campos Fraccionamiento [NUEVOS]
     unidadesPorCaja: number;
     esFraccionable: boolean;
-    precioVentaUnidad?: number;
+    precioVentaUnidad?: number | null; // Permite null para que el backend calcule automáticamente
 
     esControlado: boolean;
     refrigerado: boolean;

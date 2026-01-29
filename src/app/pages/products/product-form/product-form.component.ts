@@ -70,15 +70,17 @@ export class ProductFormComponent implements OnInit {
     // Cargar Catálogos y luego datos del producto si es edición
     this.loadCatalogs();
 
-    // Listener para habilitar/deshabitlar precio unidad
+    // Listener para habilitar/deshabilitar precio unidad
     this.productForm.get('esFraccionable')?.valueChanges.subscribe(fraccionable => {
       const precioUnidadControl = this.productForm.get('precioVentaUnidad');
       if (fraccionable) {
+        // Si es fraccionable, habilitar pero hacer OPCIONAL (no required)
         precioUnidadControl?.enable();
-        precioUnidadControl?.setValidators([Validators.required, Validators.min(0)]);
+        precioUnidadControl?.setValidators([Validators.min(0)]); // Solo validar que sea >= 0
       } else {
+        // Si NO es fraccionable, deshabilitar y poner en null
         precioUnidadControl?.disable();
-        precioUnidadControl?.setValue(0);
+        precioUnidadControl?.setValue(null);
         precioUnidadControl?.clearValidators();
       }
       precioUnidadControl?.updateValueAndValidity();
@@ -210,9 +212,14 @@ export class ProductFormComponent implements OnInit {
       // Stock: Si es edición, enviamos lo que había (o 0 si no estaba cargado, aunque debería)
       stockActual: formValue.stockActual,
 
-      // Fraccionamiento (asegurar tipos)
+      // Fraccionamiento: Si precioVentaUnidad es 0, vacío o null, enviar null explícitamente
+      // para que el backend calcule automáticamente
       unidadesPorCaja: Number(formValue.unidadesPorCaja),
-      precioVentaUnidad: formValue.esFraccionable ? Number(formValue.precioVentaUnidad) : undefined
+      precioVentaUnidad: formValue.esFraccionable
+        ? (formValue.precioVentaUnidad && Number(formValue.precioVentaUnidad) > 0
+          ? Number(formValue.precioVentaUnidad)
+          : null)
+        : null
     };
 
     console.log('🚀 [ProductForm] Enviando data:', productData);
