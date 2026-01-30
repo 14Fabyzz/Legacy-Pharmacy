@@ -46,7 +46,12 @@ $danger-color: #ef4444;
     background: #fff;
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     border: 1px solid $border-color;
+    margin-bottom: 2rem;
+    /* Restore separation between cards */
+
 
     .card-header {
         padding: 1.5rem;
@@ -69,7 +74,9 @@ $danger-color: #ef4444;
     }
 
     .card-body {
-        padding: 2rem;
+        padding: 2.5rem;
+        /* Increase padding */
+        box-sizing: border-box;
     }
 }
 
@@ -102,6 +109,11 @@ $danger-color: #ef4444;
 
 // Estilos de Inputs (Mejorados)
 .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+    /* Restore vertical spacing */
+
     label {
         display: block;
         font-weight: 500;
@@ -396,5 +408,46 @@ input:disabled+.slider:hover {
     color: $text-muted;
     font-size: 0.8125rem;
     margin-top: 0.25rem;
+    margin-top: 0.25rem;
     display: block;
+}
+
+// Panel de Fraccionamiento
+.fractional-panel {
+    background-color: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    animation: fadeIn 0.3s ease-in-out;
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        width: 100%;
+
+        // Fix for nested form-groups
+        .form-group {
+            margin-bottom: 0; // Grid handles spacing
+            min-width: 0; // Prevent flex item overflow
+        }
+
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

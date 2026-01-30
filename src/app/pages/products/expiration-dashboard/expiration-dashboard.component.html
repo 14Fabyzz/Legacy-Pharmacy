@@ -11,6 +11,12 @@
     <!-- Navegación Compartida -->
     <app-tabs-nav></app-tabs-nav>
 
+    <!-- Loader -->
+    <div class="loading-state-container" *ngIf="loading">
+        <div class="spinner-ring"></div>
+        <p class="loading-text">Analizando inventario...</p>
+    </div>
+
     <div class="dashboard-content" *ngIf="!loading">
 
         <!-- KPI CARDS SUMMARY -->

@@ -7,7 +7,7 @@ import { tap } from 'rxjs/operators';
 import Swal from 'sweetalert2'; // Import SweetAlert2
 
 import { ProductService } from '../product.service';
-import { SearchPipe } from '../../../shared/pipes/search.pipe';
+import { SearchPipe } from '../../../shared/pipes/search.pipe'; // Can be removed if not used in template anymore, but let's just remove it from standalone imports
 import { Producto, ProductoCard, Lote } from '../../../core/models/product.model';
 import { ExpirationSemaphoreComponent } from '../expiration-semaphore/expiration-semaphore.component';
 import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
@@ -16,13 +16,23 @@ import { InventoryDetailPanelComponent } from '../components/inventory-detail-pa
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, SearchPipe, ExpirationSemaphoreComponent, TabsNavComponent, InventoryDetailPanelComponent],
+  imports: [CommonModule, RouterModule, FormsModule, ExpirationSemaphoreComponent, TabsNavComponent, InventoryDetailPanelComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
   public searchTerm: string = '';
-  public products$!: Observable<ProductoCard[]>;
+  public isLoading: boolean = false; // [NUEVO] Loader state
+  // public products$!: Observable<ProductoCard[]>; // Eliminar
+
+  allProducts: ProductoCard[] = [];       // Todos los datos del backend
+  filteredProducts: ProductoCard[] = [];  // Datos filtrados por búsqueda
+  paginatedProducts: ProductoCard[] = []; // Datos de la página actual (lo que se ve)
+
+  // Paginación
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalPages: number = 1;
 
   // Variables para el Widget de Salud
   inventoryHealthStatus: 'critical' | 'alert' | 'healthy' = 'healthy';
@@ -44,11 +54,65 @@ export class ProductListComponent implements OnInit {
   }
 
   loadProducts() {
-    this.products$ = this.productService.getProductosAlmacen().pipe(
-      tap(products => {
-        // Lógica de inventario si fuera necesario
-      })
-    );
+    this.isLoading = true; // [INICIO]
+    this.productService.getProductosAlmacen().subscribe({
+      next: (products) => {
+        this.isLoading = false; // [FIN EXITOSO]
+        this.allProducts = products;
+
+        // Ordenar Alfabéticamente por Nombre Comercial
+        this.allProducts.sort((a, b) => a.nombreComercial.localeCompare(b.nombreComercial));
+
+        // Aplicar filtros iniciales (esto también inicia la paginación)
+        this.applyFilter();
+      },
+      error: (err) => {
+        this.isLoading = false; // [FIN ERROR]
+        console.error('Error cargando productos', err);
+      }
+    });
+  }
+
+  // --- LÓGICA DE FILTRADO Y PAGINACIÓN ---
+
+  applyFilter() {
+    const term = this.searchTerm.toLowerCase().trim();
+
+    if (!term) {
+      this.filteredProducts = [...this.allProducts];
+    } else {
+      this.filteredProducts = this.allProducts.filter(product => {
+        return (
+          product.nombreComercial.toLowerCase().includes(term) ||
+          product.codigoInterno.toLowerCase().includes(term) ||
+          (product.codigoBarras && product.codigoBarras.includes(term)) ||
+          product.principioActivo.toLowerCase().includes(term) ||
+          product.laboratorio.toLowerCase().includes(term)
+        );
+      });
+    }
+
+    // Recalcular paginación
+    this.totalPages = Math.ceil(this.filteredProducts.length / this.itemsPerPage) || 1;
+    this.currentPage = 1; // Reset a primera página al filtrar
+    this.updatePaginatedView();
+  }
+
+  updatePaginatedView() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.paginatedProducts = this.filteredProducts.slice(start, end);
+  }
+
+  getEndIndex(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.filteredProducts.length);
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedView();
+    }
   }
 
   // --- ACCIONES DE BOTONES (SweetAlert2 + Router) ---

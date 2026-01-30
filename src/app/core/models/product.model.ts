@@ -45,6 +45,9 @@ export interface Producto {
     stock_minimo: number;
     stock_actual: number;
 
+    tipo: 'TANGIBLE' | 'SERVICIO'; // Default 'TANGIBLE'
+    unidadesPorBlister?: number;   // Nuevo campo informativo
+
     // Campos Fraccionamiento [NUEVOS]
     unidadesPorCaja: number;
     esFraccionable: boolean;
@@ -78,6 +81,9 @@ export interface ProductoRequest {
     ivaPorcentaje: number;
     stockMinimo: number;
     stockActual: number;
+
+    tipo: 'TANGIBLE' | 'SERVICIO';
+    unidadesPorBlister?: number;
 
     // Campos Fraccionamiento [NUEVOS]
     unidadesPorCaja: number;
@@ -116,6 +122,9 @@ export interface ProductoCard {
     esFraccionable: boolean;
     unidadesPorCaja: number; // [NUEVO] Required for Hints
     precioVentaUnidad?: number;
+
+    tipo?: 'TANGIBLE' | 'SERVICIO';
+    esControlado?: boolean;
 }
 
 export interface Lote {

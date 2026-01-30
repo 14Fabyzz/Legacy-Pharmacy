@@ -38,6 +38,7 @@ export class ProductFormComponent implements OnInit {
     // Definimos el formulario usando camelCase para coincidir con ProductoRequest
     this.productForm = this.fb.group({
       // Identificación
+      tipo: ['TANGIBLE', Validators.required], // [NUEVO]
       codigoInterno: ['', Validators.required],
       codigoBarras: [''],
       nombreComercial: ['', Validators.required],
@@ -59,6 +60,7 @@ export class ProductFormComponent implements OnInit {
       // Fraccionamiento
       esFraccionable: [false],
       unidadesPorCaja: [1, [Validators.required, Validators.min(1)]],
+      unidadesPorBlister: [{ value: 0, disabled: true }], // [NUEVO]
       precioVentaUnidad: [{ value: 0, disabled: true }],
 
       // Banderas de control (Checkboxes)
@@ -70,20 +72,67 @@ export class ProductFormComponent implements OnInit {
     // Cargar Catálogos y luego datos del producto si es edición
     this.loadCatalogs();
 
-    // Listener para habilitar/deshabilitar precio unidad
+    // Listener para Tipo de Producto (Servicio vs Tangible)
+    this.productForm.get('tipo')?.valueChanges.subscribe(tipo => {
+      const stockControls = ['stockMinimo', 'stockActual', 'refrigerado', 'unidadesPorCaja', 'esFraccionable'];
+
+      if (tipo === 'SERVICIO') {
+        // Deshabilitar campos de inventario físico
+        stockControls.forEach(ctrl => {
+          this.productForm.get(ctrl)?.disable();
+          this.productForm.get(ctrl)?.clearValidators();
+        });
+
+        // Forzar valores por defecto para servicio
+        this.productForm.patchValue({
+          esFraccionable: false,
+          refrigerado: false,
+          stockMinimo: 0,
+          stockActual: 0,
+          unidadesPorCaja: 1
+        }, { emitEvent: false }); // Evitar loops
+
+      } else {
+        // Habilitar campos para TANGIBLE
+        const isEdit = this.isEditMode;
+
+        stockControls.forEach(ctrl => {
+          // Stock actual solo se habilita si NO es edición (regla existente)
+          if (ctrl === 'stockActual' && isEdit) return;
+
+          this.productForm.get(ctrl)?.enable();
+        });
+
+        // Restaurar validadores
+        this.productForm.get('stockMinimo')?.setValidators([Validators.min(0)]);
+        this.productForm.get('unidadesPorCaja')?.setValidators([Validators.required, Validators.min(1)]);
+      }
+      // Actualizar validación visual
+      stockControls.forEach(ctrl => this.productForm.get(ctrl)?.updateValueAndValidity());
+    });
+
+    // Listener para habilitar/deshabilitar precio unidad y blísters
     this.productForm.get('esFraccionable')?.valueChanges.subscribe(fraccionable => {
       const precioUnidadControl = this.productForm.get('precioVentaUnidad');
+      const blisterControl = this.productForm.get('unidadesPorBlister');
+
       if (fraccionable) {
-        // Si es fraccionable, habilitar pero hacer OPCIONAL (no required)
+        // Si es fraccionable...
         precioUnidadControl?.enable();
-        precioUnidadControl?.setValidators([Validators.min(0)]); // Solo validar que sea >= 0
+        precioUnidadControl?.setValidators([Validators.min(0)]);
+
+        blisterControl?.enable(); // Habilita campo informativo de blisters
       } else {
-        // Si NO es fraccionable, deshabilitar y poner en null
+        // Si NO es fraccionable...
         precioUnidadControl?.disable();
         precioUnidadControl?.setValue(null);
         precioUnidadControl?.clearValidators();
+
+        blisterControl?.disable();
+        blisterControl?.setValue(null);
       }
       precioUnidadControl?.updateValueAndValidity();
+      blisterControl?.updateValueAndValidity();
     });
   }
 
@@ -147,6 +196,7 @@ export class ProductFormComponent implements OnInit {
         // Como el backend YA viene en CamelCase, el mapeo es directo, excepto los IDs.
         const formData = {
           // Identificación
+          tipo: data.tipo || 'TANGIBLE', // [NUEVO]
           codigoInterno: data.codigoInterno,
           codigoBarras: data.codigoBarras,
           nombreComercial: data.nombreComercial,
@@ -169,6 +219,7 @@ export class ProductFormComponent implements OnInit {
           // Fraccionamiento
           esFraccionable: data.esFraccionable,
           unidadesPorCaja: data.unidadesPorCaja || 1,
+          unidadesPorBlister: data.unidadesPorBlister, // [NUEVO]
           precioVentaUnidad: data.precioVentaUnidad,
 
           // Banderas
@@ -215,6 +266,7 @@ export class ProductFormComponent implements OnInit {
       // Fraccionamiento: Si precioVentaUnidad es 0, vacío o null, enviar null explícitamente
       // para que el backend calcule automáticamente
       unidadesPorCaja: Number(formValue.unidadesPorCaja),
+      unidadesPorBlister: formValue.unidadesPorBlister ? Number(formValue.unidadesPorBlister) : undefined, // [NUEVO]
       precioVentaUnidad: formValue.esFraccionable
         ? (formValue.precioVentaUnidad && Number(formValue.precioVentaUnidad) > 0
           ? Number(formValue.precioVentaUnidad)
