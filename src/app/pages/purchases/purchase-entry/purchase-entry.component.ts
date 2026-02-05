@@ -309,7 +309,8 @@ export class PurchaseEntryComponent implements OnInit {
       numeroLote: item.numeroLote,
       fechaVencimiento: item.fechaVencimiento,
       cantidad: item.cantidad,
-      costoCompra: item.costoCompra,
+      // REGLA API v2.0: costoCompra debe ser el VALOR TOTAL de la línea (Cantidad * Costo Unitario)
+      costoCompra: item.cantidad * item.costoCompra,
       sucursalId: this.entryForm.get('sucursalId')?.value,
       observaciones: this.entryForm.get('observaciones')?.value
     }));

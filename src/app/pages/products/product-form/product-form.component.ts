@@ -61,6 +61,7 @@ export class ProductFormComponent implements OnInit {
       esFraccionable: [false],
       unidadesPorCaja: [1, [Validators.required, Validators.min(1)]],
       unidadesPorBlister: [{ value: 0, disabled: true }], // [NUEVO]
+      precioVentaBlister: [{ value: 0, disabled: true }], // [NUEVO]
       precioVentaUnidad: [{ value: 0, disabled: true }],
 
       // Banderas de control (Checkboxes)
@@ -115,6 +116,7 @@ export class ProductFormComponent implements OnInit {
     this.productForm.get('esFraccionable')?.valueChanges.subscribe(fraccionable => {
       const precioUnidadControl = this.productForm.get('precioVentaUnidad');
       const blisterControl = this.productForm.get('unidadesPorBlister');
+      const precioBlisterControl = this.productForm.get('precioVentaBlister');
 
       if (fraccionable) {
         // Si es fraccionable...
@@ -122,6 +124,7 @@ export class ProductFormComponent implements OnInit {
         precioUnidadControl?.setValidators([Validators.min(0)]);
 
         blisterControl?.enable(); // Habilita campo informativo de blisters
+        precioBlisterControl?.enable();
       } else {
         // Si NO es fraccionable...
         precioUnidadControl?.disable();
@@ -130,10 +133,49 @@ export class ProductFormComponent implements OnInit {
 
         blisterControl?.disable();
         blisterControl?.setValue(null);
+
+        precioBlisterControl?.disable();
+        precioBlisterControl?.setValue(null);
       }
       precioUnidadControl?.updateValueAndValidity();
       blisterControl?.updateValueAndValidity();
+      precioBlisterControl?.updateValueAndValidity();
     });
+
+    // ---------------------------------------------------------
+    // CALCULADORA DE PRECIO UNITARIO AUTOMÁTICO
+    // ---------------------------------------------------------
+    // Escuchamos cambios en Precio Base y Unidades por Caja
+    const precioBase$ = this.productForm.get('precioVentaBase')?.valueChanges;
+    const unidadesCaja$ = this.productForm.get('unidadesPorCaja')?.valueChanges;
+
+    // TODO: Usar combineLatest si quisiéramos ser más reactivos estrictos,
+    // pero con merge o suscripciones individuales también funciona.
+    // Aquí usaremos suscripciones directas para simplificar la lógica del "dirty".
+
+    this.productForm.get('precioVentaBase')?.valueChanges.subscribe(() => this.recalculateUnitPrice());
+    this.productForm.get('unidadesPorCaja')?.valueChanges.subscribe(() => this.recalculateUnitPrice());
+  }
+
+  recalculateUnitPrice() {
+    // Solo calculamos si es fraccionable
+    const esFraccionable = this.productForm.get('esFraccionable')?.value;
+    if (!esFraccionable) return;
+
+    // REGLA: Si el usuario ya escribió manualmente un precio unitario, NO lo sobrescribimos
+    // a menos que explícitamente quiera (pero aquí asumimos que dirty = manual override).
+    const precioUnidadControl = this.productForm.get('precioVentaUnidad');
+    if (precioUnidadControl?.dirty) return;
+
+    const precioBase = this.productForm.get('precioVentaBase')?.value;
+    const unidades = this.productForm.get('unidadesPorCaja')?.value;
+
+    if (precioBase > 0 && unidades > 0) {
+      const calculado = precioBase / unidades;
+      // Asignamos sin emitir evento para no ciclar, y mantenemos el control como 'pristine'
+      // para que sigan funcionando los recálculos automáticos hasta que el usuario intervenga.
+      precioUnidadControl?.setValue(parseFloat(calculado.toFixed(2)), { emitEvent: false });
+    }
   }
 
   loadCatalogs() {
@@ -220,6 +262,7 @@ export class ProductFormComponent implements OnInit {
           esFraccionable: data.esFraccionable,
           unidadesPorCaja: data.unidadesPorCaja || 1,
           unidadesPorBlister: data.unidadesPorBlister, // [NUEVO]
+          precioVentaBlister: data.precioVentaBlister, // [NUEVO]
           precioVentaUnidad: data.precioVentaUnidad,
 
           // Banderas
@@ -267,12 +310,23 @@ export class ProductFormComponent implements OnInit {
       // para que el backend calcule automáticamente
       unidadesPorCaja: Number(formValue.unidadesPorCaja),
       unidadesPorBlister: formValue.unidadesPorBlister ? Number(formValue.unidadesPorBlister) : undefined, // [NUEVO]
+      precioVentaBlister: (formValue.esFraccionable && formValue.precioVentaBlister) ? Number(formValue.precioVentaBlister) : undefined,
+
+      // REGLA CRÍTICA: Precio Unidad
+      // Si el usuario lo escribió, usamos ese.
+      // Si no (pristine/vacío), y es fraccionable, lo calculamos al vuelo.
       precioVentaUnidad: formValue.esFraccionable
-        ? (formValue.precioVentaUnidad && Number(formValue.precioVentaUnidad) > 0
-          ? Number(formValue.precioVentaUnidad)
-          : null)
+        ? (this.getFinalUnknownPrice(formValue))
         : null
     };
+
+    // Ajuste final para SERVICIOS (por seguridad duplicada)
+    if (productData.tipo === 'SERVICIO') {
+      productData.stockMinimo = 0;
+      productData.unidadesPorCaja = 1;
+      productData.esFraccionable = false;
+      productData.precioVentaUnidad = null;
+    }
 
     console.log('🚀 [ProductForm] Enviando data:', productData);
 
@@ -306,6 +360,19 @@ export class ProductFormComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Helper para determinar precio unitario final
+  getFinalUnknownPrice(formValue: any): number | null {
+    // 1. Si el usuario puso algo explícito válido
+    if (formValue.precioVentaUnidad && Number(formValue.precioVentaUnidad) > 0) {
+      return Number(formValue.precioVentaUnidad);
+    }
+    // 2. Si no puso nada, calculamos basado en unidades
+    if (formValue.precioVentaBase && formValue.unidadesPorCaja > 0) {
+      return parseFloat((Number(formValue.precioVentaBase) / Number(formValue.unidadesPorCaja)).toFixed(2));
+    }
+    return null;
   }
 
   focusBarcodeInput(): void {

@@ -147,3 +147,20 @@ export interface MovimientoKardex {
     lote: string;
     costo_unitario: number;
 }
+
+// Interface for Smart Price Checker (Search)
+export interface ProductoConsulta {
+    productoId: number;
+    nombreProducto: string;
+    tipo: 'TANGIBLE' | 'SERVICIO';
+    precioVentaBase: number;       // Precio Caja
+    precioVentaUnidad: number | null;
+    precioVentaBlister: number | null;
+    esFraccionable: boolean;
+    unidadesPorCaja: number;
+    unidadesPorBlister: number | null;
+    esControlado: boolean;
+    cantidadDisponible: number;
+    estado: string;                // Ej: "STOCK_BAJO"
+    imagenUrl?: string;            // Para visualización
+}

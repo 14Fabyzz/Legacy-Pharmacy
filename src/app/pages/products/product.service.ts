@@ -11,7 +11,8 @@ import {
   PrincipioActivo,
   ProductoCard,
   Lote,
-  MovimientoKardex
+  MovimientoKardex,
+  ProductoConsulta
 } from '../../core/models/product.model';
 import { environment } from '../../../environments/environment';
 
@@ -153,6 +154,15 @@ export class ProductService {
 
     const params = new HttpParams().set('nombre', term);
     return this.http.get<Producto[]>(`${this.apiUrl}/productos/buscar`, { headers, params });
+  }
+
+  // --- SMART PRICE CHECKER ---
+  consultarPrecio(termino: string): Observable<ProductoConsulta[]> {
+    const headers = this.getHeaders();
+    if (!headers) throw new Error('No authenticated');
+
+    const params = new HttpParams().set('query', termino);
+    return this.http.get<ProductoConsulta[]>(`${this.apiUrl}/productos/busqueda-publica`, { headers, params });
   }
 
   // --- AUXILIARES (Selectores) ---

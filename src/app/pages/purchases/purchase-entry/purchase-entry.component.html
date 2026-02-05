@@ -101,6 +101,16 @@
           </div>
         </div>
 
+        <!-- INDICADOR TOTAL LÍNEA -->
+        <div class="form-group"
+          style="background-color: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 20px; border: 1px dashed #cbd5e1; text-align: center;">
+          <label style="margin: 0; color: #64748b; font-size: 0.85rem; display: block;">Total Línea (Verifique con
+            Factura)</label>
+          <div style="font-size: 1.5rem; font-weight: 700; color: #0284c7;">
+            {{ ( (itemForm.get('cantidad')?.value || 0) * (itemForm.get('costoCompra')?.value || 0) ) | currency }}
+          </div>
+        </div>
+
         <button type="submit" class="btn btn-primary btn-block" [disabled]="itemForm.invalid || !productoSeleccionado">
           + Agregar a la Lista
         </button>

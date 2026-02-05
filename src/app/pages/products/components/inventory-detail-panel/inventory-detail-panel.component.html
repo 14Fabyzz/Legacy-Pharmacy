@@ -55,7 +55,7 @@
                             <th>Lote</th>
                             <th>Vencimiento</th>
                             <th class="text-right">Cantidad</th>
-                            <th class="text-right">Costo Unit.</th>
+                            <th class="text-right">Costo Unitario</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,7 +77,7 @@
                                 {{ lote.cantidadActual }}
                             </td>
                             <td class="text-right text-gray-600">
-                                {{ lote.costoCompra | currency:'COP':'symbol-narrow':'1.0-0' }}
+                                {{ lote.costoCompra | currency:'COP':'symbol-narrow' }}
                             </td>
                         </tr>
                     </tbody>

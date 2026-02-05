@@ -83,11 +83,11 @@ export class ProductListComponent implements OnInit {
     } else {
       this.filteredProducts = this.allProducts.filter(product => {
         return (
-          product.nombreComercial.toLowerCase().includes(term) ||
-          product.codigoInterno.toLowerCase().includes(term) ||
+          product.nombreComercial?.toLowerCase().includes(term) ||
+          product.codigoInterno?.toLowerCase().includes(term) ||
           (product.codigoBarras && product.codigoBarras.includes(term)) ||
-          product.principioActivo.toLowerCase().includes(term) ||
-          product.laboratorio.toLowerCase().includes(term)
+          product.principioActivo?.toLowerCase().includes(term) ||
+          product.laboratorio?.toLowerCase().includes(term)
         );
       });
     }

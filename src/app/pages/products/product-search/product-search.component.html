@@ -25,52 +25,116 @@
 
             <!-- LISTA DE SUGERENCIAS -->
             <div class="suggestions-dropdown" *ngIf="filteredSuggestions.length > 0">
-                <div *ngFor="let p of filteredSuggestions" class="suggestion-item" (click)="selectProduct(p)">
-                    <div class="sugg-name">{{ p.nombreComercial }}</div>
-                    <div class="sugg-meta">{{ p.concentracion }} - {{ p.laboratorio }}</div>
+                <div *ngFor="let p of filteredSuggestions" class="search-result-item" (click)="selectProduct(p)">
+                    <!-- Info Izquierda -->
+                    <div style="flex: 1;">
+                        <div class="sugg-name">{{ p.nombreComercial }}</div>
+                        <div class="sugg-meta">
+                            {{ p.concentracion }} - {{ p.laboratorio }}
+                            <span *ngIf="p.stockTotal !== undefined"
+                                style="margin-left: 8px; font-weight: 600; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px;"
+                                [ngClass]="{'bg-green-100 text-green-700': p.stockTotal >= 5, 'bg-red-100 text-red-700': p.stockTotal < 5}">
+                                Stock: {{ p.stockTotal }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Precios Derecha -->
+                    <div class="prices-container">
+                        <!-- 1. Unidad (Si es fraccionable) -->
+                        <div class="price-tag unit" *ngIf="p.esFraccionable">
+                            <span class="price-label">Unidad</span>
+                            <span class="price-value">{{ p.precioVentaUnidad | currency:'COP':'symbol-narrow':'1.0-0'
+                                }}</span>
+                        </div>
+
+                        <!-- 2. Blíster (Si tiene config) -->
+                        <div class="price-tag blister" *ngIf="p.unidadesPorBlister > 0">
+                            <span class="price-label">Blíster x{{p.unidadesPorBlister}}</span>
+                            <!-- Calculamos precio si no viniera directo, aunque idealmente viene del backend -->
+                            <span class="price-value">
+                                {{ (p.precioVentaBlister || (p.precioVentaUnidad * p.unidadesPorBlister)) |
+                                currency:'COP':'symbol-narrow':'1.0-0' }}
+                            </span>
+                        </div>
+
+                        <!-- 3. Caja (Siempre) -->
+                        <div class="price-tag box">
+                            <span class="price-label">Caja</span>
+                            <span class="price-value">{{ p.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0'
+                                }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- RESULTADO: PRODUCTO ENCONTRADO -->
-        <div class="result-card bounce-in" *ngIf="selectedProduct">
-            <div class="product-detail-grid">
-
-                <!-- Imagen -->
-                <div class="product-image-col">
-                    <div class="image-box">
-                        <img *ngIf="selectedProduct.imagenUrl" [src]="selectedProduct.imagenUrl" alt="Producto">
-                        <span *ngIf="!selectedProduct.imagenUrl" class="no-img-icon">💊</span>
+        <!-- RESULTADO: TARJETA PREMIUM -->
+        <div class="price-check-card bounce-in" *ngIf="selectedProduct">
+            <div class="card-content">
+                <div class="product-info-column">
+                    <div class="product-image-container">
+                        <img *ngIf="selectedProduct.imagenUrl" [src]="selectedProduct.imagenUrl"
+                            alt="{{ selectedProduct.nombreProducto }}" class="product-image">
+                        <span *ngIf="!selectedProduct.imagenUrl" class="no-img-icon" style="font-size: 3rem;">💊</span>
                     </div>
-                </div>
-
-                <!-- Info Principal -->
-                <div class="product-info-col">
-                    <h1 class="main-title">{{ selectedProduct.nombreComercial }}</h1>
-                    <span class="subtitle">{{ selectedProduct.concentracion }} | {{ selectedProduct.presentacion
-                        }}</span>
-
-                    <div class="meta-tags">
-                        <span class="tag lab">{{ selectedProduct.laboratorio }}</span>
-
-                        <span class="tag stock" [ngClass]="{'low': (selectedProduct.stockTotal || 0) < 5}">
-                            Stock: {{ selectedProduct.stockTotal }}
-                        </span>
-                    </div>
-
-                    <div class="price-display">
-                        <small>Precio Público</small>
-                        <div class="big-price">{{ selectedProduct.precioVentaBase | currency:'USD':'symbol':'1.0-0' }}
+                    <div class="product-details">
+                        <h2 class="product-name">{{ selectedProduct.nombreProducto }}</h2>
+                        <div class="product-badges">
+                            <span class="badge type-badge">{{ selectedProduct.tipo | titlecase }}</span>
+                            <span class="badge stock-badge"
+                                [ngClass]="{'stock-ok': selectedProduct.estado === 'STOCK_OK' || selectedProduct.estado === 'ACTIVO', 'stock-low': selectedProduct.estado === 'STOCK_BAJO'}">
+                                {{ selectedProduct.estado | titlecase }}
+                            </span>
+                            <span class="badge stock-count" *ngIf="selectedProduct.cantidadDisponible !== undefined"
+                                [class.low]="selectedProduct.cantidadDisponible <= 5">
+                                STOCK: {{ selectedProduct.cantidadDisponible }}
+                            </span>
                         </div>
                     </div>
                 </div>
 
+                <div class="prices-column">
+                    <div class="main-price-block">
+                        <span class="price-label">PRECIO CAJA / PAQUETE</span>
+                        <div class="price-value-container">
+                            <span class="currency">$</span>
+                            <span class="main-price">{{ selectedProduct.precioVentaBase | number:'1.0-0' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="prices-separator"
+                        *ngIf="selectedProduct.esFraccionable && (selectedProduct.precioVentaBlister || selectedProduct.precioVentaUnidad)">
+                    </div>
+
+                    <div class="secondary-prices-grid" *ngIf="selectedProduct.esFraccionable">
+                        <!-- Precio Blíster -->
+                        <div class="secondary-price-block" *ngIf="selectedProduct.precioVentaBlister">
+                            <span class="price-label">PRECIO BLÍSTER (x{{selectedProduct.unidadesPorBlister}})</span>
+                            <span class="secondary-price">${{ selectedProduct.precioVentaBlister | number:'1.0-0'
+                                }}</span>
+                        </div>
+
+                        <!-- Precio Unidad -->
+                        <div class="secondary-price-block" *ngIf="selectedProduct.precioVentaUnidad">
+                            <span class="price-label">PRECIO UNIDAD</span>
+                            <span class="secondary-price">${{ selectedProduct.precioVentaUnidad | number:'1.0-0'
+                                }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="card-footer">
-                <button class="btn-reset" (click)="clearSearch()">Nueva Consulta (ESC)</button>
+                <button class="new-query-button" (click)="clearSearch()">
+                    <span class="button-text">Nueva Consulta</span>
+                    <span class="button-shortcut">(ESC)</span>
+                </button>
             </div>
         </div>
+
+
 
         <!-- ESTADO: NO ENCONTRADO -->
         <div class="not-found-state" *ngIf="notFound">

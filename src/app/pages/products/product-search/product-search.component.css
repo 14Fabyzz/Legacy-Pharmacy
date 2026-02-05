@@ -88,29 +88,107 @@
     border: 1px solid #e2e8f0;
 }
 
-.suggestion-item {
-    padding: 12px 20px;
-    cursor: pointer;
+.suggestion-item,
+/* Mantener compatibilidad si se usa en otro lado, pero aquí reemplazamos visualmente */
+.search-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
     border-bottom: 1px solid #f1f5f9;
     transition: background 0.2s;
+    cursor: pointer;
 }
 
-.suggestion-item:last-child {
+.search-result-item:last-child {
     border-bottom: none;
 }
 
-.suggestion-item:hover {
+.search-result-item:hover {
     background-color: #f8fafc;
 }
 
 .sugg-name {
     font-weight: 600;
     color: #334155;
+    font-size: 1rem;
 }
 
 .sugg-meta {
     font-size: 0.85rem;
     color: #64748b;
+    margin-top: 2px;
+}
+
+/* Contenedor de Precios */
+.prices-container {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-left: 16px;
+}
+
+/* Estilo Base de Etiqueta de Precio */
+.price-tag {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0.25rem 0.75rem;
+    border-radius: 8px;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    min-width: 80px;
+}
+
+.price-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #64748b;
+    letter-spacing: 0.5px;
+}
+
+.price-value {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #0f172a;
+}
+
+/* Variantes de Color para Jerarquía Visual */
+
+/* Unidad (Lo más barato/común en menudeo) - Verde */
+.price-tag.unit {
+    background-color: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.price-tag.unit .price-value {
+    color: #166534;
+}
+
+.price-tag.unit .price-label {
+    color: #15803d;
+}
+
+/* Blíster (Opción media) - Azul */
+.price-tag.blister {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.price-tag.blister .price-value {
+    color: #1e40af;
+}
+
+.price-tag.blister .price-label {
+    color: #2563eb;
+}
+
+/* Caja (Estándar) - Gris/Neutro */
+.price-tag.box {
+    background-color: white;
 }
 
 /* Result Card */
@@ -262,4 +340,402 @@
 .not-found-state h3 {
     color: #1e293b;
     margin: 0;
+}
+
+/* --- CORPORATE SaaS STYLES --- */
+
+/* Badge System */
+.meta-badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.badge.type {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.badge.status.success {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.badge.status.warning {
+    background-color: #fef9c3;
+    color: #854d0e;
+}
+
+.badge.stock-count {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.badge.stock-count.low {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+
+/* Price Layout - Corporate */
+.prices-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 16px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Hero Price (Caja) */
+.price-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Right aligned */
+}
+
+.price-hero .label {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.price-hero .hero-value {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #0f172a;
+    /* Dark Slate */
+    line-height: 1;
+    display: flex;
+    align-items: flex-start;
+}
+
+.price-hero .currency {
+    font-size: 2rem;
+    margin-top: 8px;
+    margin-right: 6px;
+    color: #3b82f6;
+    /* Blue currency symbol */
+    font-weight: 700;
+}
+
+
+/* Sub Prices Grid - Neutral */
+.sub-prices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+}
+
+.sub-price-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Right align numbers */
+}
+
+.sub-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #94a3b8;
+    /* Lighter gray */
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.sub-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+/* --- PREMIUM CARD DESIGN (User Request) --- */
+
+/* Contenedor Principal de la Tarjeta */
+.price-check-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    /* Bordes más redondeados */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+    /* Sombra suave y moderna */
+    overflow: hidden;
+    /* Para que la imagen no se salga del borde redondeado */
+    max-width: 900px;
+    /* Ancho máximo para pantallas grandes */
+    margin: 2rem auto;
+    /* Centrado con margen superior */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    /* Fuente moderna */
+    color: #334155;
+    /* Color de texto principal */
+    animation: slideUp 0.4s ease-out;
+}
+
+/* Contenido Principal (Flexbox) */
+.card-content {
+    display: flex;
+    padding: 2rem;
+    /* Espaciado interno generoso */
+    gap: 2rem;
+    /* Espacio entre columnas */
+}
+
+/* Columna Izquierda: Información */
+.product-info-column {
+    flex: 1;
+    /* Ocupa el espacio disponible */
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.product-image-container {
+    width: 100px;
+    height: 100px;
+    background-color: #f1f5f9;
+    /* Fondo gris claro */
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.product-image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
+
+.product-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.product-name {
+    font-size: 2.25rem;
+    font-weight: 900;
+    margin: 0;
+    color: #0f172a;
+    line-height: 1.1;
+    letter-spacing: -1px;
+}
+
+.product-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.type-badge {
+    background-color: #e2e8f0;
+    color: #475569;
+}
+
+.stock-badge.stock-ok {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.stock-badge.stock-low {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.additional-info {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-top: auto;
+}
+
+.info-label {
+    font-weight: 600;
+}
+
+.info-value {
+    font-weight: 700;
+    color: #334155;
+}
+
+/* Columna Derecha: Precios */
+.prices-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Alinear a la derecha */
+    text-align: right;
+    min-width: 280px;
+    /* Ancho mínimo */
+}
+
+.price-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+    letter-spacing: 1px;
+}
+
+/* Precio Principal */
+.main-price-block {
+    margin-bottom: 0;
+}
+
+.price-value-container {
+    display: flex;
+    align-items: flex-start;
+    /* Alinear símbolo $ arriba */
+    justify-content: flex-end;
+    line-height: 1;
+}
+
+.currency {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2563eb;
+    /* Azul primario */
+    margin-top: 6px;
+    margin-right: 4px;
+}
+
+.main-price {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #2563eb;
+    letter-spacing: -2px;
+}
+
+/* Separador */
+.prices-separator {
+    height: 1px;
+    background-color: #e2e8f0;
+    width: 100%;
+    margin: 1.25rem 0;
+}
+
+/* Grid de Precios Secundarios */
+.secondary-prices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Dos columnas por defecto */
+    gap: 1rem;
+    width: 100%;
+}
+
+.secondary-price-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.secondary-price {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+}
+
+/* Pie de Página */
+.card-footer {
+    padding: 1rem 2rem;
+    background-color: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: center;
+}
+
+.new-query-button {
+    background-color: white;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.new-query-button:hover {
+    background-color: #f1f5f9;
+    border-color: #94a3b8;
+    color: #1e293b;
+    transform: translateY(-1px);
+}
+
+.button-shortcut {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: normal;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-content {
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .product-info-column {
+        flex-direction: row;
+    }
+
+    .prices-column {
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1.5rem;
+    }
+
+    .price-value-container {
+        justify-content: center;
+    }
+
+    .secondary-prices-grid {
+        grid-template-columns: 1fr 1fr;
+        /* Dos columnas en móvil para ahorrar espacio vertical */
+        text-align: center;
+    }
+
+    .secondary-price-block {
+        align-items: center;
+    }
 }
