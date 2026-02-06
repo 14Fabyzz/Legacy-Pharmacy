@@ -9,11 +9,11 @@ import { PurchaseEntryComponent } from './pages/purchases/purchase-entry/purchas
 
 const routes: Routes = [
   // 1. Ruta para el login
-  { 
-    path: 'login', 
-    component: LoginComponent 
+  {
+    path: 'login',
+    component: LoginComponent
   },
-  
+
   // 2. Ruta para la aplicación principal (el layout y sus hijos)
   {
     path: 'app', // La app principal vive en /app
@@ -25,9 +25,13 @@ const routes: Routes = [
         loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsModule)
       },
 
-      { 
-        path: 'purchases/purchase-entry', 
-        component: PurchaseEntryComponent 
+      {
+        path: 'purchases/purchase-entry',
+        component: PurchaseEntryComponent
+      },
+      {
+        path: 'ventas',
+        loadChildren: () => import('./pages/sales/sales.module').then(m => m.SalesModule)
       },
       // ... tus otras rutas ...
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
@@ -35,16 +39,17 @@ const routes: Routes = [
   },
 
   // 3. Ruta de entrada: redirige la raíz ('') a '/login'
-  { 
-    path: '', 
-    redirectTo: 'login', 
-    pathMatch: 'full' 
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
-  
+
+
   // 4. Ruta comodín (wildcard): cualquier otra URL redirige a '/login'
-  { 
-    path: '**', 
-    redirectTo: 'dashboard' 
+  {
+    path: '**',
+    redirectTo: 'dashboard'
   }
 ];
 
