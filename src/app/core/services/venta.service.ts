@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CrearVentaDTO, VentaResponseDTO, ProductoInventarioDTO, AperturaCajaDTO, TurnoCaja } from '../models/venta.models';
+import { CrearVentaDTO, VentaResponseDTO, ProductoInventarioDTO, AperturaCajaDTO, CierreCajaDTO, TurnoCaja } from '../models/venta.models';
 
 @Injectable({
     providedIn: 'root'
@@ -58,5 +58,13 @@ export class VentaService {
         // Asumiremos que el Gateway mapea /api/ventas a MS-Ventas.
         // Y MS-Ventas tiene /caja. Entonces: /api/ventas/caja/abrir
         return this.http.post<TurnoCaja>(`${this.cajaUrl}/abrir`, apertura);
+    }
+
+    cerrarCaja(cierre: CierreCajaDTO): Observable<TurnoCaja> {
+        return this.http.post<TurnoCaja>(`${this.cajaUrl}/cerrar`, cierre);
+    }
+
+    verificarEstadoCaja(): Observable<TurnoCaja> {
+        return this.http.get<TurnoCaja>(`${this.cajaUrl}/estado`);
     }
 }

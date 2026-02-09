@@ -33,6 +33,10 @@ const routes: Routes = [
         path: 'ventas',
         loadChildren: () => import('./pages/sales/sales.module').then(m => m.SalesModule)
       },
+      {
+        path: 'caja',
+        loadChildren: () => import('./pages/caja/caja.module').then(m => m.CajaModule)
+      },
       // ... tus otras rutas ...
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

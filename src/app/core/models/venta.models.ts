@@ -25,8 +25,7 @@ export interface AperturaCajaDTO {
 }
 
 export interface CierreCajaDTO {
-    dineroFinal: number; // BigDecimal
-    turnoId: number;
+    totalEfectivoReal: number; // BigDecimal
     observaciones?: string;
 }
 

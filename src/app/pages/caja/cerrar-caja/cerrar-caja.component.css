@@ -1,0 +1,91 @@
+.closure-card {
+    max-width: 800px;
+    width: 100%;
+    padding: 40px;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.summary-item {
+    background: var(--slate-50);
+    padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--slate-200);
+}
+
+.summary-item label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--slate-600);
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.summary-item .amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--slate-800);
+}
+
+.total-teorico {
+    grid-column: span 2;
+    background: #eff6ff;
+    border-color: #bae6fd;
+}
+
+.total-teorico .amount {
+    color: var(--blue-600);
+    font-size: 2rem;
+}
+
+.arqueo-section {
+    border-top: 2px dashed var(--slate-200);
+    padding-top: 40px;
+}
+
+.difference-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 15px 20px;
+    background: var(--slate-50);
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--slate-600);
+}
+
+.difference-display.negative {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.difference-display.positive {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-diff {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.large-icon {
+    font-size: 4rem;
+    color: var(--slate-200);
+    margin-bottom: 20px;
+    display: block;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
