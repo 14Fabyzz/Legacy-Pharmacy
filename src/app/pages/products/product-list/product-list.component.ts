@@ -7,26 +7,42 @@ import { tap } from 'rxjs/operators';
 import Swal from 'sweetalert2'; // Import SweetAlert2
 
 import { ProductService } from '../product.service';
-import { SearchPipe } from '../../../shared/pipes/search.pipe';
-import { Producto, ProductoCard } from '../../../core/models/product.model';
+import { SearchPipe } from '../../../shared/pipes/search.pipe'; // Can be removed if not used in template anymore, but let's just remove it from standalone imports
+import { Producto, ProductoCard, Lote } from '../../../core/models/product.model';
 import { ExpirationSemaphoreComponent } from '../expiration-semaphore/expiration-semaphore.component';
 import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
+import { InventoryDetailPanelComponent } from '../components/inventory-detail-panel/inventory-detail-panel.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, SearchPipe, ExpirationSemaphoreComponent, TabsNavComponent],
+  imports: [CommonModule, RouterModule, FormsModule, ExpirationSemaphoreComponent, TabsNavComponent, InventoryDetailPanelComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
   public searchTerm: string = '';
-  public products$!: Observable<ProductoCard[]>;
+  public isLoading: boolean = false; // [NUEVO] Loader state
+  // public products$!: Observable<ProductoCard[]>; // Eliminar
+
+  allProducts: ProductoCard[] = [];       // Todos los datos del backend
+  filteredProducts: ProductoCard[] = [];  // Datos filtrados por búsqueda
+  paginatedProducts: ProductoCard[] = []; // Datos de la página actual (lo que se ve)
+
+  // Paginación
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalPages: number = 1;
 
   // Variables para el Widget de Salud
   inventoryHealthStatus: 'critical' | 'alert' | 'healthy' = 'healthy';
   expiredCount: number = 0;
   showSemaphoreModal = false;
+
+  // Variables para Detalle de Inventario (Panel Lateral)
+  showDetailPanel = false;
+  selectedProduct: ProductoCard | null = null;
+  selectedProductLotes: Lote[] = [];
 
   constructor(
     private productService: ProductService,
@@ -38,91 +54,95 @@ export class ProductListComponent implements OnInit {
   }
 
   loadProducts() {
-    this.products$ = this.productService.getProductosAlmacen().pipe(
-      tap(products => {
-        // Lógica de inventario si fuera necesario
-      })
-    );
+    this.isLoading = true; // [INICIO]
+    this.productService.getProductosAlmacen().subscribe({
+      next: (products) => {
+        this.isLoading = false; // [FIN EXITOSO]
+        this.allProducts = products;
+
+        // Ordenar Alfabéticamente por Nombre Comercial
+        this.allProducts.sort((a, b) => a.nombreComercial.localeCompare(b.nombreComercial));
+
+        // Aplicar filtros iniciales (esto también inicia la paginación)
+        this.applyFilter();
+      },
+      error: (err) => {
+        this.isLoading = false; // [FIN ERROR]
+        console.error('Error cargando productos', err);
+      }
+    });
+  }
+
+  // --- LÓGICA DE FILTRADO Y PAGINACIÓN ---
+
+  applyFilter() {
+    const term = this.searchTerm.toLowerCase().trim();
+
+    if (!term) {
+      this.filteredProducts = [...this.allProducts];
+    } else {
+      this.filteredProducts = this.allProducts.filter(product => {
+        return (
+          product.nombreComercial?.toLowerCase().includes(term) ||
+          product.codigoInterno?.toLowerCase().includes(term) ||
+          (product.codigoBarras && product.codigoBarras.includes(term)) ||
+          product.principioActivo?.toLowerCase().includes(term) ||
+          product.laboratorio?.toLowerCase().includes(term)
+        );
+      });
+    }
+
+    // Recalcular paginación
+    this.totalPages = Math.ceil(this.filteredProducts.length / this.itemsPerPage) || 1;
+    this.currentPage = 1; // Reset a primera página al filtrar
+    this.updatePaginatedView();
+  }
+
+  updatePaginatedView() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.paginatedProducts = this.filteredProducts.slice(start, end);
+  }
+
+  getEndIndex(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.filteredProducts.length);
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedView();
+    }
   }
 
   // --- ACCIONES DE BOTONES (SweetAlert2 + Router) ---
 
   // 1. 👁️ Ver Detalle (Lotes)
   verDetalle(product: ProductoCard) {
+    this.selectedProduct = product;
+    // Mostrar loading o UI preventiva si se desea, 
+    // pero para un panel lateral suele bastar con abrirlo y mostrar spinner interno o simplemente esperar.
+    // Aquí optamos por abrir el panel vacío y cargar datos.
+
+    // Resetear lotes anteriores
+    this.selectedProductLotes = [];
+
+    // Mostrar loading global momentáneo (opcional) o simplemente abrir panel
     Swal.fire({
-      title: 'Cargando lotes...',
-      didOpen: () => Swal.showLoading()
+      title: 'Cargando stock...',
+      didOpen: () => Swal.showLoading(),
+      backdrop: false, // Menos intrusivo
+      timer: 1000 // Fallback
     });
 
     this.productService.getLotesDisponibles(product.id).subscribe({
-      next: (lotes: any[]) => { // Typed as any[] based on user info
+      next: (lotes: Lote[]) => {
         Swal.close();
-
-        if (!lotes || lotes.length === 0) {
-          Swal.fire('Sin Lotes', `No hay lotes registrados para ${product.nombreComercial}`, 'info');
-          return;
-        }
-
-        // Generar HTML de Tabla
-        let htmlTable = `
-          <div style="overflow-x:auto;">
-            <table style="width:100%; text-align:left; border-collapse: collapse;">
-              <thead>
-                <tr style="border-bottom: 2px solid #eee;">
-                  <th style="padding:8px;">Lote</th>
-                  <th style="padding:8px;">Vencimiento</th>
-                  <th style="padding:8px;">Cantidad</th>
-                  <th style="padding:8px;">Costo Unit.</th>
-                </tr>
-              </thead>
-              <tbody>
-        `;
-
-        lotes.forEach(lote => {
-          const fecha = new Date(lote.fechaVencimiento);
-          const now = new Date();
-          const diffTime = fecha.getTime() - now.getTime();
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-          // User Requirement: < 90 days = text-danger fw-bold
-          let dateClass = '';
-          if (diffDays < 90) {
-            dateClass = 'text-danger fw-bold';
-          } else {
-            // Optional: text-success for safe dates if desired, or just normal
-            // User said: "Si faltan más de 90 días, usa text-success o déjalo normal."
-            dateClass = 'text-success';
-          }
-
-          // Formatter for Currency
-          const currencyFormatter = new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-            minimumFractionDigits: 0
-          });
-
-          htmlTable += `
-              <tr style="border-bottom: 1px solid #f9f9f9;">
-                <td style="padding:8px;">${lote.numeroLote}</td>
-                <td style="padding:8px;" class="${dateClass}">
-                  ${fecha.toLocaleDateString()}
-                </td>
-                <td style="padding:8px;">${lote.cantidadActual}</td>
-                <td style="padding:8px;">${currencyFormatter.format(lote.costoCompra || 0)}</td>
-              </tr>
-            `;
-        });
-
-        htmlTable += `</tbody></table></div>`;
-
-        Swal.fire({
-          title: `Stock Detallado: ${product.nombreComercial}`,
-          html: htmlTable,
-          width: '800px', // Aumentado para mejor visualización
-          confirmButtonText: 'Cerrar'
-        });
+        this.selectedProductLotes = lotes;
+        this.showDetailPanel = true;
       },
       error: (err) => {
+        Swal.close();
         console.error(err);
         Swal.fire('Error', 'No se pudieron cargar los lotes', 'error');
       }

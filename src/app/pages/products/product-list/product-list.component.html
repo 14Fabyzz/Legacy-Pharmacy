@@ -45,11 +45,17 @@
   <app-tabs-nav></app-tabs-nav>
 
   <div class="search-container">
-    <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm">
+    <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm"
+      (ngModelChange)="applyFilter()">
   </div>
 
-  <ng-container *ngIf="products$ | async | search:searchTerm as filteredProducts">
+  <!-- Loader -->
+  <div class="loading-state-container" *ngIf="isLoading">
+    <div class="spinner-ring"></div>
+    <p class="loading-text">Cargando productos...</p>
+  </div>
 
+  <div *ngIf="!isLoading">
     <div class="product-table-wrapper">
       <table class="custom-table">
         <thead>
@@ -65,7 +71,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of filteredProducts">
+          <tr *ngFor="let product of paginatedProducts">
 
             <!-- 1. Producto (Icono + Nombre) -->
             <td>
@@ -171,15 +177,39 @@
       </table>
     </div>
 
+
+
     <div class="no-results" *ngIf="filteredProducts.length === 0">
       <p>No se encontraron productos.</p>
     </div>
-  </ng-container>
 
-  <!-- ================= MODALES ================= -->
-  <!-- Modales nativos eliminados a favor de SweetAlert2 -->
+    <!-- Paginación -->
+    <div class="pagination-controls" *ngIf="filteredProducts.length > 0">
+      <span>
+        Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ getEndIndex() }} de {{ filteredProducts.length }}
+        productos
+      </span>
+      <div class="pagination-buttons">
+        <button class="btn-page" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+          Anterior
+        </button>
+        <span class="btn-page" style="cursor: default; background: #f8fafc;">
+          Página {{ currentPage }} de {{ totalPages }}
+        </span>
+        <button class="btn-page" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+          Siguiente
+        </button>
+      </div>
+    </div>
 
-  <!-- MODAL SEMÁFORO (Mantenido porque es un componente angular complejo) -->
-  <app-expiration-semaphore *ngIf="showSemaphoreModal" (close)="closeModals()"></app-expiration-semaphore>
+    <!-- MODAL SEMÁFORO -->
+    <app-expiration-semaphore *ngIf="showSemaphoreModal" (close)="closeModals()"></app-expiration-semaphore>
+
+    <!-- PANEL LATERAL DE DETALLE DE LOTES -->
+    <app-inventory-detail-panel [isVisible]="showDetailPanel" [product]="selectedProduct" [lotes]="selectedProductLotes"
+      (close)="showDetailPanel = false">
+    </app-inventory-detail-panel>
+
+  </div> <!-- Fin de ngIf="!isLoading" -->
 
 </div>

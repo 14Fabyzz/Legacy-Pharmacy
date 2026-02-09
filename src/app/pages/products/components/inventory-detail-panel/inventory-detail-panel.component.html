@@ -1,0 +1,89 @@
+<!-- Overlay Backdrop -->
+<div class="overlay-backdrop" *ngIf="isVisible" (click)="onClose()"></div>
+
+<!-- Slide-over Panel -->
+<div class="slide-panel" [class.open]="isVisible">
+
+    <!-- Header -->
+    <div class="panel-header">
+        <div class="header-content" *ngIf="product">
+            <h2>{{ product.nombreComercial }}</h2>
+            <p>
+                {{ product.laboratorio }} <span class="mx-2 text-gray-300">|</span> {{ product.concentracion }} {{
+                product.presentacion }}
+            </p>
+        </div>
+        <button class="close-btn" (click)="onClose()" title="Cerrar panel">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div class="panel-body">
+
+        <!-- Stats Summary -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="label">Total Stock</span>
+                <span class="value">{{ product?.stockTotal || 0 }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">Lotes Activos</span>
+                <span class="value">{{ lotes.length }}</span>
+            </div>
+        </div>
+
+        <!-- Lotes Table Section -->
+        <div>
+            <h3 class="table-section-title">
+                📊 Detalle de Lotes en Inventario
+            </h3>
+
+            <div *ngIf="lotes.length === 0" class="empty-state">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
+                <p>No hay lotes registrados para este producto.</p>
+            </div>
+
+            <div class="table-container" *ngIf="lotes.length > 0">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lote</th>
+                            <th>Vencimiento</th>
+                            <th class="text-right">Cantidad</th>
+                            <th class="text-right">Costo Unitario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let lote of lotes">
+                            <td>
+                                <strong>{{ lote.numeroLote }}</strong>
+                            </td>
+                            <td>
+                                <div *ngIf="isNearExpiry(lote.fechaVencimiento); else normalDate">
+                                    <span style="color: #dc2626; font-weight: 700;">{{ lote.fechaVencimiento |
+                                        date:'dd/MM/yyyy' }}</span>
+                                    <span class="expiry-badge danger" style="margin-left: 0.5rem;">Expira pronto</span>
+                                </div>
+                                <ng-template #normalDate>
+                                    {{ lote.fechaVencimiento | date:'dd/MM/yyyy' }}
+                                </ng-template>
+                            </td>
+                            <td class="text-right font-medium" style="font-size: 1.1rem;">
+                                {{ lote.cantidadActual }}
+                            </td>
+                            <td class="text-right text-gray-600">
+                                {{ lote.costoCompra | currency:'COP':'symbol-narrow' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

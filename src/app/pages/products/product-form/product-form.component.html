@@ -1,142 +1,260 @@
 <div class="page-container">
   <header class="page-header">
-    <h2 *ngIf="!isEditMode">NUEVO PRODUCTO</h2>
-    <h2 *ngIf="isEditMode">ACTUALIZAR PRODUCTO</h2>
-    <p>Registre la ficha técnica del medicamento. El stock y los lotes se gestionan en el módulo de "Compras".</p>
+    <h2 *ngIf="!isEditMode">Crear Nuevo Producto</h2>
+    <h2 *ngIf="isEditMode">Editar Producto</h2>
+    <p>Complete la información detallada para registrar el producto en el inventario.</p>
   </header>
 
   <app-tabs-nav></app-tabs-nav>
 
-  <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="product-form">
+  <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="form-container">
 
-    <!-- SECCIÓN 1: Identificación -->
-    <fieldset class="form-section">
-      <legend>Identificación</legend>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Código Interno / SKU *</label>
-          <input type="text" formControlName="codigoInterno" placeholder="Ej: DOLEX-500">
+    <!-- COLUMNA IZQUIERDA: INFORMACIÓN PRINCIPAL -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+      <!-- TARJETA 1: IDENTIFICACIÓN -->
+      <div class="form-section-card">
+        <div class="card-header">
+          <h3>📦 Identificación Básica</h3>
         </div>
-        <div class="form-group">
-          <label>Código de Barras</label>
-          <div class="input-with-icon">
-            <input type="text" formControlName="codigoBarras" #barcodeInput (change)="validateBarcode()"
-              (keyup.enter)="validateBarcode()">
-            <button type="button" class="btn-icon-inside" (click)="focusBarcodeInput()" title="Escanear">
-              <span class="icon-barcode">|||</span>
-            </button>
+        <div class="card-body">
+          <div class="form-grid grid-2">
+            <div class="form-group">
+              <label>Código Interno / SKU *</label>
+              <input type="text" class="form-control" formControlName="codigoInterno" placeholder="Ej: PROD-001">
+              <div class="invalid-feedback"
+                *ngIf="productForm.get('codigoInterno')?.invalid && productForm.get('codigoInterno')?.touched">
+                Campo requerido
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Código de Barras</label>
+              <div class="input-group" style="display: flex; gap: 0;">
+                <input type="text" class="form-control" formControlName="codigoBarras" #barcodeInput
+                  (change)="validateBarcode()" (keyup.enter)="validateBarcode()" placeholder="Ej: 7701001001"
+                  style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                <button type="button" class="btn btn-secondary" (click)="focusBarcodeInput()" title="Escanear"
+                  style="border-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                  |||
+                </button>
+              </div>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>Nombre Comercial *</label>
+              <input type="text" class="form-control" formControlName="nombreComercial"
+                placeholder="Ej: Acetaminofén 500mg">
+              <div class="invalid-feedback"
+                *ngIf="productForm.get('nombreComercial')?.invalid && productForm.get('nombreComercial')?.touched">
+                Campo requerido
+              </div>
+            </div>
           </div>
         </div>
-        <div class="form-group full-width">
-          <label>Nombre Comercial *</label>
-          <input type="text" formControlName="nombreComercial" placeholder="Ej: Dolex Forte">
-        </div>
-      </div>
-    </fieldset>
-
-    <!-- SECCIÓN 2: Datos Farmacéuticos -->
-    <fieldset class="form-section">
-      <legend>Detalles Farmacéuticos</legend>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Principio Activo *</label>
-          <select formControlName="principioActivoId">
-            <option [ngValue]="null">Seleccione...</option>
-            <option *ngFor="let pa of principiosActivos" [ngValue]="pa.id">{{ pa.nombre }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Laboratorio *</label>
-          <select formControlName="laboratorioId">
-            <option [ngValue]="null">Seleccione...</option>
-            <option *ngFor="let lab of laboratorios" [ngValue]="lab.id">{{ lab.nombre }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Categoría *</label>
-          <select formControlName="categoriaId">
-            <option [ngValue]="null">Seleccione...</option>
-            <option *ngFor="let cat of categorias" [ngValue]="cat.id">{{ cat.nombre }}</option>
-          </select>
-        </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Concentración</label>
-          <input type="text" formControlName="concentracion" placeholder="Ej: 500mg">
+      <!-- TARJETA 2: DATOS FARMACÉUTICOS -->
+      <div class="form-section-card">
+        <div class="card-header">
+          <h3>💊 Detalles Farmacéuticos</h3>
         </div>
-        <div class="form-group">
-          <label>Presentación</label>
-          <input type="text" formControlName="presentacion" placeholder="Ej: Caja x 10 Tabletas">
-        </div>
-        <div class="form-group">
-          <label>Registro INVIMA</label>
-          <input type="text" formControlName="registroInvima">
-        </div>
-      </div>
-    </fieldset>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Principio Activo *</label>
+              <select class="form-control" formControlName="principioActivoId">
+                <option [ngValue]="null">Seleccione...</option>
+                <option *ngFor="let pa of principiosActivos" [ngValue]="pa.id">{{ pa.nombre }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Laboratorio *</label>
+              <select class="form-control" formControlName="laboratorioId">
+                <option [ngValue]="null">Seleccione...</option>
+                <option *ngFor="let lab of laboratorios" [ngValue]="lab.id">{{ lab.nombre }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Categoría *</label>
+              <select class="form-control" formControlName="categoriaId">
+                <option [ngValue]="null">Seleccione...</option>
+                <option *ngFor="let cat of categorias" [ngValue]="cat.id">{{ cat.nombre }}</option>
+              </select>
+            </div>
+          </div>
 
-    <!-- SECCIÓN 3: Comercial y Control -->
-    <fieldset class="form-section">
-      <legend>Comercial y Control</legend>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Precio Venta Base ($) *</label>
-          <input type="number" formControlName="precioVentaBase">
-        </div>
-        <div class="form-group">
-          <label>IVA (%)</label>
-          <input type="number" formControlName="ivaPorcentaje">
-        </div>
-        <div class="form-group">
-          <label>Stock Mínimo (Alerta)</label>
-          <input type="number" formControlName="stockMinimo">
+          <div class="form-grid grid-3" style="margin-top: 1.5rem;">
+            <div class="form-group">
+              <label>Concentración</label>
+              <div class="input-group">
+                <input type="text" class="form-control" formControlName="concentracion" placeholder="Ej: 500">
+                <span class="input-suffix">mg</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Presentación</label>
+              <input type="text" class="form-control" formControlName="presentacion" placeholder="Ej: Caja x 30">
+            </div>
+            <div class="form-group">
+              <label>Registro INVIMA</label>
+              <input type="text" class="form-control" formControlName="registroInvima">
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- SECCIÓN FRACCIONAMIENTO -->
-      <div class="form-row" style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        <!-- Toggle Switch -->
-        <div class="form-group checkbox-group"
-          style="display: flex; align-items: center; justify-content: flex-start; margin-top: 25px;">
-          <label class="switch">
-            <input type="checkbox" formControlName="esFraccionable">
-            <span class="slider round"></span>
-          </label>
-          <span style="font-weight: 600; margin-left: 10px;">¿Venta Fraccionada? (Por Unidad)</span>
+      <!-- TARJETA 3: CLASIFICACIÓN Y ESTADO -->
+      <div class="form-section-card">
+        <div class="card-header">
+          <h3>⚙️ Clasificación y Control</h3>
         </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <!-- Switches para mejor UX -->
+            <div class="form-group checkbox-group" style="display: flex; gap: 2rem; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <label for="esControlado" style="margin: 0; cursor: pointer; font-weight: 500;">Medicamento
+                  Controlado</label>
+                <label class="switch">
+                  <input type="checkbox" id="esControlado" formControlName="esControlado">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <label for="refrigerado" style="margin: 0; cursor: pointer; font-weight: 500;">Requiere
+                  Refrigeración</label>
+                <label class="switch">
+                  <input type="checkbox" id="refrigerado" formControlName="refrigerado">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
 
-        <div class="form-group">
-          <label>Unidades por Caja</label>
-          <input type="number" formControlName="unidadesPorCaja">
-          <small class="text-muted">Cantidad de unidades que trae la caja.</small>
-        </div>
-
-        <div class="form-group">
-          <label>Precio por Unidad ($)</label>
-          <input type="number" formControlName="precioVentaUnidad"
-            [placeholder]="productForm.get('esFraccionable')?.value ? 'Ej: 1000' : 'Deshabilitado'">
+            <div class="form-group">
+              <label>Estado del Producto</label>
+              <select class="form-control" formControlName="estado">
+                <option value="ACTIVO">✅ Activo</option>
+                <option value="INACTIVO">⛔ Inactivo</option>
+                <option value="SUSPENDIDO">⚠️ Suspendido</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-row checkboxes-row">
-        <div class="checkbox-group">
-          <input type="checkbox" id="es_controlado" formControlName="esControlado">
-          <label for="es_controlado">Es Medicamento Controlado</label>
+    </div>
+
+    <!-- COLUMNA DERECHA: PRECIOS Y CONFIGURACIÓN COMERCIAL -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+      <!-- TARJETA 4: PRECIOS -->
+      <div class="form-section-card">
+        <div class="card-header">
+          <h3>💰 Precios y Costos</h3>
         </div>
-        <div class="checkbox-group">
-          <input type="checkbox" id="refrigerado" formControlName="refrigerado">
-          <label for="refrigerado">Requiere Refrigeración</label>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Precio Venta Base *</label>
+              <div class="input-group">
+                <span class="input-prefix">$</span>
+                <input type="number" class="form-control" formControlName="precioVentaBase">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>IVA (%)</label>
+              <input type="number" class="form-control" formControlName="ivaPorcentaje">
+            </div>
+          </div>
+
+          <div class="price-summary-box">
+            <div class="summary-item">
+              <label>Precio Final (Sin IVA)</label>
+              <div class="price-value">{{ productForm.get('precioVentaBase')?.value | currency }}</div>
+            </div>
+            <div class="summary-item">
+              <label>Precio Total (+IVA)</label>
+              <div class="price-value total">
+                {{ (productForm.get('precioVentaBase')?.value * (1 + (productForm.get('ivaPorcentaje')?.value ||
+                0)/100)) | currency }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </fieldset>
 
+      <!-- TARJETA 5: INVENTARIO Y FRACCIONAMIENTO -->
+      <div class="form-section-card">
+        <div class="card-header">
+          <h3>📊 Inventario y Venta</h3>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Stock Mínimo (Alerta crítica)</label>
+            <input type="number" class="form-control" formControlName="stockMinimo">
+            <small class="text-muted">Se generará alerta cuando el stock baje de este número.</small>
+          </div>
+
+          <!-- Panel de Fraccionamiento (Siempre visible) -->
+          <div class="fractional-panel">
+            <!-- Header con Switch -->
+            <div class="form-group checkbox-group"
+              style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0;">
+              <div style="display: flex; flex-direction: column;">
+                <label style="margin: 0; font-weight: 600; cursor: pointer; color: #0369a1;" for="fraccSwitch">¿Venta
+                  Fraccionada?</label>
+                <small style="color: #64748b;">Habilitar venta por unidad/blíster</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="fraccSwitch" formControlName="esFraccionable">
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <!-- Campos Condicionales -->
+            <div class="fractional-content" *ngIf="productForm.get('esFraccionable')?.value">
+              <hr style="margin: 1rem 0; border: 0; border-top: 1px solid #bae6fd;">
+
+              <h4
+                style="margin: 0 0 1rem 0; font-size: 0.9rem; color: #0369a1; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                Configuración</h4>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Unidades x Caja *</label>
+                  <input type="number" class="form-control" formControlName="unidadesPorCaja">
+                </div>
+                <div class="form-group">
+                  <label>Precio Unitario *</label>
+                  <input type="number" class="form-control" formControlName="precioVentaUnidad">
+                </div>
+                <!-- Nueva Fila para Blisters -->
+                <div class="form-group">
+                  <label>Unidades x Blister</label>
+                  <input type="number" class="form-control" formControlName="unidadesPorBlister" placeholder="Opcional">
+                </div>
+                <div class="form-group">
+                  <label>Precio Blister</label>
+                  <input type="number" class="form-control" formControlName="precioVentaBlister" placeholder="Opcional">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Acciones Móviles (si desktop están fuera, aquí un duplicado o movemos actions afuera) -->
+
+    </div>
+
+    <!-- BOTONES DE ACCIÓN (Fixed bottom o in flow) -->
     <div class="form-actions">
-      <button type="button" class="btn btn-secondary" (click)="limpiarFormulario()">Limpiar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">
-        {{ isEditMode ? 'Actualizar Ficha' : 'Crear Ficha Técnica' }}
+      <button type="button" class="btn btn-secondary" (click)="limpiarFormulario()">
+        Limpiar Datos
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid || loadingData">
+        {{ isEditMode ? 'Guardar Cambios' : 'Crear Producto' }}
       </button>
     </div>
+
   </form>
 </div>

@@ -9,8 +9,12 @@ import {
   Categoria,
   Laboratorio,
   PrincipioActivo,
-  ProductoCard
+  ProductoCard,
+  Lote,
+  MovimientoKardex,
+  ProductoConsulta
 } from '../../core/models/product.model';
+import { environment } from '../../../environments/environment';
 
 export interface DashboardResponse {
   totalVencidos: number;
@@ -28,7 +32,7 @@ export interface DashboardResponse {
 export class ProductService {
   // El Gateway traduce:
   // /api/inventario -> http://localhost:8081/api/v1/inventario
-  private apiUrl = 'http://localhost:8080/api/inventario';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -152,6 +156,15 @@ export class ProductService {
     return this.http.get<Producto[]>(`${this.apiUrl}/productos/buscar`, { headers, params });
   }
 
+  // --- SMART PRICE CHECKER ---
+  consultarPrecio(termino: string): Observable<ProductoConsulta[]> {
+    const headers = this.getHeaders();
+    if (!headers) throw new Error('No authenticated');
+
+    const params = new HttpParams().set('query', termino);
+    return this.http.get<ProductoConsulta[]>(`${this.apiUrl}/productos/busqueda-publica`, { headers, params });
+  }
+
   // --- AUXILIARES (Selectores) ---
 
   getCategorias(): Observable<Categoria[]> {
@@ -183,19 +196,19 @@ export class ProductService {
     return this.http.post(`${this.apiUrl}/productos/${id}/imagen`, formData, { headers });
   }
 
-  getProductKardex(id: number): Observable<any[]> {
+  getProductKardex(id: number): Observable<MovimientoKardex[]> {
     const headers = this.getHeaders();
     if (!headers) return of([]);
-    return this.http.get<any[]>(`${this.apiUrl}/productos/${id}/kardex`, { headers });
+    return this.http.get<MovimientoKardex[]>(`${this.apiUrl}/productos/${id}/kardex`, { headers });
   }
 
   // --- LOGICA DE NEGOCIO (Frontend Side) ---
 
-  getLotesDisponibles(productoId: number): Observable<any[]> {
+  getLotesDisponibles(productoId: number): Observable<Lote[]> {
     const headers = this.getHeaders();
     if (!headers) return of([]);
     // Ajustar endpoint según tu backend real
-    return this.http.get<any[]>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
+    return this.http.get<Lote[]>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
   }
 
   // --- VENCIMIENTOS REALES (Endpoints del Usuario) ---

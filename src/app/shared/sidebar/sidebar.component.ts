@@ -24,6 +24,13 @@ export class SidebarComponent {
     this.currentUser$ = this.authService.currentUser$;
   }
 
+  // Usuario por defecto para mostrar si no hay sesión iniciada (Development/Fallback)
+  public defaultUser = {
+    nombreCompleto: 'Usuario de Prueba',
+    rol: 'INVITADO'
+  };
+
+
 
 
   // El array ahora es más simple, solo con la información esencial
@@ -64,7 +71,6 @@ export class SidebarComponent {
     { path: '/app/reportes', title: 'Reportes', active: false, subMenu: [] },
     { path: '/app/configuraciones', title: 'Configuraciones', active: false, subMenu: [] }
   ];
-
 
 
   toggleSubMenu(item: { active: boolean; subMenu: any[] }) {
