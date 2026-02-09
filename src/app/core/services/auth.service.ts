@@ -16,6 +16,8 @@ export interface User {
   rol: string;
   email: string;
   sucursalId: number;
+  usuarioId?: number;
+  login?: string;
 }
 
 export interface AuthResponse {
@@ -64,9 +66,18 @@ export class AuthService {
           // Check if response has user property or IS the user object
           if (response.user) {
             this.saveUser(response.user);
-          } else if (response['nombreCompleto']) {
-            // Flat response structure handling (as seen in user screenshot)
-            this.saveUser(response);
+          } else if (response.nombreCompleto) {
+            // Flat response structure handling
+            const userFromFlat: User = {
+              id: response.usuarioId || 0,
+              nombreCompleto: response.nombreCompleto,
+              rol: response.rol || 'USER',
+              email: response.login || '',
+              sucursalId: 1, // Default value
+              usuarioId: response.usuarioId,
+              login: response.login
+            };
+            this.saveUser(userFromFlat);
           }
         }
       })

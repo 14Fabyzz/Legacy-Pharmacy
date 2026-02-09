@@ -23,7 +23,11 @@ export class SidebarComponent {
     // 5. Conecta la variable local al "canal" del servicio
     this.currentUser$ = this.authService.currentUser$;
   }
-
+  // Usuario por defecto para mostrar si no hay sesión iniciada (Development/Fallback)
+  public defaultUser = {
+    nombreCompleto: 'Usuario de Prueba',
+    rol: 'INVITADO'
+  };
 
 
   // El array ahora es más simple, solo con la información esencial
