@@ -1,0 +1,157 @@
+<div class="pos-layout">
+
+  <!-- COLUMNA IZQUIERDA: PRODUCTOS (70%) -->
+  <div class="products-panel">
+
+    <!-- Header & Buscador -->
+    <div class="panel-header">
+      <h2 class="page-title">Nueva Venta</h2>
+
+      <div class="search-wrapper">
+        <input #barcodeInputRef type="text" class="clean-input search-input"
+          placeholder="Escanear código de barras o buscar producto..." [(ngModel)]="barcodeInput"
+          (input)="onSearchInput()" (keyup.enter)="onEnterKey()" autocomplete="off">
+
+        <div class="search-icon">
+          <i class="bi bi-search" *ngIf="!isLoading"></i>
+          <span class="spinner-border spinner-border-sm text-primary" *ngIf="isLoading"></span>
+        </div>
+
+        <!-- Sugerencias Flotantes -->
+        <div class="search-suggestions" *ngIf="filteredProducts.length > 0">
+          <div *ngFor="let product of filteredProducts" class="suggestion-item" (click)="selectSuggestion(product)"
+            [class.disabled]="product.cantidadDisponible <= 0">
+
+            <div class="suggestion-main">
+              <span class="product-name-sug">{{ product.nombreProducto }}</span>
+              <span class="product-price-sug">{{ product.precioVentaUnidad | currency }}</span>
+            </div>
+
+            <div class="suggestion-meta">
+              <span *ngIf="product.cantidadDisponible > 0" class="stock-badge available">Stock: {{
+                product.cantidadDisponible }}</span>
+              <span *ngIf="product.cantidadDisponible <= 0" class="stock-badge out-of-stock">SIN STOCK</span>
+              <span *ngIf="product.esControlado" class="control-badge">CONTROLADO</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla Clean -->
+    <div class="table-container">
+      <table class="clean-table">
+        <thead>
+          <tr>
+            <th class="w-40">Producto</th>
+            <th class="w-15 text-center">Tipo</th>
+            <th class="w-15 text-center">Cantidad</th>
+            <th class="w-15 text-end">Precio</th>
+            <th class="w-15 text-end">Total</th>
+            <th class="w-5"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of cartItems; let i = index">
+            <td>
+              <div class="product-name">{{ item.product.nombreProducto }}</div>
+              <div class="product-meta">
+                Stock: <span [class.text-danger]="item.product.cantidadDisponible < 5">{{
+                  item.product.cantidadDisponible }}</span>
+              </div>
+            </td>
+            <td class="text-center">
+              <button class="badge-btn" [class.badge-box]="item.esCaja" [class.badge-unit]="!item.esCaja"
+                (click)="toggleUnitType(item)">
+                {{ item.esCaja ? 'CAJA' : 'UNIDAD' }}
+              </button>
+            </td>
+            <td class="text-center">
+              <input type="number" class="clean-input qty-input" [(ngModel)]="item.cantidad"
+                (change)="updateQuantity(item, item.cantidad)" min="1">
+            </td>
+            <td class="text-end text-slate-600">
+              {{ item.precio | currency }}
+            </td>
+            <td class="text-end font-bold text-slate-800">
+              {{ item.subtotal | currency }}
+            </td>
+            <td class="text-center">
+              <button class="icon-btn delete-btn" (click)="removeItem(i)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Empty State -->
+          <tr *ngIf="cartItems.length === 0">
+            <td colspan="6" class="empty-state">
+              <i class="bi bi-cart3"></i>
+              <p>Escanea un producto para comenzar</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COLUMNA DERECHA: TOTALES (30%) -->
+  <div class="totals-panel">
+    <div class="card-clean">
+
+      <div class="card-section">
+        <label class="label-clean">Cliente</label>
+        <div class="customer-display">
+          <i class="bi bi-person-circle"></i>
+          <span>{{ clienteNombre }}</span>
+        </div>
+      </div>
+
+      <div class="card-section">
+        <label class="label-clean">Método de Pago</label>
+        <div class="payment-options">
+          <button class="payment-btn" [class.active]="metodoPago === 'EFECTIVO'"
+            (click)="metodoPago = 'EFECTIVO'; calculateChange()">
+            <i class="bi bi-cash"></i> Efectivo
+          </button>
+          <button class="payment-btn" [class.active]="metodoPago === 'TARJETA'"
+            (click)="metodoPago = 'TARJETA'; calculateChange()">
+            <i class="bi bi-credit-card"></i> Tarjeta
+          </button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="totals-summary">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>{{ subtotal | currency }}</span>
+        </div>
+        <div class="summary-row total-row">
+          <span>TOTAL</span>
+          <span>{{ total | currency }}</span>
+        </div>
+      </div>
+
+      <div class="payment-calculation" *ngIf="metodoPago === 'EFECTIVO'">
+        <div class="input-group-clean">
+          <label>Recibido</label>
+          <input type="number" class="clean-input amount-input" [(ngModel)]="montoRecibido" (input)="calculateChange()">
+        </div>
+        <div class="change-display" [class.has-change]="cambio > 0">
+          <span>Cambio:</span>
+          <strong>{{ cambio | currency }}</strong>
+        </div>
+      </div>
+
+      <button class="btn-primary-action" (click)="processSale()"
+        [disabled]="cartItems.length === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < total)">
+        COBRAR
+      </button>
+
+    </div>
+  </div>
+
+</div>

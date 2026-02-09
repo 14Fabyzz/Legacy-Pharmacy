@@ -10,9 +10,17 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface User {
+  id: number;
+  nombreCompleto: string;
+  rol: string;
+  email: string;
+  sucursalId: number;
+}
+
 export interface AuthResponse {
   token: string;
-  user: any;
+  user: User;
 }
 
 @Injectable({
@@ -22,7 +30,7 @@ export class AuthService {
   private apiUrl = 'http://localhost:8080/api/usuarios'; // No la necesitamos por ahora
   private isBrowser: boolean;
 
-  private currentUserSubject = new BehaviorSubject<any | null>(null);
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(
@@ -100,7 +108,7 @@ export class AuthService {
     }
   }
 
-  saveUser(user: any): void {
+  saveUser(user: User): void {
     if (this.isBrowser) {
       localStorage.setItem('currentUser', JSON.stringify(user));
     }
