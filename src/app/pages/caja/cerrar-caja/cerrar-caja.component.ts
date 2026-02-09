@@ -25,14 +25,14 @@ export class CerrarCajaComponent implements OnInit {
     checkStatus() {
         this.isLoading = true;
         this.ventaService.verificarEstadoCaja().subscribe({
-            next: (turno) => {
+            next: (turno: TurnoCaja) => {
                 this.turnoActual = turno;
                 this.isLoading = false;
                 if (this.turnoActual) {
                     this.calculateDifference();
                 }
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error al verificar estado de caja', err);
                 this.isLoading = false;
             }
@@ -57,12 +57,12 @@ export class CerrarCajaComponent implements OnInit {
 
             this.isLoading = true;
             this.ventaService.cerrarCaja(dto).subscribe({
-                next: () => {
+                next: (res: TurnoCaja) => {
                     this.isLoading = false;
                     alert('Caja cerrada con éxito');
                     this.router.navigate(['/app/caja/abrir']);
                 },
-                error: (err) => {
+                error: (err: any) => {
                     console.error('Error al cerrar caja', err);
                     this.isLoading = false;
                     const msg = err.error?.message || err.error || 'No se pudo cerrar la caja';

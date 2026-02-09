@@ -50,15 +50,18 @@ export class NewSaleComponent implements OnInit {
   /**
    * Lógica de Buscador Inteligente (keyup.enter)
    */
-  filteredProducts: ProductoInventarioDTO[] = [];
-  searchTimeout: ReturnType<typeof setTimeout> | undefined;
+  // --- Autocomplete Logic ---
+  searchResults: ProductoInventarioDTO[] = [];
+  showDropdown: boolean = false;
+  searchTimeout: any;
 
   onSearchInput() {
     clearTimeout(this.searchTimeout);
     this.isLoading = false;
 
     if (!this.barcodeInput.trim()) {
-      this.filteredProducts = [];
+      this.searchResults = [];
+      this.showDropdown = false;
       return;
     }
 
@@ -69,7 +72,8 @@ export class NewSaleComponent implements OnInit {
       this.ventaService.buscarProductos(term).subscribe({
         next: (products) => {
           this.isLoading = false;
-          this.filteredProducts = products || [];
+          this.searchResults = products || [];
+          this.showDropdown = this.searchResults.length > 0;
         },
         error: (err) => {
           this.isLoading = false;
@@ -79,21 +83,18 @@ export class NewSaleComponent implements OnInit {
     }, 300); // 300ms debounce
   }
 
-  selectSuggestion(product: ProductoInventarioDTO) {
-    if (product.cantidadDisponible > 0) {
-      this.addItemToCart(product);
-      this.barcodeInput = '';
-      this.filteredProducts = [];
-      this.barcodeInputRef.nativeElement.focus();
-    } else {
-      alert('Producto sin stock');
-    }
+  selectProduct(product: ProductoInventarioDTO) {
+    this.addItemToCart(product);
+    this.barcodeInput = '';
+    this.searchResults = [];
+    this.showDropdown = false;
+    this.barcodeInputRef.nativeElement.focus();
   }
 
   // Mantenemos Enter para selección rápida del primero si hay resultados
   onEnterKey() {
-    if (this.filteredProducts.length > 0) {
-      this.selectSuggestion(this.filteredProducts[0]);
+    if (this.searchResults.length > 0) {
+      this.selectProduct(this.searchResults[0]);
     } else {
       // Intento de búsqueda directa si no hubo suggestions
       this.onSearchInput();

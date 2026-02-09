@@ -1,0 +1,115 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+      routes:
+        # =================================================================
+        # RUTAS PÚBLICAS
+        # =================================================================
+        - id: usuarios-login
+          # USA LA VARIABLE DE ENTORNO AQUÍ
+          uri: ${URI_USUARIOS}
+          predicates:
+            - Path=/api/usuarios/login
+            - Method=POST
+          filters:
+            - RewritePath=/api/usuarios/login, /api/auth/login
+
+        - id: usuarios-registro
+          uri: ${URI_USUARIOS}
+          predicates:
+            - Path=/api/usuarios/registro
+            - Method=POST
+          filters:
+            - RewritePath=/api/usuarios/registro, /api/auth/register # Ajusté esto asumiendo que tu back usa /auth/register
+
+        # =================================================================
+        # RUTAS PROTEGIDAS
+        # =================================================================
+
+        # Inventario Dashboard
+        - id: inventario-dashboard
+          uri: ${URI_INVENTARIO}
+          predicates:
+            - Path=/api/dashboard/**
+          filters:
+            - RewritePath=/api/dashboard/(?<segment>.*), /api/v1/inventario/dashboard/${segment}
+            - AuthenticationFilter
+
+        # Microservicio de Inventario
+        - id: inventario-service
+          uri: ${URI_INVENTARIO}
+          predicates:
+            - Path=/api/inventario/**
+          filters:
+            - RewritePath=/api/inventario/(?<segment>.*), /api/v1/inventario/${segment}
+            - AuthenticationFilter
+
+        # Microservicio de Usuarios (General)
+        - id: usuarios-service
+          uri: ${URI_USUARIOS}
+          predicates:
+            - Path=/api/usuarios/**
+          filters:
+            # Se eliminó el RewritePath incorrecto que quitaba '/usuarios'
+            # La ruta entrante /api/usuarios se reenvía tal cual al microservicio
+            - AuthenticationFilter
+
+        # Microservicio de Ventas
+        - id: ventas-service
+          uri: ${URI_VENTAS}
+          predicates:
+            - Path=/api/ventas/**
+          filters:
+            - RewritePath=/api/ventas/(?<segment>.*), /api/v1/ventas/${segment}
+            - AuthenticationFilter
+
+# =============================================================================
+# JWT CONFIGURATION
+# =============================================================================
+jwt:
+  secret: ${JWT_SECRET:your_jwt_secret_here_for_local_dev}
+  expiration: 86400000
+
+# =============================================================================
+# ACTUATOR
+# =============================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+
+# =============================================================================
+# LOGGING
+# =============================================================================
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    com.legacy.pharmacy.gateway: DEBUG

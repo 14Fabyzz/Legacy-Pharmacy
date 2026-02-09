@@ -10,9 +10,9 @@ import { CrearVentaDTO, VentaResponseDTO, ProductoInventarioDTO, AperturaCajaDTO
 export class VentaService {
 
     // Endpoints base
-    private ventasUrl = 'http://localhost:8080/api/ventas/ventas';
+    private ventasUrl = 'http://localhost:8080/api/ventas'; // Gateway o directo
     private inventarioUrl = 'http://localhost:8080/api/inventario';
-    private cajaUrl = 'http://localhost:8080/api/ventas/caja';
+    private cajaUrl = 'http://localhost:8080/api/ventas/caja'; // Ajustado según TurnoCajaController está en MS-ventas tambien
 
     constructor(private http: HttpClient) { }
 
@@ -53,6 +53,10 @@ export class VentaService {
      * Gestión de Caja
      */
     abrirCaja(apertura: AperturaCajaDTO): Observable<TurnoCaja> {
+        // El controller TurnoCajaController tiene @RequestMapping("/caja")
+        // Si MS-ventas está en ruta base, sería /api/ventas/caja o similar dependiendo del Gateway.
+        // Asumiremos que el Gateway mapea /api/ventas a MS-Ventas.
+        // Y MS-Ventas tiene /caja. Entonces: /api/ventas/caja/abrir
         return this.http.post<TurnoCaja>(`${this.cajaUrl}/abrir`, apertura);
     }
 

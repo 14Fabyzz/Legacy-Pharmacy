@@ -7,7 +7,7 @@
     <div class="panel-header">
       <h2 class="page-title">Nueva Venta</h2>
 
-      <div class="search-wrapper">
+      <div class="search-bar">
         <input #barcodeInputRef type="text" class="clean-input search-input"
           placeholder="Escanear código de barras o buscar producto..." [(ngModel)]="barcodeInput"
           (input)="onSearchInput()" (keyup.enter)="onEnterKey()" autocomplete="off">
@@ -17,25 +17,19 @@
           <span class="spinner-border spinner-border-sm text-primary" *ngIf="isLoading"></span>
         </div>
 
-        <!-- Sugerencias Flotantes -->
-        <div class="search-suggestions" *ngIf="filteredProducts.length > 0">
-          <div *ngFor="let product of filteredProducts" class="suggestion-item" (click)="selectSuggestion(product)"
-            [class.disabled]="product.cantidadDisponible <= 0">
-
-            <div class="suggestion-main">
-              <span class="product-name-sug">{{ product.nombreProducto }}</span>
-              <span class="product-price-sug">{{ product.precioVentaUnidad | currency }}</span>
+        <!-- Dropdown de Resultados -->
+        <ul class="search-dropdown" *ngIf="showDropdown">
+          <li *ngFor="let product of searchResults" (click)="selectProduct(product)">
+            <div class="dropdown-item-main">
+              <span class="item-name">{{ product.nombreProducto }}</span>
+              <span class="item-price">{{ product.precioVentaUnidad | currency }}</span>
             </div>
-
-            <div class="suggestion-meta">
-              <span *ngIf="product.cantidadDisponible > 0" class="stock-badge available">Stock: {{
-                product.cantidadDisponible }}</span>
-              <span *ngIf="product.cantidadDisponible <= 0" class="stock-badge out-of-stock">SIN STOCK</span>
-              <span *ngIf="product.esControlado" class="control-badge">CONTROLADO</span>
+            <div class="dropdown-item-meta">
+              Stock: <span [class.text-danger]="product.cantidadDisponible < 5">{{ product.cantidadDisponible }}</span>
+              <span *ngIf="product.esControlado" class="badge-controlled">CONTROLADO</span>
             </div>
-
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
     </div>
 

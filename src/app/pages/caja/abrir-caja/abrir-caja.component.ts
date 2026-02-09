@@ -26,11 +26,11 @@ export class AbrirCajaComponent implements OnInit {
     checkStatus() {
         this.isLoading = true;
         this.ventaService.verificarEstadoCaja().subscribe({
-            next: (turno) => {
+            next: (turno: TurnoCaja) => {
                 this.turnoActual = turno;
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error al verificar estado de caja', err);
                 this.isLoading = false;
             }
@@ -56,12 +56,12 @@ export class AbrirCajaComponent implements OnInit {
 
         this.isLoading = true;
         this.ventaService.abrirCaja(dto).subscribe({
-            next: (nuevoTurno) => {
+            next: (nuevoTurno: TurnoCaja) => {
                 this.turnoActual = nuevoTurno;
                 this.isLoading = false;
                 alert('Caja abierta con éxito');
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error al abrir caja', err);
                 this.isLoading = false;
                 const msg = err.error?.message || err.error || 'No se pudo abrir la caja';

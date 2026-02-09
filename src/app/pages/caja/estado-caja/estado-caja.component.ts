@@ -21,11 +21,11 @@ export class EstadoCajaComponent implements OnInit {
     checkStatus() {
         this.isLoading = true;
         this.ventaService.verificarEstadoCaja().subscribe({
-            next: (turno) => {
+            next: (turno: TurnoCaja) => {
                 this.turnoActual = turno;
                 this.isLoading = false;
             },
-            error: (err) => {
+            error: (err: any) => {
                 console.error('Error al obtener estado de caja', err);
                 this.isLoading = false;
             }
