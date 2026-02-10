@@ -61,10 +61,8 @@
         <thead>
           <tr>
             <th style="padding-left: 20px;">Producto</th>
-            <th>Referencia</th>
-            <th>Laboratorio</th>
             <th>Stock</th>
-            <th>Vencimiento</th> <!-- [NUEVO] -->
+            <th>Vencimiento</th>
             <th>Precio</th>
             <th>Categoría</th>
             <th class="text-right" style="padding-right: 20px;">Acciones</th>
@@ -73,7 +71,7 @@
         <tbody>
           <tr *ngFor="let product of paginatedProducts">
 
-            <!-- 1. Producto (Icono + Nombre) -->
+            <!-- 1. Producto (Icono + Nombre + Badges de Seguridad) -->
             <td>
               <div class="product-cell-main">
                 <!-- Icono -->
@@ -81,9 +79,17 @@
                   <span *ngIf="true">💊</span>
                 </div>
                 <div class="product-name-wrapper">
-                  <span class="product-name-text">{{ product.nombreComercial }}</span>
-                  <small class="product-subtext">{{ product.principioActivo }} {{ product.concentracion }}</small>
-                  <!-- Badge Existente (Presentación) -->
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="product-name-text">{{ product.nombreComercial }}</span>
+                    <!-- Badge Refrigerado -->
+                    <span *ngIf="product.refrigerado" title="Requiere refrigeración"
+                      style="font-size: 0.9rem;">❄️</span>
+                    <!-- Badge Controlado -->
+                    <span *ngIf="product.esControlado" title="Medicamento controlado"
+                      style="font-size: 0.9rem;">🔒</span>
+                  </div>
+                  <small class="product-subtext">{{ product.laboratorio }}</small>
+                  <!-- Badge Presentación -->
                   <span class="status-badge-table"
                     style="background-color: #f1f5f9; color: #64748b; font-size: 0.75rem; margin-top: 4px; align-self: flex-start;">
                     {{ product.presentacion }}
@@ -92,42 +98,25 @@
               </div>
             </td>
 
-            <!-- 2. Referencia (Código Interno) -->
-            <td>
-              <div class="code-cell" style="display: flex; flex-direction: column; align-items: flex-start;">
-                <!-- Línea Superior: Código de Barras -->
-                <span class="barcode-text" style="font-weight: 700; color: #334155; font-size: 0.9rem;">
-                  <span class="barcode-icon">║▌</span> {{ product.codigoBarras || 'S/CB' }}
-                </span>
-                <!-- Línea Inferior: Código Interno -->
-                <small class="text-muted" style="font-size: 0.75rem; color: #94a3b8;">
-                  Ref: {{ product.codigoInterno }}
-                </small>
-              </div>
-            </td>
+            <!-- 2. Laboratorio (Eliminado - ya está en nombre) -->
+            <!-- Removemos esta columna -->
 
-            <!-- 3. Laboratorio -->
-            <td>
-              <span class="lab-text">{{ product.laboratorio }}</span>
-            </td>
-
-            <!-- 4. Stock Badge -->
+            <!-- 3. Stock Badge -->
             <td>
               <div class="stock-badge-container" [ngClass]="{
                      'stock-low': product.nivelStock === 'CRITICO' || product.nivelStock === 'BAJO',
                      'stock-ok': product.nivelStock === 'OPTIMO' || product.nivelStock === 'ALTO'
                    }">
                 <span class="stock-value">{{ product.stockTotal }}</span>
-                <span class="stock-divider">/</span>
-                <span class="stock-min">Min: {{ product.stockMinimo }}</span>
+                <span class="stock-label">uds</span>
               </div>
             </td>
 
-            <!-- 5. [NUEVO] Vencimiento -->
+            <!-- 4. Vencimiento (con alerta roja si < 3 meses) -->
             <td>
               <div *ngIf="product.proximoVencimiento; else noVencimiento">
                 <span class="vencimiento-text"
-                  [ngClass]="{'text-danger': getVencimientoStatus(product.proximoVencimiento) === 'red' }">
+                  [ngClass]="{'text-danger': isVencimientoCercano(product.proximoVencimiento)}">
                   <span class="icon-clock">📅</span> {{ product.proximoVencimiento | date:'dd/MM/yyyy' }}
                 </span>
               </div>
@@ -136,31 +125,40 @@
               </ng-template>
             </td>
 
-            <!-- 6. Precio (Con IVA) -->
+            <!-- 5. Precio Principal + Badge IVA + Blister -->
             <td>
-              <div *ngIf="product.esFraccionable; else precioNormal" class="price-dual">
-                <div class="price-box" style="font-weight: 700; color: #0f172a;">
-                  {{ product.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}
-                  <span style="font-size: 0.7em; font-weight: normal; color: #64748b;">/ Caja</span>
+              <div class="price-container" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <!-- Precio Principal -->
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="price-cell" style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">
+                    {{ product.precioVentaTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  </span>
+                  <!-- Badge IVA -->
+                  <span *ngIf="product.ivaPorcentaje > 0" class="badge-iva"
+                    style="background-color: #dbeafe; color: #1e40af; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600;">
+                    IVA {{ product.ivaPorcentaje }}%
+                  </span>
+                  <span *ngIf="product.ivaPorcentaje === 0" class="badge-exento"
+                    style="background-color: #f3f4f6; color: #6b7280; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">
+                    Exento
+                  </span>
                 </div>
-                <div class="price-unit" style="font-size: 0.85em; color: #059669;">
-                  {{ product.precioVentaUnidad | currency:'COP':'symbol-narrow':'1.0-0' }}
-                  <span style="font-size: 0.8em; font-weight: normal; color: #64748b;">/ Unidad</span>
+                <!-- Precio Blister (si aplica) -->
+                <div *ngIf="product.esFraccionable && product.precioVentaBlister"
+                  style="font-size: 0.85em; color: #059669;">
+                  Blíster: {{ product.precioVentaBlister | currency:'COP':'symbol-narrow':'1.0-0' }}
                 </div>
               </div>
-              <ng-template #precioNormal>
-                <span class="price-cell">{{ product.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
-              </ng-template>
             </td>
 
-            <!-- 7. Categoría -->
+            <!-- 6. Categoría -->
             <td>
               <span class="status-badge-table">
                 {{ product.categoria }}
               </span>
             </td>
 
-            <!-- 8. Acciones -->
+            <!-- 7. Acciones -->
             <td class="text-right">
               <div class="table-actions">
                 <button title="Ver Detalles (Lotes)" (click)="verDetalle(product)" class="btn-icon">👁️</button>

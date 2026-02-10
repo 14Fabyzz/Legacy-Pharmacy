@@ -114,36 +114,28 @@ export interface ProductoRequest {
 export interface ProductoCard {
     id: number;
     nombreComercial: string;
-    concentracion: string;
     presentacion: string;
-    principioActivo: string;
-    codigoInterno: string;
-    codigoBarras?: string;
     laboratorio: string;
     categoria: string;
+
+    // Precios (PrecioVentaTotal es el más importante)
+    precioVentaTotal?: number;       // PVP Final con IVA (opcional por compatibilidad)
+    precioVentaBlister?: number;     // Precio secundario si aplica
+    ivaPorcentaje: number;           // 0 = Exento, >0 = Gravado
+
+    // Stock
+    nivelStock: string;              // "CRITICO", "BAJO", "OPTIMO", "SOBRESTOCK"
     stockTotal: number;
-    stockMinimo: number;
 
-    // Inputs informativos (para detalles)
-    precio_compra_referencia?: number;  // Costo
-    porcentaje_ganancia?: number;       // Margen %
-    iva_porcentaje?: number;            // IVA %
-
-    // Precios calculados por el backend (opcionales en vista de tarjetas)
-    precioVentaBase?: number;
-    precioVentaTotal?: number;
-    precioVentaUnidad?: number;
-    precioVentaBlister?: number;
-
-    nivelStock: string;
-    proximoVencimiento?: string;
-
-    // Campos Fraccionamiento
+    // Venta Fraccionada
     esFraccionable: boolean;
-    unidadesPorCaja: number;
 
-    tipo?: 'TANGIBLE' | 'SERVICIO';
-    esControlado?: boolean;
+    // Alertas de Seguridad
+    refrigerado: boolean;
+    esControlado: boolean;
+
+    // Vencimiento
+    proximoVencimiento?: string;
 }
 
 export interface Lote {

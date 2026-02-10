@@ -83,10 +83,9 @@ export class ProductListComponent implements OnInit {
       this.filteredProducts = this.allProducts.filter(product => {
         return (
           product.nombreComercial?.toLowerCase().includes(term) ||
-          product.codigoInterno?.toLowerCase().includes(term) ||
-          (product.codigoBarras && product.codigoBarras.includes(term)) ||
-          product.principioActivo?.toLowerCase().includes(term) ||
-          product.laboratorio?.toLowerCase().includes(term)
+          product.laboratorio?.toLowerCase().includes(term) ||
+          product.categoria?.toLowerCase().includes(term) ||
+          product.presentacion?.toLowerCase().includes(term)
         );
       });
     }
@@ -148,6 +147,15 @@ export class ProductListComponent implements OnInit {
   // 3. 📊 Kardex
   verKardex(product: ProductoCard) {
     this.router.navigate(['/app/productos/kardex', product.id]);
+  }
+
+  // Método auxiliar: Detecta si el vencimiento está dentro de los próximos 3 meses
+  isVencimientoCercano(fechaVencimiento: string): boolean {
+    if (!fechaVencimiento) return false;
+    const fecha = new Date(fechaVencimiento);
+    const hoy = new Date();
+    const tresMesesEnMs = 3 * 30 * 24 * 60 * 60 * 1000; // ~90 días
+    return (fecha.getTime() - hoy.getTime()) < tresMesesEnMs;
   }
 
   // 4. 🖼️ Imagen

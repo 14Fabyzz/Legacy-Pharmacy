@@ -94,10 +94,6 @@ export class ProductService {
     console.log('🚀 [ProductService] Requesting:', `${this.apiUrl}/dashboard/cards`, params.toString());
 
     return this.http.get<ProductoCard[]>(`${this.apiUrl}/dashboard/cards`, { headers, params }).pipe(
-      // Ensure data integrity for fractional display
-      tap(cards => cards.forEach(c => {
-        if (!c.unidadesPorCaja || c.unidadesPorCaja < 1) c.unidadesPorCaja = 1;
-      })),
       catchError(err => {
         console.error('Error fetching dashboard cards', err);
         return of([]);
@@ -276,37 +272,29 @@ export class ProductService {
   mapToCard(p: Producto): ProductoCard {
     return {
       id: p.id,
-      codigoInterno: p.codigo_interno,
-      codigoBarras: p.codigo_barras,
       nombreComercial: p.nombre_comercial,
-      concentracion: p.concentracion || '', // Map from detailed
-      presentacion: p.presentacion || '',   // Map from detailed
+      presentacion: p.presentacion || '',
       laboratorio: p.laboratorio?.nombre || 'N/A',
       categoria: p.categoria?.nombre || 'N/A',
-      principioActivo: p.principioActivo?.nombre || 'N/A',
-      stockTotal: p.stock_actual,
-      stockMinimo: p.stock_minimo,
 
-      // Inputs informativos (nuevos)
-      precio_compra_referencia: p.precio_compra_referencia,
-      porcentaje_ganancia: p.porcentaje_ganancia,
-      iva_porcentaje: p.iva_porcentaje,
-
-      // Precios calculados
-      precioVentaBase: p.precio_venta_base,
+      // Precios
       precioVentaTotal: p.precio_venta_total,
-      precioVentaUnidad: p.precio_venta_unidad,
       precioVentaBlister: p.precio_venta_blister,
+      ivaPorcentaje: p.iva_porcentaje || 0,
 
+      // Stock
       nivelStock: p.stock_actual <= p.stock_minimo ? 'CRITICO' : (p.stock_actual <= p.stock_minimo * 1.5 ? 'BAJO' : 'OPTIMO'),
-      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined,
+      stockTotal: p.stock_actual,
 
-      // Fraccionamiento - Usa camelCase según interfaz Producto
-      esFraccionable: p.esFraccionable,
-      unidadesPorCaja: p.unidadesPorCaja,
+      // Venta Fraccionada
+      esFraccionable: p.esFraccionable || false,
 
-      tipo: p.tipo,
-      esControlado: p.es_controlado
+      // Alertas de Seguridad
+      refrigerado: p.refrigerado || false,
+      esControlado: p.es_controlado || false,
+
+      // Vencimiento
+      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined
     };
   }
 }
