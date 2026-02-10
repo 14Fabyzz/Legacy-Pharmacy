@@ -6,11 +6,10 @@
 
     <!-- Header -->
     <div class="panel-header">
-        <div class="header-content" *ngIf="product">
-            <h2>{{ product.nombreComercial }}</h2>
+        <div class="header-content" *ngIf="data && data.detalleProducto">
+            <h2>{{ data.detalleProducto.nombreComercial }}</h2>
             <p>
-                {{ product.laboratorio }} <span class="mx-2 text-gray-300">|</span> {{ product.concentracion }} {{
-                product.presentacion }}
+                Código: {{ data.detalleProducto.codigoInterno }}
             </p>
         </div>
         <button class="close-btn" (click)="onClose()" title="Cerrar panel">
@@ -23,17 +22,17 @@
     </div>
 
     <!-- Content -->
-    <div class="panel-body">
+    <div class="panel-body" *ngIf="data && data.detalleProducto">
 
         <!-- Stats Summary -->
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="label">Total Stock</span>
-                <span class="value">{{ product?.stockTotal || 0 }}</span>
+                <span class="value">{{ data.detalleProducto.stockTotal || 0 }}</span>
             </div>
             <div class="stat-card">
                 <span class="label">Lotes Activos</span>
-                <span class="value">{{ lotes.length }}</span>
+                <span class="value">{{ data.lotes.length || 0 }}</span>
             </div>
         </div>
 
@@ -47,32 +46,48 @@
                     style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 3px solid #0ea5e9;">
                     <span class="label" style="color: #0369a1; font-weight: 600;">Costo</span>
                     <span class="value" style="color: #0f172a; font-size: 1.1rem;">
-                        {{ product?.precio_compra_referencia | currency:'COP':'symbol-narrow':'1.0-0' }}
+                        {{ data.detalleProducto.precioCompraReferencia | currency:'COP':'symbol-narrow':'1.0-0' }}
                     </span>
                 </div>
                 <div class="stat-card"
                     style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 3px solid #f59e0b;">
                     <span class="label" style="color: #92400e; font-weight: 600;">Margen</span>
                     <span class="value" style="color: #0f172a; font-size: 1.1rem;">
-                        {{ product?.porcentaje_ganancia || 0 }}%
+                        {{ data.detalleProducto.porcentajeGanancia || 0 }}%
                     </span>
                 </div>
                 <div class="stat-card"
                     style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-left: 3px solid #6b7280;">
                     <span class="label" style="color: #374151; font-weight: 600;">Precio sin IVA</span>
                     <span class="value" style="color: #0f172a; font-size: 1.1rem;">
-                        {{ product?.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}
+                        {{ data.detalleProducto.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}
                     </span>
                 </div>
                 <div class="stat-card"
                     style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 3px solid #10b981;">
                     <span class="label" style="color: #065f46; font-weight: 600;">Precio Final</span>
                     <span class="value" style="color: #0f172a; font-size: 1.25rem; font-weight: 700;">
-                        {{ product?.precioVentaTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
+                        {{ data.detalleProducto.precioVentaTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
                     </span>
                     <small style="display: block; color: #6b7280; font-size: 0.7rem; margin-top: 2px;">
-                        IVA {{ product?.iva_porcentaje || 0 }}% incluido
+                        IVA {{ data.detalleProducto.ivaPorcentaje || 0 }}% incluido
                     </small>
+                </div>
+                <!-- Tarjeta ADICIONAL: Precio por Unidad (solo si existe) -->
+                <div class="stat-card" *ngIf="data.detalleProducto.precioVentaUnidad"
+                    style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 3px solid #f59e0b;">
+                    <span class="label" style="color: #92400e; font-weight: 600;">Precio Unidad</span>
+                    <span class="value" style="color: #0f172a; font-size: 1.1rem;">
+                        {{ data.detalleProducto.precioVentaUnidad | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </span>
+                </div>
+                <!-- Tarjeta ADICIONAL: Precio por Blister (solo si existe) -->
+                <div class="stat-card" *ngIf="data.detalleProducto.precioVentaBlister"
+                    style="background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-left: 3px solid #8b5cf6;">
+                    <span class="label" style="color: #6b21a8; font-weight: 600;">Precio Blister</span>
+                    <span class="value" style="color: #0f172a; font-size: 1.1rem;">
+                        {{ data.detalleProducto.precioVentaBlister | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -83,23 +98,23 @@
                 📊 Detalle de Lotes en Inventario
             </h3>
 
-            <div *ngIf="lotes.length === 0" class="empty-state">
+            <div *ngIf="!data.lotes || data.lotes.length === 0" class="empty-state">
                 <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
                 <p>No hay lotes registrados para este producto.</p>
             </div>
 
-            <div class="table-container" *ngIf="lotes.length > 0">
+            <div class="table-container" *ngIf="data.lotes && data.lotes.length > 0">
                 <table>
                     <thead>
                         <tr>
                             <th>Lote</th>
                             <th>Vencimiento</th>
                             <th class="text-right">Cantidad</th>
-                            <th class="text-right">Costo Unitario</th>
+                            <th class="text-right">Costo Compra</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let lote of lotes">
+                        <tr *ngFor="let lote of data.lotes">
                             <td>
                                 <strong>{{ lote.numeroLote }}</strong>
                             </td>

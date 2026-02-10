@@ -8,7 +8,7 @@ import Swal from 'sweetalert2'; // Import SweetAlert2
 
 import { ProductService } from '../product.service';
 import { SearchPipe } from '../../../shared/pipes/search.pipe'; // Can be removed if not used in template anymore, but let's just remove it from standalone imports
-import { Producto, ProductoCard, Lote } from '../../../core/models/product.model';
+import { Producto, ProductoCard, Lote, ProductoConLotesResponse } from '../../../core/models/product.model';
 import { ExpirationSemaphoreComponent } from '../expiration-semaphore/expiration-semaphore.component';
 import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
 import { InventoryDetailPanelComponent } from '../components/inventory-detail-panel/inventory-detail-panel.component';
@@ -41,8 +41,7 @@ export class ProductListComponent implements OnInit {
 
   // Variables para Detalle de Inventario (Panel Lateral)
   showDetailPanel = false;
-  selectedProduct: ProductoCard | null = null;
-  selectedProductLotes: Lote[] = [];
+  selectedProductData: ProductoConLotesResponse | null = null;
 
   constructor(
     private productService: ProductService,
@@ -119,14 +118,6 @@ export class ProductListComponent implements OnInit {
 
   // 1. 👁️ Ver Detalle (Lotes)
   verDetalle(product: ProductoCard) {
-    this.selectedProduct = product;
-    // Mostrar loading o UI preventiva si se desea, 
-    // pero para un panel lateral suele bastar con abrirlo y mostrar spinner interno o simplemente esperar.
-    // Aquí optamos por abrir el panel vacío y cargar datos.
-
-    // Resetear lotes anteriores
-    this.selectedProductLotes = [];
-
     // Mostrar loading global momentáneo (opcional) o simplemente abrir panel
     Swal.fire({
       title: 'Cargando stock...',
@@ -136,9 +127,9 @@ export class ProductListComponent implements OnInit {
     });
 
     this.productService.getLotesDisponibles(product.id).subscribe({
-      next: (lotes: Lote[]) => {
+      next: (data: ProductoConLotesResponse) => {
         Swal.close();
-        this.selectedProductLotes = lotes;
+        this.selectedProductData = data;
         this.showDetailPanel = true;
       },
       error: (err) => {

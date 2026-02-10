@@ -12,7 +12,9 @@ import {
   ProductoCard,
   Lote,
   MovimientoKardex,
-  ProductoConsulta
+  ProductoConsulta,
+  ProductoConLotesResponse,
+  DetalleProducto
 } from '../../core/models/product.model';
 import { environment } from '../../../environments/environment';
 
@@ -204,11 +206,11 @@ export class ProductService {
 
   // --- LOGICA DE NEGOCIO (Frontend Side) ---
 
-  getLotesDisponibles(productoId: number): Observable<Lote[]> {
+  getLotesDisponibles(productoId: number): Observable<ProductoConLotesResponse> {
     const headers = this.getHeaders();
-    if (!headers) return of([]);
+    if (!headers) return of({ detalleProducto: null as any, lotes: [] });
     // Ajustar endpoint según tu backend real
-    return this.http.get<Lote[]>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
+    return this.http.get<ProductoConLotesResponse>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
   }
 
   // --- VENCIMIENTOS REALES (Endpoints del Usuario) ---

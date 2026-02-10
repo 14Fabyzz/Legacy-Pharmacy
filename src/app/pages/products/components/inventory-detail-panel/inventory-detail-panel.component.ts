@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductoCard, Lote } from '../../../../core/models/product.model';
+import { ProductoCard, Lote, ProductoConLotesResponse } from '../../../../core/models/product.model';
 
 @Component({
     selector: 'app-inventory-detail-panel',
@@ -11,8 +11,7 @@ import { ProductoCard, Lote } from '../../../../core/models/product.model';
 })
 export class InventoryDetailPanelComponent {
     @Input() isVisible = false;
-    @Input() product: ProductoCard | null = null;
-    @Input() lotes: Lote[] = [];
+    @Input() data: ProductoConLotesResponse | null = null;
     @Output() close = new EventEmitter<void>();
 
     onClose() {

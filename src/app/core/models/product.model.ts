@@ -154,6 +154,27 @@ export interface Lote {
     costoCompra: number;
 }
 
+// Respuesta del endpoint /api/inventario/lotes/disponibles/{id}
+export interface DetalleProducto {
+    codigoInterno: string;
+    nombreComercial: string;
+    porcentajeGanancia: number;
+    ivaPorcentaje: number;
+    precioCompraReferencia: number;
+    precioVentaBase: number;
+    precioVentaTotal: number;
+    stockTotal: number;
+    // Campos opcionales para venta fraccionada
+    precioVentaUnidad?: number;
+    precioVentaBlister?: number;
+    unidadesPorBlister?: number;
+}
+
+export interface ProductoConLotesResponse {
+    detalleProducto: DetalleProducto;
+    lotes: Lote[];
+}
+
 export interface MovimientoKardex {
     id: number;
     fecha: string; // Viene como ISO string

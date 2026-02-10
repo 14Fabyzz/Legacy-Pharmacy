@@ -205,7 +205,7 @@
     <app-expiration-semaphore *ngIf="showSemaphoreModal" (close)="closeModals()"></app-expiration-semaphore>
 
     <!-- PANEL LATERAL DE DETALLE DE LOTES -->
-    <app-inventory-detail-panel [isVisible]="showDetailPanel" [product]="selectedProduct" [lotes]="selectedProductLotes"
+    <app-inventory-detail-panel [isVisible]="showDetailPanel" [data]="selectedProductData"
       (close)="showDetailPanel = false">
     </app-inventory-detail-panel>
 
