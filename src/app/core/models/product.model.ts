@@ -39,19 +39,26 @@ export interface Producto {
     categoria: Categoria;
     principioActivo: PrincipioActivo;
 
-    precio_venta_base: number;
-    precio_compra_referencia?: number; // Added for Purchase Entry
-    iva_porcentaje: number;
+    // Inputs: Campos que el frontend envía al backend
+    precio_compra_referencia: number;  // Costo de compra (obligatorio)
+    porcentaje_ganancia: number;       // Margen de ganancia % (obligatorio)
+    iva_porcentaje: number;            // IVA % (obligatorio)
+
+    // Outputs: Precios calculados automáticamente por el backend
+    precio_venta_base?: number;        // Calculado: precioCompra * (1 + margen/100)
+    precio_venta_total?: number;       // Calculado: precioVentaBase * (1 + IVA/100)
+    precio_venta_unidad?: number;      // Calculado: precioVentaTotal / unidadesPorCaja
+    precio_venta_blister?: number;     // Calculado: precioVentaUnidad * unidadesPorBlister
+
     stock_minimo: number;
     stock_actual: number;
 
     tipo: 'TANGIBLE' | 'SERVICIO'; // Default 'TANGIBLE'
     unidadesPorBlister?: number;   // Nuevo campo informativo
 
-    // Campos Fraccionamiento [NUEVOS]
+    // Campos Fraccionamiento
     unidadesPorCaja: number;
     esFraccionable: boolean;
-    precioVentaUnidad?: number;
 
     es_controlado: boolean;
     refrigerado: boolean;
@@ -77,18 +84,20 @@ export interface ProductoRequest {
     categoriaId: number;
     principioActivoId: number;
 
-    precioVentaBase: number;
-    ivaPorcentaje: number;
+    // Inputs obligatorios: El backend calcula los precios a partir de estos valores
+    precioCompraReferencia: number;  // Costo de compra
+    porcentajeGanancia: number;      // Margen de ganancia %
+    ivaPorcentaje: number;           // IVA %
+
     stockMinimo: number;
     stockActual: number;
 
     tipo: 'TANGIBLE' | 'SERVICIO';
     unidadesPorBlister?: number;
 
-    // Campos Fraccionamiento [NUEVOS]
+    // Campos Fraccionamiento
     unidadesPorCaja: number;
     esFraccionable: boolean;
-    precioVentaUnidad?: number | null; // Permite null para que el backend calcule automáticamente
 
     esControlado: boolean;
     refrigerado: boolean;
@@ -105,8 +114,8 @@ export interface ProductoRequest {
 export interface ProductoCard {
     id: number;
     nombreComercial: string;
-    concentracion: string;        // [NUEVO]
-    presentacion: string;         // [NUEVO]
+    concentracion: string;
+    presentacion: string;
     principioActivo: string;
     codigoInterno: string;
     codigoBarras?: string;
@@ -114,14 +123,24 @@ export interface ProductoCard {
     categoria: string;
     stockTotal: number;
     stockMinimo: number;
-    precioVentaBase: number;
-    nivelStock: string;
-    proximoVencimiento?: string;  // Change to string as requested
 
-    // Campos Fraccionamiento [NUEVOS]
-    esFraccionable: boolean;
-    unidadesPorCaja: number; // [NUEVO] Required for Hints
+    // Inputs informativos (para detalles)
+    precio_compra_referencia?: number;  // Costo
+    porcentaje_ganancia?: number;       // Margen %
+    iva_porcentaje?: number;            // IVA %
+
+    // Precios calculados por el backend (opcionales en vista de tarjetas)
+    precioVentaBase?: number;
+    precioVentaTotal?: number;
     precioVentaUnidad?: number;
+    precioVentaBlister?: number;
+
+    nivelStock: string;
+    proximoVencimiento?: string;
+
+    // Campos Fraccionamiento
+    esFraccionable: boolean;
+    unidadesPorCaja: number;
 
     tipo?: 'TANGIBLE' | 'SERVICIO';
     esControlado?: boolean;
@@ -153,9 +172,13 @@ export interface ProductoConsulta {
     productoId: number;
     nombreProducto: string;
     tipo: 'TANGIBLE' | 'SERVICIO';
-    precioVentaBase: number;       // Precio Caja
-    precioVentaUnidad: number | null;
-    precioVentaBlister: number | null;
+
+    // Precios calculados automáticamente por el backend
+    precioVentaBase?: number;       // Precio Base (sin IVA)
+    precioVentaTotal?: number;      // Precio Total (con IVA)
+    precioVentaUnidad?: number;     // Precio por unidad
+    precioVentaBlister?: number;    // Precio por blister
+
     esFraccionable: boolean;
     unidadesPorCaja: number;
     unidadesPorBlister: number | null;

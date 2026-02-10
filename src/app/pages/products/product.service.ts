@@ -284,14 +284,27 @@ export class ProductService {
       principioActivo: p.principioActivo?.nombre || 'N/A',
       stockTotal: p.stock_actual,
       stockMinimo: p.stock_minimo,
+
+      // Inputs informativos (nuevos)
+      precio_compra_referencia: p.precio_compra_referencia,
+      porcentaje_ganancia: p.porcentaje_ganancia,
+      iva_porcentaje: p.iva_porcentaje,
+
+      // Precios calculados
       precioVentaBase: p.precio_venta_base,
+      precioVentaTotal: p.precio_venta_total,
+      precioVentaUnidad: p.precio_venta_unidad,
+      precioVentaBlister: p.precio_venta_blister,
+
       nivelStock: p.stock_actual <= p.stock_minimo ? 'CRITICO' : (p.stock_actual <= p.stock_minimo * 1.5 ? 'BAJO' : 'OPTIMO'),
       proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined,
 
-      // Fraccionamiento - Ahora usa CamelCase según nueva interfaz
+      // Fraccionamiento - Usa camelCase según interfaz Producto
       esFraccionable: p.esFraccionable,
       unidadesPorCaja: p.unidadesPorCaja,
-      precioVentaUnidad: p.precioVentaUnidad
+
+      tipo: p.tipo,
+      esControlado: p.es_controlado
     };
   }
 }

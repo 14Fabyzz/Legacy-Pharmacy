@@ -1,260 +1,271 @@
 <div class="page-container">
   <header class="page-header">
-    <h2 *ngIf="!isEditMode">Crear Nuevo Producto</h2>
-    <h2 *ngIf="isEditMode">Editar Producto</h2>
-    <p>Complete la información detallada para registrar el producto en el inventario.</p>
+    <h2 *ngIf="!isEditMode">✨ NUEVO PRODUCTO</h2>
+    <h2 *ngIf="isEditMode">✏️ ACTUALIZAR PRODUCTO</h2>
+    <p>Complete la ficha técnica del medicamento. El stock y los lotes se gestionan en el módulo de "Compras".</p>
   </header>
 
-  <app-tabs-nav></app-tabs-nav>
+  <nav class="tabs-nav">
+    <a routerLink="/app/productos/almacen" routerLinkActive="active">
+      <span class="nav-icon">📦</span> ALMACÉN
+    </a>
 
-  <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="form-container">
+    <a routerLink="/app/productos/consulta" routerLinkActive="active">
+      <span class="nav-icon">🔍</span> CONSULTA
+    </a>
 
-    <!-- COLUMNA IZQUIERDA: INFORMACIÓN PRINCIPAL -->
-    <div style="display: flex; flex-direction: column; gap: 2rem;">
+    <a routerLink="/app/productos/vencimientos" routerLinkActive="active">
+      <span class="nav-icon">🚨</span> MONITOR ALERTAS
+    </a>
 
-      <!-- TARJETA 1: IDENTIFICACIÓN -->
-      <div class="form-section-card">
-        <div class="card-header">
-          <h3>📦 Identificación Básica</h3>
+    <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">
+      <span class="nav-icon">🚚</span> ENTRADAS
+    </a>
+
+    <a routerLink="/app/productos/auditoria" routerLinkActive="active">
+      <span class="nav-icon">📋</span> AUDITORÍA
+    </a>
+
+    <a routerLink="/app/productos/nuevo" routerLinkActive="active">
+      <span class="nav-icon">✨</span> NUEVO
+    </a>
+  </nav>
+
+  <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="product-form">
+
+    <!-- SECCIÓN 1: Identificación -->
+    <fieldset class="form-section">
+      <legend>📋 Identificación</legend>
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Código Interno / SKU</label>
+          <input type="text" formControlName="codigoInterno" placeholder="Ej: DOLEX-500">
         </div>
-        <div class="card-body">
-          <div class="form-grid grid-2">
-            <div class="form-group">
-              <label>Código Interno / SKU *</label>
-              <input type="text" class="form-control" formControlName="codigoInterno" placeholder="Ej: PROD-001">
-              <div class="invalid-feedback"
-                *ngIf="productForm.get('codigoInterno')?.invalid && productForm.get('codigoInterno')?.touched">
-                Campo requerido
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Código de Barras</label>
-              <div class="input-group" style="display: flex; gap: 0;">
-                <input type="text" class="form-control" formControlName="codigoBarras" #barcodeInput
-                  (change)="validateBarcode()" (keyup.enter)="validateBarcode()" placeholder="Ej: 7701001001"
-                  style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
-                <button type="button" class="btn btn-secondary" (click)="focusBarcodeInput()" title="Escanear"
-                  style="border-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;">
-                  |||
-                </button>
-              </div>
-            </div>
-            <div class="form-group" style="grid-column: 1 / -1;">
-              <label>Nombre Comercial *</label>
-              <input type="text" class="form-control" formControlName="nombreComercial"
-                placeholder="Ej: Acetaminofén 500mg">
-              <div class="invalid-feedback"
-                *ngIf="productForm.get('nombreComercial')?.invalid && productForm.get('nombreComercial')?.touched">
-                Campo requerido
-              </div>
-            </div>
+
+        <div class="form-group">
+          <label>Código de Barras</label>
+          <div class="input-with-icon">
+            <input type="text" formControlName="codigoBarras" #barcodeInput (change)="validateBarcode()"
+              (keyup.enter)="validateBarcode()" placeholder="Escanee o ingrese">
+            <button type="button" class="btn-icon-inside" (click)="focusBarcodeInput()"
+              title="Activar lector de código">
+              <span class="icon-barcode">|||</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- TARJETA 2: DATOS FARMACÉUTICOS -->
-      <div class="form-section-card">
-        <div class="card-header">
-          <h3>💊 Detalles Farmacéuticos</h3>
+      <div class="form-row">
+        <div class="form-group full-width required">
+          <label>Nombre Comercial</label>
+          <input type="text" formControlName="nombreComercial" placeholder="Ej: Dolex Forte">
         </div>
-        <div class="card-body">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Principio Activo *</label>
-              <select class="form-control" formControlName="principioActivoId">
-                <option [ngValue]="null">Seleccione...</option>
-                <option *ngFor="let pa of principiosActivos" [ngValue]="pa.id">{{ pa.nombre }}</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Laboratorio *</label>
-              <select class="form-control" formControlName="laboratorioId">
-                <option [ngValue]="null">Seleccione...</option>
-                <option *ngFor="let lab of laboratorios" [ngValue]="lab.id">{{ lab.nombre }}</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Categoría *</label>
-              <select class="form-control" formControlName="categoriaId">
-                <option [ngValue]="null">Seleccione...</option>
-                <option *ngFor="let cat of categorias" [ngValue]="cat.id">{{ cat.nombre }}</option>
-              </select>
-            </div>
-          </div>
+      </div>
+    </fieldset>
 
-          <div class="form-grid grid-3" style="margin-top: 1.5rem;">
-            <div class="form-group">
-              <label>Concentración</label>
-              <div class="input-group">
-                <input type="text" class="form-control" formControlName="concentracion" placeholder="Ej: 500">
-                <span class="input-suffix">mg</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Presentación</label>
-              <input type="text" class="form-control" formControlName="presentacion" placeholder="Ej: Caja x 30">
-            </div>
-            <div class="form-group">
-              <label>Registro INVIMA</label>
-              <input type="text" class="form-control" formControlName="registroInvima">
-            </div>
-          </div>
+    <!-- SECCIÓN 2: Datos Farmacéuticos -->
+    <fieldset class="form-section">
+      <legend>💊 Detalles Farmacéuticos</legend>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Principio Activo</label>
+          <select formControlName="principioActivoId">
+            <option [ngValue]="null">Seleccione un principio activo...</option>
+            <option *ngFor="let pa of principiosActivos" [value]="pa.id">{{ pa.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="form-group required">
+          <label>Laboratorio</label>
+          <select formControlName="laboratorioId">
+            <option [ngValue]="null">Seleccione un laboratorio...</option>
+            <option *ngFor="let lab of laboratorios" [value]="lab.id">{{ lab.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="form-group required">
+          <label>Categoría</label>
+          <select formControlName="categoriaId">
+            <option [ngValue]="null">Seleccione una categoría...</option>
+            <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
+          </select>
         </div>
       </div>
 
-      <!-- TARJETA 3: CLASIFICACIÓN Y ESTADO -->
-      <div class="form-section-card">
-        <div class="card-header">
-          <h3>⚙️ Clasificación y Control</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Concentración</label>
+          <input type="text" formControlName="concentracion" placeholder="Ej: 500mg">
         </div>
-        <div class="card-body">
-          <div class="form-grid">
-            <!-- Switches para mejor UX -->
-            <div class="form-group checkbox-group" style="display: flex; gap: 2rem; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <label for="esControlado" style="margin: 0; cursor: pointer; font-weight: 500;">Medicamento
-                  Controlado</label>
-                <label class="switch">
-                  <input type="checkbox" id="esControlado" formControlName="esControlado">
-                  <span class="slider round"></span>
-                </label>
-              </div>
-              <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <label for="refrigerado" style="margin: 0; cursor: pointer; font-weight: 500;">Requiere
-                  Refrigeración</label>
-                <label class="switch">
-                  <input type="checkbox" id="refrigerado" formControlName="refrigerado">
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            </div>
 
-            <div class="form-group">
-              <label>Estado del Producto</label>
-              <select class="form-control" formControlName="estado">
-                <option value="ACTIVO">✅ Activo</option>
-                <option value="INACTIVO">⛔ Inactivo</option>
-                <option value="SUSPENDIDO">⚠️ Suspendido</option>
-              </select>
-            </div>
-          </div>
+        <div class="form-group">
+          <label>Presentación</label>
+          <input type="text" formControlName="presentacion" placeholder="Ej: Caja x 10 Tabletas">
+        </div>
+
+        <div class="form-group">
+          <label>Registro INVIMA</label>
+          <input type="text" formControlName="registroInvima" placeholder="Ej: INVIMA 2023M-0012345">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- SECCIÓN 3: Comercial y Control -->
+    <fieldset class="form-section">
+      <legend>💰 Comercial y Control</legend>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Costo de Compra ($)</label>
+          <input type="number" formControlName="precioCompraReferencia" placeholder="0" min="0" step="100">
+        </div>
+
+        <div class="form-group required">
+          <label>Margen de Ganancia (%)</label>
+          <input type="number" formControlName="porcentajeGanancia" placeholder="30" min="0" step="1">
+        </div>
+
+        <div class="form-group required">
+          <label>IVA (%)</label>
+          <input type="number" formControlName="ivaPorcentaje" placeholder="19" min="0" max="100" step="1">
         </div>
       </div>
 
-    </div>
-
-    <!-- COLUMNA DERECHA: PRECIOS Y CONFIGURACIÓN COMERCIAL -->
-    <div style="display: flex; flex-direction: column; gap: 2rem;">
-
-      <!-- TARJETA 4: PRECIOS -->
-      <div class="form-section-card">
-        <div class="card-header">
-          <h3>💰 Precios y Costos</h3>
-        </div>
-        <div class="card-body">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Precio Venta Base *</label>
-              <div class="input-group">
-                <span class="input-prefix">$</span>
-                <input type="number" class="form-control" formControlName="precioVentaBase">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>IVA (%)</label>
-              <input type="number" class="form-control" formControlName="ivaPorcentaje">
-            </div>
-          </div>
-
-          <div class="price-summary-box">
-            <div class="summary-item">
-              <label>Precio Final (Sin IVA)</label>
-              <div class="price-value">{{ productForm.get('precioVentaBase')?.value | currency }}</div>
-            </div>
-            <div class="summary-item">
-              <label>Precio Total (+IVA)</label>
-              <div class="price-value total">
-                {{ (productForm.get('precioVentaBase')?.value * (1 + (productForm.get('ivaPorcentaje')?.value ||
-                0)/100)) | currency }}
-              </div>
-            </div>
-          </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Stock Mínimo (Alerta)</label>
+          <input type="number" formControlName="stockMinimo" placeholder="10" min="0">
         </div>
       </div>
 
-      <!-- TARJETA 5: INVENTARIO Y FRACCIONAMIENTO -->
-      <div class="form-section-card">
-        <div class="card-header">
-          <h3>📊 Inventario y Venta</h3>
+      <div class="form-row checkboxes-row">
+        <div class="checkbox-group">
+          <input type="checkbox" id="esControlado" formControlName="esControlado">
+          <label for="esControlado">🔐 Es Medicamento Controlado</label>
         </div>
-        <div class="card-body">
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="refrigerado" formControlName="refrigerado">
+          <label for="refrigerado">❄️ Requiere Refrigeración</label>
+        </div>
+      </div>
+
+      <!-- Vista Previa de Precios Calculados -->
+      <div
+        style="margin-top: 24px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <h4
+            style="margin: 0; font-size: 0.8rem; color: #475569; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+            📊 Vista Previa de Precios
+          </h4>
+          <span style="font-size: 0.7rem; color: #94a3b8; font-style: italic;">Estimado</span>
+        </div>
+
+        <!-- Grid de Precios Compacto -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+
+          <!-- Precio Base -->
+          <div style="background: white; border-radius: 8px; padding: 12px; border-left: 3px solid #94a3b8;">
+            <div
+              style="font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">
+              Sin IVA
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #1e293b;">
+              {{ calcularPreciosPreview().precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+          </div>
+
+          <!-- Precio Total -->
+          <div
+            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 8px; padding: 12px; border-left: 3px solid #2563eb;">
+            <div
+              style="font-size: 0.65rem; color: #1e40af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">
+              Con IVA (Caja)
+            </div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: #1e3a8a;">
+              {{ calcularPreciosPreview().precioVentaTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+          </div>
+
+          <!-- Precio Unidad (si aplica) -->
+          <div *ngIf="productForm.get('esFraccionable')?.value"
+            style="background: white; border-radius: 8px; padding: 12px; border-left: 3px solid #10b981;">
+            <div
+              style="font-size: 0.65rem; color: #047857; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">
+              Por Unidad
+            </div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #065f46;">
+              {{ calcularPreciosPreview().precioVentaUnidad | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+          </div>
+
+          <!-- Precio Blister (si aplica) -->
+          <div *ngIf="productForm.get('esFraccionable')?.value && productForm.get('unidadesPorBlister')?.value"
+            style="background: white; border-radius: 8px; padding: 12px; border-left: 3px solid #f59e0b;">
+            <div
+              style="font-size: 0.65rem; color: #92400e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">
+              Por Blister
+            </div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #78350f;">
+              {{ calcularPreciosPreview().precioVentaBlister | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Nota informativa -->
+        <div
+          style="margin-top: 12px; padding: 8px; background: rgba(59, 130, 246, 0.05); border-radius: 6px; border-left: 2px solid #3b82f6;">
+          <small style="font-size: 0.7rem; color: #475569; display: flex; align-items: center; gap: 6px;">
+            <span style="color: #3b82f6;">ℹ️</span>
+            El backend calculará los valores finales al guardar
+          </small>
+        </div>
+
+      </div>
+    </fieldset>
+
+    <!-- SECCIÓN 4: Fraccionamiento (Opcional) -->
+    <fieldset class="form-section">
+      <legend>📦 Configuración de Fraccionamiento</legend>
+
+      <!-- Switch de Venta Fraccionada -->
+      <div class="checkboxes-row" style="margin-bottom: 20px;">
+        <div class="checkbox-group">
+          <input type="checkbox" id="esFraccionable" formControlName="esFraccionable">
+          <label for="esFraccionable">📊 Habilitar Venta Fraccionada (por unidad/blister)</label>
+        </div>
+      </div>
+
+      <!-- Campos de Fraccionamiento (solo si está habilitado) -->
+      <div *ngIf="productForm.get('esFraccionable')?.value" style="animation: fadeIn 0.3s ease-in-out;">
+        <div class="form-row">
+          <div class="form-group required">
+            <label>Unidades por Caja</label>
+            <input type="number" formControlName="unidadesPorCaja" placeholder="Ej: 10" min="1" step="1">
+            <small class="helper-text">Número de unidades que contiene una caja completa</small>
+          </div>
+
           <div class="form-group">
-            <label>Stock Mínimo (Alerta crítica)</label>
-            <input type="number" class="form-control" formControlName="stockMinimo">
-            <small class="text-muted">Se generará alerta cuando el stock baje de este número.</small>
+            <label>Unidades por Blister</label>
+            <input type="number" formControlName="unidadesPorBlister" placeholder="Opcional" min="1" step="1">
+            <small class="helper-text">Si el producto usa blisters para agrupar unidades</small>
           </div>
-
-          <!-- Panel de Fraccionamiento (Siempre visible) -->
-          <div class="fractional-panel">
-            <!-- Header con Switch -->
-            <div class="form-group checkbox-group"
-              style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0;">
-              <div style="display: flex; flex-direction: column;">
-                <label style="margin: 0; font-weight: 600; cursor: pointer; color: #0369a1;" for="fraccSwitch">¿Venta
-                  Fraccionada?</label>
-                <small style="color: #64748b;">Habilitar venta por unidad/blíster</small>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="fraccSwitch" formControlName="esFraccionable">
-                <span class="slider round"></span>
-              </label>
-            </div>
-
-            <!-- Campos Condicionales -->
-            <div class="fractional-content" *ngIf="productForm.get('esFraccionable')?.value">
-              <hr style="margin: 1rem 0; border: 0; border-top: 1px solid #bae6fd;">
-
-              <h4
-                style="margin: 0 0 1rem 0; font-size: 0.9rem; color: #0369a1; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
-                Configuración</h4>
-              <div class="form-grid">
-                <div class="form-group">
-                  <label>Unidades x Caja *</label>
-                  <input type="number" class="form-control" formControlName="unidadesPorCaja">
-                </div>
-                <div class="form-group">
-                  <label>Precio Unitario *</label>
-                  <input type="number" class="form-control" formControlName="precioVentaUnidad">
-                </div>
-                <!-- Nueva Fila para Blisters -->
-                <div class="form-group">
-                  <label>Unidades x Blister</label>
-                  <input type="number" class="form-control" formControlName="unidadesPorBlister" placeholder="Opcional">
-                </div>
-                <div class="form-group">
-                  <label>Precio Blister</label>
-                  <input type="number" class="form-control" formControlName="precioVentaBlister" placeholder="Opcional">
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
+    </fieldset>
 
-      <!-- Acciones Móviles (si desktop están fuera, aquí un duplicado o movemos actions afuera) -->
-
-    </div>
-
-    <!-- BOTONES DE ACCIÓN (Fixed bottom o in flow) -->
+    <!-- Acciones del Formulario -->
     <div class="form-actions">
       <button type="button" class="btn btn-secondary" (click)="limpiarFormulario()">
-        Limpiar Datos
+        🔄 Limpiar
       </button>
-      <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid || loadingData">
-        {{ isEditMode ? 'Guardar Cambios' : 'Crear Producto' }}
+
+      <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">
+        {{ isEditMode ? '💾 Actualizar Ficha' : '✅ Crear Ficha Técnica' }}
       </button>
     </div>
-
   </form>
 </div>

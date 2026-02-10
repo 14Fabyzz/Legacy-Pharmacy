@@ -1,445 +1,372 @@
-// Variables (ajústalas a tu paleta real)
-$primary-color: #4a90e2;
-$bg-light: #f9fafb;
-$border-color: #e5e7eb;
-$text-dark: #1f2937;
-$text-muted: #6b7280;
-$danger-color: #ef4444;
-
-:host {
-    display: block;
-    padding: 2rem;
-    background-color: $bg-light;
+/* Layout & Page Container */
+.page-container {
+    padding: 24px;
+    background-color: #f8fafc;
     min-height: 100vh;
 }
 
 .page-header {
-    margin-bottom: 2rem;
-
-    h2 {
-        font-size: 1.875rem;
-        font-weight: 700;
-        color: $text-dark;
-        margin: 0;
-    }
-
-    p {
-        color: $text-muted;
-        margin-top: 0.5rem;
-    }
+    margin-bottom: 32px;
 }
 
-.form-container {
+.page-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.025em;
+}
+
+.page-header p {
+    font-size: 0.95rem;
+    color: #64748b;
+    max-width: 800px;
+    line-height: 1.6;
+}
+
+/* Form Container */
+.product-form {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border: 1px solid #e2e8f0;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* Form Sections */
+.form-section {
+    border: none;
+    padding: 0;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.form-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.form-section legend {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+    width: 100%;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-section legend::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-radius: 2px;
+}
+
+/* Form Rows */
+.form-row {
     display: grid;
-    gap: 2rem;
-
-    // En pantallas grandes, layout de 2 columnas: info principal a la izquierda, precios a la derecha
-    @media (min-width: 1024px) {
-        grid-template-columns: 3fr 2fr;
-        align-items: start; // Revertido a start - las tarjetas tendrán alturas naturales
-    }
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 20px;
 }
 
-.form-section-card {
-    background: #fff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    border: 1px solid $border-color;
-    margin-bottom: 2rem;
-    /* Restore separation between cards */
-
-
-    .card-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid $border-color;
-        background-color: #fafafa;
-
-        h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: $text-dark;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-
-            i {
-                color: $primary-color;
-            }
-        }
-    }
-
-    .card-body {
-        padding: 2.5rem;
-        /* Increase padding */
-        box-sizing: border-box;
-    }
-}
-
-// Grid Layout para los campos
-.form-grid {
-    display: grid;
-    gap: 1.5rem;
-    // Por defecto 1 columna en móvil
-    grid-template-columns: 1fr;
-
-    // 2 Columnas en tablet+
-    @media (min-width: 768px) {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    // 3 Columnas para datos densos
-    &.grid-3 {
-        @media (min-width: 1024px) {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    // 4 Columnas para precios
-    &.grid-4-prices {
-        @media (min-width: 1024px) {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-}
-
-// Estilos de Inputs (Mejorados)
+/* Form Groups */
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1.5rem;
-    /* Restore vertical spacing */
-
-    label {
-        display: block;
-        font-weight: 500;
-        color: #6b7280; // Color más suave para jerarquía visual
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem; // Ligeramente más pequeño
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid $border-color;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        transition: all 0.2s;
-        background-color: #fff;
-
-        &:focus {
-            outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
-        }
-
-        &.ng-invalid.ng-touched {
-            border-color: $danger-color;
-            background-color: #fef2f2; // Fondo más sutil
-
-            &:focus {
-                box-shadow: 0 0 0 3px rgba($danger-color, 0.15);
-            }
-        }
-
-        // Eliminar spinners de inputs numéricos
-        &[type="number"]::-webkit-inner-spin-button,
-        &[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            appearance: none;
-            margin: 0;
-        }
-
-        &[type="number"] {
-            -moz-appearance: textfield;
-            appearance: textfield;
-        }
-    }
-
-    select.form-control {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 1rem center;
-        background-repeat: no-repeat;
-        background-size: 1.5em 1.5em;
-    }
-
-    textarea.form-control {
-        resize: vertical;
-        min-height: 100px;
-    }
-}
-
-// Price Summary Box (Visualización de precios finales)
-.price-summary-box {
-    background-color: #f3f4f6;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    margin-top: 1.5rem;
-    display: grid;
-    gap: 1rem;
-
-    @media (min-width: 768px) {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .summary-item {
-        text-align: center;
-
-        label {
-            display: block;
-            font-size: 0.875rem;
-            color: $text-muted;
-            margin-bottom: 0.5rem;
-        }
-
-        .price-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: $text-dark;
-
-            &.total {
-                color: $primary-color;
-            }
-        }
-    }
-}
-
-
-.invalid-feedback {
-    color: $danger-color;
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    &::before {
-        content: '⚠️';
-    }
-}
-
-.form-actions {
-    grid-column: 1 / -1; // Ocupa todo el ancho
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding-top: 2rem;
-    border-top: 1px solid $border-color;
-    margin-top: 1rem;
-
-    .btn {
-        padding: 0.875rem 2rem;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-
-        &-secondary {
-            background: #fff;
-            color: $text-dark;
-            border: 2px solid $border-color;
-
-            &:hover {
-                background: $bg-light;
-                border-color: darken($border-color, 10%);
-            }
-        }
-
-        &-primary {
-            background: $primary-color;
-            color: white;
-            border: 2px solid $primary-color;
-
-            &:hover {
-                background: darken($primary-color, 5%);
-                border-color: darken($primary-color, 5%);
-            }
-
-            &:disabled {
-                background: $text-muted;
-                border-color: $text-muted;
-                cursor: not-allowed;
-                opacity: 0.7;
-            }
-        }
-    }
-}
-
-/* ===== MODERN TOGGLE SWITCH STYLES (iOS/Material Design) ===== */
-
-/* Container del toggle - usa inline-flex para alineación perfecta */
-.switch {
     position: relative;
-    display: inline-flex;
-    align-items: center;
-    width: 48px;
-    height: 26px;
-    flex-shrink: 0; // Evita que se deforme
 }
 
-/* Input oculto pero accesible */
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
+.form-group.full-width {
+    grid-column: 1 / -1;
 }
 
-/* Track del switch (fondo) */
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #cbd5e1; // Gris suave cuando OFF
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Transición suave
-    border-radius: 34px; // Redondeo completo
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); // Sombra interna sutil
+.form-group label {
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    font-size: 0.75rem;
 }
 
-/* Círculo deslizante (knob) */
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Sombra para profundidad
+/* Input Styles */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select {
+    padding: 12px 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #1e293b;
+    background-color: #ffffff;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
 }
 
-/* Estado CHECKED (ON) - Color primario */
-input:checked+.slider {
-    background-color: $primary-color; // Azul cuando ON
-}
-
-/* Hover effect (solo en desktop) */
-.slider:hover {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(59, 130, 246, 0.1);
-}
-
-/* Focus state para accesibilidad (teclado) */
-input:focus+.slider {
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="date"]:focus,
+.form-group select:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background-color: #ffffff;
 }
 
-input:focus:not(:focus-visible)+.slider {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); // Quita el focus si no es teclado
-}
-
-/* Movimiento del círculo cuando está ON */
-input:checked+.slider:before {
-    transform: translateX(22px); // Mueve el círculo a la derecha
-}
-
-/* Estado disabled */
-input:disabled+.slider {
-    opacity: 0.5;
+.form-group input[readonly] {
+    background-color: #f1f5f9;
     cursor: not-allowed;
+    border-color: #e2e8f0;
+    color: #64748b;
 }
 
-input:disabled+.slider:hover {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); // Sin hover effect
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    padding-right: 40px;
 }
 
-// Input Group Styling (para prefijos y sufijos)
-.input-group {
+/* Checkbox Groups */
+.checkboxes-row {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    padding: 16px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #3b82f6;
+}
+
+.checkbox-group label {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Radio Groups */
+.radio-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Barcode Input Styles */
+.input-with-icon {
     display: flex;
     align-items: stretch;
-
-    .input-prefix,
-    .input-suffix {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        background-color: #f3f4f6;
-        border: 1px solid $border-color;
-        font-weight: 600;
-        color: $text-muted;
-        font-size: 1rem;
-    }
-
-    .input-prefix {
-        border-right: none;
-        border-top-left-radius: 0.5rem;
-        border-bottom-left-radius: 0.5rem;
-    }
-
-    .input-suffix {
-        border-left: none;
-        border-top-right-radius: 0.5rem;
-        border-bottom-right-radius: 0.5rem;
-    }
-
-    .form-control {
-        &:first-child:not(:last-child) {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        &:last-child:not(:first-child) {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        &:not(:first-child):not(:last-child) {
-            border-radius: 0;
-        }
-    }
+    gap: 0;
 }
 
-// Mejorar estilo del text-muted
-.text-muted {
-    color: $text-muted;
-    font-size: 0.8125rem;
-    margin-top: 0.25rem;
-    margin-top: 0.25rem;
-    display: block;
+.input-with-icon input {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    flex: 1;
+    border-right: none;
 }
 
-// Panel de Fraccionamiento
-.fractional-panel {
-    background-color: #f0f9ff;
-    border: 1px solid #bae6fd;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    margin-top: 1rem;
-    animation: fadeIn 0.3s ease-in-out;
+.btn-icon-inside {
+    background-color: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-left: none;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 0 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
 
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
+.btn-icon-inside:hover {
+    background-color: #e2e8f0;
+}
+
+.icon-barcode {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 1.3rem;
+    letter-spacing: -2px;
+    transform: scaleX(0.8);
+    display: inline-block;
+    color: #475569;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.btn {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.btn-primary:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e8f0;
+    color: #334155;
+}
+
+/* Tabs Navigation (Copiado de Product List para consistencia) */
+.tabs-nav {
+    display: flex;
+    gap: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 32px;
+    padding-bottom: 0;
+}
+
+.tabs-nav a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748b;
+    padding-bottom: 12px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tabs-nav a:hover {
+    color: #3b82f6;
+}
+
+.tabs-nav a.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+.nav-icon {
+    font-size: 1.1rem;
+}
+
+/* Required Field Indicator */
+.form-group label::after {
+    content: '';
+}
+
+.form-group.required label::after {
+    content: ' *';
+    color: #ef4444;
+    font-weight: 700;
+}
+
+/* Helper Text */
+.helper-text {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 16px;
+    }
+
+    .product-form {
+        padding: 24px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn {
         width: 100%;
+        justify-content: center;
+    }
 
-        // Fix for nested form-groups
-        .form-group {
-            margin-bottom: 0; // Grid handles spacing
-            min-width: 0; // Prevent flex item overflow
-        }
-
-        .form-control {
-            width: 100%;
-            box-sizing: border-box;
-        }
+    .checkboxes-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 }
 
+/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
