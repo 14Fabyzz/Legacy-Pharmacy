@@ -1,0 +1,124 @@
+.caja-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+    padding: 20px;
+    background-color: var(--slate-50, #f8fafc);
+}
+
+.centered-card {
+    max-width: 500px;
+    width: 100%;
+    padding: 40px;
+    text-align: center;
+}
+
+.card-header-clean h2 {
+    color: var(--slate-800, #1e293b);
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.subtitle {
+    color: var(--slate-600, #475569);
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+}
+
+.status-badge-container {
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-text {
+    font-size: 0.85rem;
+    color: var(--slate-600);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.badge-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-success {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 16px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--slate-600);
+}
+
+.large-input {
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    padding-left: 45px !important;
+    text-align: center;
+    color: var(--blue-600, #2563eb) !important;
+}
+
+.input-hint {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--slate-600);
+}
+
+.btn-lg {
+    margin-top: 30px;
+    height: 60px;
+    font-size: 1.2rem;
+}
+
+.caja-info-alert {
+    background-color: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 24px;
+    color: #0369a1;
+}
+
+.caja-info-alert i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border: 1px solid var(--blue-500);
+    color: var(--blue-500);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-outline-primary:hover {
+    background: var(--blue-500);
+    color: white;
+}

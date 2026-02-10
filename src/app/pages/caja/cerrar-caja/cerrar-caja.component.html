@@ -1,0 +1,65 @@
+<div class="caja-container fadeIn">
+    <div class="card-clean closure-card" *ngIf="turnoActual && !isLoading">
+        <div class="card-header-clean">
+            <h2>Cierre de Turno</h2>
+            <p class="subtitle">Verifica los montos y realiza el arqueo final.</p>
+        </div>
+
+        <div class="closure-summary grid-2">
+            <div class="summary-item">
+                <label>Saldo Inicial</label>
+                <div class="amount">{{ turnoActual.saldoInicial | currency }}</div>
+            </div>
+            <div class="summary-item">
+                <label>Ventas del Turno (Teórico)</label>
+                <div class="amount">{{ (turnoActual.totalVentasTeorico || 0) | currency }}</div>
+            </div>
+            <div class="summary-item total-teorico">
+                <label>Total Esperado en Caja</label>
+                <div class="amount">{{ (turnoActual.saldoInicial + (turnoActual.totalVentasTeorico || 0)) | currency }}
+                </div>
+            </div>
+        </div>
+
+        <div class="arqueo-section">
+            <div class="input-group-clean">
+                <label for="efectivoReal">Efectivo Real en Caja (Conteo Físico)</label>
+                <div class="input-with-icon">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" id="efectivoReal" class="clean-input large-input"
+                        [(ngModel)]="totalEfectivoReal" (input)="calculateDifference()" placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="difference-display" [class.negative]="diferencia < 0" [class.positive]="diferencia > 0">
+                <span class="label">Diferencia:</span>
+                <span class="value">{{ diferencia | currency }}</span>
+                <span class="badge-diff" *ngIf="diferencia !== 0">
+                    {{ diferencia < 0 ? 'FALTANTE' : 'SOBRANTE' }} </span>
+            </div>
+
+            <div class="input-group-clean mt-4">
+                <label for="obs">Observaciones (Opcional)</label>
+                <textarea id="obs" class="clean-input" rows="3" [(ngModel)]="observaciones"
+                    placeholder="Notas adicionales sobre el cierre..."></textarea>
+            </div>
+
+            <button class="btn-primary-action btn-lg mt-4" (click)="cerrarTurno()">
+                CONFIRMAR CIERRE DE CAJA
+            </button>
+        </div>
+    </div>
+
+    <div class="card-clean centered-card" *ngIf="!turnoActual && !isLoading">
+        <div class="card-header-clean">
+            <i class="bi bi-lock-fill large-icon"></i>
+            <h2>Caja Cerrada</h2>
+            <p>No hay ningún turno activo en este momento.</p>
+            <button class="btn-primary-action mt-4" routerLink="/app/caja/abrir">Ir a Abrir Caja</button>
+        </div>
+    </div>
+
+    <div class="loading-overlay" *ngIf="isLoading">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+</div>

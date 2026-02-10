@@ -1,0 +1,87 @@
+<div class="caja-dashboard fadeIn">
+    <div class="dashboard-header">
+        <h1 class="page-title">Estado de Caja Actual</h1>
+        <div class="header-actions" *ngIf="turnoActual">
+            <span class="badge badge-success">TURNO ABIERTO</span>
+            <span class="time-info text-slate-500">Iniciado: {{ turnoActual.fechaApertura | date:'short' }}</span>
+        </div>
+    </div>
+
+    <div class="kpi-grid" *ngIf="turnoActual && !isLoading">
+        <div class="kpi-card info">
+            <div class="kpi-icon"><i class="bi bi-piggy-bank"></i></div>
+            <div class="kpi-content">
+                <label>Saldo Inicial</label>
+                <span class="amount">{{ turnoActual.saldoInicial | currency }}</span>
+            </div>
+        </div>
+
+        <div class="kpi-card success">
+            <div class="kpi-icon"><i class="bi bi-cart-check"></i></div>
+            <div class="kpi-content">
+                <label>Ventas del Día</label>
+                <span class="amount">{{ (turnoActual.totalVentasTeorico || 0) | currency }}</span>
+            </div>
+        </div>
+
+        <div class="kpi-card primary">
+            <div class="kpi-icon"><i class="bi bi-cash-stack"></i></div>
+            <div class="kpi-content">
+                <label>Saldo Actual en Caja</label>
+                <span class="amount">{{ saldoActual | currency }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="movimientos-section mt-5" *ngIf="turnoActual && !isLoading">
+        <div class="section-header">
+            <h2 class="title-md">Detalles del Turno</h2>
+        </div>
+        <div class="table-container">
+            <table class="clean-table">
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th class="text-end">Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Apertura de Turno (Efectivo Inicial)</td>
+                        <td class="text-end text-success">+ {{ turnoActual.saldoInicial | currency }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Ventas Registradas (Sistema)</td>
+                        <td class="text-end text-success">+ {{ (turnoActual.totalVentasTeorico || 0) | currency }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="font-bold">TOTAL ESPERADO</th>
+                        <th class="text-end font-extrabold text-blue-600">{{ saldoActual | currency }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="actions-footer mt-4">
+            <button class="btn-primary-action" routerLink="/app/caja/cerrar" style="max-width: 250px;">
+                REALIZAR CIERRE DE CAJA
+            </button>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="card-clean centered-card" *ngIf="!turnoActual && !isLoading">
+        <div class="card-header-clean">
+            <i class="bi bi-slash-circle large-icon"></i>
+            <h2>Sin Turno Activo</h2>
+            <p>Abra la caja para comenzar a ver las estadísticas diarias.</p>
+            <button class="btn-primary-action mt-4" routerLink="/app/caja/abrir">Ir a Abrir Caja</button>
+        </div>
+    </div>
+
+    <div class="loading-overlay" *ngIf="isLoading">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+</div>

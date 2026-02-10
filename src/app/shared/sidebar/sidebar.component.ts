@@ -23,7 +23,6 @@ export class SidebarComponent {
     // 5. Conecta la variable local al "canal" del servicio
     this.currentUser$ = this.authService.currentUser$;
   }
-
   // Usuario por defecto para mostrar si no hay sesión iniciada (Development/Fallback)
   public defaultUser = {
     nombreCompleto: 'Usuario de Prueba',
@@ -31,11 +30,19 @@ export class SidebarComponent {
   };
 
 
-
   // El array ahora es más simple, solo con la información esencial
   menuItems = [
     { path: '/app/dashboard', title: 'Dashboard', active: false, subMenu: [] },
-    { path: '/app/cajas', title: 'Cajas', active: false, subMenu: [] },
+    {
+      path: '/app/caja',
+      title: 'Cajas',
+      active: false,
+      subMenu: [
+        { path: '/app/caja/abrir', title: 'Abrir Caja' },
+        { path: '/app/caja/cerrar', title: 'Cerrar Caja' },
+        { path: '/app/caja/estado', title: 'Estado de Caja' }
+      ]
+    },
     { path: '/app/categorias', title: 'Categorías', active: false, subMenu: [] },
     { path: '/app/proveedores', title: 'Proveedores', active: false, subMenu: [] },
     { path: '/app/compras', title: 'Compras', active: false, subMenu: [] },

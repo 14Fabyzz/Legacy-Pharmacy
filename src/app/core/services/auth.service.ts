@@ -10,10 +10,20 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface User {
+  id: number;
+  nombreCompleto: string;
+  rol: string;
+  email: string;
+  sucursalId: number;
+  usuarioId?: number;
+  login?: string;
+}
+
 export interface AuthResponse {
   token: string;
-  user?: any;
-  // Flat structure fields
+  user?: User;
+  // Estructura plana para compatibilidad con el backend actual
   nombreCompleto?: string;
   rol?: string;
   usuarioId?: number;
@@ -27,7 +37,7 @@ export class AuthService {
   private apiUrl = 'http://localhost:8080/api/usuarios'; // No la necesitamos por ahora
   private isBrowser: boolean;
 
-  private currentUserSubject = new BehaviorSubject<any | null>(null);
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(
@@ -56,9 +66,18 @@ export class AuthService {
           // Check if response has user property or IS the user object
           if (response.user) {
             this.saveUser(response.user);
-          } else if (response['nombreCompleto']) {
-            // Flat response structure handling (as seen in user screenshot)
-            this.saveUser(response);
+          } else if (response.nombreCompleto) {
+            // Flat response structure handling
+            const userFromFlat: User = {
+              id: response.usuarioId || 0,
+              nombreCompleto: response.nombreCompleto,
+              rol: response.rol || 'USER',
+              email: response.login || '',
+              sucursalId: 1, // Default value
+              usuarioId: response.usuarioId,
+              login: response.login
+            };
+            this.saveUser(userFromFlat);
           }
         }
       })
@@ -109,7 +128,7 @@ export class AuthService {
     }
   }
 
-  saveUser(user: any): void {
+  saveUser(user: User): void {
     if (this.isBrowser) {
       localStorage.setItem('currentUser', JSON.stringify(user));
     }

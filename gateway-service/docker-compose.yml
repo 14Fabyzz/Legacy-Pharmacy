@@ -1,0 +1,31 @@
+services:
+  # Base de Datos (Necesaria para probar el ecosistema)
+  db-pharmacy:
+    image: mysql:8.0
+    container_name: db-pharmacy
+    restart: always
+    environment:
+      MYSQL_DATABASE: legacy_pharmacy
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3307:3306"
+    networks:
+      - pharmacy-network
+
+  # TU MICROSERVICIO: Gateway
+  api-gateway:
+    build: . # <--- EL PUNTO indica que el Dockerfile está aquí mismo
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - USUARIOS_URI=http://ms-usuarios:8082
+      - INVENTORY_URI=http://ms-inventory:8081
+      - VENTAS_URI=http://ms-ventas:8083
+      - JWT_SECRET=TXlTZWNyZXRLZXlGb3JKV1RUb2tlbkxlZ2FjeVBoYXJtYWN5MjAyNVNwcmluZ0Jvb3Q0VmVyeVNlY3VyZUtleQ
+    networks:
+      - pharmacy-network
+
+networks:
+  pharmacy-network:
+    driver: bridge
