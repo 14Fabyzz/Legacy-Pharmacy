@@ -2,8 +2,15 @@
     <div class="dashboard-header">
         <h1 class="page-title">Estado de Caja Actual</h1>
         <div class="header-actions" *ngIf="turnoActual">
-            <span class="badge badge-success">TURNO ABIERTO</span>
-            <span class="time-info text-slate-500">Iniciado: {{ turnoActual.fechaApertura | date:'short' }}</span>
+            <div class="action-info">
+                <i class="bi bi-calendar-event text-slate-400"></i>
+                <span class="text-sm font-medium text-slate-600 ml-2">
+                    {{ turnoActual.fechaApertura | date:'medium' }}
+                </span>
+            </div>
+            <span class="badge-pill badge-success">
+                <i class="bi bi-check-circle-fill"></i> CAJA ABIERTA
+            </span>
         </div>
     </div>
 
@@ -12,7 +19,7 @@
             <div class="kpi-icon"><i class="bi bi-piggy-bank"></i></div>
             <div class="kpi-content">
                 <label>Saldo Inicial</label>
-                <span class="amount">{{ turnoActual.saldoInicial | currency }}</span>
+                <span class="amount">{{ turnoActual.saldoInicial | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
             </div>
         </div>
 
@@ -20,22 +27,24 @@
             <div class="kpi-icon"><i class="bi bi-cart-check"></i></div>
             <div class="kpi-content">
                 <label>Ventas del Día</label>
-                <span class="amount">{{ (turnoActual.totalVentasTeorico || 0) | currency }}</span>
+                <span class="amount">{{ (turnoActual.totalVentasTeorico || 0) | currency:'COP':'symbol-narrow':'1.0-0'
+                    }}</span>
             </div>
         </div>
 
         <div class="kpi-card primary">
             <div class="kpi-icon"><i class="bi bi-cash-stack"></i></div>
             <div class="kpi-content">
-                <label>Saldo Actual en Caja</label>
-                <span class="amount">{{ saldoActual | currency }}</span>
+                <label>Saldo Actual</label>
+                <span class="amount">{{ saldoActual | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
             </div>
         </div>
     </div>
 
-    <div class="movimientos-section mt-5" *ngIf="turnoActual && !isLoading">
+    <div class="movimientos-section" *ngIf="turnoActual && !isLoading">
         <div class="section-header">
             <h2 class="title-md">Detalles del Turno</h2>
+            <p class="text-slate-500 mb-4">Resumen de movimientos calculados por el sistema.</p>
         </div>
         <div class="table-container">
             <table class="clean-table">
@@ -47,37 +56,48 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Apertura de Turno (Efectivo Inicial)</td>
-                        <td class="text-end text-success">+ {{ turnoActual.saldoInicial | currency }}</td>
+                        <td>
+                            <i class="bi bi-arrow-right-circle text-success me-2"></i>
+                            Apertura de Turno (Efectivo Inicial)
+                        </td>
+                        <td class="text-end text-success font-bold">+ {{ turnoActual.saldoInicial |
+                            currency:'COP':'symbol-narrow':'1.0-0' }}</td>
                     </tr>
                     <tr>
-                        <td>Total Ventas Registradas (Sistema)</td>
-                        <td class="text-end text-success">+ {{ (turnoActual.totalVentasTeorico || 0) | currency }}</td>
+                        <td>
+                            <i class="bi bi-receipt text-blue-600 me-2"></i>
+                            Total Ventas Registradas
+                        </td>
+                        <td class="text-end text-success font-bold">+ {{ (turnoActual.totalVentasTeorico || 0) |
+                            currency:'COP':'symbol-narrow':'1.0-0' }}</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th class="font-bold">TOTAL ESPERADO</th>
-                        <th class="text-end font-extrabold text-blue-600">{{ saldoActual | currency }}</th>
+                        <th class="font-bold text-slate-700">TOTAL ESPERADO EN CAJA</th>
+                        <th class="text-end font-extrabold text-blue-600 text-xl">{{ saldoActual |
+                            currency:'COP':'symbol-narrow':'1.0-0' }}</th>
                     </tr>
                 </tfoot>
             </table>
         </div>
 
-        <div class="actions-footer mt-4">
-            <button class="btn-primary-action" routerLink="/app/caja/cerrar" style="max-width: 250px;">
-                REALIZAR CIERRE DE CAJA
+        <div class="actions-footer mt-5 flex justify-end">
+            <button class="btn-primary-action" routerLink="/app/caja/cerrar">
+                <i class="bi bi-shield-lock me-2"></i> Realizar Cierre de Caja
             </button>
         </div>
     </div>
 
     <!-- Empty State -->
-    <div class="card-clean centered-card" *ngIf="!turnoActual && !isLoading">
-        <div class="card-header-clean">
+    <div class="centered-card" *ngIf="!turnoActual && !isLoading">
+        <div class="card-content">
             <i class="bi bi-slash-circle large-icon"></i>
-            <h2>Sin Turno Activo</h2>
-            <p>Abra la caja para comenzar a ver las estadísticas diarias.</p>
-            <button class="btn-primary-action mt-4" routerLink="/app/caja/abrir">Ir a Abrir Caja</button>
+            <h2 class="text-xl font-bold text-slate-800 mb-2">Sin Turno Activo</h2>
+            <p class="text-slate-500 mb-6">Abra la caja para comenzar a ver las estadísticas diarias.</p>
+            <button class="btn-primary-action" routerLink="/app/caja/abrir">
+                Ir a Abrir Caja
+            </button>
         </div>
     </div>
 

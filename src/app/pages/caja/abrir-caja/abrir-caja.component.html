@@ -1,8 +1,11 @@
 <div class="caja-container fadeIn">
-    <div class="card-clean centered-card">
+    <div class="centered-card">
         <div class="card-header-clean">
-            <h2>Gestión de Apertura</h2>
-            <p class="subtitle">Inicia tu jornada laboral configurando el saldo inicial.</p>
+            <div class="header-icon-container">
+                <i class="bi bi-cash-coin"></i>
+            </div>
+            <h2>Apertura de Caja</h2>
+            <p class="subtitle" *ngIf="!turnoActual">Inicia tu jornada laboral configurando el saldo inicial</p>
         </div>
 
         <div class="status-badge-container">
@@ -14,22 +17,25 @@
 
         <div class="caja-form" *ngIf="!turnoActual && !isLoading">
             <div class="input-group-clean">
-                <label for="saldoInicial">Monto Inicial en Efectivo</label>
+                <label for="saldoInicial" class="input-label">Monto Inicial</label>
                 <div class="input-with-icon">
                     <span class="currency-symbol">$</span>
                     <input type="number" id="saldoInicial" class="clean-input large-input" [(ngModel)]="saldoInicial"
-                        placeholder="0.00">
+                        min="0" (keydown)="preventInvalidInput($event)" placeholder="0">
                 </div>
-                <p class="input-hint">Ingresa el dinero físico disponible en gaveta.</p>
+                <p class="input-hint">
+                    <i class="bi bi-info-circle"></i> Ingrese el efectivo base para el turno
+                </p>
             </div>
 
-            <button class="btn-primary-action btn-lg" (click)="abrirTurno()" [disabled]="isLoading">
-                ABRIR TURNO
+            <button class="btn-primary-action" (click)="abrirTurno()"
+                [disabled]="isLoading || saldoInicial === null || saldoInicial === undefined || saldoInicial < 0">
+                Abrir Caja
             </button>
         </div>
 
         <div class="caja-info-alert" *ngIf="turnoActual">
-            <i class="bi bi-info-circle-fill"></i>
+            <i class="bi bi-shield-lock-fill"></i>
             <p>Ya tienes un turno abierto iniciado el <strong>{{ turnoActual.fechaApertura | date:'short' }}</strong>.
             </p>
             <p>Debes realizar el cierre de caja para poder iniciar uno nuevo.</p>
