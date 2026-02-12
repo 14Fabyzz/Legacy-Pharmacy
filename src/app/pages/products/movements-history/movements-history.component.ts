@@ -14,10 +14,12 @@ export interface AuditoriaItem {
     producto_foto?: string;
 }
 
+import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
+
 @Component({
     selector: 'app-movements-history',
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, RouterModule, TabsNavComponent],
     templateUrl: './movements-history.component.html',
     styleUrls: ['./movements-history.component.css']
 })
