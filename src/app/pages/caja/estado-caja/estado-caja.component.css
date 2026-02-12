@@ -11,6 +11,20 @@
     margin-bottom: 30px;
 }
 
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.025em;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* KPI Grid Styles */
 .kpi-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -20,32 +34,40 @@
 .kpi-card {
     background: white;
     padding: 24px;
-    border-radius: 12px;
-    border: 1px solid var(--slate-200);
-    box-shadow: var(--shadow-sm);
+    border-radius: 16px;
+    /* Más redondeado */
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     display: flex;
     align-items: center;
     gap: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    /* Hoover effect */
 }
 
 .kpi-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
 }
 
 .kpi-card.info .kpi-icon {
-    background: #eff6ff;
-    color: #3b82f6;
+    background: #e0f2fe;
+    color: #0284c7;
 }
 
 .kpi-card.success .kpi-icon {
-    background: #f0fdf4;
-    color: #22c55e;
+    background: #dcfce7;
+    color: #16a34a;
 }
 
 .kpi-card.primary .kpi-icon {
@@ -55,40 +77,142 @@
 
 .kpi-content label {
     display: block;
-    font-size: 0.85rem;
-    color: var(--slate-600);
+    font-size: 0.875rem;
+    color: #64748b;
     font-weight: 600;
     margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .kpi-content .amount {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--slate-800);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.025em;
 }
 
-.title-md {
+/* Movements Section */
+.movimientos-section {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-top: 1.5rem;
+}
+
+.actions-footer {
+    margin-top: 3rem;
+    /* Espaciado considerable para separar de la tabla */
+}
+
+.clean-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.clean-table th {
+    background-color: #e0f2fe;
+    /* Azul aguamarina suave */
+    color: #0f172a;
+    /* Azul oscuro */
     font-weight: 700;
-    color: var(--slate-800);
-    margin-bottom: 20px;
+    padding: 16px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #bae6fd;
+}
+
+.clean-table th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.clean-table th:last-child {
+    border-top-right-radius: 12px;
+}
+
+.clean-table td {
+    padding: 16px;
+    color: #334155;
+    font-weight: 500;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Zebra Striping */
+.clean-table tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.clean-table tbody tr:hover {
+    background-color: #eff6ff;
+    /* Resalte sutil al hover */
+    transition: background-color 0.15s ease;
+}
+
+.clean-table tfoot th {
+    padding: 20px 16px;
+    font-size: 1.1rem;
+    background-color: #f8fafc;
+    border-top: 2px solid #e2e8f0;
+}
+
+/* Badges */
+.badge-pill {
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-success {
+    background-color: #dcfce7;
+    color: #166534;
 }
 
 .text-success {
-    color: #166534;
+    color: #16a34a;
 }
 
 .text-blue-600 {
     color: #2563eb;
 }
 
-.font-extrabold {
-    font-weight: 800;
+/* Empty State */
+.centered-card {
+    max-width: 500px;
+    margin: 40px auto;
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.mt-5 {
-    margin-top: 3rem;
+.large-icon {
+    font-size: 3rem;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
 }
 
-.mt-4 {
-    margin-top: 1.5rem;
+.btn-primary-action {
+    background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    transition: all 0.2s;
+}
+
+.btn-primary-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 12px -2px rgba(37, 99, 235, 0.3);
 }

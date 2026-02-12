@@ -1,0 +1,10 @@
+<div *ngIf="toast" class="toast-container" [ngClass]="toast.type" (click)="close()">
+    <div class="toast-icon">
+        <i class="bi" [class.bi-check-circle-fill]="toast.type === 'success'"
+            [class.bi-exclamation-triangle-fill]="toast.type === 'warning'"
+            [class.bi-x-circle-fill]="toast.type === 'error'"></i>
+    </div>
+    <div class="toast-message">
+        {{ toast.message }}
+    </div>
+</div>
