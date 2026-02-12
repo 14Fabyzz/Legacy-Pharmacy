@@ -81,11 +81,16 @@ export class ProductListComponent implements OnInit {
       this.filteredProducts = [...this.allProducts];
     } else {
       this.filteredProducts = this.allProducts.filter(product => {
+        // Coincidencia exacta de código de barras (prioridad)
+        if (product.codigoBarras === term || product.codigoInterno?.toLowerCase() === term) return true;
+
         return (
           product.nombreComercial?.toLowerCase().includes(term) ||
           product.laboratorio?.toLowerCase().includes(term) ||
           product.categoria?.toLowerCase().includes(term) ||
-          product.presentacion?.toLowerCase().includes(term)
+          product.presentacion?.toLowerCase().includes(term) ||
+          product.codigoBarras?.toLowerCase().includes(term) ||
+          product.codigoInterno?.toLowerCase().includes(term)
         );
       });
     }

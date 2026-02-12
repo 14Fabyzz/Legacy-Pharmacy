@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
   Producto,
@@ -112,7 +112,7 @@ export class ProductService {
 
   getProductById(id: number): Observable<Producto> {
     const headers = this.getHeaders();
-    if (!headers) throw new Error('No authenticated');
+    if (!headers) return throwError(() => new Error('No authenticated'));
 
     return this.http.get<Producto>(`${this.apiUrl}/productos/${id}`, { headers });
   }
@@ -294,7 +294,11 @@ export class ProductService {
       esControlado: p.es_controlado || false,
 
       // Vencimiento
-      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined
+      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined,
+
+      // Identificadores
+      codigoBarras: p.codigo_barras,
+      codigoInterno: p.codigo_interno
     };
   }
 }

@@ -64,7 +64,12 @@ export class SidebarComponent {
     { path: '/app/cotizaciones', title: 'Cotizaciones', active: false, subMenu: [] },
     { path: '/app/movimientos', title: 'Movimientos en cajas', active: false, subMenu: [] },
     { path: '/app/devoluciones', title: 'Devoluciones', active: false, subMenu: [] },
-    { path: '/app/productos/kardex', title: 'Kardex', active: false, subMenu: [] },
+
+    { path: '/app/kardex', title: 'Kardex', active: false, subMenu: [
+      { path: '/app/kardex/productos', title: 'Kardex de productos' },
+    ] },
+
+
     { path: '/app/reportes', title: 'Reportes', active: false, subMenu: [] },
     { path: '/app/configuraciones', title: 'Configuraciones', active: false, subMenu: [] }
   ];

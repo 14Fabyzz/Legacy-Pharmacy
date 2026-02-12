@@ -41,6 +41,10 @@ const routes: Routes = [
         path: 'caja',
         loadChildren: () => import('./pages/caja/caja.module').then(m => m.CajaModule)
       },
+      {
+        path: 'kardex', // Nuevo módulo para /app/kardex
+        loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsModule)
+      },
       // ... tus otras rutas ...
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

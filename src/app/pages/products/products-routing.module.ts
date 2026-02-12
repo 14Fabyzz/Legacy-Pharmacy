@@ -42,6 +42,14 @@ const routes: Routes = [
     component: MovementsHistoryComponent
   },
   {
+    path: 'auditoria',
+    component: MovementsHistoryComponent
+  },
+  {
+    path: 'productos', // Mapea /app/kardex/productos -> KardexComponent
+    component: KardexComponent
+  },
+  {
     path: 'kardex',
     component: KardexComponent
   },
