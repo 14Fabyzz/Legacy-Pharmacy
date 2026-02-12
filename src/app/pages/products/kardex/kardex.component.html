@@ -22,32 +22,47 @@
     </div>
 
     <div class="filters-toolbar">
-        <div class="filter-group">
-            <div class="input-wrapper">
-                <label>Desde:</label>
-                <input type="date" class="date-input">
+        <div class="search-container" style="position: relative; width: 100%; max-width: 600px;">
+            <input type="text" [formControl]="searchControl" class="search-input"
+                placeholder="Buscar producto por nombre o código...">
+
+            <div class="search-results-dropdown" *ngIf="showResults && searchResults.length > 0">
+                <div *ngFor="let result of searchResults" class="search-result-item" (click)="selectProduct(result)">
+                    <strong>{{ result.nombreProducto }}</strong>
+                    <small>Stock: {{ result.cantidadDisponible }}</small>
+                </div>
             </div>
-            <div class="input-wrapper">
-                <label>Hasta:</label>
-                <input type="date" class="date-input">
-            </div>
-            <div class="input-wrapper">
-                <label>Tipo:</label>
-                <select class="select-input">
-                    <option value="ALL">Todos los Movimientos</option>
-                    <option value="ENTRADA">Entradas / Compras</option>
-                    <option value="SALIDA">Salidas / Ventas</option>
-                    <option value="AJUSTE">Ajustes / Pérdidas</option>
-                </select>
-            </div>
-            <button class="btn-filter">Filtrar</button>
-            <div class="separator-vertical"></div>
-            <!-- Botón simular eliminado en producción -->
         </div>
     </div>
 
-    <div class="product-summary-card">
-        <div *ngIf="isLoading; else dataTable" class="loading-state">
+    <!-- PLACEHOLDER STATE (Only if not global mode and no product selected) -->
+    <div class="empty-state" *ngIf="!product && !cargando && !isGlobalMode">
+        <div class="empty-icon">🔍</div>
+        <h3>Selecciona un producto</h3>
+        <p>Utiliza el buscador superior para encontrar el producto y ver su auditoría.</p>
+    </div>
+
+    <!-- RESULT STATE (Global or Product) -->
+    <div class="product-summary-card" *ngIf="product || isGlobalMode || cargando">
+
+        <!-- HEADER: Global vs Product -->
+        <div class="kardex-header" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+            <div *ngIf="isGlobalMode">
+                <h2 style="margin:0; font-size: 1.5rem; color: #1e293b;">🔍 Auditoría General</h2>
+                <p style="margin:5px 0 0 0; color: #64748b;">Últimos movimientos registrados en el sistema</p>
+            </div>
+
+            <div *ngIf="product && !isGlobalMode" style="display: flex; gap: 15px; align-items: center;">
+                <div class="prod-icon" style="width: 50px; height: 50px; font-size: 1.5rem;">📦</div>
+                <div>
+                    <h2 style="margin:0; font-size: 1.3rem;">{{ product.nombre_comercial }}</h2>
+                    <span class="badge">{{ product.codigo_interno }}</span>
+                    <span class="badge" style="margin-left:8px;">Stock: {{ product.stock_actual }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="cargando; else dataTable" class="loading-state">
             <div class="spinner"></div>
             <p>Cargando movimientos...</p>
         </div>
@@ -57,6 +72,7 @@
                 <thead>
                     <tr>
                         <th>Fecha / Hora</th>
+                        <th *ngIf="isGlobalMode">Producto</th>
                         <th>Tipo Mov.</th>
                         <th>Documento</th>
                         <th>Entrada</th>
@@ -67,16 +83,19 @@
                 </thead>
                 <tbody>
                     <tr *ngIf="movimientos.length === 0">
-                        <td colspan="7" class="text-center py-8 text-gray-500">
-                            No hay movimientos registrados para este producto.
+                        <td [attr.colspan]="isGlobalMode ? 8 : 7" class="text-center py-8 text-gray-500">
+                            No hay movimientos registrados.
                         </td>
                     </tr>
-                    <tr *ngFor="let m of movimientos" (click)="openDetail(m)" style="cursor: pointer;">
+                    <tr *ngFor="let m of paginatedMovimientos" (click)="openDetail(m)" style="cursor: pointer;">
                         <td>
                             <div class="date-cell">
                                 <strong>{{ m.fecha | date:'dd MMM yyyy' }}</strong>
                                 <small>{{ m.fecha | date:'HH:mm' }}</small>
                             </div>
+                        </td>
+                        <td *ngIf="isGlobalMode">
+                            <strong>{{ m.nombre_producto || 'N/A' }}</strong>
                         </td>
                         <td>
                             <span class="type-badge" [ngClass]="m.tipo.toLowerCase()">{{ m.tipo }}</span>
@@ -87,10 +106,32 @@
                         <td class="text-red">{{ m.tipo === 'SALIDA' ? m.cantidad : '-' }}</td>
 
                         <td class="font-bold">{{ m.saldo_resultante }}</td>
-                        <td class="user-cell">👤 {{ m.usuario }}</td>
+                        <td class="user-cell">👤 {{ m.usuario_responsable }}</td>
                     </tr>
                 </tbody>
             </table>
+
+            <!-- PAGINATION CONTROLS -->
+            <div class="pagination-controls" *ngIf="movimientos.length > itemsPerPage">
+                <span class="pagination-info">
+                    Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} -
+                    {{ currentPage * itemsPerPage > movimientos.length ? movimientos.length : currentPage * itemsPerPage
+                    }}
+                    de {{ movimientos.length }} resultados
+                </span>
+
+                <div class="pagination-buttons">
+                    <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">
+                        Anterior
+                    </button>
+
+                    <span class="page-current">Página {{ currentPage }} de {{ totalPages }}</span>
+
+                    <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                        Siguiente
+                    </button>
+                </div>
+            </div>
         </ng-template>
     </div>
 </div>
@@ -152,7 +193,7 @@
 
                 <div class="info-box">
                     <label>Responsable</label>
-                    <p>👤 {{ selectedMovement.usuario }}</p>
+                    <p>👤 {{ selectedMovement.usuario_responsable }}</p>
                 </div>
 
                 <div class="info-box full-width" *ngIf="selectedMovement.detalle">

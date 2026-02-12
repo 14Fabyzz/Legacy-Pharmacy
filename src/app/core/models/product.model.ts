@@ -136,6 +136,10 @@ export interface ProductoCard {
 
     // Vencimiento
     proximoVencimiento?: string;
+
+    // Identificadores (Nuevos para Búsqueda)
+    codigoBarras?: string;
+    codigoInterno?: string;
 }
 
 export interface Lote {
@@ -169,15 +173,16 @@ export interface ProductoConLotesResponse {
 
 export interface MovimientoKardex {
     id: number;
-    fecha: string; // Viene como ISO string
-    tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE'; // O string general
-    cantidad: number; // Puede ser negativo (ej: -5)
-    saldo_resultante: number;
+    fecha: string;        // ISO 8601: "2026-02-11T10:00:00"
+    tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE';
+    cantidad: number;     // Puede ser positivo o negativo
+    saldo_resultante: number; // CRÍTICO: El stock acumulado
     documento_ref: string;
-    usuario: string;
-    detalle: string; // Antes era 'motivo' o 'notas'
     lote: string;
-    costo_unitario: number;
+    usuario_responsable: string;
+    detalle: string;
+    costo_unitario?: number; // Opcional
+    nombre_producto?: string; // Para vista global
 }
 
 // Interface for Smart Price Checker (Search)
