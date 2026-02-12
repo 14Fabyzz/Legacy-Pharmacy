@@ -2,7 +2,7 @@
     <div class="closure-card" *ngIf="turnoActual && !isLoading">
         <div class="card-header-clean">
             <h2>Cierre de Turno</h2>
-            <p class="subtitle">Verifica los montos y realiza el arqueo final para cerrar la caja.</p>
+            <p class="subtitle">Verifica los montos y realiza el arqueo final para cerrar la caja</p>
         </div>
 
         <div class="closure-content">
@@ -42,20 +42,45 @@
                 </div>
 
                 <!-- Diferencia Destacada -->
-                <div class="difference-container" [class.negative]="diferencia < 0" [class.positive]="diferencia >= 0">
+                <!-- Diferencia Destacada: 3 Estados -->
+
+                <!-- Estado 1: Cuadre Exacto -->
+                <div class="difference-container exact" *ngIf="diferencia === 0">
+                    <div class="diff-header text-slate-600">
+                        <span>Resultado del Arqueo</span>
+                        <span class="badge badge-primary">PERFECTO</span>
+                    </div>
+                    <div class="diff-value text-blue-600">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Cuadre Exacto</span>
+                    </div>
+                </div>
+
+                <!-- Estado 2: Faltante (Negativo) -->
+                <div class="difference-container negative" *ngIf="diferencia < 0">
                     <div class="diff-header">
-                        <span>Diferencia (Real vs Esperado)</span>
-                        <span class="badge" *ngIf="diferencia !== 0">
-                            {{ diferencia < 0 ? 'FALTANTE' : 'SOBRANTE' }} </span>
+                        <span>Diferencia</span>
+                        <span class="badge badge-danger">FALTANTE</span>
                     </div>
                     <div class="diff-value">
-                        <i class="bi" [class.bi-check-circle-fill]="diferencia >= 0"
-                            [class.bi-exclamation-triangle-fill]="diferencia < 0"></i>
-                        {{ diferencia | currency:'COP':'symbol-narrow':'1.0-0' }}
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Faltante: {{ valorDiferenciaAbsoluto | currency:'COP':'symbol-narrow':'1.0-0' }}
                     </div>
-                    <p class="mt-2 text-sm opacity-75" *ngIf="diferencia < 0">
-                        ¡Atención! Hay un faltante de dinero respecto a lo esperado.
+                    <p class="mt-2 text-sm opacity-90 font-bold">
+                        Dinero en caja menor al esperado
                     </p>
+                </div>
+
+                <!-- Estado 3: Sobrante (Positivo) -->
+                <div class="difference-container positive" *ngIf="diferencia > 0">
+                    <div class="diff-header">
+                        <span>Diferencia</span>
+                        <span class="badge badge-success">SOBRANTE</span>
+                    </div>
+                    <div class="diff-value">
+                        <i class="bi bi-info-circle-fill"></i>
+                        Sobrante: {{ valorDiferenciaAbsoluto | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </div>
                 </div>
 
                 <div class="observations-area">
@@ -79,7 +104,7 @@
         <div class="card-content">
             <i class="bi bi-lock-fill large-icon"></i>
             <h2 class="text-xl font-bold text-slate-800 mb-2">Caja Cerrada</h2>
-            <p class="text-slate-500 mb-6">No hay ningún turno activo en este momento.</p>
+            <p class="text-slate-500 mb-6">No hay ningún turno activo en este momento</p>
             <button class="btn-primary-action" routerLink="/app/caja/abrir">
                 Ir a Abrir Caja
             </button>

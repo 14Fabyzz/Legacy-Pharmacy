@@ -169,6 +169,12 @@
     color: #991b1b;
 }
 
+.difference-container.exact {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
 .diff-header {
     display: flex;
     justify-content: space-between;

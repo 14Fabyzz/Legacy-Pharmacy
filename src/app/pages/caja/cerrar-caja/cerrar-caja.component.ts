@@ -51,8 +51,24 @@ export class CerrarCajaComponent implements OnInit {
         }
     }
 
+
+
+    get valorDiferenciaAbsoluto(): number {
+        return Math.abs(this.diferencia);
+    }
+
     cerrarTurno() {
         if (!this.turnoActual) return;
+
+        // Validación de justificación para diferencias
+        if (this.diferencia !== 0 && !this.observaciones) {
+            if (this.diferencia > 0) {
+                this.toastService.showError('⚠️ Existe un sobrante de dinero. Debe agregar una justificación para continuar.');
+            } else {
+                this.toastService.showError('⚠️ Existe un faltante de dinero. Debe agregar una justificación para continuar.');
+            }
+            return;
+        }
 
         if (confirm('¿Estás seguro de que deseas cerrar el turno de caja?')) {
             const dto: CierreCajaDTO = {
