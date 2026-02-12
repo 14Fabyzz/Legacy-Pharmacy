@@ -57,11 +57,17 @@
                 <div class="prod-icon" style="width: 50px; height: 50px; font-size: 1.5rem;">📦</div>
                 <div>
                     <!-- H1 prefers Product object, fallback to first movement -->
-                    <h1 style="margin:0; font-size: 1.3rem;">{{ product?.nombre_comercial ||
-                        movimientos[0]?.nombre_producto }}</h1>
-                    <span class="badge">Código: {{ product?.codigo_barras || movimientos[0]?.codigo_barras }}</span>
-                    <span class="badge" style="margin-left:8px;">Stock Actual: {{ movimientos[0]?.saldo_resultante || 0
-                        }} Und.</span>
+                    <h1 style="margin:0; font-size: 1.3rem;">
+                        {{ product?.nombre_comercial || (movimientos.length > 0 ? movimientos[0].nombre_producto : '')
+                        }}
+                    </h1>
+                    <span class="badge">
+                        Código: {{ product?.codigo_barras || (movimientos.length > 0 ? movimientos[0].codigo_barras :
+                        '') }}
+                    </span>
+                    <span class="badge" style="margin-left:8px;">
+                        Stock Actual: {{ (movimientos.length > 0 ? movimientos[0].saldo_resultante : 0) }} Und.
+                    </span>
                 </div>
             </div>
         </div>

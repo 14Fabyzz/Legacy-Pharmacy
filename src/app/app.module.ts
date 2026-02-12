@@ -51,8 +51,8 @@ import { ToastComponent } from './shared/components/toast/toast.component';
   ],
   providers: [
     //Añade el provider para el interceptor
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]
 })
