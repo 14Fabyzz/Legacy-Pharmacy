@@ -597,41 +597,44 @@
 
 /* --- New Helper Classes for Modern Table --- */
 
-/* Icon Circle for Product */
+/* Icon Circle for Product - Updated for Better Visuals */
 .product-icon-circle {
-    width: 72px;
-    height: 72px;
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    /* Prevent shrinking */
     border-radius: 8px;
-    /* Rounded corners as requested */
-    background-color: #FFFFFF;
-    /* White background */
+    /* Rounded square preference */
+    background-color: #f1f5f9;
+    /* Neutral background */
     border: 1px solid #E2E8F0;
-    /* Soft gray border */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    /* Slightly larger icon if no image */
+    font-size: 1.2rem;
     color: #64748B;
     flex-shrink: 0;
     overflow: hidden;
     cursor: pointer;
-    /* Interaction cursor */
-    /* transform: none; Ensure no zoom */
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    padding: 2px;
+    /* Small padding for the image inside */
 }
 
 .product-icon-circle:hover {
-    border-color: #CBD5E1;
-    /* Slight border darkening on hover, NO ZOOM */
+    border-color: #94a3b8;
+    transform: scale(1.05);
+    /* Subtle zoom effect */
 }
 
-.product-list-img {
+.product-img-circle {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    /* Fill the box without distortion */
+    object-fit: contain;
+    /* Ensures the whole bottle/box is visible */
     display: block;
+    mix-blend-mode: multiply;
+    /* Optional: helps blend white backgrounds if image has white bg */
 }
 
 /* Barcode Column */

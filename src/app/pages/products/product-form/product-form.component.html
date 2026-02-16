@@ -16,18 +16,37 @@
       <div class="form-row">
         <div class="form-group required">
           <label>Código Interno / SKU</label>
-          <input type="text" formControlName="codigoInterno" placeholder="Ej: DOLEX-500">
+          <input type="text" formControlName="codigoInterno" placeholder="Ej: DOLEX-500" (blur)="validateInternalCode()"
+            (keyup.enter)="validateInternalCode()"
+            [ngClass]="{'is-invalid': productForm.get('codigoInterno')?.invalid && (productForm.get('codigoInterno')?.dirty || productForm.get('codigoInterno')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('codigoInterno')?.hasError('required') && productForm.get('codigoInterno')?.touched">
+            El código del producto es obligatorio.
+          </div>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('codigoInterno')?.hasError('pattern') && productForm.get('codigoInterno')?.touched">
+            El código contiene caracteres no permitidos. Use solo letras y números.
+          </div>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('codigoInterno')?.hasError('duplicate')">
+            El código de producto ya existe. Por favor, ingrese un código único.
+          </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group required">
           <label>Código de Barras</label>
           <div class="input-with-icon">
             <input type="text" formControlName="codigoBarras" #barcodeInput (change)="validateBarcode()"
-              (keyup.enter)="validateBarcode()" placeholder="Escanee o ingrese">
+              (keyup.enter)="validateBarcode()" placeholder="Escanee o ingrese"
+              [ngClass]="{'is-invalid': productForm.get('codigoBarras')?.invalid && (productForm.get('codigoBarras')?.dirty || productForm.get('codigoBarras')?.touched)}">
             <button type="button" class="btn-icon-inside" (click)="focusBarcodeInput()"
               title="Activar lector de código">
               <span class="icon-barcode">|||</span>
             </button>
+          </div>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('codigoBarras')?.hasError('required') && productForm.get('codigoBarras')?.touched">
+            El código de barras es obligatorio.
           </div>
         </div>
       </div>
@@ -35,7 +54,12 @@
       <div class="form-row">
         <div class="form-group full-width required">
           <label>Nombre Comercial</label>
-          <input type="text" formControlName="nombreComercial" placeholder="Ej: Dolex Forte">
+          <input type="text" formControlName="nombreComercial" placeholder="Ej: Dolex Forte"
+            [ngClass]="{'is-invalid': productForm.get('nombreComercial')?.invalid && (productForm.get('nombreComercial')?.dirty || productForm.get('nombreComercial')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('nombreComercial')?.hasError('required') && productForm.get('nombreComercial')?.touched">
+            El nombre del producto es obligatorio.
+          </div>
         </div>
       </div>
     </fieldset>
@@ -47,26 +71,41 @@
       <div class="form-row">
         <div class="form-group required">
           <label>Principio Activo</label>
-          <select formControlName="principioActivoId">
+          <select formControlName="principioActivoId"
+            [ngClass]="{'is-invalid': productForm.get('principioActivoId')?.invalid && (productForm.get('principioActivoId')?.dirty || productForm.get('principioActivoId')?.touched)}">
             <option [ngValue]="null">Seleccione un principio activo...</option>
             <option *ngFor="let pa of principiosActivos" [value]="pa.id">{{ pa.nombre }}</option>
           </select>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('principioActivoId')?.hasError('required') && productForm.get('principioActivoId')?.touched">
+            Debe seleccionar un principio activo.
+          </div>
         </div>
 
         <div class="form-group required">
           <label>Laboratorio</label>
-          <select formControlName="laboratorioId">
+          <select formControlName="laboratorioId"
+            [ngClass]="{'is-invalid': productForm.get('laboratorioId')?.invalid && (productForm.get('laboratorioId')?.dirty || productForm.get('laboratorioId')?.touched)}">
             <option [ngValue]="null">Seleccione un laboratorio...</option>
             <option *ngFor="let lab of laboratorios" [value]="lab.id">{{ lab.nombre }}</option>
           </select>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('laboratorioId')?.hasError('required') && productForm.get('laboratorioId')?.touched">
+            Debe seleccionar un Laboratorio.
+          </div>
         </div>
 
         <div class="form-group required">
           <label>Categoría</label>
-          <select formControlName="categoriaId">
+          <select formControlName="categoriaId"
+            [ngClass]="{'is-invalid': productForm.get('categoriaId')?.invalid && (productForm.get('categoriaId')?.dirty || productForm.get('categoriaId')?.touched)}">
             <option [ngValue]="null">Seleccione una categoría...</option>
             <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
           </select>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('categoriaId')?.hasError('required') && productForm.get('categoriaId')?.touched">
+            Debe seleccionar una Categoría.
+          </div>
         </div>
       </div>
 
@@ -95,17 +134,36 @@
       <div class="form-row">
         <div class="form-group required">
           <label>Costo de Compra ($)</label>
-          <input type="number" formControlName="precioCompraReferencia" placeholder="0" min="0" step="100">
+          <input type="number" formControlName="precioCompraReferencia" placeholder="0" min="0" step="100"
+            [ngClass]="{'is-invalid': productForm.get('precioCompraReferencia')?.invalid && (productForm.get('precioCompraReferencia')?.dirty || productForm.get('precioCompraReferencia')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('precioCompraReferencia')?.hasError('required') && productForm.get('precioCompraReferencia')?.touched">
+            El costo es obligatorio.
+          </div>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('precioCompraReferencia')?.hasError('min') && productForm.get('precioCompraReferencia')?.touched">
+            El costo no puede ser negativo.
+          </div>
         </div>
 
         <div class="form-group required">
           <label>Margen de Ganancia (%)</label>
-          <input type="number" formControlName="porcentajeGanancia" placeholder="30" min="0" step="1">
+          <input type="number" formControlName="porcentajeGanancia" placeholder="30" min="0" step="1"
+            [ngClass]="{'is-invalid': productForm.get('porcentajeGanancia')?.invalid && (productForm.get('porcentajeGanancia')?.dirty || productForm.get('porcentajeGanancia')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('porcentajeGanancia')?.hasError('required') && productForm.get('porcentajeGanancia')?.touched">
+            El margen es obligatorio.
+          </div>
         </div>
 
         <div class="form-group required">
           <label>IVA (%)</label>
-          <input type="number" formControlName="ivaPorcentaje" placeholder="19" min="0" max="100" step="1">
+          <input type="number" formControlName="ivaPorcentaje" placeholder="19" min="0" max="100" step="1"
+            [ngClass]="{'is-invalid': productForm.get('ivaPorcentaje')?.invalid && (productForm.get('ivaPorcentaje')?.dirty || productForm.get('ivaPorcentaje')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('ivaPorcentaje')?.hasError('required') && productForm.get('ivaPorcentaje')?.touched">
+            El IVA es obligatorio.
+          </div>
         </div>
       </div>
 
@@ -221,8 +279,17 @@
         <div class="form-row">
           <div class="form-group required">
             <label>Unidades por Caja</label>
-            <input type="number" formControlName="unidadesPorCaja" placeholder="Ej: 10" min="1" step="1">
+            <input type="number" formControlName="unidadesPorCaja" placeholder="Ej: 10" min="1" step="1"
+              [ngClass]="{'is-invalid': productForm.get('unidadesPorCaja')?.invalid && (productForm.get('unidadesPorCaja')?.dirty || productForm.get('unidadesPorCaja')?.touched)}">
             <small class="helper-text">Número de unidades que contiene una caja completa</small>
+            <div class="invalid-feedback text-danger small mt-1"
+              *ngIf="productForm.get('unidadesPorCaja')?.hasError('required') && productForm.get('unidadesPorCaja')?.touched">
+              Debe especificar las unidades por caja.
+            </div>
+            <div class="invalid-feedback text-danger small mt-1"
+              *ngIf="productForm.get('unidadesPorCaja')?.hasError('min') && productForm.get('unidadesPorCaja')?.touched">
+              Debe ser al menos 1 unidad.
+            </div>
           </div>
 
           <div class="form-group">
@@ -240,7 +307,7 @@
         🔄 Limpiar
       </button>
 
-      <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">
+      <button type="submit" class="btn btn-primary">
         {{ isEditMode ? '💾 Actualizar Ficha' : '✅ Crear Ficha Técnica' }}
       </button>
     </div>

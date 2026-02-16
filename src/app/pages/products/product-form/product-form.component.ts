@@ -40,8 +40,8 @@ export class ProductFormComponent implements OnInit {
     this.productForm = this.fb.group({
       // Identificación
       tipo: ['TANGIBLE', Validators.required], // [NUEVO]
-      codigoInterno: ['', Validators.required],
-      codigoBarras: [''],
+      codigoInterno: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9\-_]+$/)]],
+      codigoBarras: ['', Validators.required],
       nombreComercial: ['', Validators.required],
 
       // Farmacología
@@ -125,6 +125,34 @@ export class ProductFormComponent implements OnInit {
         blisterControl?.setValue(null);
       }
       blisterControl?.updateValueAndValidity();
+    });
+  }
+
+  /**
+   * Valida si el código interno ya existe en la base de datos (CP01.1.7).
+   * Se ejecuta al perder el foco o presionar enter.
+   */
+  validateInternalCode(): void {
+    const codeControl = this.productForm.get('codigoInterno');
+    const code = codeControl?.value;
+
+    if (!code || codeControl?.invalid) return; // Si está vacío o tiene error de formato, no validamos duplicado aún
+
+    this.productService.searchProducts(code).subscribe(products => {
+      // searchProducts busca por coincidencia parcial en nombre, etc.
+      // Debemos filtrar si hay una coincidencia EXACTA en codigo_interno
+      const duplicate = products.find(p => p.codigo_interno === code);
+
+      if (duplicate && duplicate.id !== this.productId) {
+        // Encontramos un duplicado que no somos nosotros (en caso de edición)
+        codeControl.setErrors({ duplicate: true });
+        Swal.fire({
+          icon: 'error',
+          title: 'Código Duplicado',
+          text: `El código "${code}" ya está asignado al producto: ${duplicate.nombre_comercial}`,
+          footer: 'Por favor ingrese un código único'
+        });
+      }
     });
   }
 
@@ -266,7 +294,40 @@ export class ProductFormComponent implements OnInit {
   submitForm(): void {
     if (this.productForm.invalid) {
       this.productForm.markAllAsTouched();
-      Swal.fire('Formulario Inválido', 'Por favor complete los campos obligatorios (*)', 'warning');
+
+      // Mapeo de nombres técnicos a legibles para el usuario
+      const fieldLabels: { [key: string]: string } = {
+        tipo: 'Tipo de Producto',
+        codigoInterno: 'Código Interno',
+        nombreComercial: 'Nombre Comercial',
+        principioActivoId: 'Principio Activo',
+        laboratorioId: 'Laboratorio',
+        categoriaId: 'Categoría',
+        precioCompraReferencia: 'Costo de Compra',
+        porcentajeGanancia: 'Margen de Ganancia',
+        ivaPorcentaje: 'IVA',
+        unidadesPorCaja: 'Unidades por Caja',
+        codigoBarras: 'Código de Barras',
+        concentracion: 'Concentración',
+        presentacion: 'Presentación',
+        registroInvima: 'Registro Invima',
+        stockMinimo: 'Stock Mínimo',
+        stockActual: 'Stock Actual'
+      };
+
+      // Recolectar campos inválidos
+      const invalidFields = Object.keys(this.productForm.controls)
+        .filter(key => this.productForm.get(key)?.invalid)
+        .map(key => `<li>${fieldLabels[key] || key}</li>`)
+        .join('');
+
+      Swal.fire({
+        title: 'Formulario Inválido',
+        html: `Por favor complete los siguientes campos obligatorios:<br>
+              <ul style="text-align: left; margin-top: 10px; margin-left: 20px; list-style-type: disc;">${invalidFields}</ul>`,
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+      });
       return;
     }
 

@@ -21,16 +21,24 @@
         <!-- Aquí podrían ir KPIs resumen si se desean -->
     </div>
 
-    <div class="filters-toolbar">
-        <div class="search-container" style="position: relative; width: 100%; max-width: 600px;">
-            <input type="text" [formControl]="searchControl" class="search-input"
-                placeholder="Buscar producto por nombre o código...">
+    <div class="filters-toolbar"
+        style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <!-- Search Input -->
+        <div class="search-container" style="flex: 1; min-width: 250px;">
+            <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 4px;">Buscar</label>
+            <input type="text" [formControl]="searchControl" class="search-input form-control"
+                placeholder="Filtrar por producto, lote, doc..." style="width: 100%;">
+        </div>
 
-            <div class="search-results-dropdown" *ngIf="showResults && searchResults.length > 0">
-                <div *ngFor="let result of searchResults" class="search-result-item" (click)="selectProduct(result)">
-                    <strong>{{ result.nombreProducto }}</strong>
-                    <small>Stock: {{ result.cantidadDisponible }}</small>
-                </div>
+        <!-- Date Range -->
+        <div style="display: flex; gap: 10px;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 4px;">Desde</label>
+                <input type="date" class="form-control date-input" [(ngModel)]="startDate" (change)="applyFilters()">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 4px;">Hasta</label>
+                <input type="date" class="form-control date-input" [(ngModel)]="endDate" (change)="applyFilters()">
             </div>
         </div>
     </div>

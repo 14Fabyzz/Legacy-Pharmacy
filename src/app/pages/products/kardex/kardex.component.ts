@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs'; // For empty search
 import { ProductoInventarioDTO } from '../../../core/services/inventory.service';
@@ -15,7 +15,7 @@ import { MovimientoKardex, Producto } from '../../../core/models/product.model';
 @Component({
     selector: 'app-kardex',
     standalone: true,
-    imports: [CommonModule, RouterModule, ReactiveFormsModule],
+    imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule],
     templateUrl: './kardex.component.html',
     styleUrls: ['./kardex.component.css']
 })
@@ -26,11 +26,16 @@ export class KardexComponent implements OnInit {
     selectedMovement: MovimientoKardex | null = null;
     cargando = false;
 
-    // Search
+    // Search & Filter
     searchControl = new FormControl('');
     searchResults: ProductoInventarioDTO[] = [];
     showResults = false;
     isGlobalMode = false;
+
+    // Local Filtering
+    allMovements: MovimientoKardex[] = [];
+    startDate: string = '';
+    endDate: string = '';
 
     constructor(
         private route: ActivatedRoute,
@@ -40,7 +45,10 @@ export class KardexComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.setupSearch();
+        // Setup local search filter on the existing control
+        this.searchControl.valueChanges.subscribe(() => {
+            this.applyFilters();
+        });
 
         this.route.params.subscribe(params => {
             const id = params['id'];
@@ -59,6 +67,7 @@ export class KardexComponent implements OnInit {
                 this.productId = null;
                 this.product = null;
                 this.movimientos = [];
+                this.allMovements = [];
 
                 // Limpiamos buscador
                 this.searchControl.setValue('', { emitEvent: false });
@@ -70,30 +79,50 @@ export class KardexComponent implements OnInit {
         });
     }
 
-    setupSearch() {
-        this.searchControl.valueChanges.pipe(
-            debounceTime(300),
-            distinctUntilChanged(),
-            switchMap(term => {
-                if (!term || term.length < 2) {
-                    return of([]);
-                }
-                return this.inventoryService.buscarProductos(term);
-            })
-        ).subscribe(results => {
-            this.searchResults = results;
-            this.showResults = true;
-        });
+    // REMOVED: setupSearch() - We now use local filtering, or we keep it?
+    // User wanted "simple". Local filtering of loaded list is simplest.
+    // If we want to search *other* products to switch to them, we need the dropdown.
+    // But the user complained "search doesn't work".
+    // Let's Keep the dropdown ONLY for Global Mode maybe? Or just use the filter?
+    // User said: "hagamos que podamos filtarar por fecha" and "buscando... no sirve".
+    // I will implement PURE FILTERING on the current list as requested.
+    // If they want to switch product, they can go back or we can add a specific "Find Product" button later.
+    // For now, the input will filter the CURRENT list.
+
+    applyFilters() {
+        let filtered = [...this.allMovements];
+
+        // 1. Text Filter
+        const term = (this.searchControl.value || '').trim().toLowerCase();
+        if (term) {
+            filtered = filtered.filter(m =>
+                (m.nombre_producto && m.nombre_producto.toLowerCase().includes(term)) ||
+                (m.documento_ref && m.documento_ref.toLowerCase().includes(term)) ||
+                (m.usuario && m.usuario.toLowerCase().includes(term)) ||
+                (m.lote && m.lote.toLowerCase().includes(term))
+            );
+        }
+
+        // 2. Date Range Filter
+        if (this.startDate) {
+            const start = new Date(this.startDate);
+            start.setHours(0, 0, 0, 0);
+            filtered = filtered.filter(m => new Date(m.fecha) >= start);
+        }
+
+        if (this.endDate) {
+            const end = new Date(this.endDate);
+            end.setHours(23, 59, 59, 999);
+            filtered = filtered.filter(m => new Date(m.fecha) <= end);
+        }
+
+        this.movimientos = filtered;
+        this.currentPage = 1; // Reset pagination
     }
 
     selectProduct(producto: ProductoInventarioDTO) {
+        // ... kept for compatibility if needed, but UI might hide it
         this.productId = producto.productoId;
-        this.searchControl.setValue('', { emitEvent: false }); // Clear search but don't emit
-        this.showResults = false;
-        // Navegamos o cargamos directamente. Mejor cargar directo para SPA feel.
-        // Pero idealmente actualizar URL. Por ahora cargamos data.
-        this.isGlobalMode = false;
-        this.loadKardexData(this.productId);
     }
 
     loadGlobalHistory() {
@@ -102,10 +131,10 @@ export class KardexComponent implements OnInit {
             .pipe(finalize(() => this.cargando = false))
             .subscribe({
                 next: (data) => {
-                    this.movimientos = data;
-                    // Ordenamos por fecha descendente
-                    this.movimientos.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
-                    this.currentPage = 1; // Reset pagination
+                    this.allMovements = data; // Save backup
+                    // Sort descending
+                    this.allMovements.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+                    this.applyFilters(); // Populate movimientos
                 },
                 error: (err) => console.error('Error loading global history', err)
             });
@@ -122,19 +151,19 @@ export class KardexComponent implements OnInit {
         ).subscribe({
             next: (response) => {
                 this.product = response.product;
-                this.movimientos = response.kardex;
+                this.allMovements = response.kardex; // Save backup
 
-                // Sort descending by date (newest first)
-                this.movimientos.sort((a, b) => {
+                // Sort descending
+                this.allMovements.sort((a, b) => {
                     const dateA = new Date(a.fecha).getTime();
                     const dateB = new Date(b.fecha).getTime();
                     return dateB - dateA;
                 });
-                this.currentPage = 1; // Reset pagination
+
+                this.applyFilters(); // Populate movimientos
             },
             error: (err) => {
                 console.error('Error loading Kardex data', err);
-                // Aquí podrías usar Swal si lo deseas, pero un console basta por ahora como pediste
             }
         });
     }
