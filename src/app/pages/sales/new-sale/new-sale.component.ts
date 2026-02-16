@@ -1,15 +1,17 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { VentaService } from '../../../core/services/venta.service';
-import { CrearVentaDTO, ItemVentaDTO, ProductoInventarioDTO } from '../../../core/models/venta.models';
-// import Swal from 'sweetalert2'; // Recomendado para alertas bonitas
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
+import { SalesService } from '../../../core/services/sales.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { CrearVentaDTO, ItemVentaDTO, TipoVenta, MetodoPago, ProductoBusquedaResponse } from '../../../core/models/sales.models';
+import { Subject, Subscription, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError, tap } from 'rxjs/operators';
 
 interface CartItem {
-  product: ProductoInventarioDTO;
+  product: ProductoBusquedaResponse;
   cantidad: number;
+  tipoVenta: TipoVenta;
   precio: number;
   subtotal: number;
-  esCaja: boolean;
-  error?: string; // Para mostrar errores inline (ej. Sin stock)
+  error?: string;
 }
 
 @Component({
@@ -18,13 +20,14 @@ interface CartItem {
   styleUrls: ['./new-sale.component.css'],
   standalone: false
 })
-export class NewSaleComponent implements OnInit {
+export class NewSaleComponent implements OnInit, OnDestroy {
 
   @ViewChild('barcodeInputRef') barcodeInputRef!: ElementRef;
 
   // UI State
   barcodeInput: string = '';
   isLoading: boolean = false;
+  searchFailed: boolean = false; // Control explícito de fallo
 
   // Data
   cartItems: CartItem[] = [];
@@ -38,100 +41,129 @@ export class NewSaleComponent implements OnInit {
   // Configuración Venta
   clienteId: number = 1; // Genérico
   clienteNombre: string = 'CONSUMIDOR FINAL';
-  metodoPago: string = 'EFECTIVO';
+  metodoPago: MetodoPago = 'EFECTIVO';
 
-  constructor(private ventaService: VentaService) { }
+  // Opciones para el select
+  tiposVenta = Object.values(TipoVenta);
+
+  // RxJS Search
+  private searchSubject = new Subject<string>();
+  private searchSubscription!: Subscription;
+
+  constructor(
+    private salesService: SalesService,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
-    // Foco inicial
     setTimeout(() => this.barcodeInputRef?.nativeElement.focus(), 500);
+
+    // Setup Search Pipe
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      tap(() => {
+        this.isLoading = true;
+        this.searchFailed = false;
+      }),
+      switchMap(term => {
+        if (!term.trim()) {
+          this.isLoading = false;
+          this.searchFailed = false;
+          this.showDropdown = false;
+          return of([]);
+        }
+        return this.salesService.buscarProductos(term).pipe(
+          catchError(err => {
+            console.error('Search Error:', err);
+            this.toastService.showError('Error de conexión con inventario');
+            this.isLoading = false;
+            return of([]);
+          })
+        );
+      })
+    ).subscribe((products: ProductoBusquedaResponse[]) => {
+      this.isLoading = false;
+      this.searchResults = products;
+      // Solo mostramos failed si buscamos algo (input > 0) y no hay resultados
+      this.searchFailed = this.searchResults.length === 0 && this.barcodeInput.trim().length > 0;
+      this.showDropdown = this.barcodeInput.trim().length > 0;
+    });
   }
 
-  /**
-   * Lógica de Buscador Inteligente (keyup.enter)
-   */
+  ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
   // --- Autocomplete Logic ---
-  searchResults: ProductoInventarioDTO[] = [];
+  searchResults: ProductoBusquedaResponse[] = [];
   showDropdown: boolean = false;
-  searchTimeout: any;
 
   onSearchInput() {
-    clearTimeout(this.searchTimeout);
-    this.isLoading = false;
-
-    if (!this.barcodeInput.trim()) {
-      this.searchResults = [];
-      this.showDropdown = false;
-      return;
-    }
-
-    this.searchTimeout = setTimeout(() => {
-      this.isLoading = true;
-      const term = this.barcodeInput.trim();
-
-      this.ventaService.buscarProductos(term).subscribe({
-        next: (products) => {
-          this.isLoading = false;
-          this.searchResults = products || [];
-          this.showDropdown = this.searchResults.length > 0;
-        },
-        error: (err) => {
-          this.isLoading = false;
-          console.error(err);
-        }
-      });
-    }, 300); // 300ms debounce
+    // Reset inmediato para evitar parpadeos
+    this.isLoading = true;
+    this.searchFailed = false;
+    this.searchSubject.next(this.barcodeInput);
   }
 
-  selectProduct(product: ProductoInventarioDTO) {
+  selectProduct(product: ProductoBusquedaResponse) {
     this.addItemToCart(product);
     this.barcodeInput = '';
     this.searchResults = [];
     this.showDropdown = false;
+    this.searchFailed = false;
     this.barcodeInputRef.nativeElement.focus();
   }
 
-  // Mantenemos Enter para selección rápida del primero si hay resultados
   onEnterKey() {
     if (this.searchResults.length > 0) {
       this.selectProduct(this.searchResults[0]);
     } else {
-      // Intento de búsqueda directa si no hubo suggestions
-      this.onSearchInput();
+      // Force search immediately if user hits enter
+      this.searchSubject.next(this.barcodeInput);
     }
   }
 
-  addItemToCart(product: ProductoInventarioDTO) {
-    // 1. Validar si ya existe en carrito
-    const existingItem = this.cartItems.find(i => i.product.productoId === product.productoId);
+  addItemToCart(product: ProductoBusquedaResponse) {
+    // Default: CAJA (Simplicidad para POS optimizado con precios complejos)
+    let defaultTipo = TipoVenta.CAJA;
+
+    // Check duplication by ID
+    const existingItem = this.cartItems.find(i => i.product.detalleProducto.id === product.detalleProducto.id);
 
     if (existingItem) {
-      // 2. Validar Stock antes de sumar
-      if (existingItem.cantidad + 1 > product.cantidadDisponible) {
-        // Alerta visual de stock insuficiente
-        alert(`STOCK INSUFICIENTE: Solo quedan ${product.cantidadDisponible}`);
-        return;
-      }
-      existingItem.cantidad++;
-      this.recalculateItem(existingItem);
+      this.updateQuantity(existingItem, existingItem.cantidad + 1);
     } else {
-      // Validar stock inicial
-      if (product.cantidadDisponible < 1) {
-        alert('PRODUCTO AGOTADO');
+      // Validar stock global
+      if (product.detalleProducto.stockTotal < 1) {
+        this.toastService.showError('PRODUCTO AGOTADO');
         return;
       }
+
+      // Precio viene directo del DTO (Caja por defecto)
+      const precioInicial = product.detalleProducto.precioVentaTotal;
 
       const newItem: CartItem = {
         product: product,
         cantidad: 1,
-        precio: product.precioVentaUnidad,
-        subtotal: product.precioVentaUnidad,
-        esCaja: false
+        tipoVenta: defaultTipo,
+        precio: precioInicial,
+        subtotal: precioInicial
       };
       this.cartItems.push(newItem);
+      this.calculateGlobalTotals();
     }
+  }
 
-    this.calculateGlobalTotals();
+  getPrecioPorTipo(product: ProductoBusquedaResponse, tipo: TipoVenta): number {
+    switch (tipo) {
+      case TipoVenta.CAJA: return product.detalleProducto.precioVentaTotal;
+      case TipoVenta.BLISTER: return product.detalleProducto.precioVentaBlister;
+      case TipoVenta.UNIDAD: return product.detalleProducto.precioVentaUnidad;
+      default: return product.detalleProducto.precioVentaTotal;
+    }
   }
 
   removeItem(index: number) {
@@ -139,27 +171,48 @@ export class NewSaleComponent implements OnInit {
     this.calculateGlobalTotals();
   }
 
-  updateQuantity(item: CartItem, newQty: number) {
-    if (newQty < 1) {
-      item.cantidad = 1; // Mínimo 1
-      return;
+  onTipoVentaChange(item: CartItem) {
+    // Renombrado interno de la funcion, mapea a 'updateUnitType' solicitado
+    this.updateUnitType(item, item.tipoVenta);
+  }
+
+  updateUnitType(item: CartItem, tipo: TipoVenta) {
+    if (tipo !== TipoVenta.CAJA && !item.product.detalleProducto.esFraccionable) {
+      this.toastService.showWarning('Este producto solo se vende por CAJA');
+      // Revertir a Caja en UI si fuera necesario, pero el select estara disabled.
+      // Forzar valor por seguridad:
+      item.tipoVenta = TipoVenta.CAJA;
+      tipo = TipoVenta.CAJA;
     }
 
-    // Validación Stock Estricta
-    if (newQty > item.product.cantidadDisponible) {
-      item.cantidad = item.product.cantidadDisponible;
-      alert(`STOCK MÁXIMO ALCANZADO: ${item.product.cantidadDisponible}`);
-    } else {
-      item.cantidad = newQty;
+    switch (tipo) {
+      case TipoVenta.CAJA:
+        item.precio = item.product.detalleProducto.precioVentaTotal;
+        break;
+      case TipoVenta.BLISTER:
+        item.precio = item.product.detalleProducto.precioVentaBlister;
+        break;
+      case TipoVenta.UNIDAD:
+        item.precio = item.product.detalleProducto.precioVentaUnidad;
+        break;
     }
+
     this.recalculateItem(item);
     this.calculateGlobalTotals();
   }
 
-  toggleUnitType(item: CartItem) {
-    item.esCaja = !item.esCaja;
-    // Actualizar precio según tipo
-    item.precio = item.esCaja ? item.product.precioVentaBase : item.product.precioVentaUnidad;
+  updateQuantity(item: CartItem, newQty: number) {
+    if (newQty < 1) {
+      item.cantidad = 1;
+      return;
+    }
+
+    // Validación Stock (Directa contra stockActual)
+    if (newQty > item.product.detalleProducto.stockTotal) {
+      this.toastService.showError(`STOCK INSUFICIENTE: Max ${item.product.detalleProducto.stockTotal} unidades`);
+    } else {
+      item.cantidad = newQty;
+    }
     this.recalculateItem(item);
     this.calculateGlobalTotals();
   }
@@ -170,7 +223,7 @@ export class NewSaleComponent implements OnInit {
 
   calculateGlobalTotals() {
     this.subtotal = this.cartItems.reduce((acc, i) => acc + i.subtotal, 0);
-    this.total = this.subtotal; // + Impuestos si aplica
+    this.total = this.subtotal;
     this.calculateChange();
   }
 
@@ -185,27 +238,26 @@ export class NewSaleComponent implements OnInit {
   processSale() {
     if (this.cartItems.length === 0) return;
 
-    // Mapping estricto a DTO
     const request: CrearVentaDTO = {
       clienteId: this.clienteId,
       metodoPago: this.metodoPago,
       montoRecibido: this.montoRecibido,
       items: this.cartItems.map(i => ({
-        productoId: i.product.productoId,
+        productoId: i.product.detalleProducto.id,
         cantidad: i.cantidad,
-        esVentaPorCaja: i.esCaja,
-        // precioUnitario y subtotal NO se envían al backend, él calcula.
-      } as ItemVentaDTO))
+        tipoVenta: i.tipoVenta
+      }))
     };
 
-    this.ventaService.crearVenta(request).subscribe({
+    this.salesService.crearVenta(request).subscribe({
       next: (res) => {
-        alert(`¡VENTA EXITOSA! Ticket #${res.id}`); // Idealmente modal success
+        this.toastService.showSuccess(`¡VENTA EXITOSA! Ticket #${res.id}`);
         this.reset();
       },
       error: (err) => {
         console.error(err);
-        alert('ERROR AL PROCESAR VENTA');
+        const msg = err.error?.message || 'ERROR AL PROCESAR VENTA';
+        this.toastService.showError(msg);
       }
     });
   }
