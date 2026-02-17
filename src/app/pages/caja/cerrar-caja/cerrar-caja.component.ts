@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { VentaService } from '../../../core/services/venta.service';
 import { TurnoCaja, CierreCajaDTO } from '../../../core/models/venta.models';
 import { Router } from '@angular/router';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
     selector: 'app-cerrar-caja',
@@ -16,7 +17,11 @@ export class CerrarCajaComponent implements OnInit {
     diferencia: number = 0;
     isLoading: boolean = true;
 
-    constructor(private ventaService: VentaService, private router: Router) { }
+    constructor(
+        private ventaService: VentaService,
+        private router: Router,
+        private toastService: ToastService
+    ) { }
 
     ngOnInit(): void {
         this.checkStatus();
@@ -46,8 +51,24 @@ export class CerrarCajaComponent implements OnInit {
         }
     }
 
+
+
+    get valorDiferenciaAbsoluto(): number {
+        return Math.abs(this.diferencia);
+    }
+
     cerrarTurno() {
         if (!this.turnoActual) return;
+
+        // Validación de justificación para diferencias
+        if (this.diferencia !== 0 && !this.observaciones) {
+            if (this.diferencia > 0) {
+                this.toastService.showError('⚠️ Existe un sobrante de dinero. Debe agregar una justificación para continuar.');
+            } else {
+                this.toastService.showError('⚠️ Existe un faltante de dinero. Debe agregar una justificación para continuar.');
+            }
+            return;
+        }
 
         if (confirm('¿Estás seguro de que deseas cerrar el turno de caja?')) {
             const dto: CierreCajaDTO = {
@@ -59,16 +80,22 @@ export class CerrarCajaComponent implements OnInit {
             this.ventaService.cerrarCaja(dto).subscribe({
                 next: (res: TurnoCaja) => {
                     this.isLoading = false;
-                    alert('Caja cerrada con éxito');
+                    this.toastService.showSuccess('Turno cerrado exitosamente');
                     this.router.navigate(['/app/caja/abrir']);
                 },
                 error: (err: any) => {
                     console.error('Error al cerrar caja', err);
                     this.isLoading = false;
                     const msg = err.error?.message || err.error || 'No se pudo cerrar la caja';
-                    alert(msg);
+                    this.toastService.showError(msg);
                 }
             });
+        }
+    }
+
+    preventInvalidInput(event: KeyboardEvent): void {
+        if (['e', 'E', '+', '-', '.'].includes(event.key)) {
+            event.preventDefault();
         }
     }
 }

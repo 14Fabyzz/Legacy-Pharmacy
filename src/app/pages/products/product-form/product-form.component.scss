@@ -94,7 +94,8 @@
     color: #334155;
     text-transform: uppercase;
     letter-spacing: 0.025em;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
+    /* Increased from 0.75rem */
 }
 
 /* Input Styles */
@@ -281,41 +282,6 @@
     color: #334155;
 }
 
-/* Tabs Navigation (Copiado de Product List para consistencia) */
-.tabs-nav {
-    display: flex;
-    gap: 24px;
-    border-bottom: 2px solid #e2e8f0;
-    margin-bottom: 32px;
-    padding-bottom: 0;
-}
-
-.tabs-nav a {
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #64748b;
-    padding-bottom: 12px;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    margin-bottom: -2px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.tabs-nav a:hover {
-    color: #3b82f6;
-}
-
-.tabs-nav a.active {
-    color: #3b82f6;
-    border-bottom-color: #3b82f6;
-}
-
-.nav-icon {
-    font-size: 1.1rem;
-}
 
 /* Required Field Indicator */
 .form-group label::after {
@@ -376,5 +342,50 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   VALIDACIONES VISUALES (MODERNAS & PRO)
+   ========================================================================== */
+.form-group {
+
+    /* Estado Inválido: Borde Rojo Elegante + Fondo Sutil */
+    input.is-invalid,
+    select.is-invalid {
+        border-color: #E74C3C !important;
+        /* Alizarin Red */
+        background-color: #FEF9F9;
+        /* Fondo rojo muy tenue */
+        transition: all 0.2s ease-in-out;
+
+        &:focus {
+            border-color: #E74C3C !important;
+            /* Resplandor (Box Shadow) Rojo Suave y Difuminado */
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2) !important;
+            outline: none;
+        }
+    }
+
+    /* Mensaje de Feedback con Icono */
+    .invalid-feedback {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-top: 8px;
+        /* Separación superior */
+        font-size: 0.875rem;
+        /* Tamaño optimizado */
+        color: #E74C3C;
+        font-weight: 500;
+        animation: fadeIn 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+        /* Icono de alerta antes del texto */
+        &::before {
+            content: '⚠️';
+            margin-right: 6px;
+            font-size: 0.95rem;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+        }
     }
 }

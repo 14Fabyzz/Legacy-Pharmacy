@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { VentaService } from '../../../core/services/venta.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { TurnoCaja, AperturaCajaDTO } from '../../../core/models/venta.models';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
     selector: 'app-abrir-caja',
@@ -16,7 +17,8 @@ export class AbrirCajaComponent implements OnInit {
 
     constructor(
         private ventaService: VentaService,
-        private authService: AuthService
+        private authService: AuthService,
+        private toastService: ToastService
     ) { }
 
     ngOnInit(): void {
@@ -39,7 +41,7 @@ export class AbrirCajaComponent implements OnInit {
 
     abrirTurno() {
         if (this.saldoInicial < 0) {
-            alert('El saldo inicial no puede ser negativo');
+            this.toastService.showError('El saldo inicial no puede ser negativo');
             return;
         }
 
@@ -59,14 +61,28 @@ export class AbrirCajaComponent implements OnInit {
             next: (nuevoTurno: TurnoCaja) => {
                 this.turnoActual = nuevoTurno;
                 this.isLoading = false;
-                alert('Caja abierta con éxito');
+
+                // Formatear moneda para el mensaje
+                const montoFormateado = new Intl.NumberFormat('es-CO', {
+                    style: 'currency',
+                    currency: 'COP',
+                    maximumFractionDigits: 0
+                }).format(this.saldoInicial);
+
+                this.toastService.showSuccess(`✅ Caja abierta exitosamente con ${montoFormateado}. ¡Buen turno!`);
             },
             error: (err: any) => {
                 console.error('Error al abrir caja', err);
                 this.isLoading = false;
                 const msg = err.error?.message || err.error || 'No se pudo abrir la caja';
-                alert(msg);
+                this.toastService.showError(msg);
             }
         });
+    }
+
+    preventInvalidInput(event: KeyboardEvent): void {
+        if (['e', 'E', '+', '-', '.'].includes(event.key)) {
+            event.preventDefault();
+        }
     }
 }

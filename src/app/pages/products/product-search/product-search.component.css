@@ -1,36 +1,46 @@
-/* Layout */
+/* =====================================================
+   CONSULTA DE PRECIOS - DISEÑO PREMIUM MEJORADO
+   ===================================================== */
+
+/* Layout Principal */
 .page-container {
-    padding: 24px;
-    background-color: #f1f5f9;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #f0f4f8 100%);
     min-height: 100vh;
 }
 
 .page-header {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
+    text-align: center;
 }
 
 .page-header h2 {
     margin: 0;
-    color: #1e293b;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    letter-spacing: -0.5px;
 }
 
 .page-header p {
-    color: #64748b;
-    margin-top: 4px;
+    color: #718096;
+    margin-top: 8px;
+    font-size: 1rem;
+    font-weight: 400;
 }
 
-/* Tabs Navigation (Same as others) */
+/* =====================================================
+   BUSCADOR - MEJORADO
+   ===================================================== */
 
-
-/* Search Box */
 .search-layout {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .search-box-container {
     position: relative;
-    margin-bottom: 40px;
+    margin-bottom: 48px;
 }
 
 .input-wrapper {
@@ -41,26 +51,33 @@
 
 .search-icon {
     position: absolute;
-    left: 20px;
-    font-size: 1.5rem;
-    color: #94a3b8;
+    left: 24px;
+    font-size: 1.25rem;
+    color: #cbd5e1;
 }
 
 .param-search-input {
     width: 100%;
-    padding: 20px 20px 20px 60px;
-    font-size: 1.5rem;
-    border: 2px solid #cbd5e1;
-    border-radius: 16px;
+    padding: 18px 24px 18px 64px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
     outline: none;
     background-color: white;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #1a202c;
+}
+
+.param-search-input::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
 }
 
 .param-search-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .clear-btn {
@@ -69,11 +86,289 @@
     background: none;
     border: none;
     font-size: 2rem;
-    color: #94a3b8;
+    color: #cbd5e1;
     cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
 }
 
-/* Suggestions Dropdown */
+.clear-btn:hover {
+    color: #94a3b8;
+}
+
+/* =====================================================
+   TARJETA DE RESULTADO PREMIUM
+   ===================================================== */
+
+.price-check-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    max-width: 900px;
+    margin: 2rem auto;
+    animation: slideUpSmooth 0.4s ease-out;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+    color: #1a202c;
+}
+
+@keyframes slideUpSmooth {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bounce-in {
+    animation: slideUpSmooth 0.4s ease-out;
+}
+
+/* Contenido Principal */
+.card-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 2.5rem;
+    gap: 3rem;
+    align-items: center;
+}
+
+/* =====================================================
+   COLUMNA IZQUIERDA: INFORMACIÓN DEL PRODUCTO
+   ===================================================== */
+
+.product-info-column {
+    display: flex;
+    gap: 1.75rem;
+    align-items: flex-start;
+}
+
+.product-image-container {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid #e2e8f0;
+}
+
+.product-image {
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+}
+
+.no-img-icon {
+    font-size: 3.5rem;
+}
+
+.product-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.product-name {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+    color: #0f172a;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
+}
+
+.product-badges {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border: none;
+}
+
+.type-badge {
+    background-color: #f0f4ff;
+    color: #4f46e5;
+}
+
+.stock-badge {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #dcfce7;
+}
+
+.stock-badge.stock-low {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border-color: #fee2e2;
+}
+
+.stock-count {
+    background-color: #eff6ff;
+    color: #0369a1;
+    border: 1px solid #bfdbfe;
+}
+
+.stock-count.low {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border-color: #fee2e2;
+}
+
+/* =====================================================
+   COLUMNA DERECHA: PRECIOS
+   ===================================================== */
+
+.prices-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+}
+
+/* Precio Principal - DESTACADO */
+.main-price-block {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.main-price-block .price-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    letter-spacing: 1.2px;
+}
+
+.price-value-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    line-height: 1;
+}
+
+.currency {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #4f46e5;
+    margin-top: 8px;
+    margin-right: 6px;
+}
+
+.main-price {
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: #4f46e5;
+    letter-spacing: -2px;
+    line-height: 1;
+}
+
+/* Separador */
+.prices-separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    width: 100%;
+    margin: 1.5rem 0;
+}
+
+/* Precios Secundarios */
+.secondary-prices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.secondary-price-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.secondary-price-block .price-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.8px;
+    display: block;
+}
+
+.secondary-price {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a202c;
+    letter-spacing: -0.5px;
+}
+
+/* =====================================================
+   PIE DE PÁGINA
+   ===================================================== */
+
+.card-footer {
+    padding: 1.5rem 2.5rem;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: center;
+}
+
+.new-query-button {
+    background-color: white;
+    border: 1.5px solid #e2e8f0;
+    color: #475569;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.new-query-button:hover {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: white;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    transform: translateY(-2px);
+}
+
+.button-shortcut {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.new-query-button:hover .button-shortcut {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* =====================================================
+   DROPDOWN DE SUGERENCIAS - MEJORADO
+   ===================================================== */
+
 .suggestions-dropdown {
     position: absolute;
     top: 100%;
@@ -81,20 +376,18 @@
     right: 0;
     background: white;
     border-radius: 12px;
-    margin-top: 8px;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    margin-top: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
     overflow: hidden;
     z-index: 10;
     border: 1px solid #e2e8f0;
 }
 
-.suggestion-item,
-/* Mantener compatibilidad si se usa en otro lado, pero aquí reemplazamos visualmente */
 .search-result-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 1.25rem;
     border-bottom: 1px solid #f1f5f9;
     transition: background 0.2s;
     cursor: pointer;
@@ -109,59 +402,55 @@
 }
 
 .sugg-name {
-    font-weight: 600;
-    color: #334155;
+    font-weight: 700;
+    color: #0f172a;
     font-size: 1rem;
 }
 
 .sugg-meta {
     font-size: 0.85rem;
     color: #64748b;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
-/* Contenedor de Precios */
 .prices-container {
     display: flex;
-    gap: 0.75rem;
+    gap: 1rem;
     align-items: center;
     flex-wrap: wrap;
     justify-content: flex-end;
     margin-left: 16px;
 }
 
-/* Estilo Base de Etiqueta de Precio */
 .price-tag {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    padding: 0.25rem 0.75rem;
+    padding: 0.5rem 0.875rem;
     border-radius: 8px;
-    background-color: #f1f5f9;
+    background-color: #f8fafc;
     border: 1px solid #e2e8f0;
-    min-width: 80px;
+    min-width: 90px;
 }
 
-.price-label {
+.price-tag .price-label {
     font-size: 0.65rem;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
     color: #64748b;
     letter-spacing: 0.5px;
 }
 
-.price-value {
-    font-weight: 700;
-    font-size: 0.95rem;
+.price-tag .price-value {
+    font-weight: 800;
+    font-size: 1rem;
     color: #0f172a;
+    margin-top: 2px;
 }
 
-/* Variantes de Color para Jerarquía Visual */
-
-/* Unidad (Lo más barato/común en menudeo) - Verde */
 .price-tag.unit {
     background-color: #f0fdf4;
-    border-color: #bbf7d0;
+    border-color: #86efac;
 }
 
 .price-tag.unit .price-value {
@@ -172,570 +461,128 @@
     color: #15803d;
 }
 
-/* Blíster (Opción media) - Azul */
 .price-tag.blister {
-    background-color: #eff6ff;
-    border-color: #bfdbfe;
+    background-color: #f0f4ff;
+    border-color: #a5b4fc;
 }
 
 .price-tag.blister .price-value {
-    color: #1e40af;
+    color: #3730a3;
 }
 
 .price-tag.blister .price-label {
-    color: #2563eb;
+    color: #4f46e5;
 }
 
-/* Caja (Estándar) - Gris/Neutro */
 .price-tag.box {
     background-color: white;
+    border: 1.5px solid #cbd5e1;
 }
 
-/* Result Card */
-.result-card {
-    background: white;
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.product-detail-grid {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 32px;
-    margin-bottom: 24px;
-}
-
-.image-box {
-    width: 100%;
-    aspect-ratio: 1;
-    background-color: #f8fafc;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.image-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.no-img-icon {
-    font-size: 4rem;
-}
-
-.main-title {
-    font-size: 2.5rem;
-    margin: 0 0 8px 0;
+.price-tag.box .price-value {
     color: #0f172a;
-    line-height: 1.1;
 }
 
-.subtitle {
-    font-size: 1.2rem;
-    color: #64748b;
-    display: block;
-    margin-bottom: 20px;
-}
+/* =====================================================
+   ESTADOS
+   ===================================================== */
 
-.meta-tags {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 32px;
-}
-
-.tag {
-    padding: 6px 16px;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.tag.lab {
-    background-color: #e0f2fe;
-    color: #0284c7;
-}
-
-.tag.loc {
-    background-color: #f1f5f9;
-    color: #475569;
-}
-
-.tag.stock {
-    background-color: #dcfce7;
-    color: #16a34a;
-}
-
-.tag.stock.low {
-    background-color: #fee2e2;
-    color: #dc2626;
-}
-
-.price-display small {
-    display: block;
-    font-size: 1rem;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.big-price {
-    font-size: 4rem;
-    font-weight: 800;
-    color: #3b82f6;
-    line-height: 1;
-}
-
-.card-footer {
-    text-align: center;
-    border-top: 2px dashed #e2e8f0;
-    padding-top: 24px;
-}
-
-.btn-reset {
-    background: white;
-    border: 1px solid #cbd5e1;
-    padding: 12px 32px;
-    border-radius: 8px;
-    font-weight: 600;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-reset:hover {
-    background-color: #f1f5f9;
-    color: #334155;
-}
-
-/* States */
 .waiting-state,
 .not-found-state {
     text-align: center;
-    padding: 60px;
+    padding: 80px 40px;
     color: #94a3b8;
 }
 
 .not-found-state .icon {
-    font-size: 4rem;
-    margin-bottom: 16px;
+    font-size: 4.5rem;
+    margin-bottom: 20px;
 }
 
 .not-found-state h3 {
-    color: #1e293b;
-    margin: 0;
-}
-
-/* --- CORPORATE SaaS STYLES --- */
-
-/* Badge System */
-.meta-badges {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-}
-
-.badge {
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background-color: #f1f5f9;
-    color: #475569;
-}
-
-.badge.type {
-    background-color: #f1f5f9;
-    color: #475569;
-}
-
-.badge.status.success {
-    background-color: #dcfce7;
-    color: #166534;
-}
-
-.badge.status.warning {
-    background-color: #fef9c3;
-    color: #854d0e;
-}
-
-.badge.stock-count {
-    background-color: #e0f2fe;
-    color: #0369a1;
-}
-
-.badge.stock-count.low {
-    background-color: #fee2e2;
-    color: #b91c1c;
-}
-
-
-/* Price Layout - Corporate */
-.prices-section {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin-top: 16px;
-    padding-top: 24px;
-    border-top: 1px solid #e2e8f0;
-}
-
-/* Hero Price (Caja) */
-.price-hero {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    /* Right aligned */
-}
-
-.price-hero .label {
-    font-size: 0.8rem;
-    color: #64748b;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-}
-
-.price-hero .hero-value {
-    font-size: 4rem;
-    font-weight: 800;
-    color: #0f172a;
-    /* Dark Slate */
-    line-height: 1;
-    display: flex;
-    align-items: flex-start;
-}
-
-.price-hero .currency {
-    font-size: 2rem;
-    margin-top: 8px;
-    margin-right: 6px;
-    color: #3b82f6;
-    /* Blue currency symbol */
-    font-weight: 700;
-}
-
-
-/* Sub Prices Grid - Neutral */
-.sub-prices-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    width: 100%;
-}
-
-.sub-price-item {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    /* Right align numbers */
-}
-
-.sub-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: #94a3b8;
-    /* Lighter gray */
-    font-weight: 600;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
-}
-
-.sub-value {
+    color: #1a202c;
+    margin: 0 0 8px 0;
     font-size: 1.5rem;
     font-weight: 700;
-    color: #475569;
 }
 
-/* --- PREMIUM CARD DESIGN (User Request) --- */
-
-/* Contenedor Principal de la Tarjeta */
-.price-check-card {
-    background-color: #ffffff;
-    border-radius: 16px;
-    /* Bordes más redondeados */
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-    /* Sombra suave y moderna */
-    overflow: hidden;
-    /* Para que la imagen no se salga del borde redondeado */
-    max-width: 900px;
-    /* Ancho máximo para pantallas grandes */
-    margin: 2rem auto;
-    /* Centrado con margen superior */
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    /* Fuente moderna */
-    color: #334155;
-    /* Color de texto principal */
-    animation: slideUp 0.4s ease-out;
+.not-found-state p {
+    color: #718096;
+    margin-top: 8px;
 }
 
-/* Contenido Principal (Flexbox) */
-.card-content {
-    display: flex;
-    padding: 2rem;
-    /* Espaciado interno generoso */
-    gap: 2rem;
-    /* Espacio entre columnas */
-}
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
 
-/* Columna Izquierda: Información */
-.product-info-column {
-    flex: 1;
-    /* Ocupa el espacio disponible */
-    display: flex;
-    gap: 1.5rem;
-    align-items: flex-start;
-}
-
-.product-image-container {
-    width: 100px;
-    height: 100px;
-    background-color: #f1f5f9;
-    /* Fondo gris claro */
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.product-image {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-}
-
-.product-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.product-name {
-    font-size: 2.25rem;
-    font-weight: 900;
-    margin: 0;
-    color: #0f172a;
-    line-height: 1.1;
-    letter-spacing: -1px;
-}
-
-.product-badges {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.badge {
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.type-badge {
-    background-color: #e2e8f0;
-    color: #475569;
-}
-
-.stock-badge.stock-ok {
-    background-color: #dcfce7;
-    color: #166534;
-}
-
-.stock-badge.stock-low {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
-
-.additional-info {
-    font-size: 0.95rem;
-    color: #64748b;
-    margin-top: auto;
-}
-
-.info-label {
-    font-weight: 600;
-}
-
-.info-value {
-    font-weight: 700;
-    color: #334155;
-}
-
-/* Columna Derecha: Precios */
-.prices-column {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    /* Alinear a la derecha */
-    text-align: right;
-    min-width: 280px;
-    /* Ancho mínimo */
-}
-
-.price-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: #94a3b8;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-    display: block;
-    letter-spacing: 1px;
-}
-
-/* Precio Principal */
-.main-price-block {
-    margin-bottom: 0;
-}
-
-.price-value-container {
-    display: flex;
-    align-items: flex-start;
-    /* Alinear símbolo $ arriba */
-    justify-content: flex-end;
-    line-height: 1;
-}
-
-.currency {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #2563eb;
-    /* Azul primario */
-    margin-top: 6px;
-    margin-right: 4px;
-}
-
-.main-price {
-    font-size: 4rem;
-    font-weight: 900;
-    color: #2563eb;
-    letter-spacing: -2px;
-}
-
-/* Separador */
-.prices-separator {
-    height: 1px;
-    background-color: #e2e8f0;
-    width: 100%;
-    margin: 1.25rem 0;
-}
-
-/* Grid de Precios Secundarios */
-.secondary-prices-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    /* Dos columnas por defecto */
-    gap: 1rem;
-    width: 100%;
-}
-
-.secondary-price-block {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.secondary-price {
-    font-size: 1.65rem;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.5px;
-}
-
-/* Pie de Página */
-.card-footer {
-    padding: 1rem 2rem;
-    background-color: #f8fafc;
-    border-top: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: center;
-}
-
-.new-query-button {
-    background-color: white;
-    border: 1px solid #cbd5e1;
-    color: #475569;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.new-query-button:hover {
-    background-color: #f1f5f9;
-    border-color: #94a3b8;
-    color: #1e293b;
-    transform: translateY(-1px);
-}
-
-.button-shortcut {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    font-weight: normal;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
     .card-content {
-        flex-direction: column;
-        padding: 1.5rem;
-        gap: 1.5rem;
+        grid-template-columns: 1fr;
+        padding: 1.75rem;
+        gap: 2rem;
     }
 
-    .product-info-column {
-        flex-direction: row;
+    .product-name {
+        font-size: 1.75rem;
+    }
+
+    .main-price {
+        font-size: 3.5rem;
     }
 
     .prices-column {
-        align-items: center;
-        text-align: center;
+        align-items: flex-start;
+        text-align: left;
         width: 100%;
         border-top: 1px solid #e2e8f0;
         padding-top: 1.5rem;
     }
 
     .price-value-container {
-        justify-content: center;
+        justify-content: flex-start;
     }
 
     .secondary-prices-grid {
-        grid-template-columns: 1fr 1fr;
-        /* Dos columnas en móvil para ahorrar espacio vertical */
-        text-align: center;
+        grid-template-columns: 1fr;
     }
 
     .secondary-price-block {
-        align-items: center;
+        align-items: flex-start;
+    }
+
+    .card-footer {
+        padding: 1.25rem 1.75rem;
+    }
+
+    .page-container {
+        padding: 16px;
+    }
+
+    .search-layout {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-name {
+        font-size: 1.5rem;
+    }
+
+    .main-price {
+        font-size: 3rem;
+    }
+
+    .product-image-container {
+        width: 100px;
+        height: 100px;
+    }
+
+    .secondary-prices-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .main-price-block {
+        margin-bottom: 1rem;
     }
 }

@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import {
   Producto,
@@ -112,7 +112,7 @@ export class ProductService {
 
   getProductById(id: number): Observable<Producto> {
     const headers = this.getHeaders();
-    if (!headers) throw new Error('No authenticated');
+    if (!headers) return throwError(() => new Error('No authenticated'));
 
     return this.http.get<Producto>(`${this.apiUrl}/productos/${id}`, { headers });
   }
@@ -185,13 +185,19 @@ export class ProductService {
 
   // --- OTROS (Imágenes, Kardex) ---
 
-  updateProductImage(id: number, file: File): Observable<any> {
+  uploadImage(id: number, file: File): Observable<any> {
     const headers = this.getHeaders();
     if (!headers) return of(null);
 
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post(`${this.apiUrl}/productos/${id}/imagen`, formData, { headers });
+  }
+
+  deleteProductImage(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) return of(null);
+    return this.http.delete(`${this.apiUrl}/productos/${id}/imagen`, { headers });
   }
 
   getProductKardex(id: number): Observable<MovimientoKardex[]> {
@@ -294,7 +300,12 @@ export class ProductService {
       esControlado: p.es_controlado || false,
 
       // Vencimiento
-      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined
+      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined,
+
+      // Identificadores
+      codigoBarras: p.codigo_barras,
+      codigoInterno: p.codigo_interno,
+      imagenUrl: p.imagenUrl
     };
   }
 }
