@@ -185,13 +185,19 @@ export class ProductService {
 
   // --- OTROS (Imágenes, Kardex) ---
 
-  updateProductImage(id: number, file: File): Observable<any> {
+  uploadImage(id: number, file: File): Observable<any> {
     const headers = this.getHeaders();
     if (!headers) return of(null);
 
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post(`${this.apiUrl}/productos/${id}/imagen`, formData, { headers });
+  }
+
+  deleteProductImage(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) return of(null);
+    return this.http.delete(`${this.apiUrl}/productos/${id}/imagen`, { headers });
   }
 
   getProductKardex(id: number): Observable<MovimientoKardex[]> {
@@ -298,7 +304,8 @@ export class ProductService {
 
       // Identificadores
       codigoBarras: p.codigo_barras,
-      codigoInterno: p.codigo_interno
+      codigoInterno: p.codigo_interno,
+      imagenUrl: p.imagenUrl
     };
   }
 }

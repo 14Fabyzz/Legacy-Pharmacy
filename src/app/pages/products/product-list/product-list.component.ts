@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router'; // Import Router
 import { FormsModule } from '@angular/forms';
@@ -21,6 +21,8 @@ import { InventoryDetailPanelComponent } from '../components/inventory-detail-pa
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
   public searchTerm: string = '';
   public isLoading: boolean = false; // [NUEVO] Loader state
   // public products$!: Observable<ProductoCard[]>; // Eliminar
@@ -165,18 +167,139 @@ export class ProductListComponent implements OnInit {
 
   // 4. 🖼️ Imagen
   verImagen(product: ProductoCard) {
-    // Si tuvieras product.imagenUrl en el modelo, úsalo. Si no, placeholder.
-    const imgUrl = 'https://cdn-icons-png.flaticon.com/512/3004/3004458.png'; // Placeholder o product.imagenUrl
+    const imgUrl = product.imagenUrl || 'https://cdn-icons-png.flaticon.com/512/3004/3004458.png';
 
     Swal.fire({
       title: product.nombreComercial,
       text: 'Imagen del producto',
       imageUrl: imgUrl,
-      imageWidth: 300,
-      imageHeight: 300,
+      imageWidth: 400, // Larger width for visibility
+      imageHeight: 400, // Matching height (or 'auto')
       imageAlt: 'Imagen del producto',
-      confirmButtonText: 'Cerrar'
+      customClass: {
+        image: 'swal2-image-contain' // Helper class we might need to add or inline style via 'didOpen'
+      },
+      didOpen: () => {
+        // Enforce object-fit: contain directly on the SweetAlert image
+        const img = Swal.getImage();
+        if (img) {
+          img.style.objectFit = 'contain';
+          img.style.backgroundColor = '#f8fafc'; // Light background
+          img.style.borderRadius = '8px';
+          img.style.border = '1px solid #e2e8f0';
+        }
+      },
+      showCancelButton: true,
+      showDenyButton: !!product.imagenUrl, // Sólo mostrar si hay imagen
+      confirmButtonText: 'Cerrar',
+      cancelButtonText: 'Cambiar Imagen',
+      denyButtonText: 'Eliminar Imagen',
+      cancelButtonColor: '#3085d6',
+      denyButtonColor: '#d33',
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.cancel) {
+        this.selectedProductForUpload = product;
+        this.fileInput.nativeElement.click();
+      } else if (result.isDenied) {
+        // Lógica de eliminación
+        Swal.fire({
+          title: '¿Eliminar imagen?',
+          text: "Esta acción no se puede deshacer",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, eliminar'
+        }).then((confirmResult) => {
+          if (confirmResult.isConfirmed) {
+            this.eliminarImagen(product);
+          }
+        });
+      }
     });
+  }
+
+  eliminarImagen(product: ProductoCard) {
+    Swal.fire({
+      title: 'Eliminando...',
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.productService.deleteProductImage(product.id).subscribe({
+      next: () => {
+        Swal.fire('Eliminada', 'La imagen ha sido eliminada.', 'success');
+        // Actualización Local
+        product.imagenUrl = undefined; // O null, según tu tipo
+        // Si quieres ser más estricto, podrías hacer force refresh, pero esto es mejor UX
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo eliminar la imagen.', 'error');
+      }
+    });
+  }
+
+  selectedProductForUpload: ProductoCard | null = null;
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+
+    if (file && this.selectedProductForUpload) {
+      // Mostrar loading
+      Swal.fire({
+        title: 'Subiendo imagen...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      this.productService.uploadImage(this.selectedProductForUpload.id, file).subscribe({
+        next: (response: any) => {
+          // Éxito
+          Swal.fire({
+            title: '¡Imagen Actualizada!',
+            text: 'La imagen del producto se ha subido correctamente.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+
+          // Actualización Local (Optimista / Cache Busting)
+          // Asumimos que el backend retorna la URL o usamos la convención si sabemos la ruta
+          // Si el backend retorna algo como { url: '...' } úsalo.
+          // Si no, forzamos un refresh de la imagen agregando un timestamp
+          if (this.selectedProductForUpload) {
+            // Opción A: Si el response trae la URL
+            if (response && response.url) {
+              this.selectedProductForUpload.imagenUrl = response.url;
+            } else {
+              // Opción B: Si solo dice OK, y la URL es predecible o ya la teníamos
+              // Agregamos ?t=timestamp para evitar cache del navegador
+              const baseUrl = this.selectedProductForUpload.imagenUrl?.split('?')[0] || '';
+              // Nota: Si era null antes, esto podría ser tricky. 
+              // Lo ideal es que el backend devuelva la URL.
+              // Si no, recargar es lo más seguro si no sabemos la URL nueva.
+              // Pero el usuario pidió actualización local.
+
+              // INTENTO: Recargar solo este producto o simular. 
+              this.loadProducts(); // Fallback seguro si no tenemos la URL nueva en el response.
+            }
+          }
+
+          this.selectedProductForUpload = null;
+          // Reset input
+          this.fileInput.nativeElement.value = '';
+        },
+        error: (err) => {
+          console.error('Error subiendo imagen', err);
+          Swal.fire('Error', 'No se pudo subir la imagen', 'error');
+          this.selectedProductForUpload = null;
+          this.fileInput.nativeElement.value = '';
+        }
+      });
+    }
   }
 
   // 5. 🗑️ Eliminar

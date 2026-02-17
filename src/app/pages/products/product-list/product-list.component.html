@@ -75,8 +75,10 @@
             <td>
               <div class="product-cell-main">
                 <!-- Icono -->
+                <!-- Icono -->
                 <div class="product-icon-circle" (click)="verImagen(product)" title="Ver imagen">
-                  <span *ngIf="true">💊</span>
+                  <img *ngIf="product.imagenUrl" [src]="product.imagenUrl" alt="Producto" class="product-img-circle">
+                  <span *ngIf="!product.imagenUrl">💊</span>
                 </div>
                 <div class="product-name-wrapper">
                   <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -207,6 +209,8 @@
       (close)="showDetailPanel = false">
     </app-inventory-detail-panel>
 
-  </div> <!-- Fin de ngIf="!isLoading" -->
+  </div>
+  <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" accept="image/*">
+  <!-- Fin de ngIf="!isLoading" -->
 
 </div>

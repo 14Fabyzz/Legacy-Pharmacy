@@ -344,3 +344,48 @@
         transform: translateY(0);
     }
 }
+
+/* ==========================================================================
+   VALIDACIONES VISUALES (MODERNAS & PRO)
+   ========================================================================== */
+.form-group {
+
+    /* Estado Inválido: Borde Rojo Elegante + Fondo Sutil */
+    input.is-invalid,
+    select.is-invalid {
+        border-color: #E74C3C !important;
+        /* Alizarin Red */
+        background-color: #FEF9F9;
+        /* Fondo rojo muy tenue */
+        transition: all 0.2s ease-in-out;
+
+        &:focus {
+            border-color: #E74C3C !important;
+            /* Resplandor (Box Shadow) Rojo Suave y Difuminado */
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2) !important;
+            outline: none;
+        }
+    }
+
+    /* Mensaje de Feedback con Icono */
+    .invalid-feedback {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-top: 8px;
+        /* Separación superior */
+        font-size: 0.875rem;
+        /* Tamaño optimizado */
+        color: #E74C3C;
+        font-weight: 500;
+        animation: fadeIn 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+        /* Icono de alerta antes del texto */
+        &::before {
+            content: '⚠️';
+            margin-right: 6px;
+            font-size: 0.95rem;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+        }
+    }
+}

@@ -236,21 +236,42 @@
     text-transform: uppercase;
 }
 
-.date-input,
-.select-input {
-    padding: 8px 12px;
+.date-input {
+    padding: 10px 16px;
     border: 1px solid #cbd5e1;
-    border-radius: 6px;
+    border-radius: 8px;
     font-family: 'Satoshi', sans-serif;
     color: #334155;
     outline: none;
-    font-size: 13px;
+    font-size: 0.95rem;
+    background-color: #f8fafc;
+    transition: all 0.2s;
+    min-height: 25px;
+    /* Match search input height if possible */
 }
 
-.date-input:focus,
-.select-input:focus {
+.date-input:hover {
+    background-color: #fff;
+    border-color: #94a3b8;
+}
+
+.date-input:focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Custom Calendar Icon Style for Webkit/Blink */
+.date-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    padding: 2px;
+    transition: 0.2s;
+}
+
+.date-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 .btn-filter {
