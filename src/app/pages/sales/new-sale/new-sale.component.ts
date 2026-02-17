@@ -143,7 +143,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
       }
 
       // Precio viene directo del DTO (Caja por defecto)
-      const precioInicial = product.detalleProducto.precioVentaTotal;
+      const precioInicial = Number(product.detalleProducto.precioVentaTotal);
 
       const newItem: CartItem = {
         product: product,
@@ -187,13 +187,13 @@ export class NewSaleComponent implements OnInit, OnDestroy {
 
     switch (tipo) {
       case TipoVenta.CAJA:
-        item.precio = item.product.detalleProducto.precioVentaTotal;
+        item.precio = Number(item.product.detalleProducto.precioVentaTotal);
         break;
       case TipoVenta.BLISTER:
-        item.precio = item.product.detalleProducto.precioVentaBlister;
+        item.precio = Number(item.product.detalleProducto.precioVentaBlister);
         break;
       case TipoVenta.UNIDAD:
-        item.precio = item.product.detalleProducto.precioVentaUnidad;
+        item.precio = Number(item.product.detalleProducto.precioVentaUnidad);
         break;
     }
 
@@ -218,12 +218,19 @@ export class NewSaleComponent implements OnInit, OnDestroy {
   }
 
   private recalculateItem(item: CartItem) {
-    item.subtotal = item.cantidad * item.precio;
+    // Asegurar que sean numeros y no strings
+    const qty = Number(item.cantidad);
+    const price = Number(item.precio);
+    item.subtotal = qty * price;
   }
 
   calculateGlobalTotals() {
-    this.subtotal = this.cartItems.reduce((acc, i) => acc + i.subtotal, 0);
-    this.total = this.subtotal;
+    // Calcular total recorriendo el array y asegurando tipos numericos
+    this.total = this.cartItems.reduce((acc, item) => {
+      return acc + (Number(item.precio) * Number(item.cantidad));
+    }, 0);
+
+    this.subtotal = this.total;
     this.calculateChange();
   }
 
