@@ -34,7 +34,7 @@ export interface DashboardResponse {
 export class ProductService {
   // El Gateway traduce:
   // /api/inventario -> http://localhost:8081/api/v1/inventario
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrl + '/api/inventario';
 
   constructor(
     private http: HttpClient,

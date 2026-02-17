@@ -46,7 +46,7 @@ export class SidebarComponent {
     { path: '/app/categorias', title: 'Categorías', active: false, subMenu: [] },
     { path: '/app/proveedores', title: 'Proveedores', active: false, subMenu: [] },
     { path: '/app/compras', title: 'Compras', active: false, subMenu: [] },
-    { path: '/app/usuarios', title: 'Usuarios', active: false, subMenu: [] },
+    { path: '/app/users', title: 'Usuarios', active: false, subMenu: [] },
     { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },
     {
       path: '/app/productos',

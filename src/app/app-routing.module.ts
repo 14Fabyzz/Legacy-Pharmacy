@@ -38,8 +38,8 @@ const routes: Routes = [
         loadChildren: () => import('./pages/caja/caja.module').then(m => m.CajaModule)
       },
       {
-        path: 'caja',
-        loadChildren: () => import('./pages/caja/caja.module').then(m => m.CajaModule)
+        path: 'users',
+        loadChildren: () => import('./pages/users/users.module').then(m => m.UsersModule)
       },
       // ... tus otras rutas ...
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

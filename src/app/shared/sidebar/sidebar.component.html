@@ -12,8 +12,8 @@
     </div>
     <div class="user-info">
       <!-- Fallbacks para nombre y rol -->
-      <h3>{{ user.nombreCompleto || user.nombre_completo || 'Usuario de Prueba' }}</h3>
-      <p class="user-role">{{ user.rol || 'INVITADO' }}</p>
+      <h3>{{ user.nombreCompleto || 'Usuario de Prueba' }}</h3>
+      <p class="user-role">{{ user.rolNombre || 'INVITADO' }}</p>
     </div>
   </div>
 

@@ -1,8 +1,9 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 // 1. Importamos 'of' para crear respuestas falsas
-import { Observable, BehaviorSubject, tap, of } from 'rxjs';
+import { Observable, BehaviorSubject, tap, of, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 export interface LoginRequest {
@@ -13,28 +14,29 @@ export interface LoginRequest {
 export interface User {
   id: number;
   nombreCompleto: string;
-  rol: string;
-  email: string;
+  rolNombre: string;
+  login: string;
   sucursalId: number;
-  usuarioId?: number;
-  login?: string;
+  estado: string;
 }
 
 export interface AuthResponse {
   token: string;
   user?: User;
   // Estructura plana para compatibilidad con el backend actual
+  id?: number;
   nombreCompleto?: string;
-  rol?: string;
-  usuarioId?: number;
+  rolNombre?: string;
   login?: string;
+  sucursalId?: number;
+  estado?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/usuarios'; // No la necesitamos por ahora
+  private apiUrl = environment.apiUrl + '/api/usuarios';
   private isBrowser: boolean;
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -63,23 +65,43 @@ export class AuthService {
       tap(response => {
         if (response && response.token) {
           this.saveToken(response.token);
-          // Check if response has user property or IS the user object
           if (response.user) {
             this.saveUser(response.user);
           } else if (response.nombreCompleto) {
-            // Flat response structure handling
             const userFromFlat: User = {
-              id: response.usuarioId || 0,
+              id: response.id || 0,
               nombreCompleto: response.nombreCompleto,
-              rol: response.rol || 'USER',
-              email: response.login || '',
-              sucursalId: 1, // Default value
-              usuarioId: response.usuarioId,
-              login: response.login
+              rolNombre: response.rolNombre || 'USUARIO',
+              login: response.login || '',
+              sucursalId: response.sucursalId || 1,
+              estado: response.estado || 'ACTIVO'
             };
             this.saveUser(userFromFlat);
           }
         }
+      }),
+      catchError(error => {
+        // Si hay error de conexión (status 0) o el usuario lo desea, usamos MOCK
+        if (error.status === 0 || localStorage.getItem('useMockMode') === 'true') {
+          console.warn('⚠️ Error de conexión detectado. Iniciando en MODO MOCK (Simulación).');
+
+          const mockResponse: AuthResponse = {
+            token: 'token-falso-simulado-123456',
+            user: {
+              id: 1,
+              nombreCompleto: 'Usuario de Prueba (Mock)',
+              rolNombre: 'ADMIN',
+              login: 'admin',
+              sucursalId: 101,
+              estado: 'ACTIVO'
+            }
+          };
+
+          this.saveToken(mockResponse.token);
+          this.saveUser(mockResponse.user!);
+          return of(mockResponse);
+        }
+        return throwError(() => error);
       })
     );
   }
@@ -133,6 +155,17 @@ export class AuthService {
       localStorage.setItem('currentUser', JSON.stringify(user));
     }
     this.currentUserSubject.next(user);
+  }
+
+  getRole(): string | null {
+    const user = this.currentUserSubject.value;
+    if (!user) return null;
+    return user.rolNombre || (user as any).rol || null;
+  }
+
+  isAdmin(): boolean {
+    const role = this.getRole();
+    return role === 'ADMIN' || role === 'ADMINISTRADOR';
   }
 
   getToken(): string | null {
