@@ -126,6 +126,7 @@ export interface ProductoCard {
     // Stock
     nivelStock: string;              // "CRITICO", "BAJO", "OPTIMO", "SOBRESTOCK"
     stockTotal: number;
+    stockActual?: number; // Propiedad nueva del backend
 
     // Venta Fraccionada
     esFraccionable: boolean;
