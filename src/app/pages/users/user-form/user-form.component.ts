@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { CreateUserRequest, UpdateUserRequest, UserDetail, UserRole } from '../../../core/models/user.model';
+import { CreateUserRequest, UpdateUserRequest, UserDetail } from '../../../core/models/user.model';
 
 @Component({
     selector: 'app-user-form',
@@ -23,6 +23,15 @@ export class UserFormComponent implements OnInit {
     showPassword = false; // For password visibility toggle
     successMessage: string | null = null;
 
+    // NOTA: Roles hardcoded - Idealmente deberían venir de un endpoint del backend
+    // TODO: Crear endpoint GET /api/usuarios/roles en el backend y consumirlo aquí
+    // Por ahora se mantienen los roles conocidos hasta que el backend provea el endpoint
+    roles = [
+        { id: 1, nombre: 'ADMINISTRADOR' },
+        { id: 2, nombre: 'CAJERO' },
+        { id: 3, nombre: 'AUDITOR' }
+    ];
+
     constructor(
         private fb: FormBuilder,
         private route: ActivatedRoute,
@@ -34,7 +43,7 @@ export class UserFormComponent implements OnInit {
             nombreCompleto: ['', Validators.required],
             cedula: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
             login: ['', [Validators.required, Validators.minLength(4)]],
-            password: ['', [Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/)]],
+            password: ['', [Validators.minLength(8), Validators.pattern(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$/)]],
             rolId: [2, Validators.required],
             sucursalId: [1, Validators.required],
             enabled: [true]
@@ -58,7 +67,7 @@ export class UserFormComponent implements OnInit {
 
         const passwordValidators = [
             Validators.minLength(8),
-            Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/)
+            Validators.pattern(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$/)
         ];
 
         if (this.isEditMode) {
@@ -95,7 +104,7 @@ export class UserFormComponent implements OnInit {
                     this.userForm.get('login')?.disable();
                 }
             },
-            error: (err) => {
+            error: (err: any) => {
                 this.dataLoading = false;
                 this.error = 'Error al cargar los datos del usuario.';
                 console.error(err);
@@ -166,7 +175,7 @@ export class UserFormComponent implements OnInit {
                     alert('¡Usuario registrado correctamente!');
                     this.router.navigate(['/app/users']);
                 },
-                error: (err) => {
+                error: (err: any) => {
                     console.error(err);
                     this.error = 'Error al crear usuario';
                     this.loading = false;
@@ -177,6 +186,41 @@ export class UserFormComponent implements OnInit {
 
     // Helper para validaciones en el template
     get f() { return this.userForm.controls; }
+
+    /**
+     * Genera una contraseña aleatoria segura que cumple con todos los requisitos:
+     * - Mínimo 8 caracteres
+     * - Al menos 1 mayúscula, 1 minúscula, 1 número, 1 carácter especial (@#$%^&+=!)
+     */
+    generateRandomPassword(): void {
+        const length = 12;
+        const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const numbers = '0123456789';
+        const specialChars = '@#$%^&+=!';
+
+        // Asegurar que la contraseña tenga al menos un carácter de cada tipo
+        let password = '';
+        password += lowercase[Math.floor(Math.random() * lowercase.length)];
+        password += uppercase[Math.floor(Math.random() * uppercase.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+        // Rellenar el resto con caracteres aleatorios de todos los tipos
+        const allChars = lowercase + uppercase + numbers + specialChars;
+        for (let i = password.length; i < length; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+
+        // Mezclar los caracteres para que no sean predecibles
+        password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+        // Actualizar el campo del formulario
+        this.userForm.patchValue({ password });
+
+        // Mostrar la contraseña generada
+        this.showPassword = true;
+    }
 
     togglePasswordVisibility(): void {
         this.showPassword = !this.showPassword;
