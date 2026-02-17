@@ -179,6 +179,7 @@ export interface MovimientoKardex {
     tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE' | 'DEVOLUCION';
     cantidad: number;
     saldo_resultante: number;
+    saldo_historico?: number;
     costo_unitario: number;
     lote: string | null;
     detalle: string | null;

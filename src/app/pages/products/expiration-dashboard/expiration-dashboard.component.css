@@ -277,10 +277,19 @@
     overflow: hidden;
 }
 
+.product-icon-circle.small {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    border-radius: 8px;
+    /* Consistent with other views */
+}
+
 .product-icon-circle img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    mix-blend-mode: multiply;
 }
 
 .product-info small {

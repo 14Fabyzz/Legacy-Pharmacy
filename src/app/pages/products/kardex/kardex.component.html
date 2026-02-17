@@ -74,7 +74,8 @@
                         '') }}
                     </span>
                     <span class="badge" style="margin-left:8px;">
-                        Stock Actual: {{ (movimientos.length > 0 ? movimientos[0].saldo_resultante : 0) }} Und.
+                        Stock Actual: {{ (movimientos.length > 0 ? (movimientos[0].saldo_historico ??
+                        movimientos[0].saldo_resultante) : 0) }} Und.
                     </span>
                 </div>
             </div>
@@ -132,7 +133,10 @@
 
                         <!-- Saldo Column -->
                         <td class="text-center">
-                            <span style="font-weight: 800; color: #1e293b;">{{ m.saldo_resultante }}</span>
+                            <span style="font-weight: 800; color: #1e293b;">
+                                {{ m.saldo_historico !== null && m.saldo_historico !== undefined ? m.saldo_historico :
+                                '--' }}
+                            </span>
                             <small style="color: #94a3b8; margin-left: 2px;">Und.</small>
                         </td>
 

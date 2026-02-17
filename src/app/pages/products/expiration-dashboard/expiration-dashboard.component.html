@@ -83,7 +83,8 @@
                             <td>
                                 <div class="product-info">
                                     <div class="product-icon-circle small">
-                                        <span class="icon-fallback">💊</span>
+                                        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" alt="img">
+                                        <span *ngIf="!p.imagenUrl" class="icon-fallback">💊</span>
                                     </div>
                                     <div>
                                         <strong>{{ p.producto }}</strong>
@@ -181,7 +182,9 @@
                 <!-- Carta de Reabastecimiento -->
                 <div class="restock-card" *ngFor="let p of listaStockBajo">
                     <div class="restock-icon">
-                        📦
+                        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" alt="img"
+                            style="width:100%; height:100%; object-fit:contain; mix-blend-mode: multiply;">
+                        <span *ngIf="!p.imagenUrl">📦</span>
                     </div>
                     <div class="restock-info">
                         <h4>{{ p.nombre }}</h4>
