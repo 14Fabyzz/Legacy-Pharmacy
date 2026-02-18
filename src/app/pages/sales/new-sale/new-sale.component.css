@@ -39,14 +39,6 @@
   margin-bottom: 20px;
 }
 
-.page-title {
-  color: var(--slate-800);
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 16px 0;
-  letter-spacing: -0.5px;
-}
-
 
 .search-bar {
   position: relative;
