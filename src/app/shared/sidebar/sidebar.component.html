@@ -1,6 +1,6 @@
 <div class="sidebar-container">
-  <!-- Se muestra el usuario logueado O el usuario por defecto -->
-  <div class="user-profile" *ngIf="(currentUser$ | async) || defaultUser as user">
+  <!-- Se muestra el usuario logueado solamente si existe -->
+  <div class="user-profile" *ngIf="currentUser$ | async as user">
     <div class="user-avatar">
       <!-- Using SVG icon since assets/avatar-placeholder.png is missing -->
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -12,8 +12,8 @@
     </div>
     <div class="user-info">
       <!-- Fallbacks para nombre y rol -->
-      <h3>{{ user.nombreCompleto || user.nombre_completo || 'Usuario de Prueba' }}</h3>
-      <p class="user-role">{{ user.rol || 'INVITADO' }}</p>
+      <h3>{{ user.nombreCompleto }}</h3>
+      <p class="user-role">{{ user.rolNombre || user.rol }}</p>
     </div>
   </div>
 

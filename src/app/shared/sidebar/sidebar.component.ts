@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service'; // 1. Importa el AuthService
+import { AuthService } from '../../core/services/auth.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -18,16 +18,9 @@ export class SidebarComponent {
 
   public currentUser$: Observable<any | null>;
 
-  // 4. Inyecta el AuthService
   constructor(private authService: AuthService) {
-    // 5. Conecta la variable local al "canal" del servicio
     this.currentUser$ = this.authService.currentUser$;
   }
-  // Usuario por defecto para mostrar si no hay sesión iniciada (Development/Fallback)
-  public defaultUser = {
-    nombreCompleto: 'Usuario de Prueba',
-    rol: 'INVITADO'
-  };
 
 
   // El array ahora es más simple, solo con la información esencial
@@ -46,7 +39,7 @@ export class SidebarComponent {
     { path: '/app/categorias', title: 'Categorías', active: false, subMenu: [] },
     { path: '/app/proveedores', title: 'Proveedores', active: false, subMenu: [] },
     { path: '/app/compras', title: 'Compras', active: false, subMenu: [] },
-    { path: '/app/usuarios', title: 'Usuarios', active: false, subMenu: [] },
+    { path: '/app/users', title: 'Usuarios', active: false, subMenu: [] },
     { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },
     {
       path: '/app/productos',
@@ -65,9 +58,11 @@ export class SidebarComponent {
     { path: '/app/movimientos', title: 'Movimientos en cajas', active: false, subMenu: [] },
     { path: '/app/devoluciones', title: 'Devoluciones', active: false, subMenu: [] },
 
-    { path: '/app/kardex', title: 'Kardex', active: false, subMenu: [
-      { path: '/app/kardex/productos', title: 'Kardex de productos' },
-    ] },
+    {
+      path: '/app/kardex', title: 'Kardex', active: false, subMenu: [
+        { path: '/app/kardex/productos', title: 'Kardex de productos' },
+      ]
+    },
 
 
     { path: '/app/reportes', title: 'Reportes', active: false, subMenu: [] },

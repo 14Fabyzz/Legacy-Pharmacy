@@ -1,0 +1,131 @@
+<div class="users-container">
+  <div class="header-actions">
+    <h2>Gestión de Usuarios</h2>
+    <a routerLink="create" class="btn btn-primary">
+      <i class="fa fa-plus"></i> Nuevo Usuario
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Nombre Completo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="loading">
+            <td colspan="6" class="text-center">Cargando usuarios...</td>
+          </tr>
+          <tr *ngIf="!loading && users.length === 0">
+            <td colspan="6" class="text-center">No hay usuarios registrados.</td>
+          </tr>
+          <tr *ngFor="let user of users">
+            <td>{{ user.id }}</td>
+            <td>{{ user.login }}</td>
+            <td>{{ user.nombreCompleto }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'badge-admin': user.rolNombre === 'ADMIN' || user.rolNombre === 'ADMINISTRADOR',
+                'badge-user': user.rolNombre === 'EMPLOYEE' || user.rolNombre === 'CAJERO'
+              }">{{ user.rolNombre }}</span>
+            </td>
+            <td>
+              <span class="status-indicator"
+                [ngClass]="{'active': user.estado === 'ACTIVO', 'inactive': user.estado !== 'ACTIVO'}">
+                {{ user.estado }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn-icon" (click)="viewUserDetails(user.id)" title="Ver Detalles">
+                🔍
+              </button>
+              <button class="btn-icon" [routerLink]="['edit', user.id]" title="Editar">
+                ✏️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de Detalles del Usuario -->
+  <div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Detalles del Usuario</h3>
+        <button class="close-btn" (click)="closeDetailModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div *ngIf="modalLoading" class="text-center p-4">
+          Cargando detalles...
+        </div>
+
+        <div *ngIf="!modalLoading && selectedUser" class="details-grid">
+          <div class="detail-item">
+            <span class="detail-label">ID:</span>
+            <span class="detail-value">{{ selectedUser.id }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Nombre Completo:</span>
+            <span class="detail-value">{{ selectedUser.nombreCompleto }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Cédula:</span>
+            <span class="detail-value">{{ selectedUser.cedula }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Nombre de Usuario (Login):</span>
+            <span class="detail-value">{{ selectedUser.login }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Sucursal ID:</span>
+            <span class="detail-value">{{ selectedUser.sucursalId }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Rol:</span>
+            <span class="badge" [ngClass]="{
+              'badge-admin': selectedUser.rolNombre === 'ADMIN' || selectedUser.rolNombre === 'ADMINISTRADOR',
+              'badge-user': selectedUser.rolNombre === 'EMPLOYEE' || selectedUser.rolNombre === 'CAJERO'
+            }">{{ selectedUser.rolNombre }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Estado:</span>
+            <span class="status-indicator"
+              [ngClass]="{'active': selectedUser.estado === 'ACTIVO', 'inactive': selectedUser.estado !== 'ACTIVO'}">
+              {{ selectedUser.estado }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Intentos Fallidos:</span>
+            <span class="detail-value">{{ selectedUser.intentosFallidos || 0 }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fecha de Bloqueo:</span>
+            <span class="detail-value">{{ selectedUser.fechaBloqueo || 'Ninguna' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fecha de Creación:</span>
+            <span class="detail-value">{{ selectedUser.fechaCreacion | date:'medium' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Último Acceso:</span>
+            <span class="detail-value">{{ (selectedUser.ultimoAcceso | date:'medium') || 'Nunca' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDetailModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

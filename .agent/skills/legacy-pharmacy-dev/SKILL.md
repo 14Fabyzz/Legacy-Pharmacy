@@ -200,6 +200,19 @@ this.service.getData().subscribe({
 - **Frontend muestra**: Hints de unidades por caja
 - **Validación**: Stock mínimo, fechas de vencimiento
 
+### 4. Gestión de Imágenes de Productos
+- **Modelo**: Campo `imagenUrl` en interfaces `Producto`, `ProductoCard` y `DashboardResponse`
+- **Endpoints Backend**:
+  - `POST /api/productos/{id}/imagen`: Subida (`FormData`, key: `file`)
+  - `DELETE /api/productos/{id}/imagen`: Eliminación
+- **UX Frontend**:
+  - **Visualización**:
+    - Contenedor: `.product-icon-circle` (45x45px, rounded 8px)
+    - Tablas Compactas: `.product-icon-circle.small` (40x40px)
+    - Imagen: `object-fit: contain`, `mix-blend-mode: multiply` (fondo transparente/blanco)
+  - **Interacción**: Modal con SweetAlert para ver, subir (loader) y eliminar.
+  - **Actualización**: Optimista/Local en UI tras éxito, o recarga si no hay URL retorno.
+
 ---
 
 ## 🎯 Convenciones de Nombrado

@@ -1,0 +1,125 @@
+<div class="user-form-container">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
+        </div>
+
+        <div class="card-body">
+            <!-- Cargando datos -->
+            <div *ngIf="dataLoading" class="loading-overlay">
+                <div class="spinner"></div>
+                <p>Cargando información del usuario...</p>
+            </div>
+
+            <div *ngIf="error" class="alert alert-danger">
+                {{ error }}
+            </div>
+
+            <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!dataLoading">
+
+                <div class="form-group">
+                    <label for="nombreCompleto">Nombre Completo</label>
+                    <input type="text" id="nombreCompleto" class="form-control" formControlName="nombreCompleto"
+                        [class.is-invalid]="submitted && f['nombreCompleto'].errors">
+                    <div *ngIf="submitted && f['nombreCompleto'].errors" class="invalid-feedback">
+                        <div *ngIf="f['nombreCompleto'].errors['required']">El nombre completo es requerido</div>
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="cedula">Cédula</label>
+                        <input type="text" id="cedula" class="form-control" formControlName="cedula"
+                            [class.is-invalid]="submitted && f['cedula'].errors">
+                        <div *ngIf="submitted && f['cedula'].errors" class="invalid-feedback">
+                            <div *ngIf="f['cedula'].errors['required']">La cédula es requerida</div>
+                            <div *ngIf="f['cedula'].errors['pattern']">La cédula debe contener solo números</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="flex: 1;">
+                        <label for="login">Nombre de Usuario (Login)</label>
+                        <input type="text" id="login" class="form-control" formControlName="login"
+                            [class.is-invalid]="submitted && f['login'].errors">
+                        <div *ngIf="submitted && f['login'].errors" class="invalid-feedback">
+                            <div *ngIf="f['login'].errors['required']">El login es requerido</div>
+                            <div *ngIf="f['login'].errors['minlength']">Mínimo 4 caracteres</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password (Visible both for create and edit per user request) -->
+                <div class="form-group password-field">
+                    <label for="password">{{ isEditMode ? 'Nueva Contraseña' : 'Contraseña' }}</label>
+                    <div class="input-group">
+                        <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control"
+                            formControlName="password" [class.is-invalid]="submitted && f['password'].errors"
+                            placeholder="{{ isEditMode ? 'Dejar en blanco para no cambiar' : 'Ingrese la contraseña' }}">
+                        <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility()">
+                            {{ showPassword ? '🙈' : '👁️' }}
+                        </button>
+                        <button type="button" class="btn-generate-password" (click)="generateRandomPassword()"
+                            title="Generar contraseña aleatoria">
+                            🎲
+                        </button>
+                    </div>
+
+                    <!-- Help text with requirements -->
+                    <small class="form-text text-muted">
+                        {{ isEditMode ? 'Opcional. ' : '' }}Requisitos: mínimo 8 caracteres, al menos 1 mayúscula, 1
+                        minúscula, 1 número y 1 carácter especial (&#64;#$%^&amp;+=!)
+                    </small>
+
+                    <!-- Validation messages -->
+                    <div *ngIf="submitted && f['password'].errors" class="invalid-feedback" style="display: block;">
+                        <div *ngIf="f['password'].errors['required']">La contraseña es requerida</div>
+                        <div *ngIf="f['password'].errors['minlength']">La contraseña debe tener al menos 8 caracteres
+                        </div>
+                        <div *ngIf="f['password'].errors['pattern']">
+                            La contraseña debe contener al menos:
+                            <ul style="margin: 0.25rem 0 0 1.5rem; padding: 0;">
+                                <li>1 letra mayúscula (A-Z)</li>
+                                <li>1 letra minúscula (a-z)</li>
+                                <li>1 número (0-9)</li>
+                                <li>1 carácter especial (&#64;#$%^&amp;+=!)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="rolId">Rol</label>
+                        <select id="rolId" class="form-control" formControlName="rolId">
+                            <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="sucursalId">Sucursal ID</label>
+                        <input type="number" id="sucursalId" class="form-control" formControlName="sucursalId">
+                    </div>
+                </div>
+
+                <!-- Estado del usuario (siempre visible) -->
+                <div class="form-group">
+                    <label for="enabled">Estado</label>
+                    <div class="toggle-container">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="enabled" formControlName="enabled">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">{{ userForm.get('enabled')?.value ? 'Activo' : 'Inactivo' }}</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" routerLink="/app/users">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="loading">
+                        {{ loading ? 'Guardando...' : 'Guardar' }}
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
