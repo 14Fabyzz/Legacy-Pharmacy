@@ -81,66 +81,12 @@ export class AuthService {
         }
       }),
       catchError(error => {
-        // Si hay error de conexión (status 0) o el usuario lo desea, usamos MOCK
-        if (error.status === 0 || localStorage.getItem('useMockMode') === 'true') {
-          console.warn('⚠️ Error de conexión detectado. Iniciando en MODO MOCK (Simulación).');
-
-          const mockResponse: AuthResponse = {
-            token: 'token-falso-simulado-123456',
-            user: {
-              id: 1,
-              nombreCompleto: 'Usuario de Prueba (Mock)',
-              rolNombre: 'ADMIN',
-              login: 'admin',
-              sucursalId: 101,
-              estado: 'ACTIVO'
-            }
-          };
-
-          this.saveToken(mockResponse.token);
-          this.saveUser(mockResponse.user!);
-          return of(mockResponse);
-        }
         return throwError(() => error);
       })
     );
   }
 
-  // /**
-  //  * SIMULACIÓN DE LOGIN (Backend desconectado)
-  //  */
-  // login(credentials: { username: string, password: string }): Observable<any> {
-  //   
-  //   // --- CÓDIGO REAL COMENTADO ---
-  //   /*
-  //   return this.http.post(`${this.apiUrl}/api/auth/login`, credentials).pipe(
-  //     tap((response: any) => {
-  //       if (response && response.token && response.user) {
-  //         this.saveToken(response.token);
-  //         this.saveUser(response.user);
-  //       }
-  //     })
-  //   );
-  //   */
-  //
-  //   // --- CÓDIGO SIMULADO (MOCK) ---
-  //   const mockResponse = {
-  //     token: 'token-falso-simulado-123456',
-  //     user: {
-  //       // Aquí pones los datos que quieres ver en el sidebar
-  //       nombre_completo: 'Fabian Benjumea (Mock)', 
-  //       rol: 'ADMINISTRADOR',
-  //       email: 'fabian@ejemplo.com'
-  //     }
-  //   };
-  //
-  //   // Guardamos los datos falsos como si el servidor nos los hubiera enviado
-  //   this.saveToken(mockResponse.token);
-  //   this.saveUser(mockResponse.user);
-  //
-  //   // Retornamos la respuesta falsa como un Observable
-  //   return of(mockResponse);
-  // }
+
 
   // --- El resto de métodos se mantienen igual ---
 
