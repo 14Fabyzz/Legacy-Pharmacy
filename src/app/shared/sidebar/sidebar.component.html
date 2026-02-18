@@ -13,7 +13,7 @@
     <div class="user-info">
       <!-- Fallbacks para nombre y rol -->
       <h3>{{ user.nombreCompleto }}</h3>
-      <p class="user-role">{{ user.rolNombre }}</p>
+      <p class="user-role">{{ user.rolNombre || user.rol }}</p>
     </div>
   </div>
 

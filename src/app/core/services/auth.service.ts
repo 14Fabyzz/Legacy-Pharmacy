@@ -15,6 +15,7 @@ export interface User {
   id: number;
   nombreCompleto: string;
   rolNombre: string;
+  rol?: string; // Campo opcional para compatibilidad
   login: string;
   sucursalId: number;
   estado: string;
@@ -27,6 +28,7 @@ export interface AuthResponse {
   id?: number;
   nombreCompleto?: string;
   rolNombre?: string;
+  rol?: string; // Posible campo alternativo del backend
   login?: string;
   sucursalId?: number;
   estado?: string;
@@ -68,10 +70,12 @@ export class AuthService {
           if (response.user) {
             this.saveUser(response.user);
           } else if (response.nombreCompleto) {
+            console.log('Respuesta de login (flat):', response); // Debug para ver qué campos llegan
             const userFromFlat: User = {
               id: response.id || 0,
               nombreCompleto: response.nombreCompleto,
-              rolNombre: response.rolNombre || 'USUARIO',
+              // Intenta leer rolNombre, luego rol, y finalmente 'USUARIO'
+              rolNombre: response.rolNombre || response.rol || 'USUARIO',
               login: response.login || '',
               sucursalId: response.sucursalId || 1,
               estado: response.estado || 'ACTIVO'
