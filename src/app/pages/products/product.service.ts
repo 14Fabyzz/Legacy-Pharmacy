@@ -23,9 +23,9 @@ export interface DashboardResponse {
   totalPorVencer: number;
   totalStockBajo: number;
   totalSaludables: number;
-  vencidos: { id: number; producto: string; lote: string; fecha: string; cantidad: number }[];
-  porVencer: { id: number; producto: string; lote: string; fecha: string; cantidad: number; diasRestantes: number }[];
-  stockBajo: { id: number; nombre: string; stockActual: number; stockMinimo: number }[];
+  vencidos: { id: number; producto: string; lote: string; fecha: string; cantidad: number; imagenUrl?: string }[];
+  porVencer: { id: number; producto: string; lote: string; fecha: string; cantidad: number; diasRestantes: number; imagenUrl?: string }[];
+  stockBajo: { id: number; nombre: string; stockActual: number; stockMinimo: number; imagenUrl?: string }[];
 }
 
 @Injectable({

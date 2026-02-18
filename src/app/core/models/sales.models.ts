@@ -1,17 +1,28 @@
+export enum TipoVenta {
+    CAJA = 'CAJA',
+    BLISTER = 'BLISTER',
+    UNIDAD = 'UNIDAD'
+}
+
+export type MetodoPago = 'EFECTIVO' | 'TRANSFERENCIA' | 'TARJETA';
+
 export interface ItemVentaDTO {
     productoId: number;
     cantidad: number;
-    esVentaPorCaja: boolean; // true = Caja, false/null = Unidad
-    precioUnitario?: number; // BigDecimal
-    subtotal?: number; // BigDecimal
+    tipoVenta: TipoVenta;
+    // Campos UI
+    // Campos UI eliminados del DTO de envío para evitar errores de backend
+    // precioUnitarioEstimado?: number;
+    // subtotalEstimado?: number;
+    // esVentaPorCaja?: boolean; // Eliminado por obsoleto
 }
 
 export interface CrearVentaDTO {
-    clienteId: number;
+    clienteId: number | null;
     items: ItemVentaDTO[];
-    metodoPago: string;      // "EFECTIVO" or "TRANSFERENCIA"
-    referenciaPago?: string;  // Optional
-    montoRecibido: number;   // BigDecimal
+    metodoPago: MetodoPago;
+    referenciaPago?: string;
+    montoRecibido?: number;
 }
 
 export interface VentaResponseDTO {
@@ -23,9 +34,30 @@ export interface VentaResponseDTO {
     cambio: number;
     vendedorNombre: string;
     sucursalId: number;
-    metodoPago: string;
+    metodoPago: MetodoPago;
     referenciaPago?: string;
     estado: string;
     clienteId: number;
     items: ItemVentaDTO[];
+}
+
+export interface DetalleProductoDTO {
+    id: number;
+    nombreComercial: string;
+    stockTotal: number;
+    codigoBarras: string;
+    laboratorio: string;
+    presentacion: string;
+    // Precios
+    precioVentaTotal: number; // Precio Caja
+    precioVentaBlister: number;
+    precioVentaUnidad: number;
+    // Flags
+    esFraccionable: boolean;
+}
+
+export interface ProductoBusquedaResponse {
+    detalleProducto: DetalleProductoDTO;
+    lotes: any[]; // Por ahora any array si no necesitamos detalle de lotes
+    // Se puede agregar LoteDTO si es necesario en el futuro
 }

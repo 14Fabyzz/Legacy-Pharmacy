@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CrearVentaDTO, VentaResponseDTO } from '../models/sales.models';
+import { CrearVentaDTO, VentaResponseDTO, ProductoBusquedaResponse } from '../models/sales.models';
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +22,30 @@ export class SalesService {
      * Corresponde a POST /api/ventas
      */
     crearVenta(venta: CrearVentaDTO): Observable<VentaResponseDTO> {
-        return this.http.post<VentaResponseDTO>(`${this.apiUrl}`, venta);
+        // Ajuste Backend: Se requiere el sub-recurso /realizar
+        return this.http.post<VentaResponseDTO>(`${this.apiUrl}/realizar`, venta);
+    }
+
+    /**
+     * Busca productos por término (nombre, código barras, etc)
+     * Utiliza el endpoint de inventario
+     * Nota: Asumimos que el DTO de respuesta es compatible con lo que necesita el componente
+     * o devuelve 'any' por ahora si no tenemos el DTO de Inventario importado aqui.
+     * Idealmente importar ProductoInventarioDTO de venta.models o definirlo aqui.
+     * Por simplicidad y para no romper dependencias circulares si las hubiera, usaremos 'any[]' 
+     * o importaremos el DTO si está disponible.
+     * Revisando imports: no hay import de ProductoInventarioDTO. 
+     * Voy a usar 'any[]' temporalmente o mejor, importar de venta.models si es seguro.
+     * Como el usuario pidió NO crear archivos nuevos, usaré 'any' para evitar problemas de tipos cruzados
+     * O mejor, tipar la respuesta como Observable<any[]>.
+     */
+    /**
+     * Busca productos por término (nombre, código barras, etc)
+     * Utiliza el endpoint de inventario optimizado para POS
+     */
+    buscarProductos(term: string): Observable<ProductoBusquedaResponse[]> {
+        // Endpoint optimizado: GET /api/inventario/busqueda-pos?termino=...
+        return this.http.get<ProductoBusquedaResponse[]>(`http://localhost:8080/api/inventario/busqueda-pos?termino=${term}`);
     }
 
     // TODO: Agregar métodos de caja y clientes según se necesiten

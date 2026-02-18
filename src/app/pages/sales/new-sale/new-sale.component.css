@@ -47,6 +47,7 @@
   letter-spacing: -0.5px;
 }
 
+
 .search-bar {
   position: relative;
   width: 100%;
@@ -56,6 +57,8 @@
 
 .clean-input {
   width: 100%;
+  box-sizing: border-box;
+  /* Prevent overflow */
   padding: 12px 16px;
   border: 1px solid var(--slate-200);
   border-radius: var(--radius);
@@ -92,19 +95,22 @@
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
+  width: 100%;
+  /* Asegura ancho exacto al input */
+  box-sizing: border-box;
+  /* Evita que el borde sume al ancho causes overflow */
   background: white;
   border: 1px solid var(--slate-200);
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
-  margin-top: 8px;
-  /* Espacio separador del input */
+  margin-top: 4px;
+  /* Pequeño espacio visual */
   padding: 0;
   list-style: none;
   max-height: 300px;
+  /* Restored max height */
   overflow-y: auto;
   z-index: 1000;
-  /* Asegurar que flote sobre todo */
 }
 
 .search-dropdown li {
@@ -134,7 +140,35 @@
   color: var(--slate-600);
   margin-top: 4px;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.no-results {
+  padding: 20px;
+  text-align: center;
+  color: var(--slate-600);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.item-details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.product-subtitle {
+  font-size: 0.85rem;
+  color: var(--slate-600);
+}
+
+.x-small {
+  font-size: 0.75rem;
 }
 
 .badge-controlled {

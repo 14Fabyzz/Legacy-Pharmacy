@@ -126,6 +126,7 @@ export interface ProductoCard {
     // Stock
     nivelStock: string;              // "CRITICO", "BAJO", "OPTIMO", "SOBRESTOCK"
     stockTotal: number;
+    stockActual?: number; // Propiedad nueva del backend
 
     // Venta Fraccionada
     esFraccionable: boolean;
@@ -178,6 +179,7 @@ export interface MovimientoKardex {
     tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE' | 'DEVOLUCION';
     cantidad: number;
     saldo_resultante: number;
+    saldo_historico?: number;
     costo_unitario: number;
     lote: string | null;
     detalle: string | null;

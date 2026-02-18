@@ -109,7 +109,7 @@
                      'stock-low': product.nivelStock === 'CRITICO' || product.nivelStock === 'BAJO',
                      'stock-ok': product.nivelStock === 'OPTIMO' || product.nivelStock === 'ALTO'
                    }">
-                <span class="stock-value">{{ product.stockTotal }}</span>
+                <span class="stock-value">{{ product.stockActual || product.stockTotal || 0 }}</span>
                 <span class="stock-label">uds</span>
               </div>
             </td>
