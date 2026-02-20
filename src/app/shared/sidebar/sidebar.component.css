@@ -18,76 +18,111 @@
   z-index: 100;
 }
 
-/* --- User Profile Section --- */
-/* --- User Profile Section --- */
+/* --- Sidebar Header (Brand + User) --- */
+.sidebar-header {
+  padding: 0 0 4px;
+  border-bottom: 1px solid #1e293b;
+  margin-bottom: 8px;
+}
+
+/* Logo institucional */
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  /* Fondo que iguala el color de los bordes del logo */
+  background: linear-gradient(180deg, #08121e 0%, #0b1a2f 50%, #0f172a 100%);
+  width: 100%;
+}
+
+.brand-logo {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: saturate(1.05) brightness(1.02);
+  transition: filter 0.3s ease;
+  /* Desvanece los 4 bordes hacia el fondo del contenedor */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, black 12%, black 80%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 10%, black 68%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, black 12%, black 80%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 10%, black 68%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.brand-logo:hover {
+  filter: saturate(1.15) brightness(1.08);
+}
+
+
+
+/* Separador interno */
+.header-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #334155, transparent);
+  margin: 0 16px 12px;
+}
+
+/* Perfil del usuario */
 .user-profile {
   display: flex;
-  flex-direction: column;
-  /* Stack vertically */
   align-items: center;
-  /* Center horizontally */
-  padding: 30px 16px;
-  /* More vertical padding */
-  margin-bottom: 12px;
-  border-bottom: 1px solid #1e293b;
-  background: transparent;
-  text-align: center;
-  /* Center text */
+  gap: 12px;
+  padding: 10px 16px 16px;
 }
 
 .user-avatar {
   flex-shrink: 0;
-  width: 90px;
-  /* Larger avatar */
-  height: 90px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background-color: #334155;
-  margin: 0 auto 16px;
-  /* Center and add bottom margin */
-  border: 4px solid #1e293b;
-  /* Distinct border matching bg */
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0 0 2px #1e293b, 0 0 0 3px #3b82f6;
 }
 
-.user-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.user-avatar svg {
+  width: 20px;
+  height: 20px;
+  color: #e2e8f0;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   overflow: hidden;
-  width: 100%;
+  gap: 2px;
 }
 
-.user-profile h3 {
-  margin: 0;
-  color: #f8fafc;
-  /* White */
-  font-size: 16px;
-  /* Slightly larger */
+.user-name {
+  font-size: 13px;
   font-weight: 600;
-  line-height: 1.2;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.user-role {
+  font-size: 11px;
+  font-weight: 500;
+  color: #60a5fa;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.user-role {
-  margin: 6px 0 0;
-  font-size: 13px;
-  color: #94a3b8;
-  /* Gray medium */
-  font-weight: 400;
-  letter-spacing: 0.02em;
-}
+
 
 /* --- Menu Structure --- */
 .menu {
