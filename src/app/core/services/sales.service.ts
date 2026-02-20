@@ -15,6 +15,11 @@ export class SalesService {
     // Usaré /api/ventas alineado con la doc técnica dada por el usuario.
     private apiUrl = 'http://localhost:8080/api/ventas';
 
+    // Fecha actual para el ticket
+    get fecha(): Date {
+        return new Date();
+    } // Añadiendo getter de fecha
+
     constructor(private http: HttpClient) { }
 
     /**
@@ -46,6 +51,13 @@ export class SalesService {
     buscarProductos(term: string): Observable<ProductoBusquedaResponse[]> {
         // Endpoint optimizado: GET /api/inventario/busqueda-pos?termino=...
         return this.http.get<ProductoBusquedaResponse[]>(`http://localhost:8080/api/inventario/busqueda-pos?termino=${term}`);
+    }
+
+    /**
+     * Consulta stock exacto de un producto y sus precios unitarios (Hybrid flow)
+     */
+    consultarStock(id: number, sucursalId: number = 1): Observable<any> {
+        return this.http.get<any>(`http://localhost:8080/api/inventario/productos/${id}/stock?sucursalId=${sucursalId}`);
     }
 
     // TODO: Agregar métodos de caja y clientes según se necesiten

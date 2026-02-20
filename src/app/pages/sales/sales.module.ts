@@ -8,13 +8,13 @@ import { NewSaleComponent } from './new-sale/new-sale.component';
 
 @NgModule({
   declarations: [
-    SalesComponent,
-    NewSaleComponent
+    SalesComponent
   ],
   imports: [
     CommonModule,
     SalesRoutingModule,
-    FormsModule
+    FormsModule,
+    NewSaleComponent
   ]
 })
 export class SalesModule { }

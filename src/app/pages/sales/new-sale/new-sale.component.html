@@ -8,8 +8,8 @@
 
       <div class="search-bar">
         <input #barcodeInputRef type="text" class="clean-input search-input"
-          placeholder="Escanear código de barras o buscar producto..." [(ngModel)]="barcodeInput"
-          (input)="onSearchInput()" (keyup.enter)="onEnterKey()" autocomplete="off">
+          placeholder="🔍 Escanear código de barras o buscar producto..." [(ngModel)]="barcodeInput"
+          (input)="onSearchInput()" (keyup.enter)="escanearCodigo($event)" autocomplete="off">
 
         <div class="search-icon">
           <i class="bi bi-search" *ngIf="!isLoading"></i>
@@ -26,13 +26,27 @@
           <!-- Results -->
           <li *ngFor="let product of searchResults" (click)="selectProduct(product)">
             <div class="dropdown-item-main">
-              <span class="item-name fw-bold fs-5">{{ product.detalleProducto.nombreComercial }}</span>
-              <div class="item-details text-muted small">
-                <span>💊 {{ product.detalleProducto.laboratorio }}</span>
-                <span class="mx-1">|</span>
-                <span>📦 {{ product.detalleProducto.presentacion }}</span>
-                <span class="mx-1">|</span>
-                <span><i class="bi bi-upc"></i> {{ product.detalleProducto.codigoBarras }}</span>
+              <!-- ERROR 1 FIXED: Add Image to Search Result -->
+              <!-- ERROR 1 FIXED: Add Image to Search Result -->
+              <div class="flex items-center">
+                <!-- EXACT COPY FROM PRODUCT LIST -->
+                <div class="search-image-container" style="margin-right: 12px;">
+                  <div class="product-icon-circle">
+                    <img *ngIf="product.detalleProducto.imagen" [src]="product.detalleProducto.imagen" alt="Producto"
+                      class="search-product-image">
+                    <span *ngIf="!product.detalleProducto.imagen">💊</span>
+                  </div>
+                </div>
+                <div>
+                  <span class="item-name fw-bold fs-5">{{ product.detalleProducto.nombreComercial }}</span>
+                  <div class="item-details text-muted small">
+                    <span>💊 {{ product.detalleProducto.laboratorio }}</span>
+                    <span class="mx-1">|</span>
+                    <span>📦 {{ product.detalleProducto.presentacion }}</span>
+                    <span class="mx-1">|</span>
+                    <span><i class="bi bi-upc"></i> {{ product.detalleProducto.codigoBarras }}</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="dropdown-item-meta text-end">
@@ -63,37 +77,55 @@
         <tbody>
           <tr *ngFor="let item of cartItems; let i = index">
             <td>
-              <div class="product-name fw-bold">{{ item.product.detalleProducto.nombreComercial }}</div>
-              <div class="product-subtitle text-muted small">
-                {{ item.product.detalleProducto.laboratorio }} - {{ item.product.detalleProducto.presentacion }}
-              </div>
-              <!-- Stock warning if low -->
-              <div *ngIf="item.product.detalleProducto.stockTotal < 10" class="text-danger x-small">
-                Quedan: {{ item.product.detalleProducto.stockTotal }}
+              <div class="product-cell-content">
+                <!-- ERROR 2 FIXED: Correct Image Binding and Error Handling -->
+                <div class="table-image-container">
+                  <!-- FIXED: Twin Containers for Image and Emoji -->
+                  <div class="product-icon-circle" *ngIf="item.product.detalleProducto.imagen">
+                    <img [src]="item.product.detalleProducto.imagen" alt="Producto" class="product-image"
+                      (error)="onImageError($event)">
+                  </div>
+
+                  <div class="product-icon-circle" *ngIf="!item.product.detalleProducto.imagen">
+                    <span>💊</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="product-name">{{ item.product.detalleProducto.nombreComercial }}</div>
+                  <div class="product-subtitle">
+                    {{ item.product.detalleProducto.laboratorio }} - {{ item.product.detalleProducto.presentacion }}
+                  </div>
+                  <!-- Stock warning if low -->
+                  <div *ngIf="item.product.detalleProducto.stockTotal < 10" class="text-danger x-small">
+                    Quedan: {{ item.product.detalleProducto.stockTotal }}
+                  </div>
+                </div>
               </div>
             </td>
             <td class="text-center">
-              <select class="form-select form-select-sm" [(ngModel)]="item.tipoVenta" (change)="onTipoVentaChange(item)"
+              <select class="form-select form-select-sm" [ngModel]="item.tipoVenta"
+                (ngModelChange)="onTipoVentaChange(item, $event)"
                 [disabled]="!item.product.detalleProducto.esFraccionable && item.tipoVenta === 'CAJA'">
                 <option *ngFor="let tipo of tiposVenta" [value]="tipo"
-                  [disabled]="!item.product.detalleProducto.esFraccionable && tipo !== 'CAJA'">
-                  {{ tipo }}
+                  [disabled]="(!item.product.detalleProducto.esFraccionable && tipo !== 'CAJA') || !isValidPrice(tipo, item.product)">
+                  {{ tipo }} {{ !isValidPrice(tipo, item.product) ? '(N/A)' : '' }}
                 </option>
               </select>
             </td>
             <td class="text-center">
-              <input type="number" class="clean-input qty-input" [(ngModel)]="item.cantidad"
-                (change)="updateQuantity(item, item.cantidad)" min="1">
+              <input type="number" class="clean-input qty-input" [ngModel]="item.cantidad"
+                (ngModelChange)="updateQuantity(item, $event)" min="1">
             </td>
             <td class="text-end text-slate-600">
               {{ item.precio | currency }}
             </td>
             <td class="text-end font-bold text-slate-800">
-              {{ item.subtotal | currency }}
+              {{ (item.precio * item.cantidad) | currency }}
             </td>
             <td class="text-center">
-              <button class="icon-btn delete-btn" (click)="removeItem(i)">
-                <i class="bi bi-trash"></i>
+              <button class="delete-btn" (click)="removeItem(i)" title="Eliminar del carrito">
+                🗑️
               </button>
             </td>
           </tr>
@@ -127,11 +159,11 @@
         <div class="payment-options">
           <button class="payment-btn" [class.active]="metodoPago === 'EFECTIVO'"
             (click)="metodoPago = 'EFECTIVO'; calculateChange()">
-            <i class="bi bi-cash"></i> Efectivo
+            <span>💵</span> Efectivo
           </button>
           <button class="payment-btn" [class.active]="metodoPago === 'TARJETA'"
             (click)="metodoPago = 'TARJETA'; calculateChange()">
-            <i class="bi bi-credit-card"></i> Tarjeta
+            <span>💳</span> Tarjeta
           </button>
         </div>
       </div>
@@ -139,13 +171,15 @@
       <div class="divider"></div>
 
       <div class="totals-summary">
-        <div class="summary-row">
-          <span>Subtotal</span>
-          <span>{{ subtotal | currency }}</span>
+        <!-- REWRITTEN FOR SIMPLICITY AND PURITY -->
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-slate-600 font-medium">Subtotal</span>
+          <span class="text-slate-800 font-bold">{{ calcularTotalGlobal() | currency }}</span>
         </div>
-        <div class="summary-row total-row">
-          <span>TOTAL</span>
-          <span>{{ total | currency }}</span>
+
+        <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+          <span class="text-slate-900 font-bold text-xl">TOTAL</span>
+          <span class="text-green-600 font-bold text-3xl">{{ calcularTotalGlobal() | currency }}</span>
         </div>
       </div>
 
@@ -160,12 +194,68 @@
         </div>
       </div>
 
-      <button class="btn-primary-action" (click)="processSale()"
-        [disabled]="cartItems.length === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < total)">
+      <button class="btn-primary-action btn-dark-primary" (click)="processSale()"
+        [disabled]="cartItems.length === 0 || calcularTotalGlobal() === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < calcularTotalGlobal())">
         COBRAR
       </button>
 
     </div>
+  </div>
+
+</div>
+
+<!-- TICKET TÉRMICO (Solo visible al imprimir) -->
+<div id="ticket-termico" style="display: none;">
+
+  <h3>FARMASYNC POS</h3>
+
+  <div class="datos-empresa">
+    <p>NIT: 900.123.456-7</p>
+    <p>Armenia, Quindío</p>
+    <p>Régimen Común</p>
+  </div>
+
+  <div class="datos-venta">
+    <p><strong>Fecha:</strong> {{ cartService.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>Cliente:</strong> {{ clienteNombre || 'Consumidor Final' }}</p>
+    <p *ngIf="ultimaVentaId"><strong>Venta #{{ ultimaVentaId }}</strong></p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 10%">Cant.</th>
+        <th style="width: 60%">Desc.</th>
+        <th style="width: 30%; text-align: right;">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of cartItems">
+        <td>{{ item.cantidad }}</td>
+        <td>
+          {{ item.product.detalleProducto.nombreComercial }}
+          <br>
+          <small>({{ item.tipoVenta | slice:0:3 }})</small>
+        </td>
+        <td style="text-align: right;">
+          {{ (item.precio * item.cantidad) | currency:'USD':'symbol':'1.0-0' }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="totales">
+    <div class="total-grande">TOTAL: {{ cartService.total | currency:'USD':'symbol':'1.0-0' }}</div>
+
+    <div *ngIf="montoRecibido > 0">
+      <p>Efec. Recibido: {{ montoRecibido | currency:'USD':'symbol':'1.0-0' }}</p>
+      <p>Cambio: {{ cambio | currency:'USD':'symbol':'1.0-0' }}</p>
+    </div>
+  </div>
+
+  <div class="pie-pagina">
+    <p>¡Gracias por su compra!</p>
+    <p>Software: FarmaSync</p>
   </div>
 
 </div>

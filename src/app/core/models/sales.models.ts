@@ -39,6 +39,7 @@ export interface VentaResponseDTO {
     estado: string;
     clienteId: number;
     items: ItemVentaDTO[];
+    totalIva?: number; // Added for tax breakdown
 }
 
 export interface DetalleProductoDTO {
@@ -54,10 +55,20 @@ export interface DetalleProductoDTO {
     precioVentaUnidad: number;
     // Flags
     esFraccionable: boolean;
+    imagen?: string;
 }
 
 export interface ProductoBusquedaResponse {
     detalleProducto: DetalleProductoDTO;
     lotes: any[]; // Por ahora any array si no necesitamos detalle de lotes
-    // Se puede agregar LoteDTO si es necesario en el futuro
+}
+
+export interface CartItem {
+    product: ProductoBusquedaResponse;
+    cantidad: number;
+    tipoVenta: TipoVenta;
+    precio: number;
+    subtotal: number;
+    error?: string;
+    imagenUrl?: string | null;
 }

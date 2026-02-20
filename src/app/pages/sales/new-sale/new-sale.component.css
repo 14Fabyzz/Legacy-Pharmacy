@@ -4,6 +4,8 @@
   --slate-200: #e2e8f0;
   --slate-600: #475569;
   --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  /* Added for Dark Button */
   --white: #ffffff;
   --blue-500: #3b82f6;
   --blue-600: #2563eb;
@@ -13,6 +15,8 @@
   --red-bg: #fee2e2;
 
   --radius: 8px;
+  --radius-xl: 12px;
+  /* Added for rounded-xl */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
@@ -178,13 +182,14 @@
   border-radius: var(--radius);
   border: 1px solid var(--slate-200);
   box-shadow: var(--shadow-sm);
-  overflow: hidden;
+  overflow-x: auto;
   display: flex;
   flex-direction: column;
 }
 
 .clean-table {
   width: 100%;
+  min-width: 650px;
   border-collapse: collapse;
 }
 
@@ -203,6 +208,115 @@
   border-bottom: 1px solid var(--slate-200);
   color: var(--slate-800);
   vertical-align: middle;
+}
+
+/* Utility classes replacing Tailwind */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-baseline {
+  align-items: baseline;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+.small {
+  font-size: 0.875em;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+.fs-5 {
+  font-size: 1.25rem !important;
+}
+
+.fs-4 {
+  font-size: 1.5rem !important;
+}
+
+.text-success {
+  color: #198754 !important;
+}
+
+.text-end {
+  text-align: right !important;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+.bg-primary {
+  background-color: #0d6efd !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+
+/* NEW: Product Image Style */
+.product-cell-content {
+  display: flex;
+  align-items: center;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  border: 1px solid var(--slate-200);
+  background: var(--white);
+  margin-right: 12px;
+  flex-shrink: 0;
+  display: flex;
+  /* Centering for emoji */
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  /* Emoji size */
+}
+
+/* SEARCH RESULTS IMAGE */
+.search-product-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--slate-200);
+  margin-right: 12px;
 }
 
 .product-name {
@@ -242,11 +356,13 @@
   width: 60px;
   text-align: center;
   padding: 6px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius);
 }
 
 .delete-btn {
-  background: var(--red-bg);
-  color: var(--red-800);
+  background: transparent;
+  color: inherit;
   border: none;
   width: 32px;
   height: 32px;
@@ -255,11 +371,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  opacity: 0.7;
+  font-size: 1.2rem;
 }
 
 .delete-btn:hover {
-  background: #fecaca;
+  background-color: #FEE2E2;
+  opacity: 1;
 }
 
 .empty-state {
@@ -369,6 +488,17 @@
   font-weight: 800;
   color: var(--slate-800);
   margin-top: 10px;
+  /* flex properties handled by utility classes now */
+}
+
+/* ADJUSTED: Size reduced as requested */
+.total-amount-large {
+  font-size: 2rem;
+  /* Reduced from 2.5rem */
+  font-weight: 900;
+  /* font-black */
+  color: var(--slate-800);
+  line-height: 1;
 }
 
 .payment-calculation {
@@ -378,11 +508,21 @@
   margin-bottom: 20px;
 }
 
+.input-group-clean label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--slate-600);
+  margin-bottom: 4px;
+}
+
 .amount-input {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--green-700);
   text-align: right;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius);
 }
 
 .change-display {
@@ -413,12 +553,23 @@
   letter-spacing: 0.5px;
 }
 
+/* NEW: Dark Button Style */
+.btn-dark-primary {
+  background-color: var(--slate-900);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);
+}
+
 .btn-primary-action:hover:not(:disabled) {
-  background: var(--blue-600);
+  opacity: 0.9;
 }
 
 .btn-primary-action:disabled {
   background: var(--slate-200);
   color: var(--slate-600);
   cursor: not-allowed;
+  box-shadow: none;
 }
+
+/* --- TICKET TÉRMICO (Impresión) --- */
+/* ticket styles handled in TS via popup */
