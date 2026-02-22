@@ -1,42 +1,131 @@
-/* Global Typography - Inter Upgrade */
-body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #475569;
-    /* Slate-600 */
-    font-size: 15px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+/* ==============================================
+   LEGACY PHARMACY DASHBOARD — Global Styles
+   Desktop-First: 1024px → 1366px → 1600px → 1920px+
+   ============================================== */
+
+/* --- Design Tokens & Desktop Breakpoints --- */
+:root {
+    /* Breakpoints de escritorio exclusivamente */
+    --bp-laptop: 1024px;
+    /* Laptop pequeña (13"-14") */
+    --bp-standard: 1366px;
+    /* Laptop/Monitor estándar */
+    --bp-hd: 1600px;
+    /* Monitor 1600p */
+    --bp-fullhd: 1920px;
+    /* Monitor Full HD */
+    --bp-ultrawide: 2560px;
+    /* Ultrawide / 2K / 4K */
+
+    /* Spacing fluido — se expande en monitores grandes */
+    --page-padding-x: clamp(1.25rem, 2vw, 2.5rem);
+    --page-padding-y: clamp(1rem, 1.5vw, 2rem);
+    --card-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+
+    /* Tipografía base */
+    --font-base: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Headings */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+/* --- Reset Seguro Global --- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* --- Body: sin scroll horizontal nunca --- */
+body {
+    font-family: var(--font-base);
+    color: #475569;
+    /* Slate-600 */
+    /* Tipografía fluida: de 14px (laptop) a 16px (ultrawide) */
+    font-size: clamp(0.875rem, 0.9vw + 0.5rem, 1rem);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    /* Evita scroll horizontal en CUALQUIER resolución */
+    min-height: 100vh;
+    background-color: #f4f7fa;
+}
+
+/* --- Contenedor app-root --- */
+app-root {
+    display: block;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* --- Headings: escalado fluido sin media queries --- */
+h1 {
+    /* De 1.4rem (laptop) a 2rem (ultrawide) */
+    font-size: clamp(1.25rem, 1.5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
     color: #1e293b;
     /* Slate-800 */
-    font-weight: 600;
-    /* SemiBold */
     margin-bottom: 0.75rem;
 }
 
-h1 {
-    font-size: 1.75rem;
-    letter-spacing: -0.025em;
-}
-
 h2 {
-    font-size: 1.5rem;
+    font-size: clamp(1.1rem, 1.2vw, 1.75rem);
+    font-weight: 600;
     letter-spacing: -0.025em;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
 }
 
-/* Numeric Data Alignment */
+h3 {
+    font-size: clamp(1rem, 1vw, 1.4rem);
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+h4 {
+    font-size: clamp(0.9rem, 0.9vw, 1.2rem);
+    font-weight: 600;
+    color: #334155;
+}
+
+h5,
+h6 {
+    font-size: clamp(0.85rem, 0.8vw, 1rem);
+    font-weight: 600;
+    color: #334155;
+}
+
+/* --- Tablas: alineación numérica global --- */
 td,
 th,
 .tabular-nums,
 .price {
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
+}
+
+/* --- Utilidades de Tabla Segura (Desktop) --- */
+/* Evita que tablas anchas rompan el layout en laptops <1280px */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+}
+
+/* --- Escala en monitores grandes (1600px+) --- */
+@media (min-width: 1600px) {
+    body {
+        font-size: 15.5px;
+    }
+}
+
+@media (min-width: 1920px) {
+    body {
+        font-size: 16px;
+    }
+
+    /* Centra el contenido en monitores ultra-wide */
+    .layout-wrapper {
+        max-width: 2200px;
+        margin: 0 auto;
+    }
 }

@@ -4,9 +4,10 @@ import { SidebarService } from '../core/services/sidebar.service';
 
 // 1. Importa los componentes necesarios
 import { SidebarComponent } from '../shared/sidebar/sidebar.component';
-import { HeaderComponent } from '../shared/header/header.component'; 
+import { HeaderComponent } from '../shared/header/header.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ChatbotFloatingComponent } from '../shared/components/chatbot-floating/chatbot-floating.component';
 
 @Component({
   selector: 'app-layout',
@@ -15,13 +16,14 @@ import { CommonModule } from '@angular/common';
     CommonModule,      // Necesario para [ngClass]
     RouterModule,      // Necesario para <router-outlet>
     SidebarComponent,  // 2. Añade SidebarComponent aquí
-    HeaderComponent    // 3. Añade HeaderComponent aquí
+    HeaderComponent,   // 3. Añade HeaderComponent aquí
+    ChatbotFloatingComponent
   ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css']
 })
 export class LayoutComponent implements OnInit, OnDestroy {
-  
+
   isCollapsed = false;
   private sidebarSubscription!: Subscription;
 
