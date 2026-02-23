@@ -1,0 +1,177 @@
+<div class="historial-container">
+  <div class="header-section">
+    <h2>Historial de Ventas</h2>
+    <p class="subtitle">Consulta todas las ventas registradas en el sistema</p>
+  </div>
+
+  <div class="alert-warning" *ngIf="mensajeError">
+    <div class="alert-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+    <div class="alert-content">
+      <h3 class="alert-title">Atención</h3>
+      <p class="alert-text">{{ mensajeError }}</p>
+    </div>
+  </div>
+
+  <div class="table-card" *ngIf="!mensajeError">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Productos</th>
+            <th class="text-center">Método de Pago</th>
+            <th class="text-right">Total Venta</th>
+            <th class="text-right">Recibido</th>
+            <th class="text-right">Cambio</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="isLoading">
+            <td colspan="8" class="text-center loading-message">Cargando historial...</td>
+          </tr>
+          <tr *ngIf="!isLoading && historial.length === 0">
+            <td colspan="8" class="text-center empty-message">No se encontraron ventas registradas en este turno.</td>
+          </tr>
+          <tr *ngFor="let venta of historialPaginado">
+            <td class="id-col">#{{ venta.id }}</td>
+            <td>{{ venta.fechaVenta | date:'short' }}</td>
+            <td>
+              <div class="productos-list" *ngIf="venta.resumenProductos && venta.resumenProductos.length > 0">
+                <div class="producto-badge" *ngFor="let prod of venta.resumenProductos">
+                  {{ prod }}
+                </div>
+              </div>
+              <span class="text-muted" *ngIf="!venta.resumenProductos || venta.resumenProductos.length === 0">Sin
+                detalle</span>
+            </td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="venta.metodoPago.toLowerCase()">
+                {{ venta.metodoPago }}
+              </span>
+            </td>
+            <td class="text-right total-amount">{{ venta.total | currency }}</td>
+            <td class="text-right text-muted-value">{{ venta.montoRecibido | currency }}</td>
+            <td class="text-right text-muted-value">{{ venta.cambio | currency }}</td>
+            <td class="text-center">
+              <button class="btn-action-view" (click)="abrirModalFactura(venta)" title="Ver Factura">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                Ver
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pagination-container" *ngIf="!mensajeError && historial.length > itemsPorPagina">
+    <button class="btn-pagination" (click)="paginaAnterior()" [disabled]="paginaActual === 1">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Anterior
+    </button>
+    <span class="pagination-info">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+    <button class="btn-pagination" (click)="siguientePagina()"
+      [disabled]="paginaActual === totalPaginas || totalPaginas === 0">
+      Siguiente
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Modal Factura (Tirilla de Caja) -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3 class="modal-title">Factura de Venta #{{ ventaSeleccionada?.id }}</h3>
+      <button class="btn-close" (click)="cerrarModal()">&times;</button>
+    </div>
+
+    <div class="modal-body print-area">
+      <!-- Receipt Layout -->
+      <div class="receipt">
+        <div class="receipt-header">
+          <h2>Farmacia Central</h2>
+          <p>Factura de Venta</p>
+          <p class="receipt-date">Fecha: {{ ventaSeleccionada?.fechaVenta | date:'medium' }}</p>
+          <p class="receipt-id">No. Ticket: #{{ ventaSeleccionada?.id }}</p>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-items">
+          <div class="receipt-item font-bold">
+            <span>Descripción</span>
+          </div>
+          <div class="receipt-item receipt-product" *ngFor="let prod of ventaSeleccionada?.resumenProductos">
+            <span>{{ prod }}</span>
+          </div>
+          <div class="receipt-item text-center text-muted"
+            *ngIf="!ventaSeleccionada?.resumenProductos || ventaSeleccionada?.resumenProductos.length === 0">
+            <span>Sin detalle de productos</span>
+          </div>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-totals">
+          <div class="receipt-row">
+            <span>IVA:</span>
+            <span>{{ ventaSeleccionada?.totalIva | currency }}</span>
+          </div>
+          <div class="receipt-row total-row">
+            <span>TOTAL A PAGAR:</span>
+            <span>{{ ventaSeleccionada?.total | currency }}</span>
+          </div>
+          <div class="receipt-row">
+            <span>Método de Pago:</span>
+            <span class="capitalize">{{ ventaSeleccionada?.metodoPago }}</span>
+          </div>
+          <div class="receipt-row">
+            <span>Recibido:</span>
+            <span>{{ ventaSeleccionada?.montoRecibido | currency }}</span>
+          </div>
+          <div class="receipt-row">
+            <span>Cambio:</span>
+            <span>{{ ventaSeleccionada?.cambio | currency }}</span>
+          </div>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-footer">
+          <p>¡Gracias por su compra!</p>
+          <p>Conserve este recibo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="cerrarModal()">Cerrar</button>
+      <button class="btn-primary" (click)="imprimirFactura()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        </svg>
+        Imprimir
+      </button>
+    </div>
+
+  </div>
+</div>

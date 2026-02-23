@@ -399,41 +399,42 @@ export class NewSaleComponent implements OnInit, OnDestroy {
         <style>
           body { 
             font-family: 'Courier New', Courier, monospace; 
-            font-size: 11px; /* Slightly smaller for better fit */
+            font-size: 10px; /* Thermal printer real feel */
             color: black; 
             background: white; 
             margin: 0; 
-            padding: 10px; 
+            padding: 2px; /* Reduced from 10px */
             width: 80mm; 
           }
+          p { margin: 0; line-height: 1.1; }
           .text-center { text-align: center; }
           .text-right { text-align: right; }
           .font-bold { font-weight: bold; }
           
           /* Header */
-          .header { margin-bottom: 10px; border-bottom: 1px dashed black; padding-bottom: 5px; text-align: center; }
-          .header h3 { font-size: 14px; margin: 0 0 5px 0; font-weight: bold; text-transform: uppercase; }
-          .header p { margin: 2px 0; font-size: 11px; }
+          .header { margin-bottom: 5px; border-bottom: 1px dashed black; padding-bottom: 3px; text-align: center; }
+          .header h3 { font-size: 12px; margin: 0 0 2px 0; font-weight: bold; text-transform: uppercase; }
+          .header p { font-size: 10px; }
 
           /* Info Section */
-          .info { margin-bottom: 8px; border-bottom: 1px dashed black; padding-bottom: 5px; }
-          .info p { margin: 2px 0; }
+          .info { margin-bottom: 5px; border-bottom: 1px dashed black; padding-bottom: 3px; }
+          .info p { font-size: 10px; }
 
           /* Items Table */
-          .items-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-          .items-table th { border-bottom: 1px dashed black; text-align: left; padding: 2px 0; font-size: 10px; }
-          .items-table td { padding: 3px 0; vertical-align: top; font-size: 11px; }
+          .items-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+          .items-table th { border-bottom: 1px dashed black; text-align: left; padding: 1px 0; font-size: 9px; }
+          .items-table td { padding: 1px 0; vertical-align: top; font-size: 10px; line-height: 1.1; }
           .col-qty { width: 10%; text-align: center; }
           .col-desc { width: 55%; }
           .col-total { width: 35%; text-align: right; }
 
           /* Totals Section */
-          .totals { margin-top: 5px; border-top: 1px dashed black; padding-top: 5px; }
-          .totals-row { display: flex; justify-content: space-between; margin: 2px 0; }
-          .totals-row.final { font-size: 14px; font-weight: bold; margin-top: 5px; border-top: 1px dotted #ccc; padding-top: 5px; }
+          .totals { margin-top: 3px; border-top: 1px dashed black; padding-top: 3px; }
+          .totals-row { display: flex; justify-content: space-between; margin: 1px 0; font-size: 10px; }
+          .totals-row.final { font-size: 12px; font-weight: bold; margin-top: 3px; border-top: 1px dotted black; padding-top: 3px; }
 
           /* Footer */
-          .footer { margin-top: 15px; text-align: center; font-size: 10px; }
+          .footer { margin-top: 8px; text-align: center; font-size: 9px; line-height: 1.1; }
         </style>
       `);
 
@@ -447,7 +448,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
                 <td class="col-qty">${item.cantidad}</td>
                 <td class="col-desc">
                     ${item.product.detalleProducto.nombreComercial}<br>
-                    <small style="font-size: 9px; color: #333;">${item.cantidad} x ${unitPrice}</small>
+                    <small style="font-size: 9px; color: black; display: block; margin-top: 1px;">${item.cantidad} x ${unitPrice}</small>
                 </td>
                 <td class="col-total">${subtotalItem}</td>
             </tr>
@@ -499,8 +500,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
                     <span>TOTAL:</span>
                     <span>${formatCurrency(total)}</span>
                 </div>
-                
-                <div style="margin-top: 5px; border-top: 1px dotted #000; padding-top: 5px;" class="info">
+                <div style="margin-top: 3px; border-top: 1px dotted black; padding-top: 3px; border-bottom: none; margin-bottom: 0;" class="info">
                    <div class="totals-row">
                         <span>Efec. Recibido:</span>
                         <span>${formatCurrency(this.montoRecibido)}</span>
