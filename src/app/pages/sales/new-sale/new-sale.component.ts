@@ -60,6 +60,10 @@ export class NewSaleComponent implements OnInit, OnDestroy {
   cambio: number = 0;
   ultimaVentaId: string | null = null;
 
+  // Modal Ticket Variables
+  mostrarModalTicket: boolean = false;
+  ticketActual: any = null;
+
   calcularTotalGlobal(): number {
     if (!this.cartItems || this.cartItems.length === 0) return 0;
 
@@ -370,170 +374,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
   }
 
   imprimirTicket(iva: number): void {
-    // Basic formatting helper
-    const formattedDate = new Date(this.cartService.fecha).toLocaleString('es-CO', {
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit'
-    });
-
-    const formatCurrency = (amount: number) => {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
-    };
-
-    // Calculate totals breakdown
-    // Prices are tax-inclusive, so Base = Total - IVA
-    const total = this.calcularTotalGlobal();
-    const subtotal = total - iva;
-
-    // Shorten ID
-    const shortId = this.ultimaVentaId ? this.ultimaVentaId.slice(0, 8).toUpperCase() : 'PENDIENTE';
-
-    // Abrir una ventana emergente oculta
-    const WindowPrt = window.open('', '', 'left=0,top=0,width=400,height=600,toolbar=0,scrollbars=0,status=0');
-
-    if (WindowPrt) {
-      // Escribir el HTML del ticket en la nueva ventana
-      WindowPrt.document.write('<html><head><title>Ticket de Venta</title>');
-      // Inyectar el CSS exclusivo para el ticket
-      WindowPrt.document.write(`
-        <style>
-          body { 
-            font-family: 'Courier New', Courier, monospace; 
-            font-size: 10px; /* Thermal printer real feel */
-            color: black; 
-            background: white; 
-            margin: 0; 
-            padding: 2px; /* Reduced from 10px */
-            width: 80mm; 
-          }
-          p { margin: 0; line-height: 1.1; }
-          .text-center { text-align: center; }
-          .text-right { text-align: right; }
-          .font-bold { font-weight: bold; }
-          
-          /* Header */
-          .header { margin-bottom: 5px; border-bottom: 1px dashed black; padding-bottom: 3px; text-align: center; }
-          .header h3 { font-size: 12px; margin: 0 0 2px 0; font-weight: bold; text-transform: uppercase; }
-          .header p { font-size: 10px; }
-
-          /* Info Section */
-          .info { margin-bottom: 5px; border-bottom: 1px dashed black; padding-bottom: 3px; }
-          .info p { font-size: 10px; }
-
-          /* Items Table */
-          .items-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
-          .items-table th { border-bottom: 1px dashed black; text-align: left; padding: 1px 0; font-size: 9px; }
-          .items-table td { padding: 1px 0; vertical-align: top; font-size: 10px; line-height: 1.1; }
-          .col-qty { width: 10%; text-align: center; }
-          .col-desc { width: 55%; }
-          .col-total { width: 35%; text-align: right; }
-
-          /* Totals Section */
-          .totals { margin-top: 3px; border-top: 1px dashed black; padding-top: 3px; }
-          .totals-row { display: flex; justify-content: space-between; margin: 1px 0; font-size: 10px; }
-          .totals-row.final { font-size: 12px; font-weight: bold; margin-top: 3px; border-top: 1px dotted black; padding-top: 3px; }
-
-          /* Footer */
-          .footer { margin-top: 8px; text-align: center; font-size: 9px; line-height: 1.1; }
-        </style>
-      `);
-
-      // Construct Body HTML
-      let itemsHtml = '';
-      this.cartItems.forEach(item => {
-        const unitPrice = formatCurrency(Number(item.precio));
-        const subtotalItem = formatCurrency(item.cantidad * Number(item.precio));
-        itemsHtml += `
-            <tr>
-                <td class="col-qty">${item.cantidad}</td>
-                <td class="col-desc">
-                    ${item.product.detalleProducto.nombreComercial}<br>
-                    <small style="font-size: 9px; color: black; display: block; margin-top: 1px;">${item.cantidad} x ${unitPrice}</small>
-                </td>
-                <td class="col-total">${subtotalItem}</td>
-            </tr>
-          `;
-      });
-
-      const bodyContent = `
-        <div class="ticket-container">
-            <div class="header">
-                <h3>FARMASYNC POS</h3>
-                <p>NIT: 900.123.456-7</p>
-                <p>Calle 123 #45-67</p>
-                <p>Tel: 300 123 4567</p>
-                <p>Armenia, Quindío</p>
-                <p>Régimen Común</p>
-            </div>
-
-            <div class="info">
-                <p><strong>Venta:</strong> #${shortId}</p>
-                <p><strong>Fecha:</strong> ${formattedDate}</p>
-                <p><strong>Cajero:</strong> Administrador</p>
-                <p><strong>Cliente:</strong> ${this.clienteNombre || 'Consumidor Final'}</p>
-                <p><strong>Método Pago:</strong> ${this.metodoPago}</p>
-            </div>
-
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th class="col-qty">Cant</th>
-                        <th class="col-desc">Descripción</th>
-                        <th class="col-total">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${itemsHtml}
-                </tbody>
-            </table>
-
-            <div class="totals">
-                <div class="totals-row">
-                    <span>Subtotal:</span>
-                    <span>${formatCurrency(subtotal)}</span>
-                </div>
-                <div class="totals-row">
-                    <span>IVA:</span>
-                    <span>${formatCurrency(iva)}</span>
-                </div>
-                <div class="totals-row final">
-                    <span>TOTAL:</span>
-                    <span>${formatCurrency(total)}</span>
-                </div>
-                <div style="margin-top: 3px; border-top: 1px dotted black; padding-top: 3px; border-bottom: none; margin-bottom: 0;" class="info">
-                   <div class="totals-row">
-                        <span>Efec. Recibido:</span>
-                        <span>${formatCurrency(this.montoRecibido)}</span>
-                   </div>
-                   <div class="totals-row">
-                        <span>Cambio:</span>
-                        <span>${formatCurrency(this.cambio)}</span>
-                   </div>
-                </div>
-            </div>
-
-            <div class="footer">
-                <p>¡Gracias por su compra!</p>
-                <p>Conserve este tiquete para cambios.</p>
-                <p>Software: FarmaSync</p>
-            </div>
-        </div>
-      `;
-
-      WindowPrt.document.write('</head><body>');
-      WindowPrt.document.write(bodyContent);
-      WindowPrt.document.write('</body></html>');
-
-      // Cerrar el documento para que el navegador lo renderice
-      WindowPrt.document.close();
-      WindowPrt.focus();
-
-      // Imprimir y cerrar la ventana emergente automáticamente
-      setTimeout(() => {
-        WindowPrt.print();
-        WindowPrt.close();
-      }, 250); // Pequeño delay para asegurar que el DOM cargó
-    }
+    // Deprecated. Logic moved to modal.
   }
 
   processSale() {
@@ -565,28 +406,54 @@ export class NewSaleComponent implements OnInit, OnDestroy {
 
     this.salesService.crearVenta(request).subscribe({
       next: (res) => {
+        const shortId = (res.numeroFactura || '').slice(0, 8).toUpperCase();
         this.ultimaVentaId = res.numeroFactura;
         const ivaFactura = res.totalIva || 0; // Capture IVA from response
         this.toastService.showSuccess(`Venta registrada: #${res.numeroFactura}`);
-        this.cd.detectChanges(); // Update UI to show ID in ticket
 
-        // Trigger Print using Popup Isolator
-        setTimeout(() => {
-          this.imprimirTicket(ivaFactura);
+        // Mapear datos al ticketActual para el Modal
+        this.ticketActual = {
+          id: shortId,
+          fechaVenta: new Date(),
+          totalIva: ivaFactura,
+          total: total,
+          metodoPago: this.metodoPago,
+          montoRecibido: this.montoRecibido,
+          cambio: this.cambio,
+          resumenProductos: this.cartItems.map(item =>
+            `${item.cantidad} x ${item.product.detalleProducto.nombreComercial}`
+          )
+        };
 
-          // Clear after print dialog closes (or immediately if non-blocking)
-          this.cartService.clearCart();
-          this.montoRecibido = 0;
-          this.cambio = 0;
-          this.barcodeInputRef.nativeElement.focus();
-          this.cd.detectChanges();
-        }, 500);
+        this.mostrarModalTicket = true;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error(err);
         this.toastService.showError('Error al procesar venta');
       }
     });
+  }
+
+  cerrarTicketYLimpiar(): void {
+    this.mostrarModalTicket = false;
+    this.ticketActual = null;
+
+    // Reset Sale Status
+    this.cartService.clearCart();
+    this.montoRecibido = 0;
+    this.cambio = 0;
+    // Delay focus para evitar bugs de focus out en Angular cuando el modal desaparece
+    setTimeout(() => {
+      if (this.barcodeInputRef) {
+        this.barcodeInputRef.nativeElement.focus();
+      }
+    }, 100);
+    this.cd.detectChanges();
+  }
+
+  imprimirFactura(): void {
+    window.print();
   }
 
   // Helper for image error in template

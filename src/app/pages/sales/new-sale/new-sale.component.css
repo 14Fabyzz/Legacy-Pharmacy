@@ -1,5 +1,8 @@
 /* --- Variables (Clean Medical System) --- */
 :host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   --slate-50: #f8fafc;
   --slate-200: #e2e8f0;
   --slate-600: #475569;
@@ -23,12 +26,13 @@
 
 .pos-layout {
   display: grid;
+  flex: 1;
   grid-template-columns: 70% 30%;
   gap: 24px;
   background-color: var(--slate-50);
-  height: calc(100vh - 64px);
-  /* Full height minus header */
-  padding: 24px;
+  height: 100%;
+  min-height: 0;
+  /* important for nested scrolling */
   box-sizing: border-box;
 }
 

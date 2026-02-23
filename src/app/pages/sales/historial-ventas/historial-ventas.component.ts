@@ -98,7 +98,17 @@ export class HistorialVentasComponent implements OnInit {
 
     // Modal Methods
     abrirModalFactura(venta: any): void {
-        this.ventaSeleccionada = venta;
+        this.ventaSeleccionada = { ...venta };
+        // Si el backend no provee totalIva, lo calculamos asumiendo que el total incluye IVA (ej: 19%)
+        // Base = Total / 1.19 -> IVA = Total - Base
+        // Ya que el requerimiento es mostrar un valor de IVA.
+        if (this.ventaSeleccionada.totalIva === undefined ||
+            this.ventaSeleccionada.totalIva === null ||
+            this.ventaSeleccionada.totalIva === 0) {
+            const base = this.ventaSeleccionada.total / 1.19;
+            this.ventaSeleccionada.totalIva = this.ventaSeleccionada.total - base;
+        }
+
         this.mostrarModal = true;
     }
 

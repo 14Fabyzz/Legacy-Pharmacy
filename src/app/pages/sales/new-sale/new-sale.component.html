@@ -204,58 +204,87 @@
 
 </div>
 
-<!-- TICKET TÉRMICO (Solo visible al imprimir) -->
-<div id="ticket-termico" style="display: none;">
+<!-- TICKET MODAL -->
+<div class="modal-overlay" *ngIf="mostrarModalTicket" (click)="cerrarTicketYLimpiar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
 
-  <h3>FARMASYNC POS</h3>
-
-  <div class="datos-empresa">
-    <p>NIT: 900.123.456-7</p>
-    <p>Armenia, Quindío</p>
-    <p>Régimen Común</p>
-  </div>
-
-  <div class="datos-venta">
-    <p><strong>Fecha:</strong> {{ cartService.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-    <p><strong>Cliente:</strong> {{ clienteNombre || 'Consumidor Final' }}</p>
-    <p *ngIf="ultimaVentaId"><strong>Venta #{{ ultimaVentaId }}</strong></p>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th style="width: 10%">Cant.</th>
-        <th style="width: 60%">Desc.</th>
-        <th style="width: 30%; text-align: right;">Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of cartItems">
-        <td>{{ item.cantidad }}</td>
-        <td>
-          {{ item.product.detalleProducto.nombreComercial }}
-          <br>
-          <small>({{ item.tipoVenta | slice:0:3 }})</small>
-        </td>
-        <td style="text-align: right;">
-          {{ (item.precio * item.cantidad) | currency:'USD':'symbol':'1.0-0' }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="totales">
-    <div class="total-grande">TOTAL: {{ cartService.total | currency:'USD':'symbol':'1.0-0' }}</div>
-
-    <div *ngIf="montoRecibido > 0">
-      <p>Efec. Recibido: {{ montoRecibido | currency:'USD':'symbol':'1.0-0' }}</p>
-      <p>Cambio: {{ cambio | currency:'USD':'symbol':'1.0-0' }}</p>
+    <div class="modal-header">
+      <h3 class="modal-title">Tirilla de Caja</h3>
+      <button class="btn-close" (click)="cerrarTicketYLimpiar()">&times;</button>
     </div>
-  </div>
 
-  <div class="pie-pagina">
-    <p>¡Gracias por su compra!</p>
-    <p>Software: FarmaSync</p>
-  </div>
+    <!-- PRINT SECTION -->
+    <div class="modal-body print-area">
+      <div class="receipt">
+        <div class="receipt-header">
+          <h2>RegenSalud</h2>
+          <p>Factura de Venta</p>
+          <p class="receipt-date">Fecha: {{ ticketActual?.fechaVenta | date:'medium' }}</p>
+          <p class="receipt-id">No. Ticket: #{{ ticketActual?.id }}</p>
+        </div>
 
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-items">
+          <div class="receipt-item font-bold">
+            <span>Descripción</span>
+          </div>
+          <div class="receipt-item receipt-product" *ngFor="let prod of ticketActual?.resumenProductos">
+            <span>{{ prod }}</span>
+          </div>
+          <div class="receipt-item text-center text-muted"
+            *ngIf="!ticketActual?.resumenProductos || ticketActual?.resumenProductos.length === 0">
+            <span>Sin detalle de productos</span>
+          </div>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-totals">
+          <div class="receipt-row">
+            <span>IVA:</span>
+            <span>{{ ticketActual?.totalIva | currency }}</span>
+          </div>
+          <div class="receipt-row total-row">
+            <span>TOTAL A PAGAR:</span>
+            <span>{{ ticketActual?.total | currency }}</span>
+          </div>
+          <div class="receipt-row">
+            <span>Método de Pago:</span>
+            <span class="capitalize">{{ ticketActual?.metodoPago }}</span>
+          </div>
+          <div class="receipt-row">
+            <span>Recibido:</span>
+            <span>{{ ticketActual?.montoRecibido | currency }}</span>
+          </div>
+          <div class="receipt-row">
+            <span>Cambio:</span>
+            <span>{{ ticketActual?.cambio | currency }}</span>
+          </div>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="receipt-footer">
+          <p>¡Gracias por su compra!</p>
+          <p>Conserve este recibo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="cerrarTicketYLimpiar()">Cerrar</button>
+      <button class="btn-primary" (click)="imprimirFactura()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M6.728 6.75h10.544a2.25 2.25 0 012.25 2.25v5.006a2.25 2.25 0 01-2.25 2.25H6.728a2.25 2.25 0 01-2.25-2.25v-5.006a2.25 2.25 0 012.25-2.25z" />
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M17.25 6.75V4.5a2.25 2.25 0 00-2.25-2.25H9a2.25 2.25 0 00-2.25 2.25v2.25M6.75 16.25h10.5m-10.5 0v3.75a2.25 2.25 0 002.25 2.25h6a2.25 2.25 0 002.25-2.25v-3.75m-10.5 0v-3.75h10.5" />
+        </svg>
+        Imprimir
+      </button>
+    </div>
+
+  </div>
 </div>

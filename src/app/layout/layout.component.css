@@ -5,11 +5,8 @@
 .layout-wrapper {
   display: flex;
   position: relative;
-  min-height: 100vh;
-  /* IMPORTANTE: NO poner overflow-x: hidden aquí.
-     Los elementos con position:fixed (sidebar) quedan atrapados
-     si el contenedor tiene overflow-x: hidden + position: relative.
-     El overflow lo controla el body en styles.css */
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* --- Sidebar --- */
@@ -33,18 +30,17 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  /* Previene overflow en flex-children */
+  height: 100vh;
+  overflow: hidden;
   transition: margin-left 0.3s ease;
 }
 
-/* --- Header: Sticky para que siempre sea visible ---
-   IMPORTANTE: position:sticky en el header evita que el contenido
-   "suba" debajo del header y bloquee eventos de click */
 app-header {
-  position: sticky;
-  top: 0;
+  position: relative;
+  /* Changed from sticky */
+  flex-shrink: 0;
+  /* Prevents header from collapsing */
   z-index: 500;
-  /* Encima del contenido de página, debajo del sidebar */
 }
 
 /* --- Content Area --- */
@@ -52,9 +48,7 @@ app-header {
   padding: var(--page-padding-y, 1.5rem) var(--page-padding-x, 1.75rem);
   background-color: #f4f7fa;
   flex: 1;
-  /* SIN overflow de ningún tipo: no crear stacking context aquí */
-  position: relative;
-  z-index: 1;
+  overflow-y: auto;
 }
 
 /* =========================================
