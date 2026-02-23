@@ -29,33 +29,38 @@ export class HistorialVentasComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.cargarHistorial();
+        this.inicializarConTurnoActivo();
     }
 
-    cargarHistorial(): void {
+    inicializarConTurnoActivo(): void {
+        this.isLoading = true;
+        this.mensajeError = null;
+        this.salesService.obtenerTurnoActivoGlobal().subscribe({
+            next: (respuesta) => {
+                if (respuesta && respuesta.id) {
+                    this.cargarHistorial(respuesta.id);
+                } else {
+                    this.mensajeError = 'No hay una caja abierta en este momento. Por favor, abra un turno de caja para consultar las ventas.';
+                    this.historial = [];
+                    this.isLoading = false;
+                }
+            },
+            error: (err) => {
+                console.error('Error al obtener el turno activo global', err);
+                this.mensajeError = 'No hay una caja abierta en este momento. Por favor, abra un turno de caja para consultar las ventas.';
+                this.historial = [];
+                this.isLoading = false;
+            }
+        });
+    }
+
+    cargarHistorial(turnoId: number): void {
         this.isLoading = true;
         this.mensajeError = null;
         this.paginaActual = 1; // Reset to first page on load
 
-        // Intentar leer el turnoId desde localStorage (varias claves posibles)
-        const turnoIdRaw = localStorage.getItem('turnoId') || localStorage.getItem('idTurno');
-        let turnoId = turnoIdRaw ? parseInt(turnoIdRaw, 10) : 0;
-
-        // Fallback: Check if there's a caja session object
-        if (!turnoId) {
-            const cajaSession = localStorage.getItem('cajaSession');
-            if (cajaSession) {
-                try {
-                    const parsed = JSON.parse(cajaSession);
-                    turnoId = parsed.id || parsed.turnoId || parsed.idTurno || 0;
-                } catch (e) {
-                    console.error('Error parsing cajaSession', e);
-                }
-            }
-        }
-
         if (!turnoId || isNaN(turnoId) || turnoId <= 0) {
-            this.mensajeError = 'No hay un turno de caja abierto actualmente. Por favor, abra un turno de caja para consultar las ventas.';
+            this.mensajeError = 'ID de turno inválido.';
             this.historial = [];
             this.isLoading = false;
             return;
