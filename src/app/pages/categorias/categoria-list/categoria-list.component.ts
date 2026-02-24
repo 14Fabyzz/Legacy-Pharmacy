@@ -7,7 +7,8 @@ import { CategoriaService } from '../../../core/services/categoria.service';
 @Component({
     selector: 'app-categoria-list',
     standalone: false,
-    templateUrl: './categoria-list.component.html'
+    templateUrl: './categoria-list.component.html',
+    styleUrls: ['./categoria-list.component.css']
 })
 export class CategoriaListComponent implements OnInit, OnDestroy {
 

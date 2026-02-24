@@ -7,7 +7,8 @@ import { LaboratorioService } from '../../../core/services/laboratorio.service';
 @Component({
     selector: 'app-laboratorio-list',
     standalone: false,
-    templateUrl: './laboratorio-list.component.html'
+    templateUrl: './laboratorio-list.component.html',
+    styleUrls: ['./laboratorio-list.component.css']
 })
 export class LaboratorioListComponent implements OnInit, OnDestroy {
 
