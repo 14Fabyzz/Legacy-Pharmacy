@@ -2,10 +2,13 @@
     display: flex;
     gap: 32px;
     border-bottom: 2px solid #e2e8f0;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
     padding-bottom: 0;
-    overflow-x: auto;
-    /* Para móviles */
+    overflow: visible;
+    /* CRÍTICO: 'auto' corta el área clickeable de los tabs */
+    position: relative;
+    z-index: 10;
+    /* Encima del contenido de la página */
 }
 
 .tabs-nav a {
@@ -13,22 +16,25 @@
     font-size: 1.05rem;
     font-weight: 700;
     color: #64748b;
-    padding-bottom: 16px;
+    padding: 0 4px 16px 4px;
+    /* Padding lateral para ampliar área clickeable */
     border-bottom: 3px solid transparent;
-    /* Borde más grueso para el hover/active también si se desea, o solo active */
     transition: all 0.2s;
-    margin-bottom: -3px;
-    /* Ajuste para solapamiento con el borde de 3px */
+    margin-bottom: -2px;
     white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 8px;
+    cursor: pointer;
+    position: relative;
+    /* Asegura que el link esté sobre otros elementos */
+    z-index: 1;
 }
 
 .tabs-nav a:hover {
     color: #3b82f6;
-    background-color: #f8fafc;
-    /* Sutil feedback al hover */
+    background-color: rgba(59, 130, 246, 0.06);
+    /* Tinte azul sutil, sin caja blanca */
     border-radius: 4px 4px 0 0;
 }
 

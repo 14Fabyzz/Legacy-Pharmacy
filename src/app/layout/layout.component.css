@@ -1,34 +1,100 @@
-/* src/app/layout/layout.component.css */
+/* =============================================
+   Layout Component — Desktop-First Responsive
+   ============================================= */
+
 .layout-wrapper {
+  display: flex;
   position: relative;
+  height: 100vh;
+  overflow: hidden;
 }
 
+/* --- Sidebar --- */
 .sidebar {
-  position: fixed; /* O position: absolute; dependiendo del efecto deseado */
+  position: fixed;
   top: 0;
   left: 0;
-  width: 250px; /* Ancho del sidebar */
+  width: 250px;
+  /* Base: Monitor estándar */
   height: 100vh;
   z-index: 1000;
-  transition: all 0.3s ease-in-out; /* Animación suave */
+  transition: width 0.3s ease, left 0.3s ease;
+  flex-shrink: 0;
 }
 
+/* --- Main Content Area --- */
 .main-content-wrapper {
-  margin-left: 250px; /* Deja espacio para el sidebar */
-  transition: margin-left 0.3s ease-in-out; /* Animación suave */
+  margin-left: 250px;
+  /* Base: igual al ancho del sidebar */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
+  transition: margin-left 0.3s ease;
 }
 
+app-header {
+  position: relative;
+  /* Changed from sticky */
+  flex-shrink: 0;
+  /* Prevents header from collapsing */
+  z-index: 500;
+}
+
+/* --- Content Area --- */
 .content {
-  padding: 2rem;
+  padding: var(--page-padding-y, 1.5rem) var(--page-padding-x, 1.75rem);
   background-color: #f4f7fa;
-  min-height: calc(100vh - 60px); /* Altura del viewport menos la altura del header */
+  flex: 1;
+  overflow-y: auto;
 }
 
-/* ESTILOS CUANDO EL SIDEBAR ESTÁ COLAPSADO */
+/* =========================================
+   SIDEBAR COLAPSADO
+   ========================================= */
 .layout-wrapper.sidebar-collapsed .sidebar {
-  left: -250px; /* Esconde el sidebar fuera de la pantalla */
+  left: -250px;
 }
 
 .layout-wrapper.sidebar-collapsed .main-content-wrapper {
-  margin-left: 0; /* El contenido ocupa todo el ancho */
+  margin-left: 0;
+}
+
+/* =========================================
+   DESKTOP BREAKPOINTS
+   ========================================= */
+
+/* Laptop pequeña (1024px – 1280px):
+   Sidebar se estrecha un poco para dar más espacio a contenido */
+@media (max-width: 1280px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .main-content-wrapper {
+    margin-left: 220px;
+  }
+
+  .layout-wrapper.sidebar-collapsed .main-content-wrapper {
+    margin-left: 0;
+  }
+
+  .content {
+    padding: 1rem 1.25rem;
+  }
+}
+
+/* Monitor Full HD (1920px+):
+   Centra el layout y limita expansión excesiva */
+@media (min-width: 1920px) {
+  .layout-wrapper {
+    max-width: 2400px;
+    margin: 0 auto;
+  }
+
+  .content {
+    padding: 2rem 2.5rem;
+  }
 }

@@ -1,0 +1,124 @@
+<div class="chatbot-floating-container" *ngIf="!isVentasRoute">
+
+    <!-- Chat Window -->
+    <div class="chat-window" [class.open]="isOpen">
+        <!-- Modern Header -->
+        <div class="chat-header">
+            <div class="header-content">
+                <div class="header-info">
+                    <div class="bot-avatar">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="bot-details">
+                        <h3>FarmaChat</h3>
+                        <div class="status-container">
+                            <span class="status-dot"></span>
+                            <span class="status">Asistente en línea</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="close-btn" (click)="toggleChat()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="chat-messages" #chatWindow>
+            <!-- Welcome Card (Always First) -->
+            <div class="welcome-card" *ngIf="messages.length <= 1">
+                <div class="welcome-title">
+                    <i class="fas fa-hand-sparkles"></i>
+                    ¡Bienvenido a FarmaChat!
+                </div>
+                <div class="welcome-text">
+                    Soy tu asistente de inteligencia artificial. Puedo generar reportes, responder consultas sobre
+                    inventario y organizar información visualmente.
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn"
+                        (click)="sendQuickMessage('¿Qué productos tienen bajo nivel de stock?')">
+                        <i class="fas fa-exclamation-triangle"></i> Alertas de Stock
+                    </button>
+                    <button class="quick-action-btn"
+                        (click)="sendQuickMessage('Muestra los productos próximos a vencer en estado rojo')">
+                        <i class="fas fa-clock"></i> Próximos a Vencer
+                    </button>
+                    <button class="quick-action-btn"
+                        (click)="sendQuickMessage('Haz un reporte de cantidad de productos agrupados por proveedor')">
+                        <i class="fas fa-chart-pie"></i> Productos por Proveedor
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Messages Loop -->
+            <ng-container *ngFor="let msg of messages; let i = index">
+                <!-- Skip the first default text message in HTML since we use the welcome card instead -->
+                <div class="message-wrapper" [class.user-wrapper]="msg.role === 'user'"
+                    *ngIf="i > 0 || messages.length > 1">
+
+                    <!-- Avatar Avatar logic -->
+                    <div class="avatar" [class.user]="msg.role === 'user'" [class.bot]="msg.role === 'bot'">
+                        <i class="fas" [class.fa-user]="msg.role === 'user'" [class.fa-robot]="msg.role === 'bot'"></i>
+                    </div>
+
+                    <div class="message-content">
+                        <!-- Text Content -->
+                        <div *ngIf="msg.content" class="text-content">{{ msg.content }}</div>
+
+                        <!-- Table Content -->
+                        <div *ngIf="msg.type === 'table' && msg.tableData?.length" class="table-container">
+                            <table class="chat-table">
+                                <thead>
+                                    <tr>
+                                        <th *ngFor="let col of getTableHeaders(msg.tableData!)">{{ col }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of msg.tableData">
+                                        <td *ngFor="let col of getTableHeaders(msg.tableData!)">{{ row[col] }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Chart Content -->
+                        <div *ngIf="msg.type === 'chart' && msg.chartData" class="chart-container">
+                            <canvas baseChart [data]="msg.chartData" [options]="msg.chartOptions"
+                                [type]="msg.chartType || 'bar'">
+                            </canvas>
+                        </div>
+                    </div>
+                </div> <!-- /message-wrapper -->
+            </ng-container>
+
+            <!-- Typing Indicator -->
+            <div *ngIf="isTyping" class="message-wrapper bot-wrapper">
+                <div class="avatar bot"><i class="fas fa-robot"></i></div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /chat-messages -->
+
+        <!-- Modern Input Wrapper -->
+        <div class="chat-input-wrapper">
+            <div class="input-container">
+                <input type="text" [(ngModel)]="userInput" (keydown.enter)="sendMessage()"
+                    placeholder="Escribe tu pregunta aquí..." autocomplete="off" [disabled]="isTyping"
+                    class="chat-input">
+                <button class="send-btn" (click)="sendMessage()" [disabled]="!userInput.trim() || isTyping">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Button -->
+    <button class="floating-btn" (click)="toggleChat()" [class.hidden]="isOpen">
+        <i class="fas fa-comment-dots"></i>
+    </button>
+</div>

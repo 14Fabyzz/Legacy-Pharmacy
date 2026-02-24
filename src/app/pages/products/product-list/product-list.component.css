@@ -838,3 +838,140 @@
     cursor: not-allowed;
     background: #f8fafc;
 }
+
+/* ============================================
+   PRODUCT LIST — Desktop Responsive Breakpoints
+   Solo escritorio: Laptop 1024px → UltraWide 1920px+
+   ============================================ */
+
+/* --- Contenedor principal fluido --- */
+.page-container {
+    padding: var(--page-padding-y, 1.25rem) var(--page-padding-x, 1.25rem);
+}
+
+/* --- Header flexible: no se rompe en laptops --- */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Se adapta si la ventana se estrecha */
+    gap: 0.75rem;
+    width: 100%;
+}
+
+/* --- Tabla con scroll horizontal seguro en laptops pequeñas --- */
+.product-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* ─── Laptop pequeña (1024px – 1280px) ────────────────
+   Reducir tamaños para que todo quepa sin scroll */
+@media (max-width: 1280px) {
+    .page-container {
+        padding: 1rem 1.25rem;
+    }
+
+    /* Celdas más compactas */
+    .custom-table td {
+        padding: 12px 10px;
+    }
+
+    .custom-table thead th {
+        padding: 0 10px 8px;
+        font-size: 0.7rem;
+    }
+
+    /* Imagen del producto más pequeña */
+    .product-icon-circle {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+    }
+
+    .product-img-wrapper {
+        width: 55px;
+        height: 55px;
+    }
+
+    /* Nombre de producto más compacto */
+    .product-name-text {
+        font-size: 0.9rem;
+    }
+
+    .product-subtext {
+        font-size: 0.75rem;
+    }
+
+    /* Precio: reducir tamaño de fuente */
+    .price-cell {
+        font-size: 0.95rem !important;
+    }
+
+    /* Buscador: menor ancho para no empujar */
+    .search-input {
+        font-size: 0.9rem;
+        padding: 10px 14px;
+    }
+}
+
+/* ─── Monitor estándar (1366px – 1600px) ────────────────
+   Tamaños base del diseño — sin cambios grandes */
+@media (min-width: 1366px) and (max-width: 1600px) {
+    .custom-table td {
+        padding: 14px 16px;
+    }
+}
+
+/* ─── Monitor grande (1600px+) ────────────────────────── */
+@media (min-width: 1600px) {
+    .page-container {
+        padding: 1.75rem 2rem;
+    }
+
+    .product-icon-circle {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+    }
+
+    .product-img-wrapper {
+        width: 80px;
+        height: 80px;
+    }
+
+    /* Buscador más generoso */
+    .search-input {
+        max-width: 600px;
+        font-size: 1rem;
+    }
+
+    /* Celdas con más respiro */
+    .custom-table td {
+        padding: 18px 16px;
+    }
+}
+
+/* ─── Full HD / Ultra-wide (1920px+) ─────────────────── */
+@media (min-width: 1920px) {
+    .page-container {
+        padding: 2rem 2.5rem;
+        max-width: 2000px;
+        /* Evita que el contenido quede demasiado disperso */
+    }
+
+    .search-input {
+        max-width: 700px;
+    }
+
+    .custom-table td {
+        padding: 20px 18px;
+    }
+
+    .product-icon-circle {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+    }
+}

@@ -60,5 +60,22 @@ export class SalesService {
         return this.http.get<any>(`http://localhost:8080/api/inventario/productos/${id}/stock?sucursalId=${sucursalId}`);
     }
 
+    /**
+     * Consulta el historial de ventas filtrado por turno.
+     * Endpoint: GET /api/ventas/turno/{turnoId} (el gateway añade v1)
+     */
+    obtenerHistorialVentas(turnoId: number): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/turno/${turnoId}`);
+    }
+
+    /**
+     * Consulta el turno abierto actualmente de manera global.
+     */
+    obtenerTurnoActivoGlobal(): Observable<any> {
+        // Ajustando la ruta base para que coincida con el controlador si es necesario
+        // Según lo solicitado: GET /api/ventas/caja/turno-activo (Gateway reescribe a v1 internamente)
+        return this.http.get<any>('http://localhost:8080/api/ventas/caja/turno-activo');
+    }
+
     // TODO: Agregar métodos de caja y clientes según se necesiten
 }

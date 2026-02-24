@@ -52,7 +52,16 @@ export class SidebarComponent {
         { path: '/app/laboratorios', title: 'Laboratorios' }
       ]
     },
-    { path: '/app/ventas', title: 'Ventas', active: false, subMenu: [] },
+    {
+      path: '/app/ventas',
+      title: 'Ventas',
+      active: false,
+      subMenu: [
+        { path: '/app/ventas/nueva', title: 'Nueva Venta (POS)' },
+        { path: '/app/ventas/historial', title: 'Historial de Ventas' }
+      ]
+    },
+    { path: '/app/cotizaciones', title: 'Cotizaciones', active: false, subMenu: [] },
     { path: '/app/movimientos', title: 'Movimientos en cajas', active: false, subMenu: [] },
     { path: '/app/devoluciones', title: 'Devoluciones', active: false, subMenu: [] },
 
