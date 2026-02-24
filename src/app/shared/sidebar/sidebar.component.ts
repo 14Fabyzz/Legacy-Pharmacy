@@ -36,9 +36,6 @@ export class SidebarComponent {
         { path: '/app/caja/estado', title: 'Estado de Caja' }
       ]
     },
-    { path: '/app/categorias', title: 'Categorías', active: false, subMenu: [] },
-    { path: '/app/proveedores', title: 'Proveedores', active: false, subMenu: [] },
-    { path: '/app/compras', title: 'Compras', active: false, subMenu: [] },
     { path: '/app/users', title: 'Usuarios', active: false, subMenu: [] },
     { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },
     {
@@ -50,11 +47,12 @@ export class SidebarComponent {
         { path: '/app/productos/almacen', title: 'Productos en almacen' },
         { path: '/app/productos/vencimientos', title: 'Centro alertas inventario' },
         { path: '/app/productos/consulta', title: 'Buscar producto' },
-        { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' }
+        { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' },
+        { path: '/app/categorias', title: 'Categorías' },
+        { path: '/app/laboratorios', title: 'Laboratorios' }
       ]
     },
     { path: '/app/ventas', title: 'Ventas', active: false, subMenu: [] },
-    { path: '/app/cotizaciones', title: 'Cotizaciones', active: false, subMenu: [] },
     { path: '/app/movimientos', title: 'Movimientos en cajas', active: false, subMenu: [] },
     { path: '/app/devoluciones', title: 'Devoluciones', active: false, subMenu: [] },
 

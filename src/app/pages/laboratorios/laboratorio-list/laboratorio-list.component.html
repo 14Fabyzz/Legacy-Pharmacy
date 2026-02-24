@@ -1,0 +1,95 @@
+<div class="page-container">
+    <div class="page-header">
+        <div class="header-info">
+            <h2>LABORATORIOS</h2>
+            <p>Gestiona los laboratorios y fabricantes del sistema</p>
+        </div>
+        <button class="btn-primary" (click)="abrirFormulario()">
+            <span class="btn-icon">+</span>
+            Nuevo Laboratorio
+        </button>
+    </div>
+
+    <app-tabs-nav></app-tabs-nav>
+
+    <!-- LOADING -->
+    <div class="loading-container" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Cargando laboratorios...</p>
+    </div>
+
+    <!-- TABLA -->
+    <div class="table-card" *ngIf="!loading">
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" *ngIf="laboratorios.length === 0">
+            <span class="empty-icon">📭</span>
+            <p>No hay laboratorios registrados aún.</p>
+            <button class="btn-primary" (click)="abrirFormulario()">+ Crear primer laboratorio</button>
+        </div>
+
+        <table class="data-table" *ngIf="laboratorios.length > 0">
+            <thead>
+                <tr>
+                    <th class="col-id">#</th>
+                    <th>Nombre</th>
+                    <th class="col-estado">Estado</th>
+                    <th class="col-acciones">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let lab of laboratorios" class="table-row">
+                    <td class="col-id text-muted">{{ lab.id }}</td>
+                    <td class="col-nombre">
+                        <span class="nombre-label">{{ lab.nombre }}</span>
+                    </td>
+                    <td class="col-estado">
+                        <span class="badge" [ngClass]="lab.activo ? 'badge-active' : 'badge-inactive'">
+                            <span class="badge-dot"></span>
+                            {{ lab.activo ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </td>
+                    <td class="col-acciones">
+                        <div class="action-buttons">
+                            <!-- Editar -->
+                            <button class="btn-action btn-edit" (click)="abrirFormulario(lab)"
+                                title="Editar laboratorio">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                            </button>
+                            <!-- Cambiar Estado -->
+                            <button class="btn-action" [ngClass]="lab.activo ? 'btn-deactivate' : 'btn-activate'"
+                                (click)="toggleEstado(lab)" [title]="lab.activo ? 'Inactivar' : 'Activar'">
+                                <svg *ngIf="lab.activo" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10" />
+                                </svg>
+                                <svg *ngIf="!lab.activo" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2v10" />
+                                    <path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="table-footer" *ngIf="laboratorios.length > 0">
+            <span class="total-label">Total: <strong>{{ laboratorios.length }}</strong> laboratorios</span>
+            <span class="active-count">
+                Activos: <strong class="text-green">{{ activos }}</strong>
+                &nbsp;|&nbsp;
+                Inactivos: <strong class="text-orange">{{ laboratorios.length - activos }}</strong>
+            </span>
+        </div>
+    </div>
+
+</div>
