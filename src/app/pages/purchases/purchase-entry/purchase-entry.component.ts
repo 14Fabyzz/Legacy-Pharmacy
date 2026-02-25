@@ -2,6 +2,8 @@ import { Component, OnInit, ElementRef, ViewChild, Inject, PLATFORM_ID } from '@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductService } from '../../products/product.service';
 import { Producto } from '../../../core/models/product.model';
 import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
@@ -36,6 +38,7 @@ export class PurchaseEntryComponent implements OnInit {
   sugerencias: any[] = [];
   productoSeleccionado: any | null = null;
   terminoBusqueda: string = ''; // Modelo para el input
+  buscadorSubject = new Subject<string>();
 
   totalCompra = 0;
 
@@ -75,6 +78,14 @@ export class PurchaseEntryComponent implements OnInit {
       }
     });
 
+    // 2. Manejo reactivo de búsqueda (Dropdown)
+    this.buscadorSubject.pipe(
+      debounceTime(250),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.filtrarSugerencias(term);
+    });
+
     // --- LOGIC: RESTORE DRAFT ---
     this.restoreDraft();
   }
@@ -83,45 +94,59 @@ export class PurchaseEntryComponent implements OnInit {
     return isPlatformBrowser(this.platformId);
   }
 
-  /**
-   * Lógica Unificada de Búsqueda
-   * - Evento ENTER: Intenta Match Exacto (Escáner).
-   * - Evento Texto: Filtra sugerencias (Teclado).
-   */
-  /**
-   * Lógica de Búsqueda (A prueba de errores)
-   */
-  buscarProducto(termino: string) {
+  onSearchChange(term: string) {
+    this.buscadorSubject.next(term);
+  }
+
+  filtrarSugerencias(termino: string) {
+    if (!termino) {
+      this.sugerencias = [];
+      return;
+    }
+    const term = termino.toString().toLowerCase().trim();
+    this.sugerencias = this.allProducts.filter(p => {
+      const nombre = p.nombreComercial ? p.nombreComercial.toString().toLowerCase() : '';
+      const codeInterno = p.codigoInterno ? p.codigoInterno.toString().toLowerCase() : '';
+      const codeBarra = p.codigoBarras ? p.codigoBarras.toString().toLowerCase() : '';
+      return nombre.includes(term) || codeInterno.includes(term) || codeBarra.includes(term);
+    }).slice(0, 15);
+  }
+
+  onEnterKey(termino: string) {
     if (!termino) return;
     const term = termino.toString().toLowerCase().trim();
 
-    console.log('🔍 Buscando:', term);
+    console.log('🔍 Enter presionado / Escáner:', term);
 
-    const encontrado = this.allProducts.find(p => {
-      // Validar que las propiedades existan antes de comparar para evitar errores
+    // 1. Intentar coincidencia EXACTA estricta
+    const exactMatch = this.allProducts.find(p => {
       const codeBarra = p.codigoBarras ? p.codigoBarras.toString().toLowerCase() : '';
       const codeInterno = p.codigoInterno ? p.codigoInterno.toString().toLowerCase() : '';
       const nombre = p.nombreComercial ? p.nombreComercial.toString().toLowerCase() : '';
-
-      // Coincidencia exacta (prioridad escáner) o parcial en nombre
-      return codeBarra === term || codeInterno === term || nombre.includes(term);
+      return codeBarra === term || codeInterno === term || nombre === term;
     });
 
-    console.log('🔍 Resultado:', encontrado);
+    if (exactMatch) {
+      this.seleccionarProducto(exactMatch);
+      return;
+    }
 
-    if (encontrado) {
-      this.seleccionarProducto(encontrado);
-    } else {
-      // Si no es exacto, filtrar sugerencias (solo si es texto manual)
-      this.sugerencias = this.allProducts.filter(p => {
-        const nombre = p.nombreComercial ? p.nombreComercial.toString().toLowerCase() : '';
-        const codeInterno = p.codigoInterno ? p.codigoInterno.toString().toLowerCase() : '';
-        return nombre.includes(term) || codeInterno.includes(term);
-      }).slice(0, 10);
+    // 2. Si no hay coincidencia exacta pero tenemos sugerencias, tomar la primera asumiendo que es la que quiere
+    if (this.sugerencias.length > 0) {
+      this.seleccionarProducto(this.sugerencias[0]);
+      return;
+    }
 
-      if (this.sugerencias.length === 0) {
-        console.log('⚠️ Sin coincidencias para:', termino);
-      }
+    // 3. Fallback: buscar el primero que contenga el texto (comportamiento original parcial)
+    const partialMatch = this.allProducts.find(p => {
+      const codeBarra = p.codigoBarras ? p.codigoBarras.toString().toLowerCase() : '';
+      const codeInterno = p.codigoInterno ? p.codigoInterno.toString().toLowerCase() : '';
+      const nombre = p.nombreComercial ? p.nombreComercial.toString().toLowerCase() : '';
+      return codeBarra.includes(term) || codeInterno.includes(term) || nombre.includes(term);
+    });
+
+    if (partialMatch) {
+      this.seleccionarProducto(partialMatch);
     }
   }
 
@@ -134,6 +159,7 @@ export class PurchaseEntryComponent implements OnInit {
       costoCompra: 0
     });
     this.terminoBusqueda = ''; // Clear ngModel
+    this.buscadorSubject.next(''); // Reset subject
 
     // Focus en Lote
     if (this.isBrowser()) {
@@ -146,7 +172,7 @@ export class PurchaseEntryComponent implements OnInit {
 
   // Escáner Input (Line 34 HTML) call this
   onBarcodeScan(event: any) {
-    this.buscarProducto(event.target.value);
+    this.onEnterKey(event.target.value);
   }
 
   // --- ESCÁNER ---
