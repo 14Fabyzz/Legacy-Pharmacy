@@ -184,6 +184,20 @@
           <input type="checkbox" id="refrigerado" formControlName="refrigerado">
           <label for="refrigerado">❄️ Requiere Refrigeración</label>
         </div>
+
+        <div class="custom-switch-container">
+          <label class="custom-switch">
+            <input type="checkbox" formControlName="estadoActivo">
+            <span class="switch-slider"></span>
+          </label>
+          <div class="switch-text-container">
+            <span class="switch-main-label">Estado del Producto</span>
+            <span class="switch-label"
+              [ngClass]="{'text-success font-weight-bold': productForm.get('estadoActivo')?.value, 'text-muted': !productForm.get('estadoActivo')?.value}">
+              {{ productForm.get('estadoActivo')?.value ? '✅ Producto Activo' : '❌ Producto Inactivo' }}
+            </span>
+          </div>
+        </div>
       </div>
 
       <!-- Vista Previa de Precios Calculados -->

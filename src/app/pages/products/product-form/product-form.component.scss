@@ -389,3 +389,97 @@
         }
     }
 }
+
+/* ==========================================================================
+   MODERN TOGGLE SWITCH (ESTADO PRODUCTO)
+   ========================================================================== */
+.custom-switch-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.custom-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    margin: 0;
+}
+
+.custom-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e2e8f0;
+    /* Gris claro inactivo */
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 34px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Sombra 3D elegante */
+}
+
+/* Estado Activo */
+.custom-switch input:checked+.switch-slider {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    /* Verde moderno */
+}
+
+.custom-switch input:focus+.switch-slider {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.custom-switch input:checked+.switch-slider:before {
+    transform: translateX(22px);
+}
+
+/* Textos asociados al switch */
+.switch-text-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.switch-main-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    margin: 0 0 2px 0;
+}
+
+.switch-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.text-success {
+    color: #059669 !important;
+}
+
+.text-muted {
+    color: #64748b !important;
+}
