@@ -18,6 +18,11 @@ import { AuthService } from '../../core/services/auth.service';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   loginError: string | null = null;
+  showPassword = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   constructor(
     private fb: FormBuilder,
