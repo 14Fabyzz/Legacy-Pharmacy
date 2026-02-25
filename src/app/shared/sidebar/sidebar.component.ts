@@ -72,7 +72,12 @@ export class SidebarComponent {
     },
 
 
-    { path: '/app/reportes', title: 'Reportes', active: false, subMenu: [] },
+    {
+      path: '/app/reportes', title: 'Reportes', active: false,
+      subMenu: [
+        { path: '/app/reportes/ventas-consolidado', title: 'Ventas Consolidadas' }
+      ]
+    },
     { path: '/app/configuraciones', title: 'Configuraciones', active: false, subMenu: [] }
   ];
 
