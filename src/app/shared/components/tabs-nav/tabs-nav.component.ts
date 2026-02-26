@@ -15,6 +15,8 @@ export class TabsNavComponent {
         { label: 'CONSULTA', link: '/app/productos/consulta', icon: '🔍' },
         { label: 'MONITOR ALERTAS', link: '/app/productos/vencimientos', icon: '🚨' },
         { label: 'ENTRADAS', link: '/app/productos/entrada-mercancia', icon: '🚚' },
-        { label: 'NUEVO', link: '/app/productos/nuevo', icon: '✨' }
+        { label: 'NUEVO', link: '/app/productos/nuevo', icon: '✨' },
+        { label: 'CATEGORÍAS', link: '/app/categorias', icon: '🏷️' },
+        { label: 'LABORATORIOS', link: '/app/laboratorios', icon: '🔬' }
     ];
 }

@@ -67,7 +67,7 @@ export class ProductFormComponent implements OnInit {
       // Banderas de control (Checkboxes)
       esControlado: [false],
       refrigerado: [false],
-      estado: ['ACTIVO']
+      estadoActivo: [true] // [NUEVO] Switch visual. El API recibe "estado" (ACTIVO/INACTIVO)
     });
 
     // Cargar Catálogos y luego datos del producto si es edición
@@ -275,7 +275,7 @@ export class ProductFormComponent implements OnInit {
           // Banderas
           esControlado: data.esControlado,
           refrigerado: data.refrigerado,
-          estado: data.estado || 'ACTIVO'
+          estadoActivo: data.estado !== 'INACTIVO' // Por defecto true, a menos que venga INACTIVO explicitamente
         };
 
         console.log('🛠️ [ProductForm] Datos transformados para patchValue:', formData);
@@ -354,7 +354,10 @@ export class ProductFormComponent implements OnInit {
 
       // Fraccionamiento
       unidadesPorCaja: Number(formValue.unidadesPorCaja),
-      unidadesPorBlister: formValue.unidadesPorBlister ? Number(formValue.unidadesPorBlister) : undefined
+      unidadesPorBlister: formValue.unidadesPorBlister ? Number(formValue.unidadesPorBlister) : undefined,
+
+      // Estado
+      estado: formValue.estadoActivo ? 'ACTIVO' : 'INACTIVO'
     };
 
     // Ajuste final para SERVICIOS (por seguridad duplicada)
@@ -431,7 +434,7 @@ export class ProductFormComponent implements OnInit {
       stockActual: 0,
       esControlado: false,
       refrigerado: false,
-      estado: 'ACTIVO',
+      estadoActivo: true,
       esFraccionable: false,
       unidadesPorCaja: 1
     });

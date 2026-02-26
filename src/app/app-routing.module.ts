@@ -46,10 +46,21 @@ const routes: Routes = [
         loadChildren: () => import('./pages/clientes/clientes.module').then(m => m.ClientesModule)
       },
       {
-        path: 'kardex', // Nuevo módulo para /app/kardex
+        path: 'clientes',
+        loadChildren: () => import('./pages/clientes/clientes.module').then(m => m.ClientesModule)
+      },
+      {
+        path: 'kardex',
         loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsModule)
       },
-      // ... tus otras rutas ...
+      {
+        path: 'categorias',
+        loadChildren: () => import('./pages/categorias/categorias.module').then(m => m.CategoriasModule)
+      },
+      {
+        path: 'laboratorios',
+        loadChildren: () => import('./pages/laboratorios/laboratorios.module').then(m => m.LaboratoriosModule)
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
