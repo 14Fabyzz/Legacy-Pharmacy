@@ -42,6 +42,10 @@ const routes: Routes = [
         loadChildren: () => import('./pages/users/users.module').then(m => m.UsersModule)
       },
       {
+        path: 'clientes',
+        loadChildren: () => import('./pages/clientes/clientes.module').then(m => m.ClientesModule)
+      },
+      {
         path: 'kardex', // Nuevo módulo para /app/kardex
         loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsModule)
       },
