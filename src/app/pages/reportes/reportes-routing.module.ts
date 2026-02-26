@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ReportesComponent } from './reportes.component';
 import { VentasConsolidadoComponent } from './ventas-consolidado/ventas-consolidado.component';
+import { TopRotacionComponent } from './top-rotacion/top-rotacion.component';
 
 const routes: Routes = [
     {
@@ -9,6 +10,7 @@ const routes: Routes = [
         component: ReportesComponent,
         children: [
             { path: 'ventas-consolidado', component: VentasConsolidadoComponent },
+            { path: 'top-rotacion', component: TopRotacionComponent },
             { path: '', redirectTo: 'ventas-consolidado', pathMatch: 'full' }
         ]
     }

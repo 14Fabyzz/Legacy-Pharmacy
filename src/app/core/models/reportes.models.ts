@@ -28,3 +28,10 @@ export interface ReporteVentasFiltros {
     periodicidad: Periodicidad;
     sucursalId?: number;
 }
+
+export interface TopProductoResponse {
+    nombreProducto: string;
+    presentacion: string;
+    totalVendido: number;
+    ingresoGenerado: number;
+}
