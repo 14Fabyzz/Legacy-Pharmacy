@@ -7,12 +7,14 @@ import { ReportesRoutingModule } from './reportes-routing.module';
 import { ReportesComponent } from './reportes.component';
 import { VentasConsolidadoComponent } from './ventas-consolidado/ventas-consolidado.component';
 import { TopRotacionComponent } from './top-rotacion/top-rotacion.component';
+import { ConsolidadoPagosComponent } from './consolidado-pagos/consolidado-pagos.component';
 
 @NgModule({
     declarations: [
         ReportesComponent,
         VentasConsolidadoComponent,
-        TopRotacionComponent
+        TopRotacionComponent,
+        ConsolidadoPagosComponent
     ],
     imports: [
         CommonModule,

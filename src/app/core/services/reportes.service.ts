@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ReporteVentasConsolidadasDTO, ReporteVentasFiltros, TopProductoResponse } from '../models/reportes.models';
+import { ConsolidadoPagosResponse, ReporteVentasConsolidadasDTO, ReporteVentasFiltros, TopProductoResponse } from '../models/reportes.models';
 
 @Injectable({
     providedIn: 'root'
@@ -50,6 +50,26 @@ export class ReportesService {
 
         return this.http.get<TopProductoResponse[]>(
             `${this.apiUrl}/ventas/top-rotacion`,
+            { params }
+        );
+    }
+
+    /**
+     * Obtiene el reporte consolidado de pagos.
+     * GET /api/v1/reportes/ventas/consolidado-pagos
+     * Requiere: fechaInicio, fechaFin. Opcional: sucursalId
+     */
+    getConsolidadoPagos(fechaInicio: string, fechaFin: string, sucursalId?: number): Observable<ConsolidadoPagosResponse> {
+        let params = new HttpParams()
+            .set('fechaInicio', fechaInicio)
+            .set('fechaFin', fechaFin);
+
+        if (sucursalId) {
+            params = params.set('sucursalId', sucursalId.toString());
+        }
+
+        return this.http.get<ConsolidadoPagosResponse>(
+            `${this.apiUrl}/ventas/consolidado-pagos`,
             { params }
         );
     }
