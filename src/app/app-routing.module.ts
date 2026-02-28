@@ -46,6 +46,10 @@ const routes: Routes = [
         loadChildren: () => import('./pages/reportes/reportes.module').then(m => m.ReportesModule)
       },
       {
+        path: 'clientes',
+        loadChildren: () => import('./pages/clientes/clientes.module').then(m => m.ClientesModule)
+      },
+      {
         path: 'kardex',
         loadChildren: () => import('./pages/products/products.module').then(m => m.ProductsModule)
       },

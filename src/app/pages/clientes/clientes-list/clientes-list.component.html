@@ -1,0 +1,117 @@
+<div class="users-container">
+    <div class="header-actions">
+        <h2>Gestión de Clientes</h2>
+        <a routerLink="nuevo" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Nuevo Cliente
+        </a>
+    </div>
+
+    <div class="search-header-container">
+        <div class="search-box modern-search">
+            <i class="fa fa-search search-icon"></i>
+            <input type="text" class="form-control" placeholder="Buscar clientes por nombre, identificación o correo..."
+                (input)="onSearch($event)">
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="col-id">Id</th>
+                        <th class="col-cliente">Cliente</th>
+                        <th class="col-tipo">Tipo</th>
+                        <th class="col-estado">Estado</th>
+                        <th class="col-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="loading">
+                        <td colspan="5" class="text-center">Cargando clientes...</td>
+                    </tr>
+                    <tr *ngIf="!loading && clientes.length === 0">
+                        <td colspan="5" class="text-center">No hay clientes registrados o que coincidan con la búsqueda.
+                        </td>
+                    </tr>
+                    <tr *ngFor="let cliente of clientes">
+                        <td class="col-id" [title]="cliente.id">{{ cliente.id }}</td>
+                        <td class="col-cliente" [title]="cliente.nombre + ' ' + cliente.apellido">
+                            {{ cliente.nombre }} {{ cliente.apellido }}
+                        </td>
+                        <td class="col-tipo">
+                            <span class="badge" [ngClass]="{'badge-user': true}">
+                                {{ cliente.tipoCliente || 'REGULAR' }}
+                            </span>
+                        </td>
+                        <td class="col-estado">
+                            <span class="status-indicator"
+                                [ngClass]="{'active': cliente.estado === 'ACTIVO' || cliente.activo, 'inactive': cliente.estado !== 'ACTIVO' && !cliente.activo}">
+                                {{ cliente.estado || (cliente.activo ? 'ACTIVO' : 'INACTIVO') }}
+                            </span>
+                        </td>
+                        <td class="col-acciones actions">
+                            <!-- Botón Detalles -->
+                            <button class="btn-icon" (click)="abrirDetalles(cliente)" title="Ver Detalles">
+                                👁️
+                            </button>
+
+                            <!-- Botón Editar -->
+                            <button class="btn-icon" [routerLink]="['editar', cliente.id]"
+                                [disabled]="isConsumidorFinal(cliente)"
+                                [title]="isConsumidorFinal(cliente) ? 'Cliente del sistema no modificable' : 'Editar'">
+                                ✏️
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalles Cliente -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="cerrarDetalles()">
+    <div class="modal-content card-profile" (click)="$event.stopPropagation()">
+
+        <!-- Botón cerrar (X) en la esquina -->
+        <button class="btn-close-modal" (click)="cerrarDetalles()">&times;</button>
+
+        <div class="profile-header text-center">
+            <div class="profile-avatar">
+                <i class="fa fa-user-circle" style="font-size: 3rem; color: #a0aec0;"></i>
+            </div>
+            <h3 class="profile-name">{{ clienteSeleccionado?.nombre }} {{ clienteSeleccionado?.apellido }}</h3>
+
+            <div class="profile-badges">
+                <span class="badge badge-user">{{ clienteSeleccionado?.tipoCliente || 'REGULAR' }}</span>
+                <span class="status-indicator"
+                    [ngClass]="{'active': clienteSeleccionado?.estado === 'ACTIVO' || clienteSeleccionado?.activo, 'inactive': clienteSeleccionado?.estado !== 'ACTIVO' && !clienteSeleccionado?.activo}">
+                    {{ clienteSeleccionado?.estado || (clienteSeleccionado?.activo ? 'ACTIVO' : 'INACTIVO') }}
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-body grid-details">
+            <div class="detail-item">
+                <span class="detail-label">Identificación</span>
+                <span class="detail-value">
+                    {{ clienteSeleccionado?.numeroIdentificacion || clienteSeleccionado?.identificacion ||
+                    clienteSeleccionado?.cedula || clienteSeleccionado?.numeroDocumento || 'No registrada' }}
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Teléfono</span>
+                <span class="detail-value">{{ clienteSeleccionado?.telefono || 'No registrado' }}</span>
+            </div>
+            <div class="detail-item full-width">
+                <span class="detail-label">Correo Electrónico</span>
+                <span class="detail-value">{{ clienteSeleccionado?.email || 'No registrado' }}</span>
+            </div>
+        </div>
+
+        <div class="profile-footer text-center mt-3">
+            <button class="btn btn-secondary w-100" (click)="cerrarDetalles()">Cerrar</button>
+        </div>
+    </div>
+</div>
