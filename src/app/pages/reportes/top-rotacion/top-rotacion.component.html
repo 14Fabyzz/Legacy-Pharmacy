@@ -1,33 +1,61 @@
 <div class="reportes-container">
   <div class="header-section">
     <h1>Productos Mayor Rotación (Top Moving)</h1>
-    <p class="subtitle">Ranking de productos más vendidos y sus ingresos generados</p>
+    <p class="subtitle">
+      Ranking de productos más vendidos y sus ingresos generados
+    </p>
   </div>
 
   <div class="filters-card">
     <form [formGroup]="filtroForm" (ngSubmit)="generarReporte()">
       <div class="filters-grid">
         <div class="filter-group">
-          <label for="fechaInicio">Fecha Inicio <span class="required">*</span></label>
-          <input type="date" id="fechaInicio" formControlName="fechaInicio" class="form-control"
-                 [class.is-invalid]="filtroForm.get('fechaInicio')?.invalid && filtroForm.get('fechaInicio')?.touched">
+          <label for="fechaInicio"
+            >Fecha Inicio <span class="required">*</span></label
+          >
+          <input
+            type="date"
+            id="fechaInicio"
+            formControlName="fechaInicio"
+            class="form-control"
+            [class.is-invalid]="
+              filtroForm.get('fechaInicio')?.invalid &&
+              filtroForm.get('fechaInicio')?.touched
+            "
+          />
         </div>
 
         <div class="filter-group">
-          <label for="fechaFin">Fecha Fin <span class="required">*</span></label>
-          <input type="date" id="fechaFin" formControlName="fechaFin" class="form-control"
-                 [class.is-invalid]="filtroForm.get('fechaFin')?.invalid && filtroForm.get('fechaFin')?.touched">
+          <label for="fechaFin"
+            >Fecha Fin <span class="required">*</span></label
+          >
+          <input
+            type="date"
+            id="fechaFin"
+            formControlName="fechaFin"
+            class="form-control"
+            [class.is-invalid]="
+              filtroForm.get('fechaFin')?.invalid &&
+              filtroForm.get('fechaFin')?.touched
+            "
+          />
         </div>
 
         <div class="filter-group">
           <label for="limite">Límite Mostrar</label>
           <select id="limite" formControlName="limite" class="form-control">
-            <option *ngFor="let opt of opcionesLimite" [ngValue]="opt.value">{{ opt.label }}</option>
+            <option *ngFor="let opt of opcionesLimite" [ngValue]="opt.value">
+              {{ opt.label }}
+            </option>
           </select>
         </div>
 
         <div class="filter-actions">
-          <button type="submit" class="btn-primary-action" [disabled]="isLoading">
+          <button
+            type="submit"
+            class="btn-primary-action"
+            [disabled]="isLoading"
+          >
             <i class="fas fa-search" *ngIf="!isLoading"></i>
             <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
             Generar Reporte
@@ -42,9 +70,17 @@
   </div>
 
   <div class="results-card" *ngIf="hasSearched && !isLoading">
+    <div class="alert alert-secondary summary-alert" *ngIf="periodoConsultado">
+      Mostrando resultados desde el
+      <strong>{{ periodoConsultado.inicio }}</strong> hasta el
+      <strong>{{ periodoConsultado.fin }}</strong>
+    </div>
+
     <div class="results-header">
       <h3>Ranking de Productos</h3>
-      <span class="badge" *ngIf="topProductos.length > 0">{{ topProductos.length }} Resultados</span>
+      <span class="badge" *ngIf="topProductos.length > 0"
+        >{{ topProductos.length }} Resultados</span
+      >
     </div>
 
     <div class="table-responsive" *ngIf="topProductos.length > 0; else noData">
@@ -62,9 +98,17 @@
           <tr *ngFor="let prod of topProductos; let i = index">
             <td class="text-center font-weight-bold">{{ i + 1 }}</td>
             <td class="product-name">{{ prod.nombreProducto }}</td>
-            <td><span class="badge badge-presentation">{{ prod.presentacion }}</span></td>
-            <td class="text-right num-value highlight-num">{{ prod.totalVendido | number }}</td>
-            <td class="text-right num-value income-num">{{ prod.ingresoGenerado | currency:'USD':'symbol':'1.0-2' }}</td>
+            <td>
+              <span class="badge badge-presentation">{{
+                prod.presentacion
+              }}</span>
+            </td>
+            <td class="text-right num-value highlight-num">
+              {{ prod.totalVendido | number }}
+            </td>
+            <td class="text-right num-value income-num">
+              {{ prod.ingresoGenerado | currency: "USD" : "symbol" : "1.0-2" }}
+            </td>
           </tr>
         </tbody>
       </table>

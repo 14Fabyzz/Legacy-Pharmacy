@@ -1,0 +1,24 @@
+<div class="reportes-dashboard">
+  <div class="dashboard-header">
+    <h2>Reportes</h2>
+    <p>Selecciona el tipo de reporte que deseas visualizar.</p>
+  </div>
+
+  <div class="cards-grid">
+    <div
+      class="reporte-card"
+      *ngFor="let opcion of opcionesReportes"
+      [routerLink]="opcion.ruta"
+    >
+      <div class="icon-wrapper" [innerHTML]="opcion.svgIcon">
+      </div>
+      <div class="card-content">
+        <h3>{{ opcion.titulo }}</h3>
+        <p>{{ opcion.descripcion }}</p>
+      </div>
+      <div class="card-action">
+        <span>Ver Reporte <i class="bi bi-arrow-right-short"></i></span>
+      </div>
+    </div>
+  </div>
+</div>
