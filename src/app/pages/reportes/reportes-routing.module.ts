@@ -8,14 +8,11 @@ import { ConsolidadoPagosComponent } from './consolidado-pagos/consolidado-pagos
 const routes: Routes = [
     {
         path: '',
-        component: ReportesComponent,
-        children: [
-            { path: 'ventas-consolidado', component: VentasConsolidadoComponent },
-            { path: 'top-rotacion', component: TopRotacionComponent },
-            { path: 'consolidado-pagos', component: ConsolidadoPagosComponent },
-            { path: '', redirectTo: 'ventas-consolidado', pathMatch: 'full' }
-        ]
-    }
+        component: ReportesComponent
+    },
+    { path: 'ventas-consolidado', component: VentasConsolidadoComponent },
+    { path: 'top-rotacion', component: TopRotacionComponent },
+    { path: 'consolidado-pagos', component: ConsolidadoPagosComponent }
 ];
 
 @NgModule({
