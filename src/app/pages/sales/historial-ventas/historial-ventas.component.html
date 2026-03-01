@@ -22,52 +22,53 @@
       <table class="modern-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Fecha</th>
-            <th>Productos</th>
-            <th class="text-center">Método de Pago</th>
-            <th class="text-right">Total Venta</th>
-            <th class="text-right">Recibido</th>
-            <th class="text-right">Cambio</th>
-            <th class="text-center">Acciones</th>
+            <th translate="no" class="col-id">Id</th>
+            <th class="col-fecha">Fecha</th>
+            <th class="col-cliente">Cliente</th>
+            <th class="col-productos">Productos</th>
+            <th class="col-estado text-center">Estado</th>
+            <th class="col-total text-right">Total Venta</th>
+            <th class="col-acciones text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngIf="isLoading">
-            <td colspan="8" class="text-center loading-message">Cargando historial...</td>
+            <td colspan="7" class="text-center loading-message">Cargando historial...</td>
           </tr>
           <tr *ngIf="!isLoading && historial.length === 0">
-            <td colspan="8" class="text-center empty-message">No se encontraron ventas registradas en este turno.</td>
+            <td colspan="7" class="text-center empty-message">No se encontraron ventas registradas en este turno.</td>
           </tr>
           <tr *ngFor="let venta of historialPaginado">
-            <td class="id-col">#{{ venta.id }}</td>
-            <td>{{ venta.fechaVenta | date:'short' }}</td>
-            <td>
-              <div class="productos-list" *ngIf="venta.resumenProductos && venta.resumenProductos.length > 0">
-                <div class="producto-badge" *ngFor="let prod of venta.resumenProductos">
-                  {{ prod }}
-                </div>
-              </div>
-              <span class="text-muted" *ngIf="!venta.resumenProductos || venta.resumenProductos.length === 0">Sin
-                detalle</span>
+            <td class="col-id id-col">#{{ venta.id }}</td>
+            <td class="col-fecha">{{ venta.fechaVenta | date:'short' }}</td>
+            <td class="col-cliente" [title]="venta.clienteNombre || venta.clienteId || 'Consumidor Final'">
+              {{ venta.clienteNombre || venta.clienteId || 'Consumidor Final' }}
             </td>
-            <td class="text-center">
-              <span class="badge" [ngClass]="venta.metodoPago.toLowerCase()">
-                {{ venta.metodoPago }}
+            <td class="col-productos" [title]="venta.resumenProductos?.join(', ') || 'Sin detalle'">
+              <ng-container *ngIf="venta.items && venta.items.length > 0">
+                <ng-container *ngFor="let item of venta.items; let i = index; let last = last">
+                  {{ item | formatProduct : venta.resumenProductos?.[i] }}<span *ngIf="!last">, </span>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!venta.items || venta.items.length === 0">
+                {{ venta.resumenProductos?.join(', ') || 'Sin detalle' }}
+              </ng-container>
+            </td>
+            <td class="col-estado text-center">
+              <span class="badge px-3 py-2 rounded-pill shadow-sm" [ngClass]="getEstadoClass(venta.estado)">
+                {{ venta.estado || 'COMPLETADA' }}
               </span>
             </td>
-            <td class="text-right total-amount">{{ venta.total | currency }}</td>
-            <td class="text-right text-muted-value">{{ venta.montoRecibido | currency }}</td>
-            <td class="text-right text-muted-value">{{ venta.cambio | currency }}</td>
-            <td class="text-center">
-              <button class="btn-action-view" (click)="abrirModalFactura(venta)" title="Ver Factura">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                Ver
+            <td class="col-total text-right total-amount">{{ venta.total | currency }}</td>
+            <td class="col-acciones text-center actions-col">
+              <button class="btn-icon text-info" (click)="abrirModalFactura(venta)" title="Ver Detalle">
+                👁️
+              </button>
+
+              <button class="btn-icon text-warning ms-2"
+                [disabled]="venta.estado === 'DEVUELTA' || venta.estado === 'ANULADA'"
+                (click)="irADevoluciones(venta.id)" title="Procesar Devolución">
+                ↩️
               </button>
             </td>
           </tr>
@@ -99,33 +100,51 @@
   <div class="modal-content" (click)="$event.stopPropagation()">
 
     <div class="modal-header">
-      <h3 class="modal-title">Factura de Venta #{{ ventaSeleccionada?.id }}</h3>
+      <h3 class="modal-title">Ticket #{{ ventaSeleccionada?.id }}</h3>
       <button class="btn-close" (click)="cerrarModal()">&times;</button>
     </div>
 
     <div class="modal-body print-area">
       <!-- Receipt Layout -->
       <div class="receipt">
-        <div class="receipt-header">
-          <h2>RegenSalud</h2>
-          <p>Factura de Venta</p>
-          <p class="receipt-date">Fecha: {{ ventaSeleccionada?.fechaVenta | date:'medium' }}</p>
-          <p class="receipt-id">No. Ticket: #{{ ventaSeleccionada?.id }}</p>
+        <div class="receipt-header text-center">
+          <h2 class="mb-1">RegenSalud</h2>
+          <p class="mb-2 text-muted">Factura de Venta</p>
+          <p class="receipt-date mb-1">Fecha: {{ ventaSeleccionada?.fechaVenta | date:'medium' }}</p>
+          <p class="receipt-id mb-1">No. Ticket: #{{ ventaSeleccionada?.id }}</p>
+          <p class="receipt-client mb-3" *ngIf="ventaSeleccionada?.clienteNombre || ventaSeleccionada?.clienteId">
+            Cliente: {{ ventaSeleccionada?.clienteNombre || ventaSeleccionada?.clienteId }}
+          </p>
         </div>
 
         <div class="receipt-divider"></div>
 
-        <div class="receipt-items">
-          <div class="receipt-item font-bold">
-            <span>Descripción</span>
-          </div>
-          <div class="receipt-item receipt-product" *ngFor="let prod of ventaSeleccionada?.resumenProductos">
-            <span>{{ prod }}</span>
-          </div>
-          <div class="receipt-item text-center text-muted"
-            *ngIf="!ventaSeleccionada?.resumenProductos || ventaSeleccionada?.resumenProductos.length === 0">
-            <span>Sin detalle de productos</span>
-          </div>
+        <div class="receipt-items mt-3">
+          <table class="table table-sm table-borderless text-left" style="width: 100%; font-size: 0.9rem;">
+            <thead class="border-bottom font-weight-bold">
+              <tr>
+                <th>Producto (Cant x Precio)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- NEW STRATEGY: RENDER REAL ITEMS --->
+              <ng-container *ngIf="ventaSeleccionada?.items && ventaSeleccionada.items.length > 0">
+                <tr *ngFor="let item of ventaSeleccionada?.items; let i = index" class="border-bottom-dashed">
+                  <td class="py-2">{{ item | formatProduct : ventaSeleccionada.resumenProductos?.[i] }}</td>
+                </tr>
+              </ng-container>
+
+              <!-- FALLBACK: IF NO ITEMS AVAILABLE FROM ENDPOINT -->
+              <ng-container *ngIf="!ventaSeleccionada?.items || ventaSeleccionada.items.length === 0">
+                <tr *ngFor="let prod of ventaSeleccionada?.resumenProductos" class="border-bottom-dashed">
+                  <td class="py-2">{{ prod }}</td>
+                </tr>
+                <tr *ngIf="!ventaSeleccionada?.resumenProductos || ventaSeleccionada?.resumenProductos.length === 0">
+                  <td class="py-2 text-center text-muted">Sin detalle de productos</td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
         </div>
 
         <div class="receipt-divider"></div>
