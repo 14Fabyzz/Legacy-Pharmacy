@@ -22,6 +22,7 @@ export class ProductFormComponent implements OnInit {
   isEditMode = false;
   productId: number | null = null;
   loadingData = true;
+  originalEstadoActivo: boolean = true; // Track status updates
 
   // Listas cargadas desde el Backend
   categorias: Categoria[] = [];
@@ -278,6 +279,9 @@ export class ProductFormComponent implements OnInit {
           estadoActivo: data.estado !== 'INACTIVO' // Por defecto true, a menos que venga INACTIVO explicitamente
         };
 
+        this.originalEstadoActivo = formData.estadoActivo;
+
+
         console.log('🛠️ [ProductForm] Datos transformados para patchValue:', formData);
 
         // 3. Aplicar al Formulario
@@ -377,9 +381,27 @@ export class ProductFormComponent implements OnInit {
     if (this.isEditMode && this.productId) {
       this.productService.updateProduct(this.productId, productData).subscribe({
         next: () => {
-          Swal.fire('¡Éxito!', 'Producto actualizado correctamente', 'success').then(() => {
-            this.router.navigate(['/app/productos/almacen']);
-          });
+          const currentState = this.productForm.get('estadoActivo')?.value;
+          if (this.originalEstadoActivo !== currentState) {
+            const nuevoEstado: 'ACTIVO' | 'INACTIVO' = currentState ? 'ACTIVO' : 'INACTIVO';
+            this.productService.toggleEstado(this.productId!, nuevoEstado).subscribe({
+              next: () => {
+                Swal.fire('¡Éxito!', 'Producto actualizado correctamente', 'success').then(() => {
+                  this.router.navigate(['/app/productos/almacen']);
+                });
+              },
+              error: (err) => {
+                console.error('Error al cambiar estado', err);
+                Swal.fire('Advertencia', 'Producto actualizado pero hubo un error al cambiar su estado.', 'warning').then(() => {
+                  this.router.navigate(['/app/productos/almacen']);
+                });
+              }
+            });
+          } else {
+            Swal.fire('¡Éxito!', 'Producto actualizado correctamente', 'success').then(() => {
+              this.router.navigate(['/app/productos/almacen']);
+            });
+          }
         },
         error: (err) => {
           console.error(err);

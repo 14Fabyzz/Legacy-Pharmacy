@@ -131,6 +131,13 @@ export class ProductService {
     return this.http.put<Producto>(`${this.apiUrl}/productos/${id}`, product, { headers });
   }
 
+  toggleEstado(id: number, nuevoEstado: 'ACTIVO' | 'INACTIVO'): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) throw new Error('No authenticated');
+
+    return this.http.patch(`${this.apiUrl}/productos/${id}/estado`, { nuevoEstado }, { headers });
+  }
+
   deleteProduct(id: number): Observable<void> {
     const headers = this.getHeaders();
     if (!headers) {
