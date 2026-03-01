@@ -14,6 +14,17 @@ export class VentaService {
     private inventarioUrl = 'http://localhost:8080/api/inventario';
     private cajaUrl = 'http://localhost:8080/api/ventas/caja'; // Ajustado según TurnoCajaController está en MS-ventas tambien
 
+    private getAuthHeaders() {
+        let headers = {};
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                headers = { 'Authorization': `Bearer ${token}` };
+            }
+        }
+        return { headers };
+    }
+
     constructor(private http: HttpClient) { }
 
     /**
@@ -50,21 +61,25 @@ export class VentaService {
     }
 
     /**
+     * Obtiene una venta por su ID o número de ticket
+     */
+    obtenerVentaPorId(id: number): Observable<VentaResponseDTO> {
+        const apiUrl = this.ventasUrl.replace('/api/ventas', '/api/v1/ventas');
+        return this.http.get<VentaResponseDTO>(`${apiUrl}/${id}`);
+    }
+
+    /**
      * Gestión de Caja
      */
     abrirCaja(apertura: AperturaCajaDTO): Observable<TurnoCaja> {
-        // El controller TurnoCajaController tiene @RequestMapping("/caja")
-        // Si MS-ventas está en ruta base, sería /api/ventas/caja o similar dependiendo del Gateway.
-        // Asumiremos que el Gateway mapea /api/ventas a MS-Ventas.
-        // Y MS-Ventas tiene /caja. Entonces: /api/ventas/caja/abrir
-        return this.http.post<TurnoCaja>(`${this.cajaUrl}/abrir`, apertura);
+        return this.http.post<TurnoCaja>(`${this.cajaUrl}/abrir`, apertura, this.getAuthHeaders());
     }
 
     cerrarCaja(cierre: CierreCajaDTO): Observable<TurnoCaja> {
-        return this.http.post<TurnoCaja>(`${this.cajaUrl}/cerrar`, cierre);
+        return this.http.post<TurnoCaja>(`${this.cajaUrl}/cerrar`, cierre, this.getAuthHeaders());
     }
 
     verificarEstadoCaja(): Observable<TurnoCaja> {
-        return this.http.get<TurnoCaja>(`${this.cajaUrl}/estado`);
+        return this.http.get<TurnoCaja>(`${this.cajaUrl}/estado`, this.getAuthHeaders());
     }
 }

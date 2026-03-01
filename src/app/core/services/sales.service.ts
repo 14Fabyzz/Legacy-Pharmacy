@@ -72,9 +72,16 @@ export class SalesService {
      * Consulta el turno abierto actualmente de manera global.
      */
     obtenerTurnoActivoGlobal(): Observable<any> {
-        // Ajustando la ruta base para que coincida con el controlador si es necesario
-        // Según lo solicitado: GET /api/ventas/caja/turno-activo (Gateway reescribe a v1 internamente)
-        return this.http.get<any>('http://localhost:8080/api/ventas/caja/turno-activo');
+        // En algunos casos de lazy loading con componentes standalone el HTTP_INTERCEPTOR
+        // puede no inyectarse globalmente a tiempo para esta llamada.
+        // Forzamos la cabecera leyendo el token localmente como fallback (solución inmediata robusta).
+        const token = localStorage.getItem('authToken'); // o sessionStorage
+        let headers = {};
+        if (token) {
+            headers = { 'Authorization': `Bearer ${token}` };
+        }
+
+        return this.http.get<any>('http://localhost:8080/api/ventas/caja/turno-activo', { headers });
     }
 
     // TODO: Agregar métodos de caja y clientes según se necesiten

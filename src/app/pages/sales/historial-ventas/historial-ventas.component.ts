@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { SalesService } from '../../../core/services/sales.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { FormatProductPipe } from '../../../shared/pipes/format-product.pipe';
 
 @Component({
     selector: 'app-historial-ventas',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, FormatProductPipe],
     templateUrl: './historial-ventas.component.html',
     styleUrls: ['./historial-ventas.component.css']
 })
@@ -25,7 +27,8 @@ export class HistorialVentasComponent implements OnInit {
 
     constructor(
         private salesService: SalesService,
-        private toastService: ToastService
+        private toastService: ToastService,
+        private router: Router
     ) { }
 
     ngOnInit(): void {
@@ -124,5 +127,21 @@ export class HistorialVentasComponent implements OnInit {
 
     imprimirFactura(): void {
         window.print();
+    }
+
+    irADevoluciones(id: number): void {
+        this.router.navigate(['/app/devoluciones'], { queryParams: { id: id } });
+    }
+
+    getEstadoClass(estado: string): string {
+        switch ((estado || 'COMPLETADA').toUpperCase()) {
+            case 'ACTIVA':
+            case 'COMPLETADA':
+            case 'REALIZADA': return 'bg-success text-white';
+            case 'PARCIALMENTE_DEVUELTA': return 'bg-warning text-dark';
+            case 'DEVUELTA':
+            case 'ANULADA': return 'bg-danger text-white';
+            default: return 'bg-success text-white';
+        }
     }
 }

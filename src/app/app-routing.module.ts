@@ -61,6 +61,10 @@ const routes: Routes = [
         path: 'laboratorios',
         loadChildren: () => import('./pages/laboratorios/laboratorios.module').then(m => m.LaboratoriosModule)
       },
+      {
+        path: 'devoluciones',
+        loadComponent: () => import('./pages/devoluciones/devoluciones.component').then(m => m.DevolucionesComponent)
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
