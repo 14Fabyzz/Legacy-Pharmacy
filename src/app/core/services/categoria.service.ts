@@ -33,7 +33,7 @@ export class CategoriaService {
         return this.http.put<Categoria>(`${this.apiUrl}/${id}`, data);
     }
 
-    /** PATCH /api/categorias/{id}/estado — Activar / Inactivar (Soft Delete) */
+    /** PATCH /api/categorias/{id}/estado — Toggle automático (sin body) */
     toggleEstado(id: number): Observable<Categoria> {
         return this.http.patch<Categoria>(`${this.apiUrl}/${id}/estado`, {});
     }

@@ -53,20 +53,21 @@ export class UsersListComponent implements OnInit {
         });
     }
 
-    deleteUser(id: number): void {
-        if (confirm('¿Estás seguro de desactivar/activar este usuario? (Esta acción cambiará su estado)')) {
-            this.userService.toggleStatus(id).subscribe(() => {
+    deleteUser(user: UserList): void {
+        const nuevoEstado: 'ACTIVO' | 'INACTIVO' = user.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
+        const accion = nuevoEstado === 'INACTIVO' ? 'desactivar' : 'activar';
+        if (confirm(`¿Estás seguro de ${accion} este usuario?`)) {
+            this.userService.cambiarEstado(user.id, nuevoEstado).subscribe(() => {
                 this.loadUsers();
             });
         }
     }
 
     toggleStatus(user: UserList): void {
-        // The requirement says toggleStatus executes a DELETE to change status.
-        // So we can use the same method.
-        this.userService.toggleStatus(user.id).subscribe({
+        const nuevoEstado: 'ACTIVO' | 'INACTIVO' = user.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
+        this.userService.cambiarEstado(user.id, nuevoEstado).subscribe({
             next: () => this.loadUsers(),
-            error: (err) => console.error('Error toggling status', err)
+            error: (err) => console.error('Error al cambiar estado', err)
         });
     }
 
