@@ -18,6 +18,10 @@ export class ConsolidadoPagosComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
+  get totalCantidadVentas(): number {
+    return this.reporteData?.metodosPago?.reduce((acc, curr) => acc + (curr.cantidadVentas || 0), 0) || 0;
+  }
+
   constructor(
     private fb: FormBuilder,
     private reportesService: ReportesService
