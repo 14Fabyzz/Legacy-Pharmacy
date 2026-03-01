@@ -121,6 +121,55 @@
 .id-col {
   color: #64748b;
   font-family: monospace;
+  padding-left: 16px !important;
+  padding-right: 8px !important;
+  width: 60px;
+}
+
+.col-id {
+  width: 5%;
+  padding-left: 16px !important;
+  padding-right: 8px !important;
+  text-transform: none !important;
+}
+
+.col-fecha {
+  width: 15%;
+}
+
+.col-cliente {
+  width: 15%;
+}
+
+.col-productos {
+  width: 40%;
+  max-width: 0;
+  /* Necessary for text-overflow to work in table cells */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col-total {
+  width: 10%;
+  text-align: right;
+}
+
+.col-estado {
+  width: 10%;
+  text-align: center;
+}
+
+.col-acciones {
+  width: 15%;
+  text-align: center;
+}
+
+/* Ensure the table cell content truncates correctly */
+.modern-table td.col-productos {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Badges for payment methods */
@@ -281,16 +330,49 @@
   font-weight: 500;
 }
 
-/* Action Button */
-.btn-action-view {
+/* Actions Column and Buttons */
+.actions-col {
+  white-space: nowrap;
+  min-width: 150px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.3rem;
+  margin-right: 0.5rem;
+  transition: transform 0.1s;
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+}
+
+.text-warning {
+  color: #f59e0b;
+}
+
+.text-warning:hover:not(:disabled) {
+  color: #d97706;
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+.btn-action-return {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background-color: #f8fafc;
-  border: 1px solid #cbd5e1;
-  color: #0ea5e9;
-  /* Light blue accent */
+  background-color: transparent;
+  border: 1px solid #f59e0b;
+  /* warning/orange */
+  color: #f59e0b;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
@@ -298,13 +380,18 @@
   transition: all 0.2s;
 }
 
-.btn-action-view svg {
-  width: 14px;
-  height: 14px;
+.btn-action-return i {
+  font-size: 14px;
 }
 
-.btn-action-view:hover {
-  background-color: #e0f2fe;
-  border-color: #bae6fd;
-  color: #0284c7;
+.btn-action-return:hover:not(:disabled) {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.btn-action-return:disabled {
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  background-color: transparent;
 }

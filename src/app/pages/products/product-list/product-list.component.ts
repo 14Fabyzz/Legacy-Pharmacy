@@ -45,6 +45,13 @@ export class ProductListComponent implements OnInit {
   showDetailPanel = false;
   selectedProductData: ProductoConLotesResponse | null = null;
 
+  // Filtros adicionales
+  availableCategories: string[] = [];
+  availableLaboratories: string[] = [];
+  selectedCategory: string = '';
+  selectedLaboratory: string = '';
+  selectedStockStatus: string = '';
+
   constructor(
     private productService: ProductService,
     private router: Router // Inject Router
@@ -60,6 +67,10 @@ export class ProductListComponent implements OnInit {
       next: (products) => {
         this.isLoading = false; // [FIN EXITOSO]
         this.allProducts = products;
+
+        // Extraer categorías y laboratorios únicos
+        this.availableCategories = [...new Set(this.allProducts.map(p => p.categoria).filter(c => c))].sort();
+        this.availableLaboratories = [...new Set(this.allProducts.map(p => p.laboratorio).filter(l => l))].sort();
 
         // Ordenar Alfabéticamente por Nombre Comercial
         this.allProducts.sort((a, b) => a.nombreComercial.localeCompare(b.nombreComercial));
@@ -79,23 +90,35 @@ export class ProductListComponent implements OnInit {
   applyFilter() {
     const term = this.searchTerm.toLowerCase().trim();
 
-    if (!term) {
-      this.filteredProducts = [...this.allProducts];
-    } else {
-      this.filteredProducts = this.allProducts.filter(product => {
-        // Coincidencia exacta de código de barras (prioridad)
-        if (product.codigoBarras === term || product.codigoInterno?.toLowerCase() === term) return true;
+    this.filteredProducts = this.allProducts.filter(product => {
+      // 1. Filtro por término de búsqueda
+      let matchesSearch = true;
+      if (term) {
+        if (product.codigoBarras === term || product.codigoInterno?.toLowerCase() === term) {
+          matchesSearch = true;
+        } else {
+          matchesSearch = !!(
+            product.nombreComercial?.toLowerCase().includes(term) ||
+            product.laboratorio?.toLowerCase().includes(term) ||
+            product.categoria?.toLowerCase().includes(term) ||
+            product.presentacion?.toLowerCase().includes(term) ||
+            product.codigoBarras?.toLowerCase().includes(term) ||
+            product.codigoInterno?.toLowerCase().includes(term)
+          );
+        }
+      }
 
-        return (
-          product.nombreComercial?.toLowerCase().includes(term) ||
-          product.laboratorio?.toLowerCase().includes(term) ||
-          product.categoria?.toLowerCase().includes(term) ||
-          product.presentacion?.toLowerCase().includes(term) ||
-          product.codigoBarras?.toLowerCase().includes(term) ||
-          product.codigoInterno?.toLowerCase().includes(term)
-        );
-      });
-    }
+      // 2. Filtro por Categoría
+      const matchesCategory = this.selectedCategory ? product.categoria === this.selectedCategory : true;
+
+      // 3. Filtro por Laboratorio
+      const matchesLaboratory = this.selectedLaboratory ? product.laboratorio === this.selectedLaboratory : true;
+
+      // 4. Filtro por Estado de Stock
+      const matchesStock = this.selectedStockStatus ? product.nivelStock === this.selectedStockStatus : true;
+
+      return matchesSearch && matchesCategory && matchesLaboratory && matchesStock;
+    });
 
     // Recalcular paginación
     this.totalPages = Math.ceil(this.filteredProducts.length / this.itemsPerPage) || 1;

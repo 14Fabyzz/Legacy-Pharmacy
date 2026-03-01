@@ -1,0 +1,219 @@
+@import '../../users/users-list/users-list.component.css';
+
+/* --- Modern Search Bar UI --- */
+.search-header-container {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    /* Alinear a la derecha proporciona un flujo visual más moderno */
+}
+
+.search-box.modern-search {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+}
+
+.search-box.modern-search .search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.search-box.modern-search .form-control {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 3rem;
+    /* Espacio para el icono a la izquierda */
+    border: 1px solid #e2e8f0;
+    border-radius: 50px;
+    /* Bordes altamente redondeados estilo píldora */
+    background-color: #f8fafc;
+    font-size: 0.9rem;
+    color: #334155;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.search-box.modern-search .form-control:hover {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+}
+
+.search-box.modern-search .form-control:focus {
+    outline: none;
+    background-color: #ffffff;
+    border-color: #3b82f6;
+    /* Azul primario */
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    /* Resplandor suave moderno */
+}
+
+.search-box.modern-search .form-control:focus+.search-icon,
+.search-box.modern-search .form-control:not(:placeholder-shown)+.search-icon {
+    color: #3b82f6;
+}
+
+.btn-icon:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+}
+
+/* Optimización de Espacios y Layout Fijo */
+.table-responsive .table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Clases de ancho de columnas y estilos específicos */
+.col-id {
+    width: 10%;
+}
+
+.col-cliente {
+    width: 45%;
+    font-weight: 500;
+    color: #333;
+}
+
+.col-tipo {
+    width: 15%;
+}
+
+.col-estado {
+    width: 15%;
+}
+
+.col-acciones {
+    width: 15%;
+    text-align: center;
+}
+
+/* Para que los botones de acciones no se recorten en pantallas más pequeñas */
+.table td.col-acciones {
+    overflow: visible;
+}
+
+/* Modal Overlay and Content Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content.card-profile {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Botón cerrar cruz */
+.btn-close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+}
+
+.btn-close-modal:hover {
+    color: #000;
+}
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-avatar {
+    margin-bottom: 5px;
+}
+
+.profile-name {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1a202c;
+    font-weight: 600;
+}
+
+.profile-badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Grid Details */
+.grid-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    background-color: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-item.full-width {
+    grid-column: span 2;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 0.95rem;
+    color: #2d3748;
+    word-break: break-word;
+    /* Para que correos largos no rompan el modal */
+}
+
+/* Profile Footer */
+.profile-footer {
+    border-top: 1px solid #edf2f7;
+    padding-top: 15px;
+}

@@ -229,11 +229,11 @@
           <div class="receipt-item font-bold">
             <span>Descripción</span>
           </div>
-          <div class="receipt-item receipt-product" *ngFor="let prod of ticketActual?.resumenProductos">
-            <span>{{ prod }}</span>
+          <div class="receipt-item receipt-product" *ngFor="let prod of ticketActual?.items">
+            <span>{{ prod | formatProduct }}</span>
           </div>
           <div class="receipt-item text-center text-muted"
-            *ngIf="!ticketActual?.resumenProductos || ticketActual?.resumenProductos.length === 0">
+            *ngIf="!ticketActual?.items || ticketActual?.items.length === 0">
             <span>Sin detalle de productos</span>
           </div>
         </div>

@@ -2,6 +2,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FormatProductPipe } from '../../../shared/pipes/format-product.pipe';
 import { SalesService } from '../../../core/services/sales.service';
 import { ProductService } from '../../products/product.service';
 import { CartService } from '../../../core/services/cart.service';
@@ -19,7 +20,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-new-sale',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FormatProductPipe],
   templateUrl: './new-sale.component.html',
   styleUrls: ['./new-sale.component.css']
 })
@@ -420,9 +421,11 @@ export class NewSaleComponent implements OnInit, OnDestroy {
           metodoPago: this.metodoPago,
           montoRecibido: this.montoRecibido,
           cambio: this.cambio,
-          resumenProductos: this.cartItems.map(item =>
-            `${item.cantidad} x ${item.product.detalleProducto.nombreComercial}`
-          )
+          items: this.cartItems.map(item => ({
+            cantidad: item.cantidad,
+            tipoVenta: item.tipoVenta,
+            productoNombre: item.product.detalleProducto.nombreComercial
+          }))
         };
 
         this.mostrarModalTicket = true;

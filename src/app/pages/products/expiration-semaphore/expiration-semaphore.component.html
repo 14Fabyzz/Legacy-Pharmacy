@@ -1,54 +1,90 @@
 <div class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
-            <h2>Semáforo de Vencimientos (Lotes)</h2>
+            <h2>🚦 Semáforo de Vencimientos — Normativa Colombia</h2>
             <button class="close-btn" (click)="onClose()">Cerrar</button>
         </div>
 
-        <div class="columns-container">
-            <!-- Columna ROJA: Vencidos -->
-            <div class="column vencidos">
-                <h3 class="column-title">⛔ VENCIDOS</h3>
+        <!-- Loader -->
+        <div class="modal-loading" *ngIf="loading">
+            <div class="spinner-mini"></div>
+            <p>Cargando alertas...</p>
+        </div>
+
+        <div class="columns-container" *ngIf="!loading">
+
+            <!-- ═══════════════════════════════════
+                 COLUMNA ROJA — Crítico (≤ 90 días)
+                 Incluye lotes ya vencidos (diasRestantes < 0)
+            ═══════════════════════════════════ -->
+            <div class="column rojo">
+                <h3 class="column-title">🔴 ROJO — ≤ 90 DÍAS</h3>
                 <div class="cards-list">
-                    <div class="product-card" *ngFor="let item of expiredProducts">
-                        <h4>{{ item.producto?.nombre_comercial }}</h4>
-                        <p><strong>Lote:</strong> {{ item.numeroLote }}</p>
-                        <p><strong>Vencido:</strong> {{ item.fechaVencimiento | date:'dd/MM/yyyy' }}</p>
-                        <p class="expiry-msg">Hace {{ (getDaysDiff(item.fechaVencimiento) || 0) * -1 }} días</p>
-                        <button class="btn-dar-baja" (click)="darDeBaja(item.id)">🗑️ Dar de Baja</button>
+                    <div class="product-card" *ngFor="let lote of rojoLotes">
+                        <div class="card-img" *ngIf="lote.imagenUrl">
+                            <img [src]="lote.imagenUrl" alt="img">
+                        </div>
+                        <h4>{{ lote.producto }}</h4>
+                        <p><strong>Lote:</strong> {{ lote.lote }}</p>
+                        <p><strong>Vence:</strong> {{ lote.fecha | date:'dd/MM/yyyy' }}</p>
+                        <p><strong>Stock:</strong> {{ lote.cantidad }} unds</p>
+
+                        <!-- Badge dinámico según diasRestantes -->
+                        <span *ngIf="isVencido(lote)" class="badge-modal vencido">
+                            ⛔ Vencido hace {{ lote.diasRestantes * -1 }} días
+                        </span>
+                        <span *ngIf="!isVencido(lote)" class="badge-modal critico">
+                            ⚠️ Vence en {{ lote.diasRestantes }} días
+                        </span>
+
+                        <button class="btn-dar-baja" (click)="darDeBaja(lote.id)">🗑️ Dar de Baja</button>
                     </div>
-                    <div *ngIf="expiredProducts.length === 0" class="empty-msg">No hay lotes vencidos.</div>
+                    <div *ngIf="rojoLotes.length === 0" class="empty-msg">
+                        ✅ No hay lotes en zona roja.
+                    </div>
                 </div>
             </div>
 
-            <!-- Columna AMARILLA: Próximos a Vencer -->
-            <div class="column por-vencer">
-                <h3 class="column-title">⚠️ PRÓXIMOS A VENCER (30 días)</h3>
+            <!-- ═══════════════════════════════════
+                 COLUMNA AMARILLA — Prevención (91–180 días)
+            ═══════════════════════════════════ -->
+            <div class="column amarillo">
+                <h3 class="column-title">🟡 AMARILLO — 91 A 180 DÍAS</h3>
                 <div class="cards-list">
-                    <div class="product-card" *ngFor="let item of soonExpiringProducts">
-                        <h4>{{ item.producto?.nombre_comercial }}</h4>
-                        <p><strong>Lote:</strong> {{ item.numeroLote }}</p>
-                        <p><strong>Vence:</strong> {{ item.fechaVencimiento | date:'dd/MM/yyyy' }}</p>
-                        <p class="expiry-msg">En {{ getDaysDiff(item.fechaVencimiento) }} días</p>
+                    <div class="product-card" *ngFor="let lote of amarilloLotes">
+                        <div class="card-img" *ngIf="lote.imagenUrl">
+                            <img [src]="lote.imagenUrl" alt="img">
+                        </div>
+                        <h4>{{ lote.producto }}</h4>
+                        <p><strong>Lote:</strong> {{ lote.lote }}</p>
+                        <p><strong>Vence:</strong> {{ lote.fecha | date:'dd/MM/yyyy' }}</p>
+                        <p><strong>Stock:</strong> {{ lote.cantidad }} unds</p>
+                        <span class="badge-modal prevencion">
+                            🕐 Vence en {{ lote.diasRestantes }} días
+                        </span>
                     </div>
-                    <div *ngIf="soonExpiringProducts.length === 0" class="empty-msg">No hay lotes próximos a vencer.
+                    <div *ngIf="amarilloLotes.length === 0" class="empty-msg">
+                        No hay lotes en zona amarilla.
                     </div>
                 </div>
             </div>
 
-            <!-- Columna VERDE: Seguros -->
-            <div class="column seguros">
-                <h3 class="column-title">✅ STOCK SEGURO</h3>
-                <div class="cards-list">
-                    <div class="product-card" *ngFor="let item of safeProducts">
-                        <h4>{{ item.producto?.nombre_comercial }}</h4>
-                        <p><strong>Lote:</strong> {{ item.numeroLote }}</p>
-                        <p><strong>Vence:</strong> {{ item.fechaVencimiento | date:'dd/MM/yyyy' }}</p>
-                        <p class="stock-msg">Cant: {{ item.cantidadActual }}</p>
-                    </div>
-                    <div *ngIf="safeProducts.length === 0" class="empty-msg">No hay lotes seguros.</div>
+            <!-- ═══════════════════════════════════
+                 COLUMNA VERDE — Solo KPI
+                 El array verde[] llega vacío por rendimiento.
+                 Solo se muestra el total numérico.
+            ═══════════════════════════════════ -->
+            <div class="column verde">
+                <h3 class="column-title">🟢 VERDE — &gt; 180 DÍAS</h3>
+                <div class="verde-kpi">
+                    <p class="verde-total">{{ totalVerde }}</p>
+                    <p class="verde-desc">Lotes Saludables</p>
+                    <p class="verde-hint">El detalle no se carga aquí por rendimiento. Todos estos lotes tienen más de
+                        180 días de vida útil restante.</p>
+                    <span class="badge-modal saludable">✅ Sin acciones requeridas</span>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

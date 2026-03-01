@@ -1,7 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductService } from '../product.service';
-import { Producto } from '../../../core/models/inventory.model';
+import { Subscription } from 'rxjs';
+import { ProductService, LoteAlerta } from '../product.service';
 
 @Component({
   selector: 'app-expiration-semaphore',
@@ -10,39 +10,55 @@ import { Producto } from '../../../core/models/inventory.model';
   templateUrl: './expiration-semaphore.component.html',
   styleUrls: ['./expiration-semaphore.component.css']
 })
-export class ExpirationSemaphoreComponent implements OnInit {
+export class ExpirationSemaphoreComponent implements OnInit, OnDestroy {
   @Output() close = new EventEmitter<void>();
 
-  expiredProducts: any[] = [];
-  soonExpiringProducts: any[] = [];
-  safeProducts: any[] = [];
+  /** Semáforo Rojo: <= 90 días (diasRestantes puede ser negativo si vencido) */
+  rojoLotes: LoteAlerta[] = [];
+  /** Semáforo Amarillo: 91–180 días */
+  amarilloLotes: LoteAlerta[] = [];
+  /** Semáforo Verde: solo KPI, el array llega vacío del backend */
+  totalVerde: number = 0;
+
+  loading: boolean = true;
+  private sub!: Subscription;
 
   constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
-    // Cargar datos reales de Lotes
-    this.productService.getLotesVencidos().subscribe(data => this.expiredProducts = data);
-    this.productService.getLotesPorVencer().subscribe(data => this.soonExpiringProducts = data);
-
-
-
+    this.sub = this.productService.getDashboardAlertas().subscribe({
+      next: (data) => {
+        this.rojoLotes = data.rojo || [];
+        this.amarilloLotes = data.amarillo || [];
+        this.totalVerde = data.totalVerde || 0;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('❌ [Semáforo] Error cargando alertas:', err);
+        this.loading = false;
+      }
+    });
   }
 
-  // Helper para mostrar días restantes/vencidos
-  getDaysDiff(fechaVencimiento: string): number {
-    if (!fechaVencimiento) return 0;
-    const now = new Date();
-    const expiry = new Date(fechaVencimiento);
-    const diff = expiry.getTime() - now.getTime();
-    return Math.ceil(diff / (1000 * 3600 * 24));
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
+
+  /** Retorna true si el lote ya está vencido */
+  isVencido(lote: LoteAlerta): boolean {
+    return lote.diasRestantes < 0;
   }
 
   darDeBaja(loteId: number): void {
     if (confirm('¿Estás seguro de dar de baja este lote vencido?')) {
       this.productService.darDeBajaLote(loteId).subscribe(() => {
-        alert('Lote dado de baja correctamente');
-        // Recargar lista de vencidos
-        this.productService.getLotesVencidos().subscribe(data => this.expiredProducts = data);
+        alert('Lote dado de baja correctamente.');
+        // Recargar datos del modal
+        this.productService.getDashboardAlertas().subscribe(data => {
+          this.rojoLotes = data.rojo || [];
+          this.amarilloLotes = data.amarillo || [];
+          this.totalVerde = data.totalVerde || 0;
+        });
       });
     }
   }

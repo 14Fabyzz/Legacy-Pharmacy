@@ -2,7 +2,7 @@
   <header class="page-header">
     <div class="header-content">
       <div>
-        <h2>PRODUCTOS EN ALMACÉN</h2>
+        <h2>📦 PRODUCTOS EN ALMACÉN</h2>
         <p>Gestión general del inventario, precios y estado de productos.</p>
       </div>
       <div class="inventory-status-pill" [ngClass]="{
@@ -45,8 +45,33 @@
   <app-tabs-nav></app-tabs-nav>
 
   <div class="search-container">
-    <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm"
-      (ngModelChange)="applyFilter()">
+    <div class="search-row">
+      <div class="input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilter()">
+      </div>
+    </div>
+
+    <div class="filters-row">
+      <select class="filter-select" [(ngModel)]="selectedCategory" (ngModelChange)="applyFilter()">
+        <option value="">Todas las Categorías</option>
+        <option *ngFor="let cat of availableCategories" [value]="cat">{{ cat }}</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="selectedLaboratory" (ngModelChange)="applyFilter()">
+        <option value="">Todos los Laboratorios</option>
+        <option *ngFor="let lab of availableLaboratories" [value]="lab">{{ lab }}</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="selectedStockStatus" (ngModelChange)="applyFilter()">
+        <option value="">Todo el Stock</option>
+        <option value="OPTIMO">Óptimo</option>
+        <option value="SOBRESTOCK">Sobrestock</option>
+        <option value="BAJO">Stock Bajo</option>
+        <option value="CRITICO">Crítico / Agotado</option>
+      </select>
+    </div>
   </div>
 
   <!-- Loader -->

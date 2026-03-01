@@ -143,7 +143,8 @@ export class UserFormComponent implements OnInit {
                     alert('¡Usuario actualizado correctamente!');
                     // If enabled state changed, call toggleStatus
                     if (stateChanged) {
-                        this.userService.toggleStatus(this.userId!).subscribe({
+                        const nuevoEstado: 'ACTIVO' | 'INACTIVO' = currentEnabledState ? 'ACTIVO' : 'INACTIVO';
+                        this.userService.cambiarEstado(this.userId!, nuevoEstado).subscribe({
                             next: () => this.router.navigate(['/app/users']),
                             error: () => {
                                 this.error = 'Error al cambiar el estado del usuario';

@@ -18,14 +18,36 @@ import {
 } from '../../core/models/product.model';
 import { environment } from '../../../environments/environment';
 
-export interface DashboardResponse {
-  totalVencidos: number;
-  totalPorVencer: number;
+export interface LoteAlerta {
+  id: number;
+  producto: string;
+  lote: string;
+  fecha: string;
+  cantidad: number;
+  diasRestantes: number; // Puede ser negativo si ya venció
+  imagenUrl: string;
+}
+
+export interface ProductoBajoStock {
+  id: number;
+  nombre: string;
+  stockActual: number;
+  stockMinimo: number;
+  imagenUrl?: string;
+}
+
+/** @deprecated Use DashboardAlertas */
+export type DashboardResponse = DashboardAlertas;
+
+export interface DashboardAlertas {
+  totalRojo: number;      // <= 90 días (incluye vencidos)
+  totalAmarillo: number;  // 91 a 180 días
+  totalVerde: number;     // > 180 días
   totalStockBajo: number;
-  totalSaludables: number;
-  vencidos: { id: number; producto: string; lote: string; fecha: string; cantidad: number; imagenUrl?: string }[];
-  porVencer: { id: number; producto: string; lote: string; fecha: string; cantidad: number; diasRestantes: number; imagenUrl?: string }[];
-  stockBajo: { id: number; nombre: string; stockActual: number; stockMinimo: number; imagenUrl?: string }[];
+  rojo: LoteAlerta[];       // Lotes críticos (<= 90 días, diasRestantes puede ser negativo)
+  amarillo: LoteAlerta[];   // Lotes en prevención (91-180 días)
+  verde: any[];             // Siempre [] por rendimiento — usar solo totalVerde
+  stockBajo: ProductoBajoStock[];
 }
 
 @Injectable({
@@ -59,22 +81,21 @@ export class ProductService {
 
   // --- DASHBOARD / VISTAS (Lista Principal) ---
 
-  getDashboardAlertas(): Observable<DashboardResponse> {
+  getDashboardAlertas(): Observable<DashboardAlertas> {
     const headers = this.getHeaders();
     if (!headers) {
       return of({
-        totalVencidos: 0,
-        totalPorVencer: 0,
+        totalRojo: 0,
+        totalAmarillo: 0,
+        totalVerde: 0,
         totalStockBajo: 0,
-        totalSaludables: 0,
-        vencidos: [],
-        porVencer: [],
+        rojo: [],
+        amarillo: [],
+        verde: [],
         stockBajo: []
       });
     }
-    // Asegurarse de que apiUrl apunte a /api/v1/inventario/dashboard/alertas
-    // Si this.apiUrl es 'http://localhost:8080/api/inventario', entonces:
-    return this.http.get<DashboardResponse>(`${this.apiUrl}/dashboard/alertas`, { headers });
+    return this.http.get<DashboardAlertas>(`${this.apiUrl}/dashboard/alertas`, { headers });
   }
 
   getProductosAlmacen(busqueda?: string): Observable<ProductoCard[]> {
@@ -129,6 +150,13 @@ export class ProductService {
     if (!headers) throw new Error('No authenticated');
 
     return this.http.put<Producto>(`${this.apiUrl}/productos/${id}`, product, { headers });
+  }
+
+  toggleEstado(id: number, nuevoEstado: 'ACTIVO' | 'INACTIVO'): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) throw new Error('No authenticated');
+
+    return this.http.patch(`${this.apiUrl}/productos/${id}/estado`, { nuevoEstado }, { headers });
   }
 
   deleteProduct(id: number): Observable<void> {

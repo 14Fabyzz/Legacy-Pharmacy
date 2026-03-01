@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { ProductService, DashboardResponse } from '../product.service';
-import { Producto } from '../../../core/models/inventory.model';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ProductService, DashboardAlertas, LoteAlerta, ProductoBajoStock } from '../product.service';
 
 @Component({
     selector: 'app-expiration-dashboard',
@@ -8,21 +8,24 @@ import { Producto } from '../../../core/models/inventory.model';
     styleUrls: ['./expiration-dashboard.component.css'],
     standalone: false
 })
-export class ExpirationDashboardComponent implements OnInit {
+export class ExpirationDashboardComponent implements OnInit, OnDestroy {
 
-    expiredProducts: Producto[] = [];
-    soonExpiringProducts: Producto[] = [];
-    bajoStock: any[] = []; // Nueva lista para stock bajo
+    stats: DashboardAlertas | null = null;
 
-
-    stats: DashboardResponse | null = null;
-    listaVencidos: any[] = [];
-    listaPorVencer: any[] = [];
-    listaStockBajo: any[] = [];
+    // Semáforo Rojo: <= 90 días (incluye vencidos con diasRestantes < 0)
+    listaRojo: LoteAlerta[] = [];
+    // Semáforo Amarillo: 91 a 180 días
+    listaAmarillo: LoteAlerta[] = [];
+    // Semáforo Verde: Solo KPI, el array siempre llega vacío
+    totalVerde: number = 0;
+    // Stock Bajo
+    listaStockBajo: ProductoBajoStock[] = [];
 
     activeTab: 'critical' | 'alert' | 'lowstock' | 'healthy' = 'healthy';
     loading: boolean = true;
     error: string | null = null;
+
+    private sub!: Subscription;
 
     constructor(private productService: ProductService) { }
 
@@ -30,52 +33,56 @@ export class ExpirationDashboardComponent implements OnInit {
         this.loadDashboardData();
     }
 
+    ngOnDestroy(): void {
+        this.sub?.unsubscribe();
+    }
+
     loadDashboardData(): void {
         this.loading = true;
-        this.productService.getDashboardAlertas().subscribe((data: DashboardResponse) => {
-            console.log('✅ DATA DASHBOARD:', data);
-            this.stats = data;
+        this.sub = this.productService.getDashboardAlertas().subscribe({
+            next: (data: DashboardAlertas) => {
+                console.log('✅ DATA DASHBOARD (Semaforización):', data);
+                this.stats = data;
+                this.listaRojo = data.rojo || [];
+                this.listaAmarillo = data.amarillo || [];
+                this.totalVerde = data.totalVerde || 0;
+                this.listaStockBajo = data.stockBajo || [];
 
-            this.listaVencidos = data.vencidos || [];
-            this.listaPorVencer = data.porVencer || [];
-            this.listaStockBajo = data.stockBajo || [];
+                // Prioridad de pestaña: Rojo > Amarillo > Stock Bajo > Verde
+                if (this.listaRojo.length > 0) {
+                    this.activeTab = 'critical';
+                } else if (this.listaAmarillo.length > 0) {
+                    this.activeTab = 'alert';
+                } else if (this.listaStockBajo.length > 0) {
+                    this.activeTab = 'lowstock';
+                } else {
+                    this.activeTab = 'healthy';
+                }
 
-            // Prioridad de Pestaña
-            if (this.listaVencidos.length > 0) {
-                this.activeTab = 'critical';
-            } else if (this.listaPorVencer.length > 0) {
-                this.activeTab = 'alert';
-            } else if (this.listaStockBajo.length > 0) {
-                this.activeTab = 'lowstock';
-            } else {
-                this.activeTab = 'healthy';
+                this.loading = false;
+            },
+            error: (err) => {
+                console.error('❌ Error cargando dashboard de alertas:', err);
+                this.error = 'No se pudo cargar el panel de alertas.';
+                this.loading = false;
             }
-
-            this.loading = false;
-        }, error => {
-            console.error('Error cargando dashboard:', error);
-            this.loading = false;
         });
     }
 
-
-    // Helper para cambiar tabs desde el HTML
     setActiveTab(tab: 'critical' | 'alert' | 'lowstock' | 'healthy'): void {
         this.activeTab = tab;
     }
 
-    // Helper para clases CSS de días restantes
-    getDaysClass(days: number): string {
-        if (days < 0) return 'expired-tag';
-        if (days <= 30) return 'warning-tag';
-        return 'ok-tag';
+    /** Retorna true si el lote ya está vencido (diasRestantes negativo) */
+    isVencido(lote: LoteAlerta): boolean {
+        return lote.diasRestantes < 0;
     }
 
     darDeBaja(loteId: number): void {
         if (confirm('¿Estás seguro de dar de baja este lote vencido?')) {
             this.productService.darDeBajaLote(loteId).subscribe(() => {
-                alert('Lote dado de baja correctamente');
-                this.loadDashboardData(); // Recargar datos
+                alert('Lote dado de baja correctamente.');
+                this.loadDashboardData();
             });
         }
     }

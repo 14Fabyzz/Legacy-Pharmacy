@@ -1,0 +1,41 @@
+.font-monospace {
+  font-family:
+    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  font-size: 0.9em;
+}
+
+.outline-table tfoot tr td {
+  border-top: 2px solid #dee2e6;
+}
+
+.refs-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.refs-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #f8f9fc;
+}
+
+/* Fix text colors for badges if not provided by theme */
+.badge.bg-success {
+  background-color: #1cc88a !important;
+  color: white;
+}
+.badge.bg-info {
+  background-color: #36b9cc !important;
+  color: white;
+}
+.badge.bg-secondary {
+  background-color: #858796 !important;
+  color: white;
+}
+
+/* Custom margins */
+.mt-md-0 {
+  margin-top: 0 !important;
+}

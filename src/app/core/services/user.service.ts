@@ -69,9 +69,14 @@ export class UserService {
         return this.http.put<UserDetail>(`${this.apiUrl}/${id}`, user);
     }
 
+    /** PATCH /api/usuarios/{id}/estado — Cambia estado (ACTIVO | INACTIVO | BLOQUEADO) */
+    cambiarEstado(id: number, nuevoEstado: 'ACTIVO' | 'INACTIVO' | 'BLOQUEADO'): Observable<any> {
+        return this.http.patch<any>(`${this.apiUrl}/${id}/estado`, { nuevoEstado });
+    }
+
+    /** @deprecated Usar cambiarEstado() — mantenido por compatibilidad temporal */
     toggleStatus(id: number): Observable<void> {
-        // Backend uses DELETE to deactivate/toggle
-        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+        return this.cambiarEstado(id, 'INACTIVO') as Observable<void>;
     }
 
     changePassword(id: number, password: string): Observable<void> {

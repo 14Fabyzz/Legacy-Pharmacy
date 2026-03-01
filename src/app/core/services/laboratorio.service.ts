@@ -18,7 +18,7 @@ export class LaboratorioService {
         return this.http.get<Laboratorio[]>(this.apiUrl);
     }
 
-    /** GET /api/laboratorios/activas — Solo los activos */
+    /** GET /api/laboratorios/activos — Solo los activos */
     getActivos(): Observable<Laboratorio[]> {
         return this.http.get<Laboratorio[]>(`${this.apiUrl}/activas`);
     }
@@ -33,7 +33,7 @@ export class LaboratorioService {
         return this.http.put<Laboratorio>(`${this.apiUrl}/${id}`, data);
     }
 
-    /** PATCH /api/laboratorios/{id}/estado — Activar / Inactivar (Soft Delete) */
+    /** PATCH /api/laboratorios/{id}/estado — Toggle automático (sin body) */
     toggleEstado(id: number): Observable<Laboratorio> {
         return this.http.patch<Laboratorio>(`${this.apiUrl}/${id}/estado`, {});
     }
