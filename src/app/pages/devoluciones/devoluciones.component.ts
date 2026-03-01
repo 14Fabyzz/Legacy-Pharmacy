@@ -86,13 +86,31 @@ export class DevolucionesComponent implements OnInit {
                 }
 
                 this.ventaActual = venta;
-                this.itemsDevolucion = this.ventaActual.items.map((item: any) => ({
-                    productoId: item.productoId,
-                    nombreProducto: item.nombreProducto || `Producto ID: ${item.productoId}`,
-                    precio: item.precioUnitario || (item.subtotal / item.cantidad) || 0,
-                    cantidadComprada: item.cantidad,
-                    cantidadADevolver: 0
-                }));
+                this.itemsDevolucion = this.ventaActual.items.map((item: any, index: number) => {
+                    let nombre = item.nombreProducto;
+                    if (!nombre && this.ventaActual.resumenProductos && this.ventaActual.resumenProductos[index]) {
+                        const fallback = this.ventaActual.resumenProductos[index];
+                        const cantidad = item.cantidad || 0;
+                        const regexStr = `^${cantidad}\\s*x\\s*`;
+                        const regex = new RegExp(regexStr, 'i');
+                        nombre = fallback.replace(regex, '').trim();
+                        if (nombre === fallback) {
+                            const parts = fallback.split(' x ');
+                            if (parts.length > 1) {
+                                parts.shift();
+                                nombre = parts.join(' x ');
+                            }
+                        }
+                    }
+
+                    return {
+                        productoId: item.productoId,
+                        nombreProducto: nombre || `Producto ID: ${item.productoId}`,
+                        precio: item.precioUnitario || (item.subtotal / item.cantidad) || 0,
+                        cantidadComprada: item.cantidad,
+                        cantidadADevolver: 0
+                    };
+                });
 
                 if (this.ventaActual.estado === 'DEVUELTA') {
                     this.toastService.showWarning('Esta factura ya ha sido devuelta en su totalidad. No se pueden realizar más operaciones.');
