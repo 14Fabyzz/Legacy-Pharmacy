@@ -1,49 +1,42 @@
-<div class="row mb-4">
-  <div class="col-12">
-    <h2 class="h3 mb-2 text-gray-800">Consolidado de Pagos</h2>
-    <p class="mb-4 text-muted">
+<div class="dashboard-container">
+  <!-- Encabezado -->
+  <div class="page-header">
+    <h2 class="page-title">Consolidado de Pagos</h2>
+    <p class="page-subtitle">
       Reporte de ingresos agrupados por método de pago para cuadre de caja y
       conciliación bancaria.
     </p>
   </div>
-</div>
 
-<!-- Filtros -->
-<div class="card shadow mb-4">
-  <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Filtros de Búsqueda</h6>
-  </div>
-  <div class="card-body">
+  <div class="filters-card">
     <form [formGroup]="filtrosForm" (ngSubmit)="generarReporte()">
-      <div class="row g-3 align-items-end">
-        <div class="col-md-3">
-          <label for="fechaInicio" class="form-label">Fecha Inicio *</label>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="fechaInicio"
+            >Fecha Inicio <span class="required">*</span></label
+          >
           <input
             type="date"
             class="form-control"
             id="fechaInicio"
             formControlName="fechaInicio"
-            [class.is-invalid]="
-              filtrosForm.get('fechaInicio')?.invalid &&
-              filtrosForm.get('fechaInicio')?.touched
-            "
           />
         </div>
-        <div class="col-md-3">
-          <label for="fechaFin" class="form-label">Fecha Fin *</label>
+
+        <div class="filter-group">
+          <label for="fechaFin"
+            >Fecha Fin <span class="required">*</span></label
+          >
           <input
             type="date"
             class="form-control"
             id="fechaFin"
             formControlName="fechaFin"
-            [class.is-invalid]="
-              filtrosForm.get('fechaFin')?.invalid &&
-              filtrosForm.get('fechaFin')?.touched
-            "
           />
         </div>
-        <div class="col-md-3">
-          <label for="sucursalId" class="form-label">Sucursal (Opcional)</label>
+
+        <div class="filter-group">
+          <label for="sucursalId">Sucursal (Opcional)</label>
           <input
             type="number"
             class="form-control"
@@ -52,204 +45,193 @@
             placeholder="ID Sucursal"
           />
         </div>
-        <div class="col-md-3 mt-4 mt-md-0">
+
+        <div class="filter-actions">
           <button
             type="submit"
-            class="btn btn-primary w-100"
+            class="btn-primary-action"
             [disabled]="isLoading"
           >
-            <i class="fas fa-search me-2"></i>
-            {{ isLoading ? "Generando..." : "Generar Reporte" }}
+            <i class="fas fa-search" *ngIf="!isLoading"></i>
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            Generar Reporte
           </button>
         </div>
       </div>
-      <div class="text-danger mt-2" *ngIf="errorMessage">
+      
+      <div class="error-message mt-3" *ngIf="errorMessage">
         {{ errorMessage }}
       </div>
     </form>
   </div>
-</div>
 
-<!-- Estado de carga -->
-<div class="text-center my-5" *ngIf="isLoading">
-  <div class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Cargando...</span>
+  <!-- Estado de carga -->
+  <div class="premium-loader" *ngIf="isLoading">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Procesando información financiera...</div>
   </div>
-  <p class="mt-2">Consultando datos...</p>
-</div>
 
 <!-- Resultados -->
 <ng-container *ngIf="reporteData && !isLoading">
-  <!-- Resumen Cards -->
-  <div class="row mb-4">
-    <div class="col-xl-4 col-md-6 mb-4">
-      <div class="card border-left-primary shadow h-100 py-2">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-              <div
-                class="text-xs font-weight-bold text-primary text-uppercase mb-1"
-              >
-                Gran Total (Recaudado)
+    <!-- Resumen Cards -->
+    <div class="row mb-4">
+      <div class="col-xl-4 col-md-6 mb-4">
+        <div class="premium-card metric-card metric-card-primary h-100 mb-0">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col">
+                <div class="metric-label">Gran Total (Recaudado)</div>
+                <div class="metric-value">
+                  {{ reporteData.granTotal | currency: "USD" : "symbol" : "1.2-2" }}
+                </div>
               </div>
-              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                {{
-                  reporteData.granTotal | currency: "USD" : "symbol" : "1.2-2"
-                }}
+              <div class="col-auto">
+                <div class="metric-icon-wrap metric-primary-icon">
+                  <i class="bi bi-wallet2"></i>
+                </div>
               </div>
             </div>
-            <div class="col-auto">
-              <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-xl-4 col-md-6 mb-4">
+        <div class="premium-card metric-card metric-card-success h-100 mb-0">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col">
+                <div class="metric-label">Período Analizado</div>
+                <div class="h6 mb-0 font-weight-bold text-gray-800" style="margin-top: 0.5rem;">
+                  {{ reporteData.fechaInicio }} <span class="text-muted mx-1">al</span> {{ reporteData.fechaFin }}
+                </div>
+              </div>
+              <div class="col-auto">
+                <div class="metric-icon-wrap metric-success-icon">
+                  <i class="bi bi-calendar-check"></i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-xl-4 col-md-6 mb-4">
-      <div class="card border-left-success shadow h-100 py-2">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-            <div class="col mr-2">
-              <div
-                class="text-xs font-weight-bold text-success text-uppercase mb-1"
-              >
-                Período Analizado
-              </div>
-              <div class="h6 mb-0 font-weight-bold text-gray-800">
-                {{ reporteData.fechaInicio }} a {{ reporteData.fechaFin }}
-              </div>
-            </div>
-            <div class="col-auto">
-              <i class="fas fa-calendar fa-2x text-gray-300"></i>
-            </div>
-          </div>
+
+    <!-- Tabla Principal: Consolidado por Método de Pago -->
+    <div class="premium-card">
+      <div class="card-header">
+        <i class="bi bi-pie-chart-fill text-primary"></i>
+        <span>Resumen por Método de Pago</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="premium-table-wrapper border-0 rounded-0">
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>Método de Pago</th>
+                <th class="text-center">Cantidad Ventas</th>
+                <th class="text-right">Total Recaudado</th>
+                <th class="text-right">% Participación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let metodo of reporteData.metodosPago">
+                <td>
+                  <div class="payment-method-tag">
+                    <i class="bi" [ngClass]="{
+                      'bi-cash': metodo.nombreMetodo === 'EFECTIVO',
+                      'bi-credit-card-2-front': metodo.nombreMetodo === 'TARJETA' || metodo.nombreMetodo === 'TARJETA_CREDITO' || metodo.nombreMetodo === 'TARJETA_DEBITO',
+                      'bi-bank': metodo.nombreMetodo === 'TRANSFERENCIA'
+                    }"></i>
+                    {{ metodo.nombreMetodo }}
+                  </div>
+                </td>
+                <td class="text-center font-weight-bold text-muted">{{ metodo.cantidadVentas }}</td>
+                <td class="text-right font-weight-bold">
+                  {{ metodo.totalRecaudado | currency: "USD" : "symbol" : "1.2-2" }}
+                </td>
+                <td class="text-right">
+                  <span
+                    class="modern-badge"
+                    [ngClass]="{
+                      'badge-success-soft': metodo.porcentajeParticipacion > 50,
+                      'badge-info-soft': metodo.porcentajeParticipacion <= 50 && metodo.porcentajeParticipacion > 0,
+                      'badge-secondary-soft': metodo.porcentajeParticipacion === 0
+                    }"
+                  >
+                    {{ metodo.porcentajeParticipacion }}%
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="reporteData.metodosPago.length === 0">
+                <td colspan="4" class="text-center py-5 text-muted">
+                  <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                  No se encontraron pagos registrados en el período especificado.
+                </td>
+              </tr>
+            </tbody>
+            <tfoot
+              class="premium-tfoot"
+              *ngIf="reporteData.metodosPago.length > 0"
+            >
+              <tr>
+                <td>GRAN TOTAL</td>
+                <td class="text-center font-weight-bold" style="color: #6c757d;">{{ totalCantidadVentas }}</td>
+                <td class="text-right text-primary h5 mb-0 font-weight-bold">
+                  {{ reporteData.granTotal | currency: "USD" : "symbol" : "1.2-2" }}
+                </td>
+                <td class="text-right text-primary h5 mb-0 font-weight-bold">100.00%</td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Tabla Principal: Consolidado por Método de Pago -->
-  <div class="card shadow mb-4">
-    <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary">
-        Resumen por Método de Pago
-      </h6>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table
-          class="table table-bordered table-hover outline-table"
-          width="100%"
-          cellspacing="0"
-        >
-          <thead class="table-light">
-            <tr>
-              <th>Método de Pago</th>
-              <th class="text-center">Cantidad Ventas</th>
-              <th class="text-end">Total Recaudado</th>
-              <th class="text-end">% Participación</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let metodo of reporteData.metodosPago">
-              <td class="font-weight-bold">{{ metodo.nombreMetodo }}</td>
-              <td class="text-center">{{ metodo.cantidadVentas }}</td>
-              <td class="text-end">
-                {{
-                  metodo.totalRecaudado | currency: "USD" : "symbol" : "1.2-2"
-                }}
-              </td>
-              <td class="text-end">
-                <span
-                  class="badge"
-                  [ngClass]="{
-                    'bg-success': metodo.porcentajeParticipacion > 50,
-                    'bg-info': metodo.porcentajeParticipacion <= 50,
-                    'bg-secondary': metodo.porcentajeParticipacion === 0,
-                  }"
-                >
-                  {{ metodo.porcentajeParticipacion }}%
-                </span>
-              </td>
-            </tr>
-            <tr *ngIf="reporteData.metodosPago.length === 0">
-              <td colspan="4" class="text-center py-4">
-                No se encontraron pagos registrados en el período especificado.
-              </td>
-            </tr>
-          </tbody>
-          <tfoot
-            class="table-light font-weight-bold"
-            *ngIf="reporteData.metodosPago.length > 0"
-          >
-            <tr>
-              <td>GRAN TOTAL</td>
-              <td class="text-center">-</td>
-              <td class="text-end text-primary h5 mb-0">
-                {{
-                  reporteData.granTotal | currency: "USD" : "symbol" : "1.2-2"
-                }}
-              </td>
-              <td class="text-end">100.00%</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tabla Secundaria: Desglose de Referencias (Auditoría) -->
-  <div
-    class="card shadow mb-4"
-    *ngIf="
-      reporteData.detallesReferencias &&
-      reporteData.detallesReferencias.length > 0
-    "
-  >
+    <!-- Tabla Secundaria: Desglose de Referencias (Auditoría) -->
     <div
-      class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+      class="premium-card"
+      *ngIf="reporteData.detallesReferencias && reporteData.detallesReferencias.length > 0"
     >
-      <h6 class="m-0 font-weight-bold text-primary">
-        Desglose de Auditoría (Tarjetas y Transferencias)
-      </h6>
-    </div>
-    <div class="card-body">
-      <p class="text-muted small mb-3">
-        Listado de transacciones no realizadas en efectivo que contienen una
-        referencia de pago para su correcta conciliación bancaria.
-      </p>
-      <div class="table-responsive refs-table-container">
-        <table
-          class="table table-sm table-bordered table-striped refs-table"
-          width="100%"
-          cellspacing="0"
-        >
-          <thead class="table-light sticky-top">
-            <tr>
-              <th>Fecha</th>
-              <th>ID Venta</th>
-              <th>Método</th>
-              <th>Referencia</th>
-              <th class="text-end">Monto</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let ref of reporteData.detallesReferencias">
-              <td>{{ ref.fechaVenta | date: "short" }}</td>
-              <td>#{{ ref.idVenta }}</td>
-              <td>
-                <span class="badge bg-secondary">{{ ref.metodoPago }}</span>
-              </td>
-              <td class="font-monospace text-primary">
-                {{ ref.referenciaPago }}
-              </td>
-              <td class="text-end font-weight-bold">
-                {{ ref.monto | currency: "USD" : "symbol" : "1.2-2" }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="card-header justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-shield-check text-primary"></i>
+          <span>Desglose de Auditoría (Tarjetas y Transferencias)</span>
+        </div>
+      </div>
+      <div class="card-body pt-3">
+        <p class="text-muted small mb-4">
+          Listado de transacciones no realizadas en efectivo que contienen una
+          referencia de pago para su correcta conciliación bancaria.
+        </p>
+        <div class="refs-table-container premium-table-wrapper">
+          <table class="premium-table refs-table mb-0">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>ID Venta</th>
+                <th>Método</th>
+                <th>Referencia</th>
+                <th class="text-end">Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ref of reporteData.detallesReferencias">
+                <td class="text-muted">{{ ref.fechaVenta | date: "dd/MM/yyyy HH:mm" }}</td>
+                <td class="font-weight-bold">#{{ ref.idVenta }}</td>
+                <td>
+                  <span class="modern-badge badge-secondary-soft py-1 px-2 text-xs">{{ ref.metodoPago }}</span>
+                </td>
+                <td>
+                  <span class="font-monospace">{{ ref.referenciaPago }}</span>
+                </td>
+                <td class="text-end font-weight-bold text-primary">
+                  {{ ref.monto | currency: "USD" : "symbol" : "1.2-2" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-</ng-container>
+  </ng-container>
+</div>
