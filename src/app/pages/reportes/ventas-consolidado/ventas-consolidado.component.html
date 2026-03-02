@@ -63,6 +63,18 @@
         <i class="bi bi-bar-chart-line me-2"></i>
         {{ isLoading ? "Generando..." : "Generar Reporte" }}
       </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-danger ms-2"
+        style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.25rem; font-weight: 500; border-radius: 8px;"
+        (click)="exportarPDF()"
+        [disabled]="!hasData || isLoading"
+        title="Descargar PDF"
+      >
+        <i class="bi bi-file-earmark-pdf"></i>
+        Descargar PDF
+      </button>
     </div>
   </div>
 

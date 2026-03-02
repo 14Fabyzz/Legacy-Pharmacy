@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReportesService } from '../../../core/services/reportes.service';
 import { TopProductoResponse } from '../../../core/models/reportes.models';
+import { PdfExportService } from '../../../core/services/pdf-export.service';
 
 @Component({
   selector: 'app-top-rotacion',
@@ -26,6 +27,7 @@ export class TopRotacionComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private reportesService: ReportesService,
+    private pdfExportService: PdfExportService
   ) {
     this.filtroForm = this.fb.group({
       fechaInicio: ['', Validators.required],
@@ -79,5 +81,31 @@ export class TopRotacionComponent implements OnInit {
           this.isLoading = false;
         },
       });
+  }
+
+  exportarPDF(): void {
+    if (this.topProductos.length === 0) return;
+
+    const columnas = ['#', 'Producto', 'Presentación', 'Cantidad Vendida', 'Ingresos Generados'];
+    const filas = this.topProductos.map((prod, i) => [
+      (i + 1).toString(),
+      prod.nombreProducto,
+      prod.presentacion,
+      prod.totalVendido.toLocaleString('es-CO'),
+      `$${prod.ingresoGenerado.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    ]);
+
+    let periodoStr = '';
+    if (this.periodoConsultado) {
+      periodoStr = `${this.periodoConsultado.inicio} al ${this.periodoConsultado.fin}`;
+    }
+
+    this.pdfExportService.exportarTablaPDF(
+      'Productos Mayor Rotación (Top Moving)',
+      columnas,
+      filas,
+      'top_rotacion',
+      periodoStr
+    );
   }
 }

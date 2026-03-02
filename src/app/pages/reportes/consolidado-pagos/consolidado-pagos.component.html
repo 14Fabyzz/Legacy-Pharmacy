@@ -46,7 +46,7 @@
           />
         </div>
 
-        <div class="filter-actions">
+        <div class="filter-actions" style="display: flex; gap: 0.5rem; align-items: flex-end;">
           <button
             type="submit"
             class="btn-primary-action"
@@ -55,6 +55,18 @@
             <i class="fas fa-search" *ngIf="!isLoading"></i>
             <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
             Generar Reporte
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.25rem; font-weight: 500; border-radius: 8px;"
+            (click)="exportarPDF()"
+            [disabled]="!reporteData || reporteData.metodosPago.length === 0 || isLoading"
+            title="Descargar PDF"
+          >
+            <i class="fas fa-file-pdf"></i>
+            Descargar PDF
           </button>
         </div>
       </div>

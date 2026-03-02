@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ReportesService } from '../../../core/services/reportes.service';
+import { PdfExportService } from '../../../core/services/pdf-export.service';
 import {
     ReporteVentasConsolidadasDTO,
     ReporteVentasFiltros,
@@ -81,7 +82,10 @@ export class VentasConsolidadoComponent implements OnDestroy {
 
     private subscription: Subscription | null = null;
 
-    constructor(private reportesService: ReportesService) {
+    constructor(
+        private reportesService: ReportesService,
+        private pdfExportService: PdfExportService
+    ) {
         this.setDefaultDates();
     }
 
@@ -188,6 +192,37 @@ export class VentasConsolidadoComponent implements OnDestroy {
             case 'MENSUAL': return 'Mensual';
             default: return '';
         }
+    }
+
+    exportarPDF(): void {
+        if (!this.reporte || !this.hasData) return;
+
+        const columnas = ['Período', 'Ingresos', 'IVA', 'Neto', 'Ventas'];
+        const filas = this.reporte.periodos.map(p => [
+            p.periodo,
+            `$${p.totalIngresos.toLocaleString('es-CO')}`,
+            `$${p.totalIva.toLocaleString('es-CO')}`,
+            `$${p.subtotalNeto.toLocaleString('es-CO')}`,
+            p.cantidadVentas.toString()
+        ]);
+
+        filas.push([
+            'TOTALES',
+            `$${this.reporte.totalIngresos.toLocaleString('es-CO')}`,
+            `$${this.reporte.totalIva.toLocaleString('es-CO')}`,
+            `$${this.reporte.subtotalNeto.toLocaleString('es-CO')}`,
+            this.reporte.cantidadVentas.toString()
+        ]);
+
+        const periodoStr = `${this.reporte.fechaInicio} al ${this.reporte.fechaFin} (${this.getPeriodicidadLabel()})`;
+
+        this.pdfExportService.exportarTablaPDF(
+            'Reporte de Ventas Consolidadas',
+            columnas,
+            filas,
+            'ventas_consolidadas',
+            periodoStr
+        );
     }
 
     ngOnDestroy(): void {

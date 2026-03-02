@@ -4,6 +4,7 @@ import { ReportesService } from '../../../core/services/reportes.service';
 import { ConsolidadoPagosResponse } from '../../../core/models/reportes.models';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
+import { PdfExportService } from '../../../core/services/pdf-export.service';
 
 @Component({
   selector: 'app-consolidado-pagos',
@@ -24,7 +25,8 @@ export class ConsolidadoPagosComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private reportesService: ReportesService
+    private reportesService: ReportesService,
+    private pdfExportService: PdfExportService
   ) {
     this.filtrosForm = this.fb.group({
       fechaInicio: ['', Validators.required],
@@ -73,5 +75,35 @@ export class ConsolidadoPagosComponent implements OnInit {
           console.error('Error fetching consolidado pagos:', err);
         }
       });
+  }
+
+  exportarPDF(): void {
+      if (!this.reporteData || !this.reporteData.metodosPago || this.reporteData.metodosPago.length === 0) return;
+
+      const columnas = ['Método de Pago', 'Cantidad Ventas', 'Total Recaudado', '% Participación'];
+      
+      const filas = this.reporteData.metodosPago.map(m => [
+          m.nombreMetodo,
+          m.cantidadVentas.toString(),
+          `$${m.totalRecaudado.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          `${m.porcentajeParticipacion}%`
+      ]);
+
+      filas.push([
+          'GRAN TOTAL',
+          this.totalCantidadVentas.toString(),
+          `$${this.reporteData.granTotal.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          '100.00%'
+      ]);
+
+      const periodoStr = `${this.reporteData.fechaInicio} al ${this.reporteData.fechaFin}`;
+
+      this.pdfExportService.exportarTablaPDF(
+          'Consolidado de Pagos',
+          columnas,
+          filas,
+          'consolidado_pagos',
+          periodoStr
+      );
   }
 }
