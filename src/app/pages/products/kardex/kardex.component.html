@@ -107,7 +107,7 @@
                             No hay movimientos registrados.
                         </td>
                     </tr>
-                    <tr *ngFor="let m of paginatedMovimientos" (click)="openDetail(m)" style="cursor: pointer;">
+                    <tr *ngFor="let m of paginatedMovimientos">
                         <td>
                             <div class="date-cell">
                                 <strong>{{ m.fecha | date:'dd MMM yyyy' }}</strong>
@@ -120,7 +120,11 @@
                         <td>
                             <span class="type-badge" [ngClass]="m.tipo | lowercase">{{ m.tipo }}</span>
                         </td>
-                        <td class="doc-ref">#{{ m.documento_ref || '---' }}</td>
+                        <td class="doc-ref">
+                            <span *ngIf="m.documento_ref">{{ m.documento_ref }}</span>
+                            <span *ngIf="!m.documento_ref"
+                                style="color: #94a3b8; font-style: italic; font-size: 0.85em;">Sin Documento</span>
+                        </td>
 
                         <!-- Lote Column -->
                         <td>
@@ -170,79 +174,5 @@
                 </div>
             </div>
         </ng-template>
-    </div>
-</div>
-
-
-<!-- DETALLE MODAL -->
-<div class="modal-overlay" *ngIf="selectedMovement" (click)="closeDetail()">
-    <div class="detail-card" (click)="$event.stopPropagation()">
-
-        <header class="detail-header" [ngClass]="selectedMovement.tipo | lowercase">
-            <div class="header-icon">
-                <span *ngIf="selectedMovement.tipo === 'ENTRADA'">📥</span>
-                <span *ngIf="selectedMovement.tipo === 'SALIDA'">📤</span>
-                <span *ngIf="selectedMovement.tipo === 'AJUSTE'">🔧</span>
-            </div>
-
-            <div class="header-texts">
-                <h3 class="mov-type">{{ selectedMovement.tipo }} DE INVENTARIO</h3>
-                <h2 class="prod-name">{{ product?.nombre_comercial || selectedMovement.nombre_producto }}</h2>
-                <p class="mov-date">{{ selectedMovement.fecha | date:'fullDate' }} — {{ selectedMovement.fecha |
-                    date:'mediumTime' }}</p>
-            </div>
-
-            <button class="btn-close-modal" (click)="closeDetail()">✕</button>
-        </header>
-
-        <div class="detail-body">
-
-            <div class="detail-row highlight">
-                <div>
-                    <label>Documento Ref.</label>
-                    <strong>#{{ selectedMovement.documento_ref || '---' }}</strong>
-                </div>
-                <div class="text-right">
-                    <label>Cantidad</label>
-                    <strong class="qty-text"
-                        [ngClass]="selectedMovement.tipo === 'ENTRADA' ? 'text-green' : 'text-red'">
-                        {{ selectedMovement.tipo === 'ENTRADA' ? '+' : '-' }}{{ selectedMovement.cantidad }} u.
-                    </strong>
-                </div>
-            </div>
-
-            <hr class="divider">
-
-            <div class="info-grid">
-
-                <!-- Campos Cliente y Proveedor eliminados del modelo estricto -->
-
-
-                <div class="info-box" *ngIf="selectedMovement.lote">
-                    <label>Lote</label>
-                    <p class="batch-tag">{{ selectedMovement.lote }}</p>
-                </div>
-
-                <div class="info-box" *ngIf="selectedMovement.costo_unitario">
-                    <label>Costo Unit.</label>
-                    <p>{{ selectedMovement.costo_unitario | currency }}</p>
-                </div>
-
-                <div class="info-box">
-                    <label>Responsable</label>
-                    <p>👤 {{ selectedMovement.usuario }}</p>
-                </div>
-
-                <div class="info-box full-width" *ngIf="selectedMovement.detalle">
-                    <label>Notas / Observaciones</label>
-                    <p class="notes-box">"{{ selectedMovement.detalle }}"</p>
-                </div>
-
-            </div>
-        </div>
-        <div class="detail-footer">
-            <button class="btn-secondary" style="margin-right: 10px;">📄 Ver Factura Completa</button>
-            <button class="btn-print">🖨️ Imprimir Comprobante</button>
-        </div>
     </div>
 </div>
