@@ -10,6 +10,8 @@ export interface ItemVentaDTO {
     productoId: number;
     cantidad: number;
     tipoVenta: TipoVenta;
+    descuento?: number;
+    precioUnitario?: number;
     // Campos UI
     // Campos UI eliminados del DTO de envío para evitar errores de backend
     // precioUnitarioEstimado?: number;
@@ -68,6 +70,7 @@ export interface CartItem {
     cantidad: number;
     tipoVenta: TipoVenta;
     precio: number;
+    descuento?: number;
     subtotal: number;
     error?: string;
     imagenUrl?: string | null;

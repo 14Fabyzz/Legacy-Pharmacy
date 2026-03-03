@@ -325,12 +325,39 @@
 
 .product-name {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .product-meta {
   font-size: 0.85rem;
   color: var(--slate-600);
+}
+
+.product-subtitle {
+  font-size: 0.75rem;
+  color: var(--slate-600);
+  line-height: 1.2;
+}
+
+/* Hide spinners in number input */
+input[type=number].no-spinners::-webkit-inner-spin-button,
+input[type=number].no-spinners::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number].no-spinners {
+  -moz-appearance: textfield;
+  /* Firefox */
+  appearance: textfield;
 }
 
 /* Badges & Buttons */

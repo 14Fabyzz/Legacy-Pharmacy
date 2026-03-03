@@ -32,7 +32,11 @@ export class CartService {
 
     get total(): number {
         return this.cartItems.reduce((acc, item) => {
-            return acc + (Number(item.precio) * Number(item.cantidad));
+            const pct = (Number(item.descuento) || 0) / 100;
+            const precioEfectivo = Number(item.precio) * (1 - pct);
+            let subFila = precioEfectivo * Number(item.cantidad);
+            if (subFila < 0) subFila = 0;
+            return acc + subFila;
         }, 0);
     }
 
@@ -80,6 +84,7 @@ export class CartService {
                 product: product,
                 cantidad: 1,
                 precio: precioInicial,
+                descuento: 0,
                 subtotal: precioInicial, // Initial subtotal
                 tipoVenta: initialType,
                 imagenUrl: fullImageUrl // Explicitly copy image URL
@@ -112,7 +117,8 @@ export class CartService {
 
         item.cantidad = finalQty;
         // Subtotal calculation is now done in view or on demand, but we can update property for consistency if needed
-        item.subtotal = finalQty * Number(item.precio);
+        const pct = (Number(item.descuento) || 0) / 100;
+        item.subtotal = finalQty * (Number(item.precio) * (1 - pct));
 
         this.cartItemsSubject.next([...this.cartItems]);
         this.saveToStorage();
@@ -139,14 +145,16 @@ export class CartService {
                 break;
         }
 
-        item.subtotal = item.cantidad * item.precio;
+        const pct = (Number(item.descuento) || 0) / 100;
+        item.subtotal = item.cantidad * (Number(item.precio) * (1 - pct));
         this.cartItemsSubject.next([...this.cartItems]);
         this.saveToStorage();
     }
 
     private recalculateItem(item: CartItem) {
         // Deprecated or internal helper, can be removed or kept simple
-        item.subtotal = Number(item.cantidad) * Number(item.precio);
+        const pct = (Number(item.descuento) || 0) / 100;
+        item.subtotal = Number(item.cantidad) * (Number(item.precio) * (1 - pct));
     }
 
     // Removed calcularTotales() - now dynamic
@@ -192,8 +200,11 @@ export class CartService {
                     item.cantidad = Number(item.cantidad) || 1;
                     item.precio = Number(item.precio) || 0;
 
+                    item.descuento = Number(item.descuento) || 0;
+                    const pct = item.descuento / 100;
+
                     // Recalculate subtotal immediately
-                    item.subtotal = item.cantidad * item.precio;
+                    item.subtotal = item.cantidad * (item.precio * (1 - pct));
 
                     // Restore Image URL if missing from top-level but present in product
                     if (!item.imagenUrl && item.product?.detalleProducto?.imagen) {

@@ -15,6 +15,7 @@ import {
   CrearVentaDTO
 } from '../../../core/models/sales.models';
 import { Subject, Subscription, of, debounceTime, distinctUntilChanged, switchMap, catchError, tap, finalize } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -60,6 +61,20 @@ export class NewSaleComponent implements OnInit, OnDestroy {
   montoRecibido: number = 0;
   cambio: number = 0;
   ultimaVentaId: string | null = null;
+  referenciaPago: string = '';
+  procesandoVenta: boolean = false;
+
+  get isAdmin(): boolean {
+    const role = this.authService.getRole()?.toUpperCase() || '';
+    return role === 'ADMIN' || role === 'ADMINISTRADOR' || role === 'SUPERVISOR';
+  }
+
+  get hasInvalidDiscounts(): boolean {
+    return this.cartItems.some(i => {
+      const desc = Number(i.descuento) || 0;
+      return desc < 0 || desc > 100;
+    });
+  }
 
   // Modal Ticket Variables
   mostrarModalTicket: boolean = false;
@@ -70,8 +85,12 @@ export class NewSaleComponent implements OnInit, OnDestroy {
 
     return this.cartItems.reduce((acc, item) => {
       const precio = Number(item.precio) || 0;
+      const descuento = Number(item.descuento) || 0;
       const cantidad = Number(item.cantidad) || 0;
-      return acc + (precio * cantidad);
+      const pct = descuento / 100;
+      let subFila = (precio * (1 - pct)) * cantidad;
+      if (subFila < 0) subFila = 0;
+      return acc + subFila;
     }, 0);
   }
 
@@ -88,7 +107,8 @@ export class NewSaleComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     public cartService: CartService,
     private toastService: ToastService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -358,10 +378,26 @@ export class NewSaleComponent implements OnInit, OnDestroy {
     // Explicit Cast to avoid string concatenation issues
     const qty = Number(newQty);
     this.cartService.updateQuantity(item, qty);
+    this.calculateChange();
     this.cd.detectChanges(); // Force UI update
   }
 
-  // --- Calculations ---
+  onItemChange(item: CartItem) {
+    // Notify the cart service so it can persist and propagate the state
+    this.cartService.saveToStorage();
+    this.calculateChange();
+    this.cd.detectChanges();
+  }
+
+  // --- Calculations & Payments ---
+
+  setPaymentMethod(method: MetodoPago) {
+    this.metodoPago = method;
+    if (method === 'EFECTIVO') {
+      this.referenciaPago = '';
+    }
+    this.calculateChange();
+  }
 
   calculateChange() {
     const total = this.calcularTotalGlobal();
@@ -394,18 +430,33 @@ export class NewSaleComponent implements OnInit, OnDestroy {
 
     if (this.cartItems.length === 0) return;
 
+    if (this.metodoPago !== 'EFECTIVO' && !this.referenciaPago?.trim()) {
+      this.toastService.showError('Debe ingresar el número de comprobante o referencia de pago');
+      return;
+    }
+
+    this.procesandoVenta = true;
+
     const request: CrearVentaDTO = {
       clienteId: this.cartService.clienteId,
       metodoPago: this.metodoPago,
+      referenciaPago: this.metodoPago !== 'EFECTIVO' ? this.referenciaPago.trim() : undefined,
       montoRecibido: this.montoRecibido,
       items: this.cartItems.map(i => ({
         productoId: i.product.detalleProducto.id,
         cantidad: i.cantidad,
-        tipoVenta: i.tipoVenta
+        tipoVenta: i.tipoVenta,
+        precioUnitario: Number(i.precio) || 0,
+        descuento: Number(i.descuento) || 0
       }))
     };
 
-    this.salesService.crearVenta(request).subscribe({
+    this.salesService.crearVenta(request).pipe(
+      finalize(() => {
+        this.procesandoVenta = false;
+        this.cd.detectChanges();
+      })
+    ).subscribe({
       next: (res) => {
         const shortId = (res.numeroFactura || '').slice(0, 8).toUpperCase();
         this.ultimaVentaId = res.numeroFactura;
@@ -433,7 +484,8 @@ export class NewSaleComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error(err);
-        this.toastService.showError('Error al procesar venta');
+        const errorMsg = err?.error?.message || err?.message || 'Error al procesar la venta';
+        this.toastService.showError(errorMsg);
       }
     });
   }

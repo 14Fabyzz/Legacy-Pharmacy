@@ -64,13 +64,13 @@ export class PdfExportService {
         fillColor: [245, 245, 245]
       },
       // 4. Pie de página (Fecha y Hora de generación)
-      didDrawPage: function (data) {
+      didDrawPage: function (data: any) {
         // Formatear la fecha actual
         const now = new Date();
         const fechaStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         doc.setFontSize(9);
         doc.setTextColor(150, 150, 150);
-        
+
         // Agregar footer centrado o a la derecha (aquí va a la derecha)
         const footerText = `Generado el: ${fechaStr} - Página ${doc.getCurrentPageInfo().pageNumber}`;
         const footerWidth = doc.getTextWidth(footerText);

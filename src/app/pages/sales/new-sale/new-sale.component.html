@@ -68,9 +68,9 @@
           <tr>
             <th class="w-40">Producto</th>
             <th class="w-15 text-center">Tipo</th>
-            <th class="w-15 text-center">Cantidad</th>
-            <th class="w-15 text-end">Precio</th>
-            <th class="w-15 text-end">Total</th>
+            <th class="w-10 text-center">Cantidad</th>
+            <th class="w-20 text-end">Precio</th>
+            <th class="w-10 text-end">Total</th>
             <th class="w-5"></th>
           </tr>
         </thead>
@@ -117,11 +117,51 @@
               <input type="number" class="clean-input qty-input" [ngModel]="item.cantidad"
                 (ngModelChange)="updateQuantity(item, $event)" min="1">
             </td>
-            <td class="text-end text-slate-600">
-              {{ item.precio | currency }}
+            <td class="text-end text-slate-600" style="min-width: 150px; padding-right: 16px;">
+              <div class="d-flex flex-column align-items-end gap-2" style="width: 100%;">
+
+                <!-- Price Input -->
+                <div
+                  style="display: flex; align-items: stretch; width: 140px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; background: white;">
+                  <div
+                    style="display: flex; align-items: center; justify-content: center; width: 30px; background-color: #f8fafc; border-right: 1px solid #e2e8f0; font-size: 0.85rem; color: #475569;">
+                    $
+                  </div>
+                  <input type="number" class="no-spinners"
+                    style="flex: 1; border: none; outline: none; text-align: right; padding: 0 8px; font-size: 0.85rem; min-width: 0;"
+                    [(ngModel)]="item.precio" (ngModelChange)="onItemChange(item)" [readonly]="!isAdmin"
+                    [style.background-color]="!isAdmin ? '#e2e8f0' : 'white'"
+                    [style.cursor]="!isAdmin ? 'not-allowed' : 'text'" title="Precio Unitario" min="0">
+                </div>
+
+                <!-- Discount Input -->
+                <div
+                  [style.border]="((item.descuento || 0) > 100 || (item.descuento || 0) < 0) ? '1px solid #dc3545' : '1px solid #e2e8f0'"
+                  style="display: flex; align-items: stretch; width: 140px; height: 32px; border-radius: 4px; overflow: hidden; background: white;">
+                  <div
+                    style="display: flex; align-items: center; justify-content: center; width: 50px; background-color: #f8fafc; border-right: 1px solid #e2e8f0; font-size: 0.75rem; color: #475569;">
+                    Desct.
+                  </div>
+                  <input type="number" class="no-spinners text-danger"
+                    style="flex: 1; border: none; outline: none; text-align: right; padding: 0 4px; font-size: 0.85rem; min-width: 0;"
+                    [(ngModel)]="item.descuento" (ngModelChange)="onItemChange(item)" [readonly]="!isAdmin"
+                    [style.background-color]="!isAdmin ? '#e2e8f0' : 'white'"
+                    [style.cursor]="!isAdmin ? 'not-allowed' : 'text'" title="Descuento (%)" placeholder="0" min="0"
+                    max="100">
+                  <div
+                    style="display: flex; align-items: center; justify-content: center; width: 30px; background-color: #f8fafc; border-left: 1px solid #e2e8f0; font-size: 0.85rem; color: #475569;">
+                    %
+                  </div>
+                </div>
+                <small *ngIf="(item.descuento || 0) > 100" class="text-danger"
+                  style="font-size: 0.7rem; margin-top: -4px;">El máximo es 100%</small>
+                <small *ngIf="(item.descuento || 0) < 0" class="text-danger"
+                  style="font-size: 0.7rem; margin-top: -4px;">El mínimo es 0%</small>
+
+              </div>
             </td>
             <td class="text-end font-bold text-slate-800">
-              {{ (item.precio * item.cantidad) | currency }}
+              {{ (item.precio * (1 - ((item.descuento || 0) / 100)) * item.cantidad) | currency }}
             </td>
             <td class="text-center">
               <button class="delete-btn" (click)="removeItem(i)" title="Eliminar del carrito">
@@ -156,16 +196,27 @@
 
       <div class="card-section">
         <label class="label-clean">Método de Pago</label>
-        <div class="payment-options">
-          <button class="payment-btn" [class.active]="metodoPago === 'EFECTIVO'"
-            (click)="metodoPago = 'EFECTIVO'; calculateChange()">
+        <div class="payment-options" style="display: flex; gap: 8px;">
+          <button class="payment-btn flex-fill" [class.active]="metodoPago === 'EFECTIVO'"
+            (click)="setPaymentMethod('EFECTIVO')" style="padding: 8px 4px; font-size: 0.85rem;">
             <span>💵</span> Efectivo
           </button>
-          <button class="payment-btn" [class.active]="metodoPago === 'TARJETA'"
-            (click)="metodoPago = 'TARJETA'; calculateChange()">
+          <button class="payment-btn flex-fill" [class.active]="metodoPago === 'TARJETA'"
+            (click)="setPaymentMethod('TARJETA')" style="padding: 8px 4px; font-size: 0.85rem;">
             <span>💳</span> Tarjeta
           </button>
+          <button class="payment-btn flex-fill" [class.active]="metodoPago === 'TRANSFERENCIA'"
+            (click)="setPaymentMethod('TRANSFERENCIA')" style="padding: 8px 4px; font-size: 0.85rem;">
+            <span>🏦</span> Transf.
+          </button>
         </div>
+      </div>
+
+      <!-- Electronic Payment Reference -->
+      <div class="card-section mt-3" *ngIf="metodoPago !== 'EFECTIVO'">
+        <label class="label-clean text-danger" style="font-size: 0.8rem;">* Nro. de Comprobante / Voucher</label>
+        <input type="text" class="form-control form-control-sm border-slate-300" placeholder="Ej: 00492811"
+          [(ngModel)]="referenciaPago" [class.border-danger]="!referenciaPago.trim()">
       </div>
 
       <div class="divider"></div>
@@ -194,9 +245,15 @@
         </div>
       </div>
 
-      <button class="btn-primary-action btn-dark-primary" (click)="processSale()"
-        [disabled]="cartItems.length === 0 || calcularTotalGlobal() === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < calcularTotalGlobal())">
-        COBRAR
+      <button class="btn-primary-action btn-dark-primary d-flex justify-content-center align-items-center"
+        (click)="processSale()"
+        [disabled]="cartItems.length === 0 || calcularTotalGlobal() === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < calcularTotalGlobal()) || hasInvalidDiscounts || (metodoPago !== 'EFECTIVO' && !referenciaPago.trim()) || procesandoVenta">
+        <ng-container *ngIf="!procesandoVenta">COBRAR</ng-container>
+        <ng-container *ngIf="procesandoVenta">
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"
+            style="margin-right: 8px;"></span>
+          Procesando...
+        </ng-container>
       </button>
 
     </div>
