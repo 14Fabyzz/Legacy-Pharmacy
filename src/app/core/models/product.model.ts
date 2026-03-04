@@ -183,7 +183,7 @@ export interface MovimientoKardex {
     costo_unitario: number;
     lote: string | null;
     detalle: string | null;
-    documento_ref: string | null;
+    documento_ref?: string | null;
     usuario: string;
     nombre_producto: string;
     codigo_barras: string;

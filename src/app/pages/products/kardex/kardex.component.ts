@@ -23,7 +23,7 @@ export class KardexComponent implements OnInit {
     productId: number | null = null;
     product: Producto | null = null;
     movimientos: MovimientoKardex[] = [];
-    selectedMovement: MovimientoKardex | null = null;
+
     cargando = false;
 
     // Search & Filter
@@ -168,13 +168,6 @@ export class KardexComponent implements OnInit {
         });
     }
 
-    openDetail(movement: MovimientoKardex) {
-        this.selectedMovement = movement;
-    }
-
-    closeDetail() {
-        this.selectedMovement = null;
-    }
 
     // Pagination
     currentPage = 1;
