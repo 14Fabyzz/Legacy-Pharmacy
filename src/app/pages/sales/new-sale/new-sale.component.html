@@ -225,12 +225,19 @@
         <!-- REWRITTEN FOR SIMPLICITY AND PURITY -->
         <div class="flex justify-between items-center mb-2">
           <span class="text-slate-600 font-medium">Subtotal</span>
-          <span class="text-slate-800 font-bold">{{ calcularTotalGlobal() | currency }}</span>
+          <span class="text-slate-800 font-bold">{{ totalOriginal | currency }}</span>
+        </div>
+
+        <div class="flex justify-between items-center mb-2" *ngIf="ajusteRedondeo !== 0">
+          <span class="text-slate-600 font-medium">Ajuste al peso:</span>
+          <span class="text-slate-800"
+            [ngClass]="{'text-green-600 font-medium': ajusteRedondeo < 0, 'text-red-600 font-bold': ajusteRedondeo > 0}">{{
+            ajusteRedondeo | currency }}</span>
         </div>
 
         <div class="flex justify-between items-center pt-2 border-t border-slate-100">
           <span class="text-slate-900 font-bold text-xl">TOTAL</span>
-          <span class="text-green-600 font-bold text-3xl">{{ calcularTotalGlobal() | currency }}</span>
+          <span class="text-green-600 font-bold text-3xl">{{ totalAPagar | currency }}</span>
         </div>
       </div>
 
@@ -247,7 +254,7 @@
 
       <button class="btn-primary-action btn-dark-primary d-flex justify-content-center align-items-center"
         (click)="processSale()"
-        [disabled]="cartItems.length === 0 || calcularTotalGlobal() === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < calcularTotalGlobal()) || hasInvalidDiscounts || (metodoPago !== 'EFECTIVO' && !referenciaPago.trim()) || procesandoVenta">
+        [disabled]="cartItems.length === 0 || totalAPagar === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < totalAPagar) || hasInvalidDiscounts || (metodoPago !== 'EFECTIVO' && !referenciaPago.trim()) || procesandoVenta">
         <ng-container *ngIf="!procesandoVenta">COBRAR</ng-container>
         <ng-container *ngIf="procesandoVenta">
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"

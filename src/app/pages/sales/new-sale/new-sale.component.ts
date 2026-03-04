@@ -94,6 +94,27 @@ export class NewSaleComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
+  get totalOriginal(): number {
+    return this.calcularTotalGlobal();
+  }
+
+  get totalAPagar(): number {
+    let total = this.totalOriginal;
+    if (this.metodoPago === 'EFECTIVO') {
+      const factor = 50;
+      // Truncar hacia abajo al múltiplo de 50 más cercano (favor del cliente)
+      total = Math.floor(total / factor) * factor;
+    }
+    return total;
+  }
+
+  get ajusteRedondeo(): number {
+    if (this.metodoPago === 'EFECTIVO') {
+      return this.totalAPagar - this.totalOriginal;
+    }
+    return 0;
+  }
+
   // Opciones
   tiposVenta = Object.values(TipoVenta);
 
@@ -400,7 +421,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
   }
 
   calculateChange() {
-    const total = this.calcularTotalGlobal();
+    const total = this.totalAPagar;
     if (this.metodoPago === 'EFECTIVO') {
       this.cambio = this.montoRecibido - total;
       if (this.cambio < 0) this.cambio = 0;
@@ -416,7 +437,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
 
   processSale() {
     // Validate amount for Cash
-    const total = this.calcularTotalGlobal();
+    const total = this.totalAPagar;
 
     if (total === 0) {
       this.toastService.showError('El total de la venta no puede ser 0');
