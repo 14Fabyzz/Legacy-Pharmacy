@@ -19,24 +19,50 @@
     <form [formGroup]="filtrosForm" (ngSubmit)="generarAnalisis()">
       <div class="filters-grid">
         <div class="filter-group">
-          <label for="fechaInicio">FECHA INICIO <span class="required">*</span></label>
+          <label for="fechaInicio"
+            >FECHA INICIO <span class="required">*</span></label
+          >
           <div class="input-with-icon">
-            <input type="date" id="fechaInicio" formControlName="fechaInicio" class="form-control"
-              [class.is-invalid]="filtrosForm.get('fechaInicio')?.invalid && filtrosForm.get('fechaInicio')?.touched" />
+            <input
+              type="date"
+              id="fechaInicio"
+              formControlName="fechaInicio"
+              class="form-control"
+              [class.is-invalid]="
+                filtrosForm.get('fechaInicio')?.invalid &&
+                filtrosForm.get('fechaInicio')?.touched
+              "
+            />
           </div>
         </div>
 
         <div class="filter-group">
-          <label for="fechaFin">FECHA FIN <span class="required">*</span></label>
+          <label for="fechaFin"
+            >FECHA FIN <span class="required">*</span></label
+          >
           <div class="input-with-icon">
-            <input type="date" id="fechaFin" formControlName="fechaFin" class="form-control"
-              [class.is-invalid]="filtrosForm.get('fechaFin')?.invalid && filtrosForm.get('fechaFin')?.touched" />
+            <input
+              type="date"
+              id="fechaFin"
+              formControlName="fechaFin"
+              class="form-control"
+              [class.is-invalid]="
+                filtrosForm.get('fechaFin')?.invalid &&
+                filtrosForm.get('fechaFin')?.touched
+              "
+            />
           </div>
         </div>
 
         <div class="filter-group">
-          <label for="periodicidad">PERÍODO <span class="required">*</span></label>
-          <select id="periodicidad" class="form-control" formControlName="periodicidad">
+          <label for="periodicidad"
+            >PERÍODO <span class="required">*</span></label
+          >
+          <select
+            id="periodicidad"
+            class="form-control"
+            formControlName="periodicidad"
+          >
             <option *ngFor="let p of opcionesPeriodicidad" [value]="p">
               {{ p | titlecase }}
             </option>
@@ -45,7 +71,11 @@
 
         <div class="filter-group">
           <label for="sucursal">SUCURSAL</label>
-          <select id="sucursal" class="form-control" formControlName="sucursalId">
+          <select
+            id="sucursal"
+            class="form-control"
+            formControlName="sucursalId"
+          >
             <option [ngValue]="null">Todas las sucursales</option>
             <option [value]="1">Sucursal 1 (Norte)</option>
           </select>
@@ -61,14 +91,26 @@
           </select>
         </div>
 
-        <div class="filter-actions" style="display: flex; gap: 0.5rem; align-items: flex-end;">
-          <button type="submit" class="btn-primary-action" [disabled]="isAnalyzing">
+        <div
+          class="filter-actions"
+          style="display: flex; gap: 0.5rem; align-items: flex-end"
+        >
+          <button
+            type="submit"
+            class="btn-primary-action"
+            [disabled]="isAnalyzing"
+          >
             <i class="fas fa-search" *ngIf="!isAnalyzing"></i>
             <i class="fas fa-spinner fa-spin" *ngIf="isAnalyzing"></i>
             Generar Reporte
           </button>
 
-          <button type="button" class="btn btn-outline-secondary btn-pdf" [disabled]="!analisisResultado || isAnalyzing" title="Descargar PDF">
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-pdf"
+            [disabled]="!analisisResultado || isAnalyzing"
+            title="Descargar PDF"
+          >
             <i class="fas fa-file-pdf"></i>
             Descargar PDF
           </button>
@@ -78,28 +120,16 @@
   </div>
 
   <!-- Estado de Carga -->
-  <div *ngIf="isAnalyzing" class="loading-state text-center py-5">
-    <div class="spinner-grow text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
+  <div *ngIf="isAnalyzing" class="loading-state-container">
+    <div class="spinner-border loading-spinner" role="status">
+      <span class="visually-hidden">Cargando...</span>
     </div>
-    <div
-      class="spinner-grow text-secondary ms-2"
-      role="status"
-      style="animation-delay: 0.1s"
-    >
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <div
-      class="spinner-grow text-info ms-2"
-      role="status"
-      style="animation-delay: 0.2s"
-    >
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <h4 class="mt-4 fw-bold text-primary">
-      La IA está analizando los datos de ventas...
-    </h4>
-    <p class="text-muted">Esto puede tomar unos segundos.</p>
+    <h5 class="loading-title text-dark mt-4 fw-bold">
+      Gemini está generando el reporte, un momento por favor...
+    </h5>
+    <p class="loading-subtitle text-muted mt-2">
+      Esto puede tomar unos segundos.
+    </p>
   </div>
 
   <!-- Mensaje de Error -->
