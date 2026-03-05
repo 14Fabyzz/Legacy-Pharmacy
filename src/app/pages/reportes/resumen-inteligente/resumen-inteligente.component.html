@@ -108,6 +108,7 @@
           <button
             type="button"
             class="btn btn-outline-secondary btn-pdf"
+            (click)="exportarPDF()"
             [disabled]="!analisisResultado || isAnalyzing"
             title="Descargar PDF"
           >
@@ -152,8 +153,7 @@
       <hr class="op-2" />
     </div>
     <div class="card-body p-4 pt-2">
-      <div class="analisis-content text-justify">
-        {{ analisisResultado }}
+      <div class="analisis-content text-justify" [innerHTML]="analisisResultado | markdownBold">
       </div>
     </div>
     <div

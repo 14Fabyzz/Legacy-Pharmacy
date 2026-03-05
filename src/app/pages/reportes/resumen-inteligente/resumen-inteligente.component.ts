@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReportesService } from '../../../core/services/reportes.service';
 import { Periodicidad } from '../../../core/models/reportes.models';
+import { PdfExportService } from '../../../core/services/pdf-export.service';
 
 @Component({
   selector: 'app-resumen-inteligente',
@@ -20,7 +21,8 @@ export class ResumenInteligenteComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private reportesService: ReportesService
+    private reportesService: ReportesService,
+    private pdfExportService: PdfExportService
   ) { }
 
   ngOnInit(): void {
@@ -61,6 +63,27 @@ export class ResumenInteligenteComponent implements OnInit {
         this.isAnalyzing = false;
       }
     });
+  }
+
+  exportarPDF(): void {
+    if (!this.analisisResultado) return;
+    
+    // 1. Limpieza de asteriscos dobles de markdown
+    const textoLimpio = this.analisisResultado.replace(/\*\*/g, '');
+    
+    // 2. Obtener periodo para el PDF
+    const { fechaInicio, fechaFin } = this.filtrosForm.value;
+    const periodoStr = `${fechaInicio} al ${fechaFin}`;
+    
+    // 3. Nombre del archivo dinámico
+    const nombreArchivo = `Resumen_IA_${fechaInicio}_${fechaFin}`;
+
+    this.pdfExportService.exportarTextoPDF(
+      'Resumen Ejecutivo Inteligente',
+      textoLimpio,
+      nombreArchivo,
+      periodoStr
+    );
   }
 
   // Utilidad para formatear fecha a YYYY-MM-DD

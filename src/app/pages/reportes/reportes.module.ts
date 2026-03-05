@@ -9,6 +9,7 @@ import { VentasConsolidadoComponent } from './ventas-consolidado/ventas-consolid
 import { TopRotacionComponent } from './top-rotacion/top-rotacion.component';
 import { ConsolidadoPagosComponent } from './consolidado-pagos/consolidado-pagos.component';
 import { ResumenInteligenteComponent } from './resumen-inteligente/resumen-inteligente.component';
+import { MarkdownBoldPipe } from '../../shared/pipes/markdown-bold.pipe';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { ResumenInteligenteComponent } from './resumen-inteligente/resumen-intel
         FormsModule,
         ReactiveFormsModule,
         ReportesRoutingModule,
-        BaseChartDirective
+        BaseChartDirective,
+        MarkdownBoldPipe
     ]
 })
 export class ReportesModule { }
