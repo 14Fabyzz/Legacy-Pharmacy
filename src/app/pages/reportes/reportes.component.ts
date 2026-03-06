@@ -41,7 +41,18 @@ export class ReportesComponent implements OnInit {
           <line x1="2" y1="10" x2="22" y2="10"></line>
         </svg>`;
 
+        const resumenInteligenteSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+        </svg>`;
+
         this.opcionesReportes = [
+            {
+                titulo: 'Resumen Ejecutivo Inteligente ✨',
+                descripcion: 'Análisis narrativo generado por IA sobre el rendimiento de las ventas consolidadas.',
+                ruta: 'resumen-inteligente',
+                svgIcon: this.sanitizer.bypassSecurityTrustHtml(resumenInteligenteSvg)
+            },
             {
                 titulo: 'Reporte de Ventas Consolidadas',
                 descripcion: 'Visualiza los ingresos agrupados por métodos de pago y conciliación bancaria.',

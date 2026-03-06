@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ConsolidadoPagosResponse, ReporteVentasConsolidadasDTO, ReporteVentasFiltros, TopProductoResponse } from '../models/reportes.models';
+import { ConsolidadoPagosResponse, ReporteVentasConsolidadasDTO, ReporteVentasFiltros, ResumenInteligenteResponse, TopProductoResponse } from '../models/reportes.models';
 
 @Injectable({
     providedIn: 'root'
@@ -70,6 +70,27 @@ export class ReportesService {
 
         return this.http.get<ConsolidadoPagosResponse>(
             `${this.apiUrl}/ventas/consolidado-pagos`,
+            { params }
+        );
+    }
+
+    /**
+     * Obtiene el resumen inteligente generado por IA.
+     * GET /api/v1/reportes/analisis-inteligente
+     * Requiere: fechaInicio, fechaFin, periodicidad. Opcional: sucursalId
+     */
+    getResumenInteligente(filtros: ReporteVentasFiltros): Observable<ResumenInteligenteResponse> {
+        let params = new HttpParams()
+            .set('fechaInicio', filtros.fechaInicio)
+            .set('fechaFin', filtros.fechaFin)
+            .set('periodicidad', filtros.periodicidad);
+
+        if (filtros.sucursalId) {
+            params = params.set('sucursalId', filtros.sucursalId.toString());
+        }
+
+        return this.http.get<ResumenInteligenteResponse>(
+            `${this.apiUrl}/ventas/resumen-inteligente`,
             { params }
         );
     }

@@ -4,6 +4,7 @@ import { ReportesComponent } from './reportes.component';
 import { VentasConsolidadoComponent } from './ventas-consolidado/ventas-consolidado.component';
 import { TopRotacionComponent } from './top-rotacion/top-rotacion.component';
 import { ConsolidadoPagosComponent } from './consolidado-pagos/consolidado-pagos.component';
+import { ResumenInteligenteComponent } from './resumen-inteligente/resumen-inteligente.component';
 
 const routes: Routes = [
     {
@@ -12,7 +13,8 @@ const routes: Routes = [
     },
     { path: 'ventas-consolidado', component: VentasConsolidadoComponent },
     { path: 'top-rotacion', component: TopRotacionComponent },
-    { path: 'consolidado-pagos', component: ConsolidadoPagosComponent }
+    { path: 'consolidado-pagos', component: ConsolidadoPagosComponent },
+    { path: 'resumen-inteligente', component: ResumenInteligenteComponent }
 ];
 
 @NgModule({
