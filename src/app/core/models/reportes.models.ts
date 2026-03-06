@@ -59,3 +59,9 @@ export interface ConsolidadoPagosResponse {
   metodosPago: MetodoPagoDTO[];
   detallesReferencias: DetalleReferenciaPagoDTO[];
 }
+
+export interface ResumenInteligenteResponse {
+  resumenGenerado: string;
+  reporteBase: ReporteVentasConsolidadasDTO;
+  topProductos: TopProductoResponse[];
+}

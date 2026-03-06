@@ -8,20 +8,24 @@ import { ReportesComponent } from './reportes.component';
 import { VentasConsolidadoComponent } from './ventas-consolidado/ventas-consolidado.component';
 import { TopRotacionComponent } from './top-rotacion/top-rotacion.component';
 import { ConsolidadoPagosComponent } from './consolidado-pagos/consolidado-pagos.component';
+import { ResumenInteligenteComponent } from './resumen-inteligente/resumen-inteligente.component';
+import { MarkdownBoldPipe } from '../../shared/pipes/markdown-bold.pipe';
 
 @NgModule({
     declarations: [
         ReportesComponent,
         VentasConsolidadoComponent,
         TopRotacionComponent,
-        ConsolidadoPagosComponent
+        ConsolidadoPagosComponent,
+        ResumenInteligenteComponent
     ],
     imports: [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
         ReportesRoutingModule,
-        BaseChartDirective
+        BaseChartDirective,
+        MarkdownBoldPipe
     ]
 })
 export class ReportesModule { }

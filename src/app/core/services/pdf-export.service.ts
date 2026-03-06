@@ -82,4 +82,52 @@ export class PdfExportService {
     // 5. Descargar el archivo
     doc.save(`${nombreArchivo}.pdf`);
   }
+  /**
+   * Genera y descarga un PDF con texto narrativo largo.
+   * Útil para exportar análisis o resúmenes ejecutivos.
+   */
+  exportarTextoPDF(titulo: string, textoBase: string, nombreArchivo: string, periodo: string) {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const titleColor: [number, number, number] = [30, 30, 30];
+    
+    // 1. Título centrado
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...titleColor);
+    const textWidth = doc.getTextWidth(titulo);
+    doc.text(titulo, (210 - textWidth) / 2, 20);
+
+    // 2. Subtítulo (Período)
+    let startY = 30;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    const periodoText = `Período: ${periodo}`;
+    const perWidth = doc.getTextWidth(periodoText);
+    doc.text(periodoText, (210 - perWidth) / 2, startY);
+    
+    // 3. Cuerpo del texto (división inteligente)
+    startY += 15;
+    doc.setFontSize(11);
+    doc.setTextColor(40, 40, 40);
+    
+    // Divide el texto respetando los márgenes (180mm de ancho útil aprox)
+    const lineasTexto = doc.splitTextToSize(textoBase, 180);
+    
+    // Escribe el texto con iterador para manejar múltiples hojas si fuera muy largo
+    // (Por simplicidad asumo que cabe en 1 hoja, jsPDF.text() maneja arreglos de string)
+    doc.text(lineasTexto, 15, startY);
+
+    // 4. Pie de página
+    const now = new Date();
+    const fechaStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+    doc.setFontSize(9);
+    doc.setTextColor(150, 150, 150);
+    const footerText = `Generado el: ${fechaStr} - Página 1`;
+    const footerWidth = doc.getTextWidth(footerText);
+    doc.text(footerText, 210 - 15 - footerWidth, doc.internal.pageSize.height - 10);
+
+    // 5. Descargar
+    doc.save(nombreArchivo);
+  }
 }
