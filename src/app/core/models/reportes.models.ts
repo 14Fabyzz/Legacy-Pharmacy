@@ -62,4 +62,6 @@ export interface ConsolidadoPagosResponse {
 
 export interface ResumenInteligenteResponse {
   resumenGenerado: string;
+  reporteBase: ReporteVentasConsolidadasDTO;
+  topProductos: TopProductoResponse[];
 }

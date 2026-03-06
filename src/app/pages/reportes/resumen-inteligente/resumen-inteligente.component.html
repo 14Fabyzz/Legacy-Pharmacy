@@ -141,7 +141,7 @@
     <i class="fas fa-exclamation-triangle me-2"></i> {{ errorMensaje }}
   </div>
 
-  <!-- Resultados: Tarjeta del Reporte Ejecutivo -->
+  <!-- Resultados: Dashboard Híbrido -->
   <div
     *ngIf="analisisResultado && !isAnalyzing"
     class="resultado-card card-neumorphic animate__animated animate__fadeInUp"
@@ -152,10 +152,34 @@
       </h4>
       <hr class="op-2" />
     </div>
-    <div class="card-body p-4 pt-2">
-      <div class="analisis-content text-justify" [innerHTML]="analisisResultado | markdownBold">
+
+    <!-- Contenedor Principal para Exportación PDF -->
+    <div id="dashboard-ia-export" class="card-body p-4 pt-2">
+      <div class="row">
+        <!-- Columna Izquierda (70%) - Análisis de la IA -->
+        <div class="col-md-8">
+          <div class="analisis-content text-justify" [innerHTML]="analisisResultado | markdownBold">
+          </div>
+        </div>
+
+        <!-- Columna Derecha (30%) - Gráfico Top Productos -->
+        <div class="col-md-4 d-flex flex-column align-items-center justify-content-center">
+          <h5 class="text-secondary fw-bold text-center mb-4">Top 5 Productos (Ingresos)</h5>
+          
+          <div style="display: block; width: 100%; height: 300px;" *ngIf="doughnutChartData">
+            <canvas baseChart
+              [data]="doughnutChartData"
+              [options]="doughnutChartOptions"
+              [type]="'doughnut'">
+            </canvas>
+          </div>
+          <div *ngIf="!doughnutChartData" class="text-muted small text-center mt-3">
+            <i class="fas fa-info-circle me-1"></i> No hay datos suficientes para el gráfico.
+          </div>
+        </div>
       </div>
     </div>
+    
     <div
       class="card-footer bg-light border-0 px-4 py-3 rounded-bottom text-muted small text-end"
     >

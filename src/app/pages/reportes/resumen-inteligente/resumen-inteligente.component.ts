@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReportesService } from '../../../core/services/reportes.service';
 import { Periodicidad } from '../../../core/models/reportes.models';
 import { PdfExportService } from '../../../core/services/pdf-export.service';
+import { ChartConfiguration, ChartData, ChartOptions } from 'chart.js';
+import { TopProductoResponse } from '../../../core/models/reportes.models';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'app-resumen-inteligente',
@@ -16,6 +20,18 @@ export class ResumenInteligenteComponent implements OnInit {
   isAnalyzing: boolean = false;
   analisisResultado: string | null = null;
   errorMensaje: string | null = null;
+
+  // Chart Properties
+  public doughnutChartOptions: ChartConfiguration<'doughnut'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+    },
+  };
+  public doughnutChartData: ChartData<'doughnut'> | null = null;
 
   opcionesPeriodicidad: Periodicidad[] = ['DIARIO', 'SEMANAL', 'MENSUAL'];
 
@@ -55,6 +71,28 @@ export class ResumenInteligenteComponent implements OnInit {
     this.reportesService.getResumenInteligente(filtros).subscribe({
       next: (response) => {
         this.analisisResultado = response.resumenGenerado;
+
+        if (response.topProductos && response.topProductos.length > 0) {
+          const labels = response.topProductos.map(p => p.nombreProducto);
+          const data = response.topProductos.map(p => p.ingresoGenerado);
+
+          this.doughnutChartData = {
+            labels: labels,
+            datasets: [
+              {
+                data: data,
+                label: 'Ingresos ($)',
+                backgroundColor: [
+                  '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                  '#858796', '#5a5c69', '#2e59d9', '#17a673', '#2c9faf'
+                ]
+              }
+            ]
+          };
+        } else {
+            this.doughnutChartData = null;
+        }
+
         this.isAnalyzing = false;
       },
       error: (err) => {
@@ -66,24 +104,30 @@ export class ResumenInteligenteComponent implements OnInit {
   }
 
   exportarPDF(): void {
-    if (!this.analisisResultado) return;
+    const data = document.getElementById('dashboard-ia-export');
+    if (!data) return;
     
-    // 1. Limpieza de asteriscos dobles de markdown
-    const textoLimpio = this.analisisResultado.replace(/\*\*/g, '');
-    
-    // 2. Obtener periodo para el PDF
     const { fechaInicio, fechaFin } = this.filtrosForm.value;
-    const periodoStr = `${fechaInicio} al ${fechaFin}`;
-    
-    // 3. Nombre del archivo dinámico
-    const nombreArchivo = `Resumen_IA_${fechaInicio}_${fechaFin}`;
+    const nombreArchivo = `Dashboard_Inteligencia_Artificial.pdf`;
 
-    this.pdfExportService.exportarTextoPDF(
-      'Resumen Ejecutivo Inteligente',
-      textoLimpio,
-      nombreArchivo,
-      periodoStr
-    );
+    html2canvas(data, { scale: 2 }).then(canvas => {
+      const margin = 15;
+      const pdf = new jsPDF('p', 'mm', 'a4'); 
+      const position = 10;
+      
+      const imgWidth = pdf.internal.pageSize.getWidth() - (margin * 2);
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const contentDataURL = canvas.toDataURL('image/png');
+      
+      pdf.setFontSize(14);
+      pdf.text('Dashboard Híbrido - Inteligencia Artificial', margin, position);
+      pdf.setFontSize(10);
+      pdf.text(`Periodo: ${fechaInicio} al ${fechaFin}`, margin, position + 6);
+      
+      // La imagen va debajo de los textos, ajustamos el margen Y en 15 extra para que no pise el título
+      pdf.addImage(contentDataURL, 'PNG', margin, position + margin, imgWidth, imgHeight);
+      pdf.save(nombreArchivo);
+    });
   }
 
   // Utilidad para formatear fecha a YYYY-MM-DD
