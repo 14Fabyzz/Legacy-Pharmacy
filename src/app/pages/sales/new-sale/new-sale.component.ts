@@ -260,7 +260,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
         if (det.precioVentaUnidad > 0) validTypes.push(TipoVenta.UNIDAD);
 
         if (validTypes.length === 0) {
-          this.toastService.showWarning('Este producto no tiene precios configurados. No se puede vender.');
+          this.toastService.showWarning('Este producto no tiene precios configurados. No se puede vender');
           this.isLoading = false;
           return;
         }
@@ -367,7 +367,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
           };
           this.selectProduct(mappedProd);
         } else if (products.length > 1) {
-          this.toastService.showWarning('Múltiples productos encontrados. Seleccione uno.');
+          this.toastService.showWarning('Múltiples productos encontrados. Seleccione uno');
           // Keep dropdown open
           this.searchSubject.next(term);
         } else {
@@ -521,9 +521,42 @@ export class NewSaleComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.error(err);
-        const errorMsg = err?.error?.message || err?.message || 'Error al procesar la venta';
-        this.toastService.showError(errorMsg);
+        console.error('[processSale] RAW ERROR:', err);
+
+        // El backend Spring/Feign puede enviar el error como:
+        // - Objeto JSON: { message: '...' }
+        // - String con JSON embebido: 'Error registrando salida: 500 : \'{"message":"..."}\'
+        // Usamos regex para extraer el campo "message" sin importar el envoltorio
+        let cleanMsg = '';
+
+        try {
+          const raw = typeof err?.error === 'string'
+            ? err.error
+            : typeof err?.error === 'object'
+              ? (err.error?.message || JSON.stringify(err.error))
+              : (err?.message || '');
+
+          // Regex: captura el valor del campo "message" dentro del JSON
+          const msgMatch = raw.match(/"message"\s*:\s*"([^"]+)"/);
+          if (msgMatch && msgMatch[1]) {
+            cleanMsg = msgMatch[1];
+          } else {
+            // Sin campo message, tomamos el string limpio si no es JSON
+            cleanMsg = raw.startsWith('{') ? '' : raw;
+          }
+        } catch {
+          cleanMsg = '';
+        }
+
+        const msgLower = (cleanMsg || '').toLowerCase();
+
+        if (msgLower.includes('stock') || msgLower.includes('inventario') || msgLower.includes('insuf') || msgLower.includes('faltar')) {
+          this.toastService.showWarning(cleanMsg || 'Stock insuficiente para uno o más productos');
+        } else if (err?.status === 0) {
+          this.toastService.showError('No se pudo conectar con el servidor');
+        } else {
+          this.toastService.showError('Error al procesar la venta. Inténtelo nuevamente');
+        }
       }
     });
   }
