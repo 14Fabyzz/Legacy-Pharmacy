@@ -1,0 +1,109 @@
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+
+        <!-- NO-PRINT: HEADER DEL MODAL -->
+        <div class="modal-header d-print-none">
+            <h3 class="modal-title m-0 fw-bold">Tirilla de Caja</h3>
+            <button class="btn-close" (click)="cerrarModal()">&times;</button>
+        </div>
+
+        <!-- PRINT SECTION -->
+        <div class="modal-body print-area">
+            <div class="receipt">
+
+                <div class="receipt-header text-center mb-3">
+                    <div class="fw-bold mb-1"
+                        style="font-size: 1.5rem; text-transform: uppercase; color: #1e293b; margin-top: 0; line-height: 1.2;">
+                        Farmacia Regen Salud
+                    </div>
+                    <p class="mb-0 text-muted">Factura de Venta</p>
+                    <p class="receipt-date mb-0">Fecha: {{ ticket.fechaVenta | date:'dd/MM/yyyy HH:mm' }}</p>
+                    <p class="receipt-id mb-2 fw-medium">No. Ticket: #{{ ticket.id }}</p>
+                    <div *ngIf="ticket.clienteNombre" class="text-start mt-2 border-top pt-2">
+                        <small>Cliente: <strong>{{ ticket.clienteNombre }}</strong></small>
+                    </div>
+                </div>
+
+                <div class="receipt-divider border-top border-dark border-1 border-dashed my-2"></div>
+
+                <div class="receipt-items">
+                    <div class="text-uppercase small fw-bold mb-2">Descripción</div>
+
+                    <div class="item-ticket mb-3" *ngFor="let item of ticket.items">
+                        <div class="item-nombre fw-bold">{{ item.cantidad }} x {{ item.productoNombre }}</div>
+                        <div class="item-detalles text-muted" style="font-size: 0.85rem;">
+                            Precio Ud: {{ item.precioUnitario | currency }} | Dcto: {{ item.descuento }}%
+                        </div>
+                        <div class="item-total text-dark fw-bold" style="font-size: 0.85rem;">
+                            Total: {{ item.totalFila | currency }}
+                        </div>
+                        <hr class="dashed-line my-2" style="border-top: 1px dashed #cbd5e1; opacity: 1;">
+                    </div>
+
+                    <div class="text-center text-muted mt-3" *ngIf="!ticket.items || ticket.items.length === 0">
+                        <span>Sin detalle de productos</span>
+                    </div>
+                </div>
+
+                <div class="receipt-divider border-top border-dark border-1 border-dashed my-2"></div>
+
+                <div class="receipt-totals mt-2">
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Subtotal:</span>
+                        <span>{{ ticket.subtotal | currency }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-1 text-muted">
+                        <small>IVA:</small>
+                        <small>{{ (ticket.totalIva || 0) | currency }}</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Ajuste al peso:</span>
+                        <span>{{ (ticket.ajusteRedondeo || 0) | currency }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2 mt-2 pt-2 border-top">
+                        <strong class="fs-5">TOTAL A PAGAR:</strong>
+                        <strong class="fs-5">{{ ticket.totalAPagar | currency }}</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Método de Pago:</span>
+                        <span class="text-capitalize">{{ ticket.metodoPago.toLowerCase() }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-1" *ngIf="ticket.metodoPago === 'EFECTIVO'">
+                        <span>Recibido:</span>
+                        <span>{{ ticket.montoRecibido | currency }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-1" *ngIf="ticket.metodoPago === 'EFECTIVO'">
+                        <span>Cambio:</span>
+                        <span>{{ ticket.cambio | currency }}</span>
+                    </div>
+
+                </div>
+
+                <div class="receipt-divider border-top border-dark border-1 border-dashed my-3"></div>
+
+                <div class="receipt-footer text-center fst-italic text-muted small">
+                    <p class="mb-1">¡Gracias por su compra!</p>
+                    <p class="mb-0">Conserve este recibo.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NO-PRINT: MODAL ACTIONS -->
+        <div class="modal-actions d-print-none border-top pt-3 mt-3 d-flex justify-content-end gap-2 p-3">
+            <button class="btn btn-secondary px-4" (click)="cerrarModal()">Cerrar</button>
+            <button class="btn btn-primary px-4 d-flex align-items-center gap-2" (click)="imprimirFactura()">
+                <i class="bi bi-printer"></i>
+                Imprimir
+            </button>
+        </div>
+
+    </div>
+</div>

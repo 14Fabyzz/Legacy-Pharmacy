@@ -2,7 +2,6 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FormatProductPipe } from '../../../shared/pipes/format-product.pipe';
 import { SalesService } from '../../../core/services/sales.service';
 import { ProductService } from '../../products/product.service';
 import { CartService } from '../../../core/services/cart.service';
@@ -14,6 +13,8 @@ import {
   TipoVenta,
   CrearVentaDTO
 } from '../../../core/models/sales.models';
+import { TicketData } from '../../../shared/components/ticket-impresion/ticket-data.model';
+import { TicketImpresionComponent } from '../../../shared/components/ticket-impresion/ticket-impresion.component';
 import { Subject, Subscription, of, debounceTime, distinctUntilChanged, switchMap, catchError, tap, finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { environment } from '../../../../environments/environment';
@@ -21,7 +22,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-new-sale',
   standalone: true,
-  imports: [CommonModule, FormsModule, FormatProductPipe],
+  imports: [CommonModule, FormsModule, TicketImpresionComponent],
   templateUrl: './new-sale.component.html',
   styleUrls: ['./new-sale.component.css']
 })
@@ -78,7 +79,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
 
   // Modal Ticket Variables
   mostrarModalTicket: boolean = false;
-  ticketActual: any = null;
+  ticketActual: TicketData | null = null;
 
   calcularTotalGlobal(): number {
     if (!this.cartItems || this.cartItems.length === 0) return 0;
@@ -479,25 +480,41 @@ export class NewSaleComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (res) => {
-        const shortId = (res.numeroFactura || '').slice(0, 8).toUpperCase();
+        // Usar el ID corto de la base de datos como principal
+        const shortId = res.id ? res.id.toString() : (res.numeroFactura || '').slice(0, 8).toUpperCase();
         this.ultimaVentaId = res.numeroFactura;
         const ivaFactura = res.totalIva || 0; // Capture IVA from response
-        this.toastService.showSuccess(`Venta registrada: #${res.numeroFactura}`);
+        this.toastService.showSuccess(`Venta registrada: #${res.id || res.numeroFactura}`);
 
-        // Mapear datos al ticketActual para el Modal
+        // Mapear estrictamente la interfaz TicketData sin recalcular (Single Source of Truth)
         this.ticketActual = {
           id: shortId,
           fechaVenta: new Date(),
+          clienteNombre: this.clienteNombre,
+          subtotal: this.totalOriginal,
+          ajusteRedondeo: this.ajusteRedondeo,
           totalIva: ivaFactura,
-          total: total,
+          totalAPagar: total,
           metodoPago: this.metodoPago,
           montoRecibido: this.montoRecibido,
           cambio: this.cambio,
-          items: this.cartItems.map(item => ({
-            cantidad: item.cantidad,
-            tipoVenta: item.tipoVenta,
-            productoNombre: item.product.detalleProducto.nombreComercial
-          }))
+          items: this.cartItems.map(item => {
+            const precio = Number(item.precio) || 0;
+            const descuento = Number(item.descuento) || 0;
+            const cantidad = Number(item.cantidad) || 0;
+            const pct = descuento / 100;
+            // Aquí repetimos brevemente el Math local por la iteración de UI para mapearlo al modelo de impresión (solo visualización)
+            let totalFila = (precio * (1 - pct)) * cantidad;
+            if (totalFila < 0) totalFila = 0;
+
+            return {
+              cantidad: item.cantidad,
+              productoNombre: item.product.detalleProducto.nombreComercial,
+              precioUnitario: precio,
+              descuento: descuento,
+              totalFila: totalFila
+            };
+          })
         };
 
         this.mostrarModalTicket = true;

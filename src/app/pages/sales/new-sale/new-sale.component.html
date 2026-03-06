@@ -69,7 +69,7 @@
             <th class="w-40">Producto</th>
             <th class="w-15 text-center">Tipo</th>
             <th class="w-10 text-center">Cantidad</th>
-            <th class="w-20 text-end">Precio</th>
+            <th class="w-20 text-center">Descuento</th>
             <th class="w-10 text-end">Total</th>
             <th class="w-5"></th>
           </tr>
@@ -117,46 +117,37 @@
               <input type="number" class="clean-input qty-input" [ngModel]="item.cantidad"
                 (ngModelChange)="updateQuantity(item, $event)" min="1">
             </td>
-            <td class="text-end text-slate-600" style="min-width: 150px; padding-right: 16px;">
-              <div class="d-flex flex-column align-items-end gap-2" style="width: 100%;">
+            <td style="text-align: center; vertical-align: middle; min-width: 150px;">
+              <div
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%; height: 100%;">
 
-                <!-- Price Input -->
+                <!-- Diseño de la Píldora de Descuento (Moderna y Exclusiva) -->
                 <div
-                  style="display: flex; align-items: stretch; width: 140px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; background: white;">
-                  <div
-                    style="display: flex; align-items: center; justify-content: center; width: 30px; background-color: #f8fafc; border-right: 1px solid #e2e8f0; font-size: 0.85rem; color: #475569;">
-                    $
-                  </div>
+                  style="display: flex; align-items: center; justify-content: center; background-color: #ffffff; border-radius: 8px; padding: 4px 10px; width: fit-content; white-space: nowrap; margin: 0; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: box-shadow 0.2s ease-in-out;"
+                  onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'"
+                  onmouseout="this.style.boxShadow='0 1px 2px 0 rgba(0, 0, 0, 0.05)'"
+                  [style.borderColor]="((item.descuento || 0) > 100 || (item.descuento || 0) < 0) ? '#dc3545' : '#e5e7eb'">
+
+                  <!-- Textos de la Píldora (Izquierda) -->
+                  <span style="color: #6b7280; font-size: 0.85rem; margin-right: 6px; font-weight: 500;">Dcto</span>
+
+                  <!-- El Input de Descuento -->
                   <input type="number" class="no-spinners"
-                    style="flex: 1; border: none; outline: none; text-align: right; padding: 0 8px; font-size: 0.85rem; min-width: 0;"
-                    [(ngModel)]="item.precio" (ngModelChange)="onItemChange(item)" [readonly]="!isAdmin"
-                    [style.background-color]="!isAdmin ? '#e2e8f0' : 'white'"
-                    [style.cursor]="!isAdmin ? 'not-allowed' : 'text'" title="Precio Unitario" min="0">
-                </div>
-
-                <!-- Discount Input -->
-                <div
-                  [style.border]="((item.descuento || 0) > 100 || (item.descuento || 0) < 0) ? '1px solid #dc3545' : '1px solid #e2e8f0'"
-                  style="display: flex; align-items: stretch; width: 140px; height: 32px; border-radius: 4px; overflow: hidden; background: white;">
-                  <div
-                    style="display: flex; align-items: center; justify-content: center; width: 50px; background-color: #f8fafc; border-right: 1px solid #e2e8f0; font-size: 0.75rem; color: #475569;">
-                    Desct.
-                  </div>
-                  <input type="number" class="no-spinners text-danger"
-                    style="flex: 1; border: none; outline: none; text-align: right; padding: 0 4px; font-size: 0.85rem; min-width: 0;"
+                    style="background: transparent; border: none; outline: none; width: 35px; text-align: center; color: #1f2937; font-weight: 600; font-size: 0.85rem; padding: 0; margin: 0;"
                     [(ngModel)]="item.descuento" (ngModelChange)="onItemChange(item)" [readonly]="!isAdmin"
-                    [style.background-color]="!isAdmin ? '#e2e8f0' : 'white'"
                     [style.cursor]="!isAdmin ? 'not-allowed' : 'text'" title="Descuento (%)" placeholder="0" min="0"
                     max="100">
-                  <div
-                    style="display: flex; align-items: center; justify-content: center; width: 30px; background-color: #f8fafc; border-left: 1px solid #e2e8f0; font-size: 0.85rem; color: #475569;">
-                    %
-                  </div>
+
+                  <!-- Textos de la Píldora (Derecha) -->
+                  <span style="color: #6b7280; font-size: 0.85rem; margin-left: 2px; font-weight: 500;">%</span>
+
                 </div>
+
+                <!-- Mensajes de Error -->
                 <small *ngIf="(item.descuento || 0) > 100" class="text-danger"
-                  style="font-size: 0.7rem; margin-top: -4px;">El máximo es 100%</small>
+                  style="font-size: 0.65rem; margin: 0; font-weight: 500;">Máx 100%</small>
                 <small *ngIf="(item.descuento || 0) < 0" class="text-danger"
-                  style="font-size: 0.7rem; margin-top: -4px;">El mínimo es 0%</small>
+                  style="font-size: 0.65rem; margin: 0; font-weight: 500;">Mín 0%</small>
 
               </div>
             </td>
@@ -255,12 +246,9 @@
       <button class="btn-primary-action btn-dark-primary d-flex justify-content-center align-items-center"
         (click)="processSale()"
         [disabled]="cartItems.length === 0 || totalAPagar === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < totalAPagar) || hasInvalidDiscounts || (metodoPago !== 'EFECTIVO' && !referenciaPago.trim()) || procesandoVenta">
-        <ng-container *ngIf="!procesandoVenta">COBRAR</ng-container>
-        <ng-container *ngIf="procesandoVenta">
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"
-            style="margin-right: 8px;"></span>
-          Procesando...
-        </ng-container>
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 8px;"
+          *ngIf="procesandoVenta"></span>
+        {{ procesandoVenta ? 'Procesando...' : 'COBRAR' }}
       </button>
 
     </div>
@@ -269,86 +257,6 @@
 </div>
 
 <!-- TICKET MODAL -->
-<div class="modal-overlay" *ngIf="mostrarModalTicket" (click)="cerrarTicketYLimpiar()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-
-    <div class="modal-header">
-      <h3 class="modal-title">Tirilla de Caja</h3>
-      <button class="btn-close" (click)="cerrarTicketYLimpiar()">&times;</button>
-    </div>
-
-    <!-- PRINT SECTION -->
-    <div class="modal-body print-area">
-      <div class="receipt">
-        <div class="receipt-header">
-          <h2>RegenSalud</h2>
-          <p>Factura de Venta</p>
-          <p class="receipt-date">Fecha: {{ ticketActual?.fechaVenta | date:'medium' }}</p>
-          <p class="receipt-id">No. Ticket: #{{ ticketActual?.id }}</p>
-        </div>
-
-        <div class="receipt-divider"></div>
-
-        <div class="receipt-items">
-          <div class="receipt-item font-bold">
-            <span>Descripción</span>
-          </div>
-          <div class="receipt-item receipt-product" *ngFor="let prod of ticketActual?.items">
-            <span>{{ prod | formatProduct }}</span>
-          </div>
-          <div class="receipt-item text-center text-muted"
-            *ngIf="!ticketActual?.items || ticketActual?.items.length === 0">
-            <span>Sin detalle de productos</span>
-          </div>
-        </div>
-
-        <div class="receipt-divider"></div>
-
-        <div class="receipt-totals">
-          <div class="receipt-row">
-            <span>IVA:</span>
-            <span>{{ ticketActual?.totalIva | currency }}</span>
-          </div>
-          <div class="receipt-row total-row">
-            <span>TOTAL A PAGAR:</span>
-            <span>{{ ticketActual?.total | currency }}</span>
-          </div>
-          <div class="receipt-row">
-            <span>Método de Pago:</span>
-            <span class="capitalize">{{ ticketActual?.metodoPago }}</span>
-          </div>
-          <div class="receipt-row">
-            <span>Recibido:</span>
-            <span>{{ ticketActual?.montoRecibido | currency }}</span>
-          </div>
-          <div class="receipt-row">
-            <span>Cambio:</span>
-            <span>{{ ticketActual?.cambio | currency }}</span>
-          </div>
-        </div>
-
-        <div class="receipt-divider"></div>
-
-        <div class="receipt-footer">
-          <p>¡Gracias por su compra!</p>
-          <p>Conserve este recibo.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn-secondary" (click)="cerrarTicketYLimpiar()">Cerrar</button>
-      <button class="btn-primary" (click)="imprimirFactura()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M6.728 6.75h10.544a2.25 2.25 0 012.25 2.25v5.006a2.25 2.25 0 01-2.25 2.25H6.728a2.25 2.25 0 01-2.25-2.25v-5.006a2.25 2.25 0 012.25-2.25z" />
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M17.25 6.75V4.5a2.25 2.25 0 00-2.25-2.25H9a2.25 2.25 0 00-2.25 2.25v2.25M6.75 16.25h10.5m-10.5 0v3.75a2.25 2.25 0 002.25 2.25h6a2.25 2.25 0 002.25-2.25v-3.75m-10.5 0v-3.75h10.5" />
-        </svg>
-        Imprimir
-      </button>
-    </div>
-
-  </div>
-</div>
+<app-ticket-impresion *ngIf="mostrarModalTicket && ticketActual" [ticket]="ticketActual"
+  [mostrarModal]="mostrarModalTicket" (cerrar)="cerrarTicketYLimpiar()">
+</app-ticket-impresion>

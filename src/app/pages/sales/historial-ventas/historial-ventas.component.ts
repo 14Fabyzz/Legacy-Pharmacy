@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { SalesService } from '../../../core/services/sales.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { FormatProductPipe } from '../../../shared/pipes/format-product.pipe';
+import { TicketData } from '../../../shared/components/ticket-impresion/ticket-data.model';
+import { TicketImpresionComponent } from '../../../shared/components/ticket-impresion/ticket-impresion.component';
 
 @Component({
     selector: 'app-historial-ventas',
     standalone: true,
-    imports: [CommonModule, FormatProductPipe],
+    imports: [CommonModule, FormatProductPipe, TicketImpresionComponent],
     templateUrl: './historial-ventas.component.html',
     styleUrls: ['./historial-ventas.component.css']
 })
@@ -23,7 +25,7 @@ export class HistorialVentasComponent implements OnInit {
 
     // Modal variables
     mostrarModal: boolean = false;
-    ventaSeleccionada: any = null;
+    ventaSeleccionada: TicketData | null = null;
 
     constructor(
         private salesService: SalesService,
@@ -106,16 +108,70 @@ export class HistorialVentasComponent implements OnInit {
 
     // Modal Methods
     abrirModalFactura(venta: any): void {
-        this.ventaSeleccionada = { ...venta };
-        // Si el backend no provee totalIva, lo calculamos asumiendo que el total incluye IVA (ej: 19%)
-        // Base = Total / 1.19 -> IVA = Total - Base
-        // Ya que el requerimiento es mostrar un valor de IVA.
-        if (this.ventaSeleccionada.totalIva === undefined ||
-            this.ventaSeleccionada.totalIva === null ||
-            this.ventaSeleccionada.totalIva === 0) {
-            const base = this.ventaSeleccionada.total / 1.19;
-            this.ventaSeleccionada.totalIva = this.ventaSeleccionada.total - base;
+        const total = Number(venta.total) || 0;
+        let totalIva = Number(venta.totalIva);
+
+        // Retain original logic if IVA is missing
+        if (isNaN(totalIva) || totalIva === 0) {
+            const base = total / 1.19;
+            totalIva = total - base;
         }
+
+        // Recuperar "Subtotal" restando el IVA
+        const isEfectivo = (venta.metodoPago || 'EFECTIVO') === 'EFECTIVO';
+
+        let subtotalItems = 0;
+        const mappedItems = (venta.items || venta.detalles || []).map((det: any, index: number) => {
+            const qty = det.cantidad || 0;
+            const price = det.precioUnitario || 0;
+            const dcto = det.descuento || 0;
+            let fila = det.subtotal || det.totalFila;
+            if (fila === undefined) {
+                fila = (price * (1 - (dcto / 100))) * qty;
+            }
+            subtotalItems += fila;
+
+            // El historial devuelve items sin nombre; el nombre real está en venta.resumenProductos[i]
+            // o en sub-objeto producto, o en campos directos según versión del endpoint
+            const resumenFallback = venta.resumenProductos?.[index];
+
+            return {
+                cantidad: qty,
+                productoNombre: det.producto?.nombreComercial
+                    || det.producto?.nombre
+                    || det.nombreProducto
+                    || det.nombreComercial
+                    || det.nombre
+                    || resumenFallback
+                    || `Producto #${det.productoId || det.id || '?'}`,
+                precioUnitario: price,
+                descuento: dcto,
+                totalFila: fila
+            };
+        });
+
+        const sumWithoutIva = subtotalItems;
+        const totalConIva = sumWithoutIva + totalIva;
+
+        // Si es efectivo y el total que devolvió el backend (ya redondeado en tabla) difiere del sumWithoutIva + iva
+        let ajusteCalculado = venta.ajusteRedondeo || 0;
+        if (ajusteCalculado === 0 && isEfectivo) {
+            ajusteCalculado = total - totalConIva;
+        }
+
+        this.ventaSeleccionada = {
+            id: venta.id ? venta.id.toString() : (venta.numeroFactura || '').slice(0, 8).toUpperCase(),
+            fechaVenta: venta.fecha ? new Date(venta.fecha) : new Date(venta.fechaVenta || new Date()),
+            clienteNombre: venta.clienteNombre || 'Consumidor Final',
+            subtotal: sumWithoutIva,
+            ajusteRedondeo: ajusteCalculado,
+            totalIva: totalIva,
+            totalAPagar: total,
+            metodoPago: venta.metodoPago || 'EFECTIVO',
+            montoRecibido: venta.montoRecibido || total,
+            cambio: venta.cambio || 0,
+            items: mappedItems
+        };
 
         this.mostrarModal = true;
     }
@@ -123,10 +179,6 @@ export class HistorialVentasComponent implements OnInit {
     cerrarModal(): void {
         this.mostrarModal = false;
         this.ventaSeleccionada = null;
-    }
-
-    imprimirFactura(): void {
-        window.print();
     }
 
     irADevoluciones(id: number): void {
