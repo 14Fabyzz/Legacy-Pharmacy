@@ -120,25 +120,7 @@
                       </div>
                     </div>
 
-                    <!-- Detalles Condicionales de Devolución -->
-                    <div class="return-details-block mt-3 fade-in" *ngIf="item.cantidadADevolver > 0">
-                      <div class="d-flex flex-column gap-2" style="width: 100%; min-width: 150px;">
-                        <select class="form-select form-select-sm text-muted shadow-none"
-                          [(ngModel)]="item.motivoDetalle" [disabled]="isVentaDevuelta"
-                          style="border-radius: 6px; border-color: #e2e8f0; font-size: 0.85rem;">
-                          <option [ngValue]="undefined" disabled selected>Seleccione un motivo...</option>
-                          <option *ngFor="let motivo of motivosDevolucion" [value]="motivo">{{ motivo }}</option>
-                        </select>
 
-                        <select class="form-select form-select-sm text-muted shadow-none"
-                          [(ngModel)]="item.destinoProducto" [disabled]="isVentaDevuelta"
-                          style="border-radius: 6px; border-color: #e2e8f0; font-size: 0.85rem;">
-                          <option [ngValue]="undefined" disabled selected>Destino físico...</option>
-                          <option *ngFor="let destino of destinosProducto" [value]="destino.value">{{ destino.label }}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
                   </td>
                   <td class="text-center" style="vertical-align: middle;">
                     <div class="vector-qty-display d-flex align-items-center justify-content-center mx-auto">{{
@@ -195,14 +177,14 @@
             </div>
 
             <div class="actions-stack">
-              <button class="premium-btn action-partial" (click)="ejecutarDevolucionParcial()"
+              <button class="premium-btn action-partial" (click)="iniciarDevolucionParcial()"
                 [disabled]="isProcessing || !tieneItemsParaDevolver || isVentaDevuelta">
                 <i class="fas fa-exchange-alt me-2" *ngIf="!isProcessing"></i>
                 <i class="fas fa-circle-notch fa-spin me-2" *ngIf="isProcessing"></i>
                 Ejecutar Dev. Parcial
               </button>
 
-              <button class="premium-btn action-total" (click)="ejecutarDevolucionTotal()"
+              <button class="premium-btn action-total" (click)="iniciarAnulacionTotal()"
                 [disabled]="isProcessing || isVentaDevuelta">
                 <i class="fas fa-ban me-2" *ngIf="!isProcessing"></i>
                 <i class="fas fa-circle-notch fa-spin me-2" *ngIf="isProcessing"></i>

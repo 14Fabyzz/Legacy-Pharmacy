@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { VentaService } from '../../core/services/venta.service';
 import { DevolucionService } from '../../core/services/devolucion.service';
 import { ToastService } from '../../core/services/toast.service';
+import Swal from 'sweetalert2';
 
 interface ItemDevolucionUI {
     productoId: number;
@@ -141,6 +142,16 @@ export class DevolucionesComponent implements OnInit {
     }
 
     get resumenTotalADevolver(): number {
+        if (!this.ventaActual || !this.itemsDevolucion || this.itemsDevolucion.length === 0) {
+            return 0;
+        }
+
+        const esDevolucionCompleta = this.itemsDevolucion.every(i => i.cantidadADevolver === i.cantidadComprada);
+        if (esDevolucionCompleta) {
+            // Respeta el redondeo y los descuentos de la factura original
+            return this.ventaActual.total;
+        }
+
         return this.itemsDevolucion.reduce((acc, item) => acc + (item.precio * item.cantidadADevolver), 0);
     }
 
@@ -152,78 +163,186 @@ export class DevolucionesComponent implements OnInit {
         return this.ventaActual?.estado === 'DEVUELTA';
     }
 
-    ejecutarDevolucionTotal() {
+    async iniciarAnulacionTotal() {
         if (!this.ventaActual) return;
 
-        const confirmar = confirm(`¿Estás seguro de ANULAR totalmente la venta #${this.ventaActual.numeroFactura || this.ventaActual.id}?`);
-        if (!confirmar) return;
+        const formHtml = `
+            <div style="display: flex; flex-direction: column; gap: 15px; text-align: left; margin-top: 15px;">
+                <div>
+                    <label style="font-weight: 600; font-size: 0.9rem; color: #475569;">Destino físico de los productos:</label>
+                    <select id="swal-destino" class="swal2-select" style="display: flex; width: 100%; margin: 10px auto; font-size: 0.9rem;">
+                        <option value="STOCK">Inventario Principal (Disponible)</option>
+                        <option value="CUARENTENA">Cuarentena (Revisión)</option>
+                        <option value="MERMA">Merma (Dañado / Descarte)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-weight: 600; font-size: 0.9rem; color: #475569;">Motivo (mínimo 5 caracteres):</label>
+                    <textarea id="swal-motivo" class="swal2-textarea" style="margin: 10px auto; width: 100%; font-size: 0.9rem; height: 80px;" placeholder="Escribe el motivo detallado..."></textarea>
+                </div>
+            </div>
+        `;
+
+        // 1. Intercepción del clic y apertura del Dialog (SweetAlert2)
+        const { value: formResult, isConfirmed } = await Swal.fire({
+            title: `Anular Venta Completa`,
+            html: `<p style="margin-bottom: 0;">Se devolverá el dinero total y todos los productos al inventario.</p>${formHtml}`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar Anulación',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#d33',
+            // 2. Validación en base a los elementos del custom HTML
+            preConfirm: () => {
+                const destino = (document.getElementById('swal-destino') as HTMLSelectElement).value;
+                const motivo = (document.getElementById('swal-motivo') as HTMLTextAreaElement).value;
+
+                if (!destino) {
+                    Swal.showValidationMessage('Debes seleccionar un destino físico válido.');
+                    return false;
+                }
+                if (!motivo || motivo.trim().length < 5) {
+                    Swal.showValidationMessage('Debes ingresar un motivo válido (mínimo 5 caracteres).');
+                    return false;
+                }
+                return { destino, motivo: motivo.trim() };
+            }
+        });
+
+        // Si el usuario presiona "Cancelar" o aborta
+        if (!isConfirmed || !formResult) {
+            return;
+        }
 
         this.isProcessing = true;
 
-        // Enviar array vacío para devolución total (anulación)
-        this.devolucionService.procesarDevolucion(this.ventaActual.id, { items: [] }).subscribe({
+        // 3. Armar el payload inyectando motivo y destino
+        const payload: any = {
+            items: [], // Array vacío indica anulación total
+            motivo: formResult.motivo,
+            destinoProducto: formResult.destino
+        };
+
+        this.devolucionService.procesarDevolucion(this.ventaActual.id, payload).subscribe({
             next: (res) => {
                 this.isProcessing = false;
-                this.toastService.showSuccess('Venta anulada correctamente');
+                Swal.fire({
+                    title: '¡Anulación Total Exitosa!',
+                    text: 'La venta ha sido anulada correctamente.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 this.limpiarVista();
             },
             error: (err) => {
                 this.isProcessing = false;
-                this.toastService.showError('Error al anular la venta');
-                console.error(err);
+                Swal.fire({
+                    title: 'Error al anular',
+                    text: err.error?.message || 'Hubo un problema de comunicación con el servidor.',
+                    icon: 'error'
+                });
+                console.error('Error en anulación total:', err);
             }
         });
     }
 
-    ejecutarDevolucionParcial() {
+    async iniciarDevolucionParcial() {
         if (!this.ventaActual) return;
 
-        let validacionError = false;
-        const itemsPayload = this.itemsDevolucion
-            .filter(i => i.cantidadADevolver > 0)
-            .map(i => {
-                if (!i.motivoDetalle || !i.destinoProducto) {
-                    validacionError = true;
-                }
-                return {
-                    productoId: i.productoId,
-                    cantidad: i.cantidadADevolver,
-                    motivoDetalle: i.motivoDetalle,
-                    destinoProducto: i.destinoProducto
-                };
-            });
+        const itemsADevolver = this.itemsDevolucion.filter(i => i.cantidadADevolver > 0);
 
-        if (itemsPayload.length === 0) {
+        if (itemsADevolver.length === 0) {
             this.toastService.showWarning('Seleccione al menos un producto para devolver');
-            return;
-        }
-
-        if (validacionError) {
-            this.toastService.showWarning('Debe seleccionar motivo y destino para todos los productos a devolver.');
             return;
         }
 
         const esDevolucionCompleta = this.itemsDevolucion.every(i => i.cantidadADevolver === i.cantidadComprada);
         if (esDevolucionCompleta) {
-            this.ejecutarDevolucionTotal();
+            this.iniciarAnulacionTotal();
             return;
         }
 
-        const confirmar = confirm(`¿Procesar devolución parcial por un monto de $${this.resumenTotalADevolver.toFixed(2)}?`);
-        if (!confirmar) return;
+        const formHtml = `
+            <div style="display: flex; flex-direction: column; gap: 15px; text-align: left; margin-top: 15px;">
+                <div>
+                    <label style="font-weight: 600; font-size: 0.9rem; color: #475569;">Destino físico de los productos:</label>
+                    <select id="swal-destino" class="swal2-select" style="display: flex; width: 100%; margin: 10px auto; font-size: 0.9rem;">
+                        <option value="STOCK">Inventario Principal (Disponible)</option>
+                        <option value="CUARENTENA">Cuarentena (Revisión)</option>
+                        <option value="MERMA">Merma (Dañado / Descarte)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-weight: 600; font-size: 0.9rem; color: #475569;">Motivo (mínimo 5 caracteres):</label>
+                    <textarea id="swal-motivo" class="swal2-textarea" style="margin: 10px auto; width: 100%; font-size: 0.9rem; height: 80px;" placeholder="Escribe el motivo detallado..."></textarea>
+                </div>
+            </div>
+        `;
+
+        const { value: formResult, isConfirmed } = await Swal.fire({
+            title: `Devolución Parcial`,
+            html: `<p style="margin-bottom: 0;">¿Por qué motivo se devuelven estos productos específicos?</p>${formHtml}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar Devolución',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#3085d6',
+            preConfirm: () => {
+                const destino = (document.getElementById('swal-destino') as HTMLSelectElement).value;
+                const motivo = (document.getElementById('swal-motivo') as HTMLTextAreaElement).value;
+
+                if (!destino) {
+                    Swal.showValidationMessage('Debes seleccionar un destino físico válido.');
+                    return false;
+                }
+                if (!motivo || motivo.trim().length < 5) {
+                    Swal.showValidationMessage('Debes ingresar un motivo válido (mínimo 5 caracteres).');
+                    return false;
+                }
+                return { destino, motivo: motivo.trim() };
+            }
+        });
+
+        if (!isConfirmed || !formResult) return;
 
         this.isProcessing = true;
 
-        this.devolucionService.procesarDevolucion(this.ventaActual.id, { items: itemsPayload }).subscribe({
+        // Armamos los ítems aplicando la selección central del modal
+        const itemsPayload = itemsADevolver.map(i => {
+            return {
+                productoId: i.productoId,
+                cantidad: i.cantidadADevolver,
+                motivoDetalle: formResult.motivo,
+                destinoProducto: formResult.destino
+            };
+        });
+
+        const payload = {
+            items: itemsPayload,
+            motivo: formResult.motivo
+        };
+
+        this.devolucionService.procesarDevolucion(this.ventaActual.id, payload).subscribe({
             next: (res) => {
                 this.isProcessing = false;
-                this.toastService.showSuccess('Devolución parcial procesada exitosamente');
+                Swal.fire({
+                    title: '¡Devolución Parcial Exitosa!',
+                    text: 'Los productos seleccionados han sido devueltos correctamente.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 this.limpiarVista();
             },
             error: (err) => {
                 this.isProcessing = false;
-                this.toastService.showError('Error al procesar devolución parcial');
-                console.error(err);
+                Swal.fire({
+                    title: 'Error al procesar devolución parcial',
+                    text: err.error?.message || 'Hubo un problema de comunicación con el servidor.',
+                    icon: 'error'
+                });
+                console.error('Error en devolución parcial:', err);
             }
         });
     }
