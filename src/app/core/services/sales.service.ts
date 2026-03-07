@@ -84,5 +84,20 @@ export class SalesService {
         return this.http.get<any>('http://localhost:8080/api/ventas/caja/turno-activo', { headers });
     }
 
+    /**
+     * Consulta el estado de la caja/turno del usuario logueado.
+     * Endpoint: GET /api/v1/ventas/caja/estado
+     * ⚠️ El backend lanza excepción (4xx/5xx) si el usuario NO tiene turno abierto.
+     *    En ese caso, el componente debe interpretar el error como estado CERRADA.
+     */
+    getEstadoCaja(): Observable<any> {
+        const token = localStorage.getItem('authToken');
+        let headers = {};
+        if (token) {
+            headers = { 'Authorization': `Bearer ${token}` };
+        }
+        return this.http.get<any>('http://localhost:8080/api/v1/ventas/caja/estado', { headers });
+    }
+
     // TODO: Agregar métodos de caja y clientes según se necesiten
 }

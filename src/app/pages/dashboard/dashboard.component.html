@@ -2,16 +2,39 @@
   <div class="cards-grid">
 
     <a class="card" *ngFor="let card of dashboardCards" [routerLink]="card.route">
-      
+
       <div class="card-header">
         <i [class]="card.icon"></i>
         <h4>{{ card.title }}</h4>
       </div>
 
       <div class="card-footer">
-      <span class="count" *ngIf="card.count !== null">{{ card.count }}</span>
-      <span class="label">{{ card.text }}</span>
-    </div>
+
+        <!-- Tarjeta CAJAS: muestra badge de estado Abierta / Cerrada -->
+        <ng-container *ngIf="card.cajaAbierta !== undefined && card.cajaAbierta !== null; else loadingCaja">
+          <span class="caja-status-badge" [class.abierta]="card.cajaAbierta" [class.cerrada]="!card.cajaAbierta">
+            <span class="caja-dot"></span>
+            {{ card.cajaAbierta ? 'ABIERTA' : 'CERRADA' }}
+          </span>
+        </ng-container>
+
+        <!-- Cargando estado de caja -->
+        <ng-template #loadingCaja>
+          <ng-container *ngIf="card.title === 'CAJAS'; else normalFooter">
+            <span class="caja-status-badge loading">
+              <span class="caja-dot"></span>
+              CARGANDO...
+            </span>
+          </ng-container>
+        </ng-template>
+
+        <!-- Resto de tarjetas: número + etiqueta o "VER" -->
+        <ng-template #normalFooter>
+          <span class="count" *ngIf="card.count !== null">{{ card.count }}</span>
+          <span class="label">{{ card.text }}</span>
+        </ng-template>
+
+      </div>
 
     </a>
 
