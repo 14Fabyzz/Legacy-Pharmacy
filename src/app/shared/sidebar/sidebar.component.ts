@@ -61,7 +61,6 @@ export class SidebarComponent {
         { path: '/app/ventas/historial', title: 'Historial de Ventas' }
       ]
     },
-    { path: '/app/cotizaciones', title: 'Cotizaciones', active: false, subMenu: [] },
     { path: '/app/movimientos', title: 'Movimientos en cajas', active: false, subMenu: [] },
     { path: '/app/devoluciones', title: 'Devoluciones', active: false, subMenu: [] },
 
