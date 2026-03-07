@@ -39,4 +39,65 @@
     </a>
 
   </div>
+
+  <!-- Bottom Section -->
+  <div class="bottom-section">
+    <!-- Gráfico 60% -->
+    <div class="chart-container">
+      <div class="section-header">
+        <h4>Ventas Semanales</h4>
+        <a routerLink="/app/ventas/historial" class="action-link">Ver detalles</a>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="salesChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Lista 40% -->
+    <div class="list-container">
+      <div class="section-header">
+        <h4>Últimas Transacciones</h4>
+      </div>
+      <div class="transaction-list">
+
+        <ng-container *ngIf="transactionList.length > 0; else noTransacciones">
+          <div class="transaction-item" *ngFor="let tx of transactionList">
+
+            <div class="tx-icon" [ngClass]="{
+              'sub': tx.tipo === 'ENTRADA' || tx.tipo === 'AJUSTE',
+              'add': tx.tipo === 'SALIDA',
+              'card-pay': tx.tipo === 'DEVOLUCION'
+            }">
+              <i class="fas" [ngClass]="{
+                'fa-box': tx.tipo === 'ENTRADA' || tx.tipo === 'AJUSTE',
+                'fa-money-bill-wave': tx.tipo === 'SALIDA',
+                'fa-exchange-alt': tx.tipo === 'DEVOLUCION'
+              }"></i>
+            </div>
+
+            <div class="tx-details">
+              <span class="tx-title" [title]="(tx.detalle || tx.tipo) + ' - ' + tx.nombre_producto">
+                {{ tx.detalle || tx.tipo }} - {{ tx.nombre_producto }}
+              </span>
+              <span class="tx-time">{{ tx.fecha | date:'MMM d, h:mm a' }}</span>
+            </div>
+
+            <div class="tx-amount" [ngClass]="{
+              'negative': tx.tipo === 'ENTRADA' || tx.tipo === 'AJUSTE',
+              'positive': tx.tipo === 'SALIDA' || tx.tipo === 'DEVOLUCION'
+            }">
+              {{ (tx.tipo === 'SALIDA' ? '-' : '+') }}{{ tx.cantidad }} uds
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #noTransacciones>
+          <div style="text-align: center; color: #64748b; padding: 20px 0; font-size: 0.9rem;">
+            No hay transacciones recientes
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+  </div>
 </div>

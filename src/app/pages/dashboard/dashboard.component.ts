@@ -1,13 +1,19 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
 import { catchError, of } from 'rxjs';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 import { SalesService } from '../../core/services/sales.service';
 import { UserService } from '../../core/services/user.service';
 import { ClienteService } from '../../core/services/cliente.service';
 import { ProductService } from '../products/product.service';
+import { ReportesService } from '../../core/services/reportes.service';
+import { InventoryService } from '../../core/services/inventory.service';
+import { MovimientoKardex } from '../../core/models/product.model';
 
 interface DashboardCard {
   title: string;
@@ -26,9 +32,11 @@ interface DashboardCard {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subs = new Subscription();
+  private chartInstance: any;
+  transactionList: MovimientoKardex[] = [];
 
   dashboardCards: DashboardCard[] = [
     // Caja: cajaAbierta = null → muestra "CARGANDO..." hasta que responda la API
@@ -52,14 +60,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private clienteService: ClienteService,
     private productService: ProductService,
+    private reportesService: ReportesService,
+    private inventoryService: InventoryService
   ) { }
 
   ngOnInit(): void {
     this.cargarEstadoCaja();
     this.cargarConteos();
+    this.cargarTransacciones();
+  }
+
+  ngAfterViewInit(): void {
+    this.cargarDatosGrafico();
   }
 
   ngOnDestroy(): void {
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
     this.subs.unsubscribe();
   }
 
@@ -103,5 +121,135 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private setCount(title: string, value: number): void {
     const card = this.find(title);
     if (card) card.count = value;
+  }
+
+  // ── Lista de Transacciones ──────────────────────────────────────────────────
+  private cargarTransacciones(): void {
+    const sub = this.inventoryService.obtenerUltimosMovimientos()
+      .pipe(catchError(() => of([])))
+      .subscribe(movimientos => {
+        // Tomamos solo los 5 más recientes
+        this.transactionList = movimientos.slice(0, 5);
+      });
+
+    this.subs.add(sub);
+  }
+
+  // ── Gráfico ─────────────────────────────────────────────────────────────────
+  private cargarDatosGrafico(): void {
+    const hoy = new Date();
+    const hace7Dias = new Date(hoy);
+    hace7Dias.setDate(hoy.getDate() - 6);
+
+    // Formato YYYY-MM-DD
+    const fechaInicio = hace7Dias.toISOString().split('T')[0];
+    const fechaFin = hoy.toISOString().split('T')[0];
+
+    const filtros = { fechaInicio, fechaFin, periodicidad: 'DIARIO' as any };
+
+    const sub = this.reportesService.getVentasConsolidado(filtros)
+      .pipe(catchError((err) => {
+        console.error('Error cargando gráfico:', err);
+        return of(null);
+      }))
+      .subscribe(datos => {
+        if (!datos || !datos.periodos) {
+          // Fallback en caso de error o sin datos
+          setTimeout(() => this.initChart(['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'], [0, 0, 0, 0, 0, 0, 0]), 100);
+          return;
+        }
+
+        // Mapear datos de la API al gráfico
+        const labels = datos.periodos.map((d: any) => {
+          // Convertir fecha de YYYY-MM-DD a un texto corto
+          const date = new Date(d.periodo);
+          // Ajustar por timezone para evitar off-by-one errors
+          date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+          return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+        });
+        const valores = datos.periodos.map((d: any) => d.totalIngresos);
+
+        setTimeout(() => this.initChart(labels, valores), 100);
+      });
+
+    this.subs.add(sub);
+  }
+
+  private initChart(labels: string[] = [], dataValues: number[] = []): void {
+    const canvas = document.getElementById('salesChart') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
+
+    this.chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Ingresos',
+          data: dataValues,
+          backgroundColor: '#3b82f6',
+          borderRadius: 4,
+          barPercentage: 0.6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                return '$' + context.raw;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            border: {
+              display: false
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                size: 11
+              }
+            }
+          },
+          y: {
+            display: true,
+            grid: {
+              color: '#f1f5f9'
+            },
+            border: {
+              display: false
+            },
+            beginAtZero: true,
+            suggestedMax: Number(Math.max(...dataValues, 10)) > 10 ? undefined : 1000,
+            ticks: {
+              color: '#94a3b8',
+              font: {
+                size: 11
+              },
+              callback: function (value: any) {
+                return '$' + value;
+              }
+            }
+          }
+        }
+      }
+    });
   }
 }
