@@ -10,7 +10,7 @@
 
         <div class="status-badge-container">
             <span class="status-text">Estado Actual:</span>
-            <span class="badge" [class.badge-danger]="!turnoActual" [class.badge-success]="turnoActual">
+            <span class="badge" translate="no" [class.badge-danger]="!turnoActual" [class.badge-success]="turnoActual">
                 {{ turnoActual ? 'CAJA ABIERTA' : 'CAJA CERRADA' }}
             </span>
         </div>

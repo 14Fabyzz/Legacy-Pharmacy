@@ -1,6 +1,7 @@
 .caja-dashboard {
     padding: 30px;
-    background-color: var(--slate-50);
+    background-color: #f8fafc;
+    /* Suavizar el fondo gris */
     min-height: calc(100vh - 100px);
 }
 
@@ -15,6 +16,7 @@
     font-size: 1.8rem;
     font-weight: 800;
     color: #1e293b;
+    /* Azul oscuro profesional */
     letter-spacing: -0.025em;
 }
 
@@ -28,77 +30,195 @@
 .kpi-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 30px;
+    /* Un poco más de aire entre tarjetas */
 }
 
+/* Base styling for regular cards */
 .kpi-card {
-    background: white;
-    padding: 24px;
-    border-radius: 16px;
-    /* Más redondeado */
-    border: none;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    background: #FFFFFF;
+    padding: 32px 28px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
-    gap: 20px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 24px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
 }
 
 .kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-    /* Hoover effect */
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.08);
+}
+
+
+
+.kpi-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    opacity: 0.9;
+    transition: height 0.3s ease;
+}
+
+.kpi-card.info::after {
+    background: linear-gradient(90deg, #38bdf8, #0284c7);
+}
+
+.kpi-card.success::after {
+    background: linear-gradient(90deg, #34d399, #10b981);
+}
+
+.kpi-card:hover::after {
+    height: 6px;
+    /* Borde inferior crece sutilmente */
 }
 
 .kpi-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
+    width: 60px;
+    /* Reducido de 68px */
+    height: 60px;
+    /* Reducido de 68px */
+    border-radius: 16px;
+    /* Ajuste suave para el nuevo tamaño */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.75rem;
+    font-size: 1.8rem;
+    /* Reducido de 2.2rem */
+    position: relative;
+    box-shadow: none;
+    /* Sombra interior eliminada a petición del usuario */
 }
 
+/* Gradientes vibrantes para los iconos */
 .kpi-card.info .kpi-icon {
-    background: #e0f2fe;
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
     color: #0284c7;
 }
 
 .kpi-card.success .kpi-icon {
-    background: #dcfce7;
-    color: #16a34a;
+    background: linear-gradient(135deg, #dcfce7 0%, #a7f3d0 100%);
+    color: #059669;
+    /* Verde oscuro para buen contraste */
 }
 
+/* REDISEÑO CREATIVO DE LA TARJETA PRINCIPAL (Saldo Actual) - Armonizado con las demás */
+.kpi-card.primary {
+    background: #FFFFFF;
+    /* Retorna a fondo blanco */
+    color: #0f172a;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+}
+
+.kpi-card.primary::after {
+    /* Mantenemos el borde iluminado como las demás tarjetas, color índigo primario */
+    background: linear-gradient(90deg, #818cf8, #4f46e5);
+}
+
+
+
 .kpi-card.primary .kpi-icon {
-    background: #eef2ff;
+    /* Icono en escala light, color índigo */
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
     color: #4f46e5;
+    /* Removemos los filtros de glassmorphism del fondo oscuro previo */
+    backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    /* Sombra interior eliminada a petición del usuario */
+}
+
+.kpi-content {
+    flex: 1;
 }
 
 .kpi-content label {
     display: block;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
+    /* Reducido de 0.85rem */
     color: #64748b;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 4px;
+    /* Reducido de 6px */
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+}
+
+/* Adaptación del color del label en la tarjeta primary (Retornado al estándar) */
+.kpi-card.primary .kpi-content label {
+    color: #64748b;
+    /* Vuelve a ser gris normal */
 }
 
 .kpi-content .amount {
-    font-size: 1.75rem;
+    font-size: 1.8rem;
+    /* Reducido de 2.2rem para un aspecto más limpio y proporcionado */
+    /* Numeros más grandes de impacto */
     font-weight: 800;
     color: #0f172a;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    display: block;
 }
 
-/* Movements Section */
+.kpi-card.primary .kpi-content .amount {
+    color: #0f172a;
+    /* Vuelve a ser oscuro */
+    text-shadow: none;
+    /* Quitamos la sombra del texto claro */
+}
+
+/* Movements Section (Tabla Resultados) */
 .movimientos-section {
-    background: white;
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    margin-top: 1.5rem;
+    background: #FFFFFF;
+    border-radius: 20px;
+    /* En armonia con las kpi-cards */
+    padding: 36px 40px;
+    /* Aún más espacio de respiro */
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+}
+
+.section-header {
+    margin-bottom: 30px;
+    position: relative;
+    padding-left: 20px;
+}
+
+/* Indicador lateral creativo */
+.section-header::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 2px;
+    width: 5px;
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+    border-radius: 5px;
+}
+
+.section-header .title-md {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.02em;
+}
+
+.section-header p {
+    font-size: 0.95rem;
+    color: #64748b;
+    font-weight: 500;
+    margin: 0;
 }
 
 .actions-footer {
@@ -108,21 +228,33 @@
 
 .clean-table {
     width: 100%;
-    border-collapse: separate;
+    border-collapse: collapse;
+    /* Permite líneas horizontales finas consistentes */
     border-spacing: 0;
 }
 
 .clean-table th {
-    background-color: #e0f2fe;
-    /* Azul aguamarina suave */
-    color: #0f172a;
-    /* Azul oscuro */
+    background-color: #f0f9ff;
+    /* Azul muy suave y limpio */
+    color: #0369a1;
+    /* Azul corporativo oscuro para contraste */
     font-weight: 700;
-    padding: 16px;
+    padding: 16px 20px;
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 0.05em;
-    border-bottom: 2px solid #bae6fd;
+    border-bottom: 2px solid #e0f2fe;
+    /* Borde inferior sutilmente más oscuro que el fondo */
+    border-left: none;
+    border-right: none;
+    text-align: left;
+    /* Asegura alineación a la izquierda para Concepto */
+}
+
+/* Alineación explícita a la derecha para la columna Monto */
+.clean-table th.text-end,
+.clean-table td.text-end {
+    text-align: right !important;
 }
 
 .clean-table th:first-child {
@@ -134,53 +266,83 @@
 }
 
 .clean-table td {
-    padding: 16px;
+    padding: 24px 20px;
+    /* Más espacio vertical a las filas (padding mayor) */
     color: #334155;
     font-weight: 500;
     border-bottom: 1px solid #f1f5f9;
+    /* Líneas horizontales muy finas */
+    border-left: none;
+    /* Sin bordes verticales */
+    border-right: none;
+    /* Sin bordes verticales */
+    vertical-align: middle;
 }
 
-/* Zebra Striping */
-.clean-table tbody tr:nth-child(even) {
-    background-color: #f8fafc;
-}
-
+/* Hover sutil / remover zebra stripping que ensucia el diseño moderno */
 .clean-table tbody tr:hover {
-    background-color: #eff6ff;
+    background-color: #f8fafc;
     /* Resalte sutil al hover */
     transition: background-color 0.15s ease;
 }
 
 .clean-table tfoot th {
-    padding: 20px 16px;
+    padding: 24px 20px;
     font-size: 1.1rem;
-    background-color: #f8fafc;
+    background-color: #ffffff;
     border-top: 2px solid #e2e8f0;
+    border-bottom: none;
+    color: #334155;
+    /* Base color for tfoot th */
 }
 
-/* Badges */
+/* Forzar el color del Saldo Final con alta especificidad */
+.clean-table tfoot th.text-gray-900,
+th.text-gray-900 {
+    color: #111827 !important;
+}
+
+/* Badges / Estados de Caja (Píldoras de Color) */
 .badge-pill {
-    padding: 6px 12px;
-    border-radius: 9999px;
-    font-weight: 700;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    /* Totalmente redondeado */
+    font-weight: 500;
+    font-size: 12px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
 }
 
+/* Estado "Abierta" */
 .badge-success {
-    background-color: #dcfce7;
-    color: #166534;
+    background-color: #d1fae5;
+    /* Verde menta suave */
+    color: #065f46;
+    /* Texto verde oscuro */
+}
+
+/* Estado "Cerrada" / Peligro etc (Adicional para mantener compatibilidad) */
+.badge-closed,
+.badge-danger {
+    background-color: #f1f5f9;
+    /* Gris suave */
+    color: #475569;
+    /* Gris oscuro */
 }
 
 .text-success {
-    color: #16a34a;
+    color: #10b981;
+    /* Verde vibrante de Regen Salud */
 }
 
 .text-blue-600 {
     color: #2563eb;
+}
+
+.text-gray-900 {
+    color: #111827 !important;
+    /* Gris muy oscuro profesional neutro para SALDO FINAL */
 }
 
 /* Empty State */
@@ -189,9 +351,12 @@
     margin: 40px auto;
     text-align: center;
     padding: 40px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: #FFFFFF;
+    /* Blanco puro */
+    border-radius: 12px;
+    /* Moderne rounded */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    /* Sombra sutil */
 }
 
 .large-icon {
@@ -200,19 +365,23 @@
     margin-bottom: 1rem;
 }
 
+/* Botones: Mantén verde vibrante de Regen Salud + píldoras modernas */
 .btn-primary-action {
-    background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+    background: #10b981;
+    /* Verde vibrante Regen Salud */
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 999px;
+    /* Diseño totalmente redondeado "píldora" */
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
     transition: all 0.2s;
 }
 
 .btn-primary-action:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 12px -2px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 8px 12px -2px rgba(16, 185, 129, 0.3);
+    background: #059669;
 }

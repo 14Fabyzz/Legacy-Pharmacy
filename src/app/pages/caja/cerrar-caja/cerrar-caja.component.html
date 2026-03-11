@@ -84,17 +84,17 @@
                 </div>
 
                 <div class="observations-area">
-                    <label for="obs" class="input-label">Observaciones (Opcional)</label>
+                    <label for="obs" class="input-label">Observaciones</label>
                     <textarea id="obs" class="clean-input" rows="3" [(ngModel)]="observaciones"
                         placeholder="Notas adicionales sobre el cierre..."></textarea>
                 </div>
 
-                <button class="btn-closure" [class.btn-danger-action]="diferencia < 0"
-                    [class.btn-confirm]="diferencia >= 0" (click)="cerrarTurno()"
+                <button class="btn-closure" [class.btn-danger-action]="diferencia !== 0"
+                    [class.btn-confirm]="diferencia === 0" (click)="cerrarTurno()"
                     [disabled]="isLoading || totalEfectivoReal === null || totalEfectivoReal === undefined || totalEfectivoReal < 0">
-                    <i class="bi" [class.bi-lock-fill]="diferencia >= 0"
-                        [class.bi-exclamation-octagon]="diferencia < 0"></i>
-                    {{ diferencia < 0 ? 'Confirmar Cierre con Faltante' : 'Confirmar Cierre de Caja' }} </button>
+                    <i class="bi" [class.bi-lock-fill]="diferencia === 0"
+                        [class.bi-exclamation-octagon]="diferencia !== 0"></i>
+                    {{ diferencia !== 0 ? 'Confirmar Cierre con Descuadre' : 'Confirmar Cierre de Caja' }} </button>
             </div>
         </div>
     </div>

@@ -12,7 +12,7 @@ import { ToastService } from '../../../core/services/toast.service';
 })
 export class CerrarCajaComponent implements OnInit {
     turnoActual: TurnoCaja | null = null;
-    totalEfectivoReal: number = 0;
+    totalEfectivoReal: number | null = null;
     observaciones: string = '';
     diferencia: number = 0;
     isLoading: boolean = true;
@@ -47,7 +47,7 @@ export class CerrarCajaComponent implements OnInit {
     calculateDifference() {
         if (this.turnoActual) {
             const teorico = (this.turnoActual.saldoInicial || 0) + (this.turnoActual.totalVentasTeorico || 0);
-            this.diferencia = this.totalEfectivoReal - teorico;
+            this.diferencia = (this.totalEfectivoReal || 0) - teorico;
         }
     }
 
@@ -72,7 +72,7 @@ export class CerrarCajaComponent implements OnInit {
 
         if (confirm('¿Estás seguro de que deseas cerrar el turno de caja?')) {
             const dto: CierreCajaDTO = {
-                totalEfectivoReal: this.totalEfectivoReal,
+                totalEfectivoReal: this.totalEfectivoReal || 0,
                 observaciones: this.observaciones
             };
 
