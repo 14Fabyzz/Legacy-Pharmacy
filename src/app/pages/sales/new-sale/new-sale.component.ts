@@ -397,11 +397,26 @@ export class NewSaleComponent implements OnInit, OnDestroy {
   }
 
   updateQuantity(item: CartItem, newQty: number) {
-    // Explicit Cast to avoid string concatenation issues
-    const qty = Number(newQty);
-    this.cartService.updateQuantity(item, qty);
+    const qty = Math.max(1, Number(newQty) || 1);
+    const maxStock = item.product.detalleProducto.stockTotal;
+    const clamped = Math.min(qty, maxStock);
+    this.cartService.updateQuantity(item, clamped);
     this.calculateChange();
-    this.cd.detectChanges(); // Force UI update
+    this.cd.detectChanges();
+  }
+
+  /** Clampea el valor del DOM en tiempo real mientras el usuario escribe y dispara el toast */
+  clampQtyInput(event: Event, item: CartItem) {
+    const input = event.target as HTMLInputElement;
+    const maxStock = item.product.detalleProducto.stockTotal;
+    const val = parseInt(input.value, 10);
+    if (!isNaN(val) && val > maxStock) {
+      input.value = maxStock.toString();
+      this.toastService.showError(`Solo hay ${maxStock} unidades disponibles`);
+    }
+    if (!isNaN(val) && val < 1) {
+      input.value = '1';
+    }
   }
 
   onItemChange(item: CartItem) {
@@ -430,6 +445,24 @@ export class NewSaleComponent implements OnInit, OnDestroy {
       this.montoRecibido = total;
       this.cambio = 0;
     }
+  }
+
+  /** Formatea un número con separadores de miles (puntos) al estilo COP, sin depender de locales de Angular */
+  formatMontoDisplay(value: number): string {
+    if (!value) return '';
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  /** Máscara de moneda COP: parsea el string con puntos de miles y actualiza el valor numérico real */
+  onMontoRecibidoInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    // Eliminar todo excepto dígitos
+    const raw = input.value.replace(/\D/g, '');
+    const numeric = raw ? parseInt(raw, 10) : 0;
+    this.montoRecibido = numeric;
+    // Actualizar el display del input con formato de miles (puntos)
+    input.value = numeric ? numeric.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+    this.calculateChange();
   }
 
   imprimirTicket(iva: number): void {

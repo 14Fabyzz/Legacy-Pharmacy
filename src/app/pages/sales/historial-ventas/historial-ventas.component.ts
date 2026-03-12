@@ -132,8 +132,10 @@ export class HistorialVentasComponent implements OnInit {
             subtotalItems += fila;
 
             // El historial devuelve items sin nombre; el nombre real está en venta.resumenProductos[i]
-            // o en sub-objeto producto, o en campos directos según versión del endpoint
-            const resumenFallback = venta.resumenProductos?.[index];
+            // o en sub-objeto producto, o en campos directos según versión del endpoint.
+            // Se limpia el prefijo "N x " que ya trae resumenProductos para evitar duplicado en la plantilla.
+            const rawResumen = venta.resumenProductos?.[index] || '';
+            const resumenFallback = rawResumen.replace(/^\d+\s*[xX]\s*/, '').trim();
 
             return {
                 cantidad: qty,

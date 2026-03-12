@@ -234,3 +234,41 @@
 .sidebar-container::-webkit-scrollbar-thumb:hover {
   background-color: #475569;
 }
+
+/* --- Footer --- */
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid #1e293b;
+  margin-top: auto;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background-color: transparent;
+  color: #ef4444;
+  /* Red 500 */
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  /* Red 400 */
+}

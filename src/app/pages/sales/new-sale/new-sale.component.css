@@ -198,13 +198,35 @@
 }
 
 .clean-table th {
-  background: var(--slate-50);
-  color: var(--slate-600);
+  background:#e0e7ff;
+  color: var(--slate-900);
   font-weight: 600;
   font-size: 0.875rem;
   text-transform: uppercase;
   padding: 16px;
   border-bottom: 1px solid var(--slate-200);
+}
+
+/* Unificación de estilos del <select> de tipo de venta */
+.clean-table .form-select {
+  appearance: auto;
+  height: 34px;
+  padding: 4px 8px;
+  font-size: 0.82rem;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius);
+  background-color: var(--white);
+  color: var(--slate-800);
+  cursor: pointer;
+  transition: border-color 0.2s;
+  width: 100%;
+  max-width: 110px;
+}
+
+.clean-table .form-select:focus {
+  outline: none;
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .clean-table td {
@@ -455,11 +477,13 @@ input[type=number].no-spinners {
   color: var(--slate-600);
   margin-bottom: 8px;
   font-weight: 600;
+  text-align: center;
 }
 
 .customer-display {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   padding: 10px;
   background: var(--slate-50);
@@ -469,12 +493,13 @@ input[type=number].no-spinners {
 }
 
 .payment-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 
 .payment-btn {
+  flex: 1;
   border: 1px solid var(--slate-200);
   background: var(--white);
   padding: 10px;
@@ -572,27 +597,34 @@ input[type=number].no-spinners {
 .btn-primary-action {
   width: 100%;
   padding: 16px;
-  background: var(--blue-500);
-  color: white;
+  background: #059669;
+  color: #ffffff;
   border: none;
   border-radius: var(--radius);
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* NEW: Dark Button Style */
+/* Emerald Green Button */
 .btn-dark-primary {
-  background-color: var(--slate-900);
+  background-color: #059669;
   border-radius: var(--radius-xl);
-  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
 }
 
 .btn-primary-action:hover:not(:disabled) {
-  opacity: 0.9;
+  background-color: #047857;
+  box-shadow: 0 6px 20px rgba(4, 120, 87, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-primary-action:active:not(:disabled) {
+  transform: translateY(0px);
+  box-shadow: 0 2px 8px rgba(4, 120, 87, 0.25);
 }
 
 .btn-primary-action:disabled {
@@ -600,6 +632,7 @@ input[type=number].no-spinners {
   color: var(--slate-600);
   cursor: not-allowed;
   box-shadow: none;
+  transform: none;
 }
 
 /* --- TICKET TÉRMICO (Impresión) --- */
