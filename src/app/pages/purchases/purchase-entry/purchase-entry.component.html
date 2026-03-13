@@ -21,7 +21,11 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Observaciones / No. Factura</label>
+          <label>No. Documento / Factura / Acta *</label>
+          <input type="text" formControlName="documento" class="form-control" placeholder="Ej: FAC-001" required>
+        </div>
+        <div class="form-group">
+          <label>Observaciones</label>
           <textarea formControlName="observaciones" class="form-control" rows="2"></textarea>
         </div>
       </form>
@@ -171,7 +175,7 @@
           🗑️ Limpiar Lista
         </button>
         <button class="btn btn-success btn-lg btn-block" (click)="procesarEntrada()"
-          [disabled]="itemsEntrada.length === 0">
+          [disabled]="itemsEntrada.length === 0 || entryForm.invalid">
           ✅ Procesar Entrada al Inventario
         </button>
       </div>

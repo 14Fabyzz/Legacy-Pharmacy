@@ -54,6 +54,7 @@ export class PurchaseEntryComponent implements OnInit {
     // Formulario Header (Sucursal, Observaciones)
     this.entryForm = this.fb.group({
       sucursalId: [1, Validators.required],
+      documento: ['', Validators.required],
       observaciones: ['Entrada de Mercancía']
     });
 
@@ -338,6 +339,9 @@ export class PurchaseEntryComponent implements OnInit {
       // REGLA API v2.0: costoCompra debe ser el VALOR TOTAL de la línea (Cantidad * Costo Unitario)
       costoCompra: item.cantidad * item.costoCompra,
       sucursalId: this.entryForm.get('sucursalId')?.value,
+      documento: this.entryForm.get('documento')?.value,
+      documentoRef: this.entryForm.get('documento')?.value,
+      numeroDocumento: this.entryForm.get('documento')?.value,
       observaciones: this.entryForm.get('observaciones')?.value
     }));
 
@@ -357,7 +361,7 @@ export class PurchaseEntryComponent implements OnInit {
           localStorage.removeItem('draft_entrada_mercancia');
         }
 
-        this.entryForm.reset({ sucursalId: 1, observaciones: 'Entrada de Mercancía' });
+        this.entryForm.reset({ sucursalId: 1, documento: '', observaciones: 'Entrada de Mercancía' });
         this.itemForm.reset({ cantidad: 1, costoCompra: 0 });
         this.productoSeleccionado = null;
       },
