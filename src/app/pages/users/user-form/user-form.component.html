@@ -89,6 +89,29 @@
 
                 <div class="form-row" style="display: flex; gap: 1rem;">
                     <div class="form-group" style="flex: 1;">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" class="form-control" formControlName="email"
+                            placeholder="juan@correo.com"
+                            [class.is-invalid]="submitted && f['email'].errors">
+                        <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+                            <div *ngIf="f['email'].errors['required']">El correo es requerido</div>
+                            <div *ngIf="f['email'].errors['email']">Ingrese un correo válido</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="flex: 1;">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" id="telefono" class="form-control" formControlName="telefono"
+                            placeholder="3001234567"
+                            [class.is-invalid]="submitted && f['telefono'].errors">
+                        <div *ngIf="submitted && f['telefono'].errors" class="invalid-feedback">
+                            <div *ngIf="f['telefono'].errors['required']">El teléfono es requerido</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
                         <label for="rolId">Rol</label>
                         <select id="rolId" class="form-control" formControlName="rolId">
                             <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>

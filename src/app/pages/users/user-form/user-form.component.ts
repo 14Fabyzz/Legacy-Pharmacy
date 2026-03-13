@@ -44,6 +44,8 @@ export class UserFormComponent implements OnInit {
             cedula: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
             login: ['', [Validators.required, Validators.minLength(4)]],
             password: ['', [Validators.minLength(8), Validators.pattern(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$/)]],
+            email: ['', [Validators.required, Validators.email]],    // ✨ NUEVO
+            telefono: ['', Validators.required],                      // ✨ NUEVO
             rolId: [2, Validators.required],
             sucursalId: [1, Validators.required],
             enabled: [true]
@@ -89,6 +91,8 @@ export class UserFormComponent implements OnInit {
                         nombreCompleto: user.nombreCompleto,
                         cedula: user.cedula,
                         login: user.login,
+                        email: user.email || '',
+                        telefono: user.telefono || '',
                         rolId: user.rolId,
                         sucursalId: user.sucursalId,
                         enabled: user.estado === 'ACTIVO'
@@ -166,6 +170,8 @@ export class UserFormComponent implements OnInit {
                 nombreCompleto: this.userForm.get('nombreCompleto')?.value,
                 cedula: this.userForm.get('cedula')?.value,
                 login: this.userForm.get('login')?.value,
+                email: this.userForm.get('email')?.value,
+                telefono: this.userForm.get('telefono')?.value,
                 rolId: this.userForm.get('rolId')?.value,
                 sucursalId: this.userForm.get('sucursalId')?.value,
                 password: this.userForm.get('password')?.value

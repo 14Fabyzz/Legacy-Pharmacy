@@ -31,9 +31,9 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Definimos el formulario con 'username' y 'password'
+    // Definimos el formulario con 'identifier' (usuario o correo) y 'password'
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
+      identifier: ['', Validators.required],
       password: ['', Validators.required]
     });
   }
@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
     //    Esto envía: { username: "...", password: "..." }
     //    Coincide con lo que espera el AuthService.
     const credentials = {
-      login: this.loginForm.value.username,
+      identifier: this.loginForm.value.identifier,
       password: this.loginForm.value.password
     };
 

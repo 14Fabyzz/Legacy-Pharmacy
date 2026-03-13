@@ -9,6 +9,8 @@ export interface UserList {
   nombreCompleto: string;
   cedula: string;
   login: string;
+  email?: string;
+  telefono?: string;
   rolNombre: string;
   estado: string; // ACTIVO/INACTIVO
 }
@@ -19,6 +21,8 @@ export interface UserDetail {
   nombreCompleto: string;
   cedula: string;
   login: string;
+  email?: string;
+  telefono?: string;
   rolId: number;
   rolNombre: string;
   sucursalId: number;
@@ -34,6 +38,8 @@ export interface CreateUserRequest {
   nombreCompleto: string;
   cedula: string;
   login: string;
+  email: string;      // ✨ NUEVO - requerido por el backend
+  telefono: string;   // ✨ NUEVO - requerido por el backend
   rolId: number;
   sucursalId: number;
   password?: string;

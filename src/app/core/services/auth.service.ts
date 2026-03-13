@@ -7,7 +7,7 @@ import { Observable, BehaviorSubject, tap, of, catchError, throwError } from 'rx
 import { Router } from '@angular/router';
 
 export interface LoginRequest {
-  login: string;
+  identifier: string; // Acepta username O correo electrónico
   password: string;
 }
 
