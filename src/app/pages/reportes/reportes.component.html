@@ -1,24 +1,48 @@
-<div class="reportes-dashboard">
-  <div class="dashboard-header">
-    <h2>Reportes</h2>
-    <p>Selecciona el tipo de reporte que deseas visualizar.</p>
+<div class="reportes-dashboard" *ngIf="isReportesHome">
+  <div class="dashboard-header text-center py-4">
+    <h2 class="fw-bold text-dark">Métricas y Análisis</h2>
+    <p class="text-secondary">Seleccione un módulo para visualizar los indicadores clave y reportes de Inteligencia Artificial.</p>
   </div>
 
-  <div class="cards-grid">
-    <div
-      class="reporte-card"
-      *ngFor="let opcion of opcionesReportes"
-      [routerLink]="opcion.ruta"
-    >
-      <div class="icon-wrapper" [innerHTML]="opcion.svgIcon">
-      </div>
+  <div class="cards-grid px-3 pb-5">
+    <!-- Tarjeta 1 (IA) -->
+    <div class="reporte-card" routerLink="./resumen-inteligente">
+      <div class="icon-wrapper ia-theme"><i class="bi bi-stars"></i></div>
       <div class="card-content">
-        <h3>{{ opcion.titulo }}</h3>
-        <p>{{ opcion.descripcion }}</p>
+        <h3>Resumen Inteligente (IA)</h3>
+        <p>Análisis ejecutivo y recomendaciones generadas por Google Gemini.</p>
       </div>
-      <div class="card-action">
-        <span>Ver Reporte <i class="bi bi-arrow-right-short"></i></span>
+      <div class="card-action text-primary fw-bold">
+        <span>Ver Análisis <i class="bi bi-arrow-right-short"></i></span>
       </div>
     </div>
+
+    <!-- Tarjeta 2 (Inventario) -->
+    <div class="reporte-card" routerLink="./pulso-inventario">
+      <div class="icon-wrapper inv-theme"><i class="bi bi-box-seam"></i></div>
+      <div class="card-content">
+        <h3>Pulso de Inventario</h3>
+        <p>Métricas de rotación, retorno de inversión y cobertura de stock.</p>
+      </div>
+      <div class="card-action text-success fw-bold">
+        <span>Ver Pulso <i class="bi bi-arrow-right-short"></i></span>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3 (Ventas) -->
+    <div class="reporte-card" routerLink="./motor-ventas">
+      <div class="icon-wrapper vent-theme"><i class="bi bi-cart3"></i></div>
+      <div class="card-content">
+        <h3>Motor de Ventas</h3>
+        <p>Análisis de ticket promedio, conversión y comportamiento del cliente.</p>
+      </div>
+      <div class="card-action text-info fw-bold">
+        <span>Ver Motor <i class="bi bi-arrow-right-short"></i></span>
+      </div>
+    </div>
+
+
   </div>
 </div>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,66 @@
+<div class="reportes-dashboard">
+  <div class="dashboard-header">
+    <h2>Pulso de Inventario</h2>
+    <p>Monitorea la rotación y eficiencia del inventario.</p>
+  </div>
+
+  <div class="filter-section card">
+    <div class="filter-row">
+      <div class="form-group">
+        <label>Fecha Inicio:</label>
+        <input type="date" [(ngModel)]="fechaInicio" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Fecha Fin:</label>
+        <input type="date" [(ngModel)]="fechaFin" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Sucursal (ID):</label>
+        <input type="number" [(ngModel)]="sucursalId" class="form-control" min="1">
+      </div>
+      <div class="form-group btn-group">
+        <button class="btn btn-primary" (click)="consultarMetricas()" [disabled]="isLoading">
+          <i class="bi bi-search"></i> {{ isLoading ? 'Cargando...' : 'Consultar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="errorMensaje" class="alert alert-danger mt-3">
+    {{ errorMensaje }}
+  </div>
+
+  <div *ngIf="datosInventario && !isLoading" class="kpi-cards-grid mt-4">
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="bi bi-arrow-repeat"></i></div>
+      <div class="kpi-details">
+        <h3>{{ datosInventario.rotacionInventarioIri | number:'1.1-2' }}</h3>
+        <p>Rotación Inventario (IRI)</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+      <div class="kpi-details">
+        <h3>{{ datosInventario.gmroi | number:'1.1-2' }}</h3>
+        <p>GMROI</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="bi bi-percent"></i></div>
+      <div class="kpi-details">
+        <h3>{{ datosInventario.sellThroughRate | number:'1.1-2' }}%</h3>
+        <p>Sell-Through Rate</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="bi bi-calendar-range"></i></div>
+      <div class="kpi-details">
+        <h3>{{ datosInventario.weeksOfSupplyWos | number:'1.1-2' }}</h3>
+        <p>Semanas de Suministro (WOS)</p>
+      </div>
+    </div>
+  </div>
+</div>

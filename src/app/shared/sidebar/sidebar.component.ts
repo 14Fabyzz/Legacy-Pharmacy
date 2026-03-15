@@ -73,12 +73,7 @@ export class SidebarComponent {
 
     {
       path: '/app/reportes', title: 'Reportes', active: false,
-      subMenu: [
-        { path: '/app/reportes/resumen-inteligente', title: 'Resumen Ejecutivo IA ✨' },
-        { path: '/app/reportes/ventas-consolidado', title: 'Ventas Consolidadas' },
-        { path: '/app/reportes/top-rotacion', title: 'Productos Mayor Rotación' },
-        { path: '/app/reportes/consolidado-pagos', title: 'Consolidado de Pagos' }
-      ]
+      subMenu: []
     },
     { path: '/app/configuraciones', title: 'Configuraciones', active: false, subMenu: [] }
   ];

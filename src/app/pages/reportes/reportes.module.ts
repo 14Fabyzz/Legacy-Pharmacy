@@ -5,19 +5,17 @@ import { BaseChartDirective } from 'ng2-charts';
 
 import { ReportesRoutingModule } from './reportes-routing.module';
 import { ReportesComponent } from './reportes.component';
-import { VentasConsolidadoComponent } from './ventas-consolidado/ventas-consolidado.component';
-import { TopRotacionComponent } from './top-rotacion/top-rotacion.component';
-import { ConsolidadoPagosComponent } from './consolidado-pagos/consolidado-pagos.component';
 import { ResumenInteligenteComponent } from './resumen-inteligente/resumen-inteligente.component';
 import { MarkdownBoldPipe } from '../../shared/pipes/markdown-bold.pipe';
+import { PulsoInventarioComponent } from './pulso-inventario/pulso-inventario.component';
+import { MotorVentasComponent } from './motor-ventas/motor-ventas.component';
 
 @NgModule({
     declarations: [
         ReportesComponent,
-        VentasConsolidadoComponent,
-        TopRotacionComponent,
-        ConsolidadoPagosComponent,
-        ResumenInteligenteComponent
+        ResumenInteligenteComponent,
+        PulsoInventarioComponent,
+        MotorVentasComponent
     ],
     imports: [
         CommonModule,
