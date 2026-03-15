@@ -1,0 +1,58 @@
+<div class="reportes-dashboard">
+  <div class="dashboard-header">
+    <h2>Motor de Ventas y Clientes</h2>
+    <p>Analiza el ticket promedio y la conversión de clientes.</p>
+  </div>
+
+  <div class="filter-section card">
+    <div class="filter-row">
+      <div class="form-group">
+        <label>Fecha Inicio:</label>
+        <input type="date" [(ngModel)]="fechaInicio" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Fecha Fin:</label>
+        <input type="date" [(ngModel)]="fechaFin" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Sucursal (ID):</label>
+        <input type="number" [(ngModel)]="sucursalId" class="form-control" min="1">
+      </div>
+      <div class="form-group btn-group">
+        <button class="btn btn-primary" (click)="consultarMetricas()" [disabled]="isLoading">
+          <i class="bi bi-search"></i> {{ isLoading ? 'Cargando...' : 'Consultar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="errorMensaje" class="alert alert-danger mt-3">
+    {{ errorMensaje }}
+  </div>
+
+  <div *ngIf="datosVentas && !isLoading" class="kpi-cards-grid mt-4">
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="bi bi-currency-dollar"></i></div>
+      <div class="kpi-details">
+        <h3>{{ datosVentas.ticketPromedio | currency }}</h3>
+        <p>Ticket Promedio</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="bi bi-bag-check"></i></div>
+      <div class="kpi-details">
+        <h3>{{ datosVentas.unitsPerTransactionUpt | number:'1.1-2' }}</h3>
+        <p>Unidades por Tx (UPT)</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="bi bi-graph-up"></i></div>
+      <div class="kpi-details">
+        <h3>{{ datosVentas.margenUtilidadBruta | number:'1.1-2' }}%</h3>
+        <p>Margen Utilidad Bruta</p>
+      </div>
+    </div>
+  </div>
+</div>

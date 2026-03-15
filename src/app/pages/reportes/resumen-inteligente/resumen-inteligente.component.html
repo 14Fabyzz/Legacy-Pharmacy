@@ -109,7 +109,7 @@
             type="button"
             class="btn btn-outline-secondary btn-pdf"
             (click)="exportarPDF()"
-            [disabled]="!analisisResultado || isAnalyzing"
+            [disabled]="!resumenData || isAnalyzing"
             title="Descargar PDF"
           >
             <i class="fas fa-file-pdf"></i>
@@ -143,7 +143,7 @@
 
   <!-- Resultados: Dashboard Híbrido -->
   <div
-    *ngIf="analisisResultado && !isAnalyzing"
+    *ngIf="resumenData && !isAnalyzing"
     class="resultado-card card-neumorphic animate__animated animate__fadeInUp"
   >
     <div class="card-header bg-transparent border-0 pt-4 pb-0 px-4">
@@ -155,26 +155,31 @@
 
     <!-- Contenedor Principal para Exportación PDF -->
     <div id="dashboard-ia-export" class="card-body p-4 pt-2">
-      <div class="row">
-        <!-- Columna Izquierda (70%) - Análisis de la IA -->
-        <div class="col-md-8">
-          <div class="analisis-content text-justify" [innerHTML]="analisisResultado | markdownBold">
-          </div>
-        </div>
+      <div class="analisis-content text-justify" [innerHTML]="resumenData.resumenGenerado | markdownBold">
+      </div>
 
-        <!-- Columna Derecha (30%) - Gráfico Top Productos -->
-        <div class="col-md-4 d-flex flex-column align-items-center justify-content-center">
-          <h5 class="text-secondary fw-bold text-center mb-4">Top 5 Productos (Ingresos)</h5>
-          
-          <div style="display: block; width: 100%; height: 300px;" *ngIf="doughnutChartData">
-            <canvas baseChart
-              [data]="doughnutChartData"
-              [options]="doughnutChartOptions"
-              [type]="'doughnut'">
-            </canvas>
+      <!-- Panel de Métricas de Respaldo -->
+      <div class="metrics-backup mt-4 pt-3 border-top" *ngIf="resumenData.metricasVentas || resumenData.metricasInventario">
+        <h5 class="text-secondary fw-bold mb-3"><i class="fas fa-chart-line me-2"></i>Métricas de Respaldo</h5>
+        <div class="row g-3">
+          <div class="col-md-6" *ngIf="resumenData.metricasVentas">
+            <div class="card bg-light border-0 p-3 h-100">
+              <h6 class="text-primary"><i class="bi bi-wallet2 me-2"></i>Ventas</h6>
+              <div class="small">
+                <div><strong>Ticket Promedio:</strong> {{ resumenData.metricasVentas.ticketPromedio | currency }}</div>
+                <div><strong>Margen:</strong> {{ resumenData.metricasVentas.margenUtilidadBruta | number:'1.1-2' }}%</div>
+              </div>
+            </div>
           </div>
-          <div *ngIf="!doughnutChartData" class="text-muted small text-center mt-3">
-            <i class="fas fa-info-circle me-1"></i> No hay datos suficientes para el gráfico.
+          <div class="col-md-6" *ngIf="resumenData.metricasInventario">
+            <div class="card bg-light border-0 p-3 h-100">
+              <h6 class="text-success"><i class="bi bi-box-seam me-2"></i>Inventario</h6>
+              <div class="small">
+                <div><strong>Rotación (IRI):</strong> {{ resumenData.metricasInventario.rotacionInventarioIri | number:'1.1-2' }}</div>
+                <div><strong>WOS:</strong> {{ resumenData.metricasInventario.weeksOfSupplyWos | number:'1.1-2' }}</div>
+                <div><strong>GMROI:</strong> {{ resumenData.metricasInventario.gmroi | number:'1.1-2' }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

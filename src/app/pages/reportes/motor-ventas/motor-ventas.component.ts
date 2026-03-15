@@ -1,0 +1,59 @@
+import { Component, OnInit } from '@angular/core';
+import { ReportesService } from '../../../core/services/reportes.service';
+import { VentasClientesMetricas } from '../../../core/models/reportes.models';
+
+@Component({
+  selector: 'app-motor-ventas',
+  standalone: false,
+  templateUrl: './motor-ventas.component.html',
+  styleUrls: ['./motor-ventas.component.css']
+})
+export class MotorVentasComponent implements OnInit {
+
+  fechaInicio: string = '';
+  fechaFin: string = '';
+  sucursalId: number = 1;
+
+  datosVentas?: VentasClientesMetricas;
+  isLoading: boolean = false;
+  errorMensaje: string | null = null;
+
+  constructor(private reportesService: ReportesService) { }
+
+  ngOnInit(): void {
+    const hoy = new Date();
+    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    
+    this.fechaInicio = this.formatDate(inicioMes);
+    this.fechaFin = this.formatDate(hoy);
+    
+    this.consultarMetricas();
+  }
+
+  consultarMetricas(): void {
+    if (!this.fechaInicio || !this.fechaFin || !this.sucursalId) return;
+
+    this.isLoading = true;
+    this.errorMensaje = null;
+
+    this.reportesService.obtenerMotorVentas(this.fechaInicio, this.fechaFin, this.sucursalId)
+      .subscribe({
+        next: (data) => {
+          this.datosVentas = data;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error al obtener métricas de ventas', err);
+          this.errorMensaje = 'Ocurrió un error al consultar las métricas. Intente nuevamente.';
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private formatDate(date: Date): string {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+}
