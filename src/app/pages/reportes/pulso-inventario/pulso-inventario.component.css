@@ -132,3 +132,11 @@
   color: #64748b;
   margin: 0;
 }
+
+.kpi-description {
+  display: block;
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 0.4rem;
+  line-height: 1.35;
+}
