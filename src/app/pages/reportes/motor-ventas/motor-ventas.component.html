@@ -36,6 +36,7 @@
       <div class="kpi-details">
         <h3>{{ datosVentas.ticketPromedio | currency }}</h3>
         <p>Ticket Promedio</p>
+        <small class="kpi-description"><i>Gasto medio de cada cliente. (Ventas Totales / Número de Transacciones)</i></small>
       </div>
     </div>
 
@@ -44,6 +45,7 @@
       <div class="kpi-details">
         <h3>{{ datosVentas.unitsPerTransactionUpt | number:'1.1-2' }}</h3>
         <p>Unidades por Tx (UPT)</p>
+        <small class="kpi-description"><i>Cuántos productos se lleva, en promedio, cada cliente que pasa por la caja. (Total de unidades vendidas / Número de Transacciones)</i></small>
       </div>
     </div>
 
@@ -52,6 +54,7 @@
       <div class="kpi-details">
         <h3>{{ datosVentas.margenUtilidadBruta | number:'1.1-2' }}%</h3>
         <p>Margen Utilidad Bruta</p>
+        <small class="kpi-description"><i>Lo que queda después de pagar el costo del producto. ((Ventas - Costo de Ventas) / Ventas) × 100</i></small>
       </div>
     </div>
   </div>

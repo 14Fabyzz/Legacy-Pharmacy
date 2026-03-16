@@ -36,6 +36,7 @@
       <div class="kpi-details">
         <h3>{{ datosInventario.rotacionInventarioIri | number:'1.1-2' }}</h3>
         <p>Rotación Inventario (IRI)</p>
+        <small class="kpi-description"><i>Veces que el stock se renueva. (Costo de mercancía vendida / inventario promedio)</i></small>
       </div>
     </div>
 
@@ -44,6 +45,7 @@
       <div class="kpi-details">
         <h3>{{ datosInventario.gmroi | number:'1.1-2' }}</h3>
         <p>GMROI</p>
+        <small class="kpi-description"><i>Cuántos pesos ganas por cada peso invertido en stock. (Margen bruto / Costo promedio del inventario)</i></small>
       </div>
     </div>
 
@@ -52,6 +54,7 @@
       <div class="kpi-details">
         <h3>{{ datosInventario.sellThroughRate | number:'1.1-2' }}%</h3>
         <p>Sell-Through Rate</p>
+        <small class="kpi-description"><i>Porcentaje de inventario vendido respecto al recibido. ((Unidades vendidas / Unidades recibidas) × 100)</i></small>
       </div>
     </div>
 
@@ -60,6 +63,7 @@
       <div class="kpi-details">
         <h3>{{ datosInventario.weeksOfSupplyWos | number:'1.1-2' }}</h3>
         <p>Semanas de Suministro (WOS)</p>
+        <small class="kpi-description"><i>Cuánto tiempo durará el stock actual si se sigue vendiendo al mismo ritmo.</i></small>
       </div>
     </div>
   </div>
