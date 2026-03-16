@@ -43,11 +43,11 @@ export class SidebarComponent {
       title: 'Productos',
       active: false,
       subMenu: [
-        { path: '/app/productos/nuevo', title: 'Nuevo producto' },
         { path: '/app/productos/almacen', title: 'Productos en almacen' },
-        { path: '/app/productos/vencimientos', title: 'Centro alertas inventario' },
         { path: '/app/productos/consulta', title: 'Buscar producto' },
+        { path: '/app/productos/vencimientos', title: 'Centro alertas inventario' },
         { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' },
+        { path: '/app/productos/nuevo', title: 'Nuevo producto' },
         { path: '/app/categorias', title: 'Categorías' },
         { path: '/app/laboratorios', title: 'Laboratorios' }
       ]

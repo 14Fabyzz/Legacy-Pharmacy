@@ -1,6 +1,48 @@
 <div class="chatbot-floating-container" *ngIf="!isVentasRoute">
 
-    <!-- Chat Window -->
+    <!-- Secondary Floating Window (Rich Content) -->
+    <div class="rich-content-window" *ngIf="activeRichContent" [class.open]="true">
+        <div class="chat-header rich-header">
+            <div class="header-info">
+                <div class="bot-avatar">
+                    <i class="fas" [class.fa-chart-pie]="activeRichContent.type === 'chart'"
+                        [class.fa-table]="activeRichContent.type === 'table'"></i>
+                </div>
+                <div class="bot-details">
+                    <h3>{{ activeRichContent.content || (activeRichContent.type === 'chart' ? 'Gráfico' : 'Tabla') }}</h3>
+                </div>
+            </div>
+            <button class="close-btn" (click)="closeRichContentWindow()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="rich-content-body">
+            <!-- Table Content Full Size -->
+            <div *ngIf="activeRichContent.type === 'table' && activeRichContent.tableData?.length"
+                class="table-container full-size">
+                <table class="chat-table">
+                    <thead>
+                        <tr>
+                            <th *ngFor="let col of getTableHeaders(activeRichContent.tableData!)">{{ col }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of activeRichContent.tableData!">
+                            <td *ngFor="let col of getTableHeaders(activeRichContent.tableData!)">{{ row[col] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Chart Content Full Size -->
+            <div *ngIf="activeRichContent.type === 'chart' && activeRichContent.chartData"
+                class="chart-container full-size">
+                <canvas baseChart [data]="activeRichContent.chartData" [options]="activeRichContent.chartOptions"
+                    [type]="activeRichContent.chartType || 'bar'">
+                </canvas>
+            </div>
+        </div>
+    </div>    <!-- Chat Window -->
     <div class="chat-window" [class.open]="isOpen">
         <!-- Modern Header -->
         <div class="chat-header">
@@ -40,13 +82,10 @@
                         <i class="fas fa-exclamation-triangle"></i> Alertas de Stock
                     </button>
                     <button class="quick-action-btn"
-                        (click)="sendQuickMessage('Muestra los productos próximos a vencer en estado rojo')">
-                        <i class="fas fa-clock"></i> Próximos a Vencer
+                        (click)="sendQuickMessage('Muestra los productos próximos a vencer')">
+                        <i class="fas fa-clock"></i> Productos próximos a Vencer
                     </button>
-                    <button class="quick-action-btn"
-                        (click)="sendQuickMessage('Haz un reporte de cantidad de productos agrupados por proveedor')">
-                        <i class="fas fa-chart-pie"></i> Productos por Proveedor
-                    </button>
+                    
                 </div>
             </div>
 
@@ -65,27 +104,24 @@
                         <!-- Text Content -->
                         <div *ngIf="msg.content" class="text-content">{{ msg.content }}</div>
 
-                        <!-- Table Content -->
-                        <div *ngIf="msg.type === 'table' && msg.tableData?.length" class="table-container">
-                            <table class="chat-table">
-                                <thead>
-                                    <tr>
-                                        <th *ngFor="let col of getTableHeaders(msg.tableData!)">{{ col }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let row of msg.tableData">
-                                        <td *ngFor="let col of getTableHeaders(msg.tableData!)">{{ row[col] }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <!-- Table Content Preview Card -->
+                        <div *ngIf="msg.type === 'table' && msg.tableData?.length" 
+                             class="rich-content-preview" (click)="openRichContentWindow(msg)">
+                            <div class="preview-icon"><i class="fas fa-table"></i></div>
+                            <div class="preview-details">
+                                <span class="preview-title">Tabla generada</span>
+                                <span class="preview-action">Hacer clic para ver reporte</span>
+                            </div>
                         </div>
 
-                        <!-- Chart Content -->
-                        <div *ngIf="msg.type === 'chart' && msg.chartData" class="chart-container">
-                            <canvas baseChart [data]="msg.chartData" [options]="msg.chartOptions"
-                                [type]="msg.chartType || 'bar'">
-                            </canvas>
+                        <!-- Chart Content Preview Card -->
+                        <div *ngIf="msg.type === 'chart' && msg.chartData" 
+                             class="rich-content-preview" (click)="openRichContentWindow(msg)">
+                            <div class="preview-icon"><i class="fas fa-chart-pie"></i></div>
+                            <div class="preview-details">
+                                <span class="preview-title">Gráfico generado</span>
+                                <span class="preview-action">Hacer clic para ver detalle</span>
+                            </div>
                         </div>
                     </div>
                 </div> <!-- /message-wrapper -->
