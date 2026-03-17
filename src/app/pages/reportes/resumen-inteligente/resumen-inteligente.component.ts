@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReportesService } from '../../../core/services/reportes.service';
-import { Periodicidad } from '../../../core/models/reportes.models';
+import { Periodicidad, ResumenInteligenteResponse } from '../../../core/models/reportes.models';
 import { PdfExportService } from '../../../core/services/pdf-export.service';
 import { ChartConfiguration, ChartData, ChartOptions } from 'chart.js';
-import { TopProductoResponse } from '../../../core/models/reportes.models';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
@@ -18,7 +17,7 @@ export class ResumenInteligenteComponent implements OnInit {
 
   filtrosForm!: FormGroup;
   isAnalyzing: boolean = false;
-  analisisResultado: string | null = null;
+  resumenData?: ResumenInteligenteResponse;
   errorMensaje: string | null = null;
 
   // Chart Properties
@@ -42,7 +41,6 @@ export class ResumenInteligenteComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Inicializar formulario con fechas por defecto (ej. último mes)
     const hoy = new Date();
     const haceUnMes = new Date();
     haceUnMes.setMonth(hoy.getMonth() - 1);
@@ -51,7 +49,7 @@ export class ResumenInteligenteComponent implements OnInit {
       fechaInicio: [this.formatDate(haceUnMes), Validators.required],
       fechaFin: [this.formatDate(hoy), Validators.required],
       periodicidad: ['MENSUAL', Validators.required],
-      sucursalId: [null],
+      sucursalId: [1],
       limite: ['Top 5']
     });
   }
@@ -63,39 +61,25 @@ export class ResumenInteligenteComponent implements OnInit {
     }
 
     this.isAnalyzing = true;
-    this.analisisResultado = null;
+    this.resumenData = undefined;
     this.errorMensaje = null;
 
     const filtros = this.filtrosForm.value;
 
-    this.reportesService.getResumenInteligente(filtros).subscribe({
-      next: (response) => {
-        this.analisisResultado = response.resumenGenerado;
+    this.reportesService.generarResumenInteligente(
+      filtros.fechaInicio, 
+      filtros.fechaFin, 
+      filtros.sucursalId || 1
+    ).subscribe({
+      next: (response: ResumenInteligenteResponse) => {
+        this.resumenData = response;
 
-        if (response.topProductos && response.topProductos.length > 0) {
-          const labels = response.topProductos.map(p => p.nombreProducto);
-          const data = response.topProductos.map(p => p.ingresoGenerado);
-
-          this.doughnutChartData = {
-            labels: labels,
-            datasets: [
-              {
-                data: data,
-                label: 'Ingresos ($)',
-                backgroundColor: [
-                  '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
-                  '#858796', '#5a5c69', '#2e59d9', '#17a673', '#2c9faf'
-                ]
-              }
-            ]
-          };
-        } else {
-            this.doughnutChartData = null;
-        }
+        // Ya no tenemos topProductos en la respuesta, por ahora limpiamos el chart
+        this.doughnutChartData = null;
 
         this.isAnalyzing = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al generar resumen:', err);
         this.errorMensaje = 'Ocurrió un error al intentar generar el resumen inteligente. Por favor, intente nuevamente.';
         this.isAnalyzing = false;

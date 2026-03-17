@@ -30,6 +30,7 @@ export class ChatbotFloatingComponent implements AfterViewChecked {
   isTyping = false;
   userInput = '';
   messages: ChatMessage[] = [];
+  activeRichContent: ChatMessage | null = null; // New state to track what's open in the secondary window
 
   constructor(private chatbotService: ChatbotService, private router: Router) {
     // La bienvenida inicial ahora la maneja la "welcome-card" en el HTML
@@ -52,12 +53,25 @@ export class ChatbotFloatingComponent implements AfterViewChecked {
 
   toggleChat() {
     this.isOpen = !this.isOpen;
+    if (!this.isOpen) {
+      // If the chat is closed, also hide the secondary window
+      this.activeRichContent = null;
+    }
   }
 
   scrollToBottom(): void {
     if (this.chatWindow) {
       this.chatWindow.nativeElement.scrollTop = this.chatWindow.nativeElement.scrollHeight;
     }
+  }
+
+  // New Methods for Rich Content Window
+  openRichContentWindow(msg: ChatMessage) {
+    this.activeRichContent = msg;
+  }
+
+  closeRichContentWindow() {
+    this.activeRichContent = null;
   }
 
   sendMessage() {
@@ -127,22 +141,30 @@ export class ChatbotFloatingComponent implements AfterViewChecked {
           }
         };
 
-        this.messages.push({
+        const chartMsg: ChatMessage = {
           role: 'bot',
           type: 'chart',
           content: title,
           chartData: chartData,
           chartOptions: chartOptions,
           chartType: parsed.chart_type === 'doughnut' ? 'doughnut' : 'bar'
-        });
+        };
+        this.messages.push(chartMsg);
+        
+        // Auto-open side window
+        this.openRichContentWindow(chartMsg);
 
       } else if (resType === 'table') {
-        this.messages.push({
+        const tableMsg: ChatMessage = {
           role: 'bot',
           type: 'table',
           content: title || 'Aquí tienes la tabla de datos:',
           tableData: payloadData
-        });
+        };
+        this.messages.push(tableMsg);
+        
+        // Auto-open side window
+        this.openRichContentWindow(tableMsg);
       } else {
         // Es tipo texto o no detectado
         let rawContent = parsed.content || answerString;

@@ -23,8 +23,8 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 
 .reporte-card {
@@ -47,26 +47,46 @@
 }
 
 .icon-wrapper {
-  color: #007bff;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 123, 255, 0.1);
   width: 60px;
   height: 60px;
   border-radius: 50%;
   transition: all 0.3s ease;
+  font-size: 24px;
 }
+
+.ia-theme {
+  color: #0d6efd;
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.inv-theme {
+  color: #198754;
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.vent-theme {
+  color: #0dcaf0;
+  background-color: rgba(13, 202, 240, 0.1);
+}
+
+.op-theme {
+  color: #ffc107;
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+.reporte-card:hover .ia-theme { background-color: #0d6efd; color: white; }
+.reporte-card:hover .inv-theme { background-color: #198754; color: white; }
+.reporte-card:hover .vent-theme { background-color: #0dcaf0; color: white; }
+.reporte-card:hover .op-theme { background-color: #ffc107; color: white; }
+
 
 .icon-wrapper ::ng-deep svg {
   width: 32px;
   height: 32px;
-}
-
-.reporte-card:hover .icon-wrapper {
-  background-color: #007bff;
-  color: #ffffff;
 }
 
 .card-content {
@@ -95,12 +115,11 @@
 }
 
 .card-action span {
-  color: #007bff;
   font-weight: 500;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
-  transition: color 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .card-action span i {
@@ -109,5 +128,5 @@
 }
 
 .reporte-card:hover .card-action span {
-  color: #0056b3;
+  opacity: 0.8;
 }

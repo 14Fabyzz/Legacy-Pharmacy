@@ -667,3 +667,188 @@
         padding: 0.4rem 0.75rem;
     }
 }
+
+/* --- SECONDARY RICH CONTENT WINDOW (Compact & Attached to Chat) --- */
+.rich-content-window {
+    position: absolute;
+    bottom: 71px;
+    /* Floating higher above the chat window's base */
+    right: calc(100% + 15px);
+    /* Positioned cleanly immediately to the left of the chat */
+    width: 480px;
+    /* Much smaller fixed width, avoiding sidebar overlap */
+    height: min(680px, calc(100vh - 120px));
+    /* Exactly matches chat window height */
+    max-height: calc(100vh - 120px);
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 20px;
+    box-shadow: -10px 10px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(15px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-origin: bottom right;
+    z-index: 9998;
+}
+
+.rich-content-window.open {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    pointer-events: all;
+    animation: slideInLeft 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.rich-header {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 16px 20px;
+}
+
+.rich-header .bot-details h3 {
+    color: white !important;
+    /* Emphatic white color for the title */
+    font-size: 1.2rem;
+}
+
+.rich-content-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Make tables and charts take full space in the secondary window */
+.table-container.full-size {
+    margin: 0;
+    width: 100%;
+    height: auto;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+.table-container.full-size .chat-table {
+    font-size: 0.95rem;
+    /* Larger font for full view */
+}
+
+.table-container.full-size .chat-table th,
+.table-container.full-size .chat-table td {
+    padding: 16px 20px;
+}
+
+.chart-container.full-size {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    /* Fill available space */
+    min-height: 400px;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* --- RICH CONTENT PREVIEW CARDS (In Chat) --- */
+.rich-content-preview {
+    margin-top: 12px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rich-content-preview:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+    border-color: rgba(59, 130, 246, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(59, 130, 246, 0.2);
+}
+
+.preview-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.6);
+    color: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.preview-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.preview-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.preview-action {
+    font-size: 0.8rem;
+    color: var(--primary-light);
+    font-weight: 500;
+}
+
+
+/* --- RESPONSIVE ADJUSTMENTS FOR SECONDARY WINDOW --- */
+@media (max-width: 1024px) {
+    .rich-content-window {
+        /* On narrow screens, it becomes a centered modal */
+        position: fixed;
+        right: auto;
+        left: 50%;
+        top: 50%;
+        bottom: auto;
+        width: min(480px, 95vw);
+        height: min(600px, 90vh);
+        transform-origin: center;
+        transform: translate(-50%, -50%) scale(0.95);
+        z-index: 10000;
+    }
+
+    .rich-content-window.open {
+        transform: translate(-50%, -50%) scale(1);
+        animation: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .rich-content-window {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        /* Full screen on mobile */
+    }
+}

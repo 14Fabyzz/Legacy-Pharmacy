@@ -137,42 +137,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // ── Gráfico ─────────────────────────────────────────────────────────────────
   private cargarDatosGrafico(): void {
-    const hoy = new Date();
-    const hace7Dias = new Date(hoy);
-    hace7Dias.setDate(hoy.getDate() - 6);
-
-    // Formato YYYY-MM-DD
-    const fechaInicio = hace7Dias.toISOString().split('T')[0];
-    const fechaFin = hoy.toISOString().split('T')[0];
-
-    const filtros = { fechaInicio, fechaFin, periodicidad: 'DIARIO' as any };
-
-    const sub = this.reportesService.getVentasConsolidado(filtros)
-      .pipe(catchError((err) => {
-        console.error('Error cargando gráfico:', err);
-        return of(null);
-      }))
-      .subscribe(datos => {
-        if (!datos || !datos.periodos) {
-          // Fallback en caso de error o sin datos
-          setTimeout(() => this.initChart(['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'], [0, 0, 0, 0, 0, 0, 0]), 100);
-          return;
-        }
-
-        // Mapear datos de la API al gráfico
-        const labels = datos.periodos.map((d: any) => {
-          // Convertir fecha de YYYY-MM-DD a un texto corto
-          const date = new Date(d.periodo);
-          // Ajustar por timezone para evitar off-by-one errors
-          date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
-          return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
-        });
-        const valores = datos.periodos.map((d: any) => d.totalIngresos);
-
-        setTimeout(() => this.initChart(labels, valores), 100);
-      });
-
-    this.subs.add(sub);
+    // Placeholder chart data since old reportes are deleted for the new KPIs dashboard
+    setTimeout(() => this.initChart(['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'], [0, 0, 0, 0, 0, 0, 0]), 100);
   }
 
   private initChart(labels: string[] = [], dataValues: number[] = []): void {

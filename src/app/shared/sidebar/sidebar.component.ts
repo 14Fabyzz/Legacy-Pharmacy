@@ -43,11 +43,11 @@ export class SidebarComponent {
       title: 'Productos',
       active: false,
       subMenu: [
-        { path: '/app/productos/nuevo', title: 'Nuevo producto' },
         { path: '/app/productos/almacen', title: 'Productos en almacen' },
-        { path: '/app/productos/vencimientos', title: 'Centro alertas inventario' },
         { path: '/app/productos/consulta', title: 'Buscar producto' },
+        { path: '/app/productos/vencimientos', title: 'Centro alertas inventario' },
         { path: '/app/purchases/purchase-entry', title: 'Entrada Mercancía' },
+        { path: '/app/productos/nuevo', title: 'Nuevo producto' },
         { path: '/app/categorias', title: 'Categorías' },
         { path: '/app/laboratorios', title: 'Laboratorios' }
       ]
@@ -73,12 +73,7 @@ export class SidebarComponent {
 
     {
       path: '/app/reportes', title: 'Reportes', active: false,
-      subMenu: [
-        { path: '/app/reportes/resumen-inteligente', title: 'Resumen Ejecutivo IA ✨' },
-        { path: '/app/reportes/ventas-consolidado', title: 'Ventas Consolidadas' },
-        { path: '/app/reportes/top-rotacion', title: 'Productos Mayor Rotación' },
-        { path: '/app/reportes/consolidado-pagos', title: 'Consolidado de Pagos' }
-      ]
+      subMenu: []
     },
     { path: '/app/configuraciones', title: 'Configuraciones', active: false, subMenu: [] }
   ];

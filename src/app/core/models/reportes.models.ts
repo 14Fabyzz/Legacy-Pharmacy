@@ -1,25 +1,3 @@
-export interface PeriodoVentaDTO {
-  periodo: string;
-  totalIngresos: number;
-  totalIva: number;
-  subtotalNeto: number;
-  totalDescuentos: number;
-  cantidadVentas: number;
-}
-
-export interface ReporteVentasConsolidadasDTO {
-  fechaInicio: string;
-  fechaFin: string;
-  periodicidad: string;
-  sucursalId: number | null;
-  totalIngresos: number;
-  totalIva: number;
-  subtotalNeto: number;
-  totalDescuentos: number;
-  cantidadVentas: number;
-  periodos: PeriodoVentaDTO[];
-}
-
 export type Periodicidad = 'DIARIO' | 'SEMANAL' | 'MENSUAL';
 
 export interface ReporteVentasFiltros {
@@ -29,39 +7,21 @@ export interface ReporteVentasFiltros {
   sucursalId?: number;
 }
 
-export interface TopProductoResponse {
-  nombreProducto: string;
-  presentacion: string;
-  totalVendido: number;
-  ingresoGenerado: number;
+export interface GestionInventarioMetricas {
+  rotacionInventarioIri: number;
+  gmroi: number;
+  sellThroughRate: number;
+  weeksOfSupplyWos: number;
 }
 
-export interface MetodoPagoDTO {
-  nombreMetodo: string;
-  cantidadVentas: number;
-  totalRecaudado: number;
-  porcentajeParticipacion: number;
-}
-
-export interface DetalleReferenciaPagoDTO {
-  idVenta: number;
-  referenciaPago: string;
-  monto: number;
-  fechaVenta: string;
-  metodoPago: string;
-}
-
-export interface ConsolidadoPagosResponse {
-  fechaInicio: string;
-  fechaFin: string;
-  sucursalId: number | null;
-  granTotal: number;
-  metodosPago: MetodoPagoDTO[];
-  detallesReferencias: DetalleReferenciaPagoDTO[];
+export interface VentasClientesMetricas {
+  ticketPromedio: number;
+  unitsPerTransactionUpt: number;
+  margenUtilidadBruta: number;
 }
 
 export interface ResumenInteligenteResponse {
   resumenGenerado: string;
-  reporteBase: ReporteVentasConsolidadasDTO;
-  topProductos: TopProductoResponse[];
+  metricasInventario?: GestionInventarioMetricas;
+  metricasVentas?: VentasClientesMetricas;
 }
