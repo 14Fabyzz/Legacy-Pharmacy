@@ -39,10 +39,17 @@
             <td colspan="7" class="text-center empty-message">No se encontraron ventas registradas en este turno.</td>
           </tr>
           <tr *ngFor="let venta of historialPaginado">
-            <td class="col-id id-col">#{{ venta.id }}</td>
-            <td class="col-fecha">{{ venta.fechaVenta | date:'short' }}</td>
-            <td class="col-cliente" [title]="venta.clienteNombre || venta.clienteId || 'Consumidor Final'">
-              {{ venta.clienteNombre || venta.clienteId || 'Consumidor Final' }}
+            <td class="col-id id-col">
+              <span style="color: #0f172a; font-weight: 600;">#{{ venta.id }}</span>
+            </td>
+            <td class="col-fecha">
+              <div style="display:flex; flex-direction:column; gap:2px;">
+                <span style="font-size:13px; font-weight:500; color:#374151;">{{ venta.fechaVenta | date:'dd/MMM/yyyy' }}</span>
+                <span style="font-size:12px; color:#6b7280;">{{ venta.fechaVenta | date:'shortTime' }}</span>
+              </div>
+            </td>
+            <td class="col-cliente" [title]="venta.clienteNombre || 'Consumidor Final'">
+              {{ venta.clienteNombre || 'Consumidor Final' }}
             </td>
             <td class="col-productos" [title]="venta.resumenProductos?.join(', ') || 'Sin detalle'">
               <ng-container *ngIf="venta.items && venta.items.length > 0">
@@ -55,7 +62,11 @@
               </ng-container>
             </td>
             <td class="col-estado text-center">
-              <span class="badge px-3 py-2 rounded-pill shadow-sm" [ngClass]="getEstadoClass(venta.estado)">
+              <span
+                style="padding:4px 12px; border-radius:9999px; font-size:12px; font-weight:600; display:inline-block; text-transform:uppercase; letter-spacing:0.03em; white-space:nowrap;"
+                [style.background-color]="(venta.estado === 'DEVUELTA') ? '#ffedd5' : (venta.estado === 'ANULADA') ? '#fee2e2' : (venta.estado === 'PARCIALMENTE_DEVUELTA') ? '#fef3c7' : '#d1fae5'"
+                [style.color]="(venta.estado === 'DEVUELTA') ? '#9a3412' : (venta.estado === 'ANULADA') ? '#991b1b' : (venta.estado === 'PARCIALMENTE_DEVUELTA') ? '#92400e' : '#065f46'"
+              >
                 {{ venta.estado || 'COMPLETADA' }}
               </span>
             </td>

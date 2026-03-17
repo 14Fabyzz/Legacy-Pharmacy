@@ -191,11 +191,38 @@ export class HistorialVentasComponent implements OnInit {
         switch ((estado || 'COMPLETADA').toUpperCase()) {
             case 'ACTIVA':
             case 'COMPLETADA':
-            case 'REALIZADA': return 'bg-success text-white';
-            case 'PARCIALMENTE_DEVUELTA': return 'bg-warning text-dark';
+            case 'REALIZADA': return 'estado-completada';
+            case 'PARCIALMENTE_DEVUELTA': return 'estado-parcial';
+            case 'DEVUELTA': return 'estado-devuelta';
+            case 'ANULADA': return 'estado-anulada';
+            default: return 'estado-completada';
+        }
+    }
+
+    getEstadoStyle(estado: string): { [key: string]: string } {
+        const base = {
+            'padding': '4px 12px',
+            'border-radius': '9999px',
+            'font-size': '12px',
+            'font-weight': '600',
+            'display': 'inline-block',
+            'text-transform': 'uppercase',
+            'letter-spacing': '0.03em',
+            'white-space': 'nowrap'
+        };
+        switch ((estado || 'COMPLETADA').toUpperCase()) {
+            case 'ACTIVA':
+            case 'COMPLETADA':
+            case 'REALIZADA':
+                return { ...base, 'background-color': '#d1fae5', 'color': '#065f46' };
+            case 'PARCIALMENTE_DEVUELTA':
+                return { ...base, 'background-color': '#fef3c7', 'color': '#92400e' };
             case 'DEVUELTA':
-            case 'ANULADA': return 'bg-danger text-white';
-            default: return 'bg-success text-white';
+                return { ...base, 'background-color': '#ffedd5', 'color': '#9a3412' };
+            case 'ANULADA':
+                return { ...base, 'background-color': '#fee2e2', 'color': '#991b1b' };
+            default:
+                return { ...base, 'background-color': '#d1fae5', 'color': '#065f46' };
         }
     }
 }

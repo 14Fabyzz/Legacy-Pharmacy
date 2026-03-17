@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../../core/services/sales.service';
 import { ProductService } from '../../products/product.service';
+import { ClienteService, Cliente } from '../../../core/services/cliente.service';
 import { CartService } from '../../../core/services/cart.service';
 import { ToastService } from '../../../core/services/toast.service';
 import {
@@ -18,11 +19,12 @@ import { TicketImpresionComponent } from '../../../shared/components/ticket-impr
 import { Subject, Subscription, of, debounceTime, distinctUntilChanged, switchMap, catchError, tap, finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { environment } from '../../../../environments/environment';
+import { ClientesModule } from '../../clientes/clientes.module';
 
 @Component({
   selector: 'app-new-sale',
   standalone: true,
-  imports: [CommonModule, FormsModule, TicketImpresionComponent],
+  imports: [CommonModule, FormsModule, TicketImpresionComponent, ClientesModule],
   templateUrl: './new-sale.component.html',
   styleUrls: ['./new-sale.component.css']
 })
@@ -81,6 +83,16 @@ export class NewSaleComponent implements OnInit, OnDestroy {
   mostrarModalTicket: boolean = false;
   ticketActual: TicketData | null = null;
 
+  // Client Search & Modal
+  mostrarModalCliente: boolean = false;
+  clienteSearchInput: string = '';
+  isSearchingCliente: boolean = false;
+  showClienteDropdown: boolean = false;
+  clienteSearchFailed: boolean = false;
+  clientesResultados: Cliente[] = [];
+  private clienteSearchSubject = new Subject<string>();
+  private clienteSearchSub!: Subscription;
+
   calcularTotalGlobal(): number {
     if (!this.cartItems || this.cartItems.length === 0) return 0;
 
@@ -127,6 +139,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
   constructor(
     private salesService: SalesService,
     private productService: ProductService,
+    private clienteService: ClienteService,
     public cartService: CartService,
     private toastService: ToastService,
     private cd: ChangeDetectorRef,
@@ -201,6 +214,37 @@ export class NewSaleComponent implements OnInit, OnDestroy {
       this.searchFailed = this.searchResults.length === 0 && this.barcodeInput.trim().length > 0;
       this.showDropdown = this.barcodeInput.trim().length > 0;
     });
+
+    // Setup Client Search Pipe
+    this.clienteSearchSub = this.clienteSearchSubject.pipe(
+      debounceTime(350),
+      distinctUntilChanged(),
+      tap(() => {
+        this.isSearchingCliente = true;
+        this.clienteSearchFailed = false;
+      }),
+      switchMap(term => {
+        if (!term.trim() || term.length < 2) {
+          this.isSearchingCliente = false;
+          this.clienteSearchFailed = false;
+          this.showClienteDropdown = false;
+          return of([]);
+        }
+        return this.clienteService.buscar(term).pipe(
+          catchError(err => {
+            console.error('Client Search Error:', err);
+            this.isSearchingCliente = false;
+            return of([]);
+          })
+        );
+      })
+    ).subscribe((clientes: Cliente[]) => {
+      this.isSearchingCliente = false;
+      this.clientesResultados = clientes;
+      this.clienteSearchFailed = this.clientesResultados.length === 0 && this.clienteSearchInput.trim().length > 1;
+      this.showClienteDropdown = this.clienteSearchInput.trim().length > 1;
+      this.cd.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {
@@ -209,6 +253,9 @@ export class NewSaleComponent implements OnInit, OnDestroy {
     }
     if (this.cartSubscription) {
       this.cartSubscription.unsubscribe();
+    }
+    if (this.clienteSearchSub) {
+      this.clienteSearchSub.unsubscribe();
     }
     // DO NOT clear cart service, so it persists
   }
@@ -383,6 +430,46 @@ export class NewSaleComponent implements OnInit, OnDestroy {
     });
   }
 
+  // --- Client Handling ---
+
+  onClienteSearchInput() {
+    this.isSearchingCliente = true;
+    this.clienteSearchFailed = false;
+    this.clienteSearchSubject.next(this.clienteSearchInput);
+  }
+
+  seleccionarCliente(cliente: Cliente) {
+    this.cartService.clienteId = cliente.id || 1;
+    this.clienteNombre = `${cliente.nombre} ${cliente.apellido}`;
+    
+    this.clienteSearchInput = '';
+    this.showClienteDropdown = false;
+    this.clientesResultados = [];
+    this.cd.detectChanges();
+  }
+
+  limpiarCliente() {
+    this.cartService.clienteId = 1;
+    this.clienteNombre = 'Consumidor Final';
+    this.clienteSearchInput = '';
+    this.cd.detectChanges();
+  }
+
+  abrirModalCliente() {
+    this.mostrarModalCliente = true;
+  }
+
+  cerrarModalCliente() {
+    this.mostrarModalCliente = false;
+  }
+
+  onClienteGuardado(cliente: any) {
+    // Si la DB retorna el modelo, lo usamos.
+    this.seleccionarCliente(cliente);
+    this.cerrarModalCliente();
+    this.toastService.showSuccess(`Cliente ${cliente.nombre} seleccionado para la venta.`);
+  }
+
   // --- Cart Actions ---
 
   // Wrapper methods for HTML to call
@@ -493,7 +580,7 @@ export class NewSaleComponent implements OnInit, OnDestroy {
     this.procesandoVenta = true;
 
     const request: CrearVentaDTO = {
-      clienteId: this.cartService.clienteId,
+      clienteId: this.cartService.clienteId || 1,
       metodoPago: this.metodoPago,
       referenciaPago: this.metodoPago !== 'EFECTIVO' ? this.referenciaPago.trim() : undefined,
       montoRecibido: this.montoRecibido,

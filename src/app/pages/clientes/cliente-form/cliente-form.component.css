@@ -1,1 +1,15 @@
 @import '../../users/user-form/user-form.component.css';
+
+.modal-mode {
+    padding: 0 !important;
+}
+
+.modal-mode .card-body {
+    padding: 0 !important;
+}
+
+.modal-mode .form-control {
+    width: 100% !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+}

@@ -1,9 +1,6 @@
 <div class="caja-container fadeIn">
     <div class="centered-card">
         <div class="card-header-clean">
-            <div class="header-icon-container">
-                <i class="bi bi-cash-coin"></i>
-            </div>
             <h2>Apertura de Caja</h2>
             <p class="subtitle" *ngIf="!turnoActual">Inicia tu jornada laboral configurando el saldo inicial</p>
         </div>
@@ -35,11 +32,19 @@
         </div>
 
         <div class="caja-info-alert" *ngIf="turnoActual">
-            <i class="bi bi-shield-lock-fill"></i>
-            <p>Ya tienes un turno abierto iniciado el <strong>{{ turnoActual.fechaApertura | date:'short' }}</strong>.
+            <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#3b82f6" viewBox="0 0 16 16">
+                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+              </svg>
+            </div>
+            <h4 class="alert-title">Turno en Curso</h4>
+            <p class="alert-body">Ya tienes un turno abierto iniciado el
+                <strong>{{ turnoActual.fechaApertura | date:'short' }}</strong>.
             </p>
-            <p>Debes realizar el cierre de caja para poder iniciar uno nuevo</p>
-            <button class="btn-outline-primary mt-3" routerLink="/app/caja/estado">Ver Estado de Caja</button>
+            <p class="alert-hint">Debes realizar el cierre de caja para poder iniciar uno nuevo.</p>
+            <button class="btn-cta-solid" routerLink="/app/caja/estado">
+                Ver Estado de Caja
+            </button>
         </div>
 
         <div class="loading-overlay" *ngIf="isLoading">

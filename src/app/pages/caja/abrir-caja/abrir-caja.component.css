@@ -188,35 +188,83 @@
     background: #cbd5e1;
 }
 
-/* Info Alert */
+/* Info Alert — Tarjeta de bloqueo moderna */
 .caja-info-alert {
-    background-color: #f0f9ff;
-    border: 1px solid #bae6fd;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
-    padding: 24px;
-    color: #0369a1;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-top: 4px;
 }
 
-.caja-info-alert i {
+.alert-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.12);
+}
+
+.alert-icon-wrapper i {
     font-size: 2rem;
-    margin-bottom: 15px;
+    color: #1e40af;
     display: block;
-    color: #0ea5e9;
 }
 
-.btn-outline-primary {
-    background: transparent;
-    border: 2px solid #3b82f6;
-    color: #3b82f6;
-    padding: 10px 24px;
-    border-radius: 8px;
-    cursor: pointer;
+.alert-title {
+    font-size: 1.15rem;
     font-weight: 700;
-    transition: all 0.2s;
+    color: #1e293b;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.01em;
 }
 
-.btn-outline-primary:hover {
-    background: #eff6ff;
-    color: #2563eb;
-    border-color: #2563eb;
+.alert-body {
+    font-size: 0.95rem;
+    color: #334155;
+    margin: 0 0 6px 0;
+    line-height: 1.6;
+}
+
+.alert-hint {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+}
+
+/* Botón CTA sólido del estado bloqueado */
+.btn-cta-solid {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 28px;
+    background: transparent;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    text-decoration: none;
+}
+
+.btn-cta-solid:hover {
+    background: #3b82f6;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3);
+}
+
+.btn-cta-solid:active {
+    transform: translateY(0);
+    box-shadow: none;
 }

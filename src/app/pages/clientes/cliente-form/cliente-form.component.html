@@ -1,6 +1,6 @@
-<div class="user-form-container">
-    <div class="card">
-        <div class="card-header">
+<div class="user-form-container w-100" [ngClass]="{'modal-mode': isModal}">
+    <div class="card w-100" [ngStyle]="isModal ? {'box-shadow': 'none', 'border-radius': '0', 'margin': '0', 'width': '100%', 'max-width': '100%', 'border': 'none'} : {}">
+        <div class="card-header" *ngIf="!isModal">
             <h2>{{ isEditMode ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>
         </div>
 
@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" routerLink="/app/clientes">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
                     <button type="submit" class="btn btn-primary" [disabled]="loading">
                         {{ loading ? 'Guardando...' : 'Guardar' }}
                     </button>

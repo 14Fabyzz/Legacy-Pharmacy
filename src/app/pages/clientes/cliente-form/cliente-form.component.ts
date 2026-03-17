@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClienteService, Cliente } from '../../../core/services/cliente.service';
@@ -11,6 +11,10 @@ import { ToastService } from '../../../core/services/toast.service';
   styleUrls: ['./cliente-form.component.css']
 })
 export class ClienteFormComponent implements OnInit {
+  @Input() isModal: boolean = false;
+  @Output() clienteGuardado = new EventEmitter<any>();
+  @Output() cancelar = new EventEmitter<void>();
+
   clienteForm: FormGroup;
   isEditMode = false;
   clienteId?: number;
@@ -106,9 +110,13 @@ export class ClienteFormComponent implements OnInit {
 
     if (this.isEditMode && this.clienteId) {
       this.clienteService.update(this.clienteId, clienteData).subscribe({
-        next: () => {
+        next: (res) => {
           this.toastService.showSuccess('¡Cliente actualizado correctamente!');
-          this.router.navigate(['/app/clientes']);
+          if (this.isModal) {
+            this.clienteGuardado.emit(res);
+          } else {
+            this.router.navigate(['/app/clientes']);
+          }
         },
         error: () => {
           this.toastService.showError('Error al actualizar cliente');
@@ -117,15 +125,27 @@ export class ClienteFormComponent implements OnInit {
       });
     } else {
       this.clienteService.create(clienteData).subscribe({
-        next: () => {
+        next: (res) => {
           this.toastService.showSuccess('¡Cliente registrado correctamente!');
-          this.router.navigate(['/app/clientes']);
+          if (this.isModal) {
+            this.clienteGuardado.emit(res);
+          } else {
+            this.router.navigate(['/app/clientes']);
+          }
         },
         error: () => {
           this.toastService.showError('Error al crear el cliente');
           this.loading = false;
         }
       });
+    }
+  }
+
+  onCancel(): void {
+    if (this.isModal) {
+      this.cancelar.emit();
+    } else {
+      this.router.navigate(['/app/clientes']);
     }
   }
 }
