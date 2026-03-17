@@ -100,4 +100,17 @@ export class SalesService {
     }
 
     // TODO: Agregar métodos de caja y clientes según se necesiten
+
+    /**
+     * Consulta las ventas de la semana actual.
+     * Endpoint: GET /api/v1/ventas/semanales
+     */
+    obtenerVentasSemanales(): Observable<any> {
+        const token = localStorage.getItem('authToken');
+        let headers = {};
+        if (token) {
+            headers = { 'Authorization': `Bearer ${token}` };
+        }
+        return this.http.get<any>('http://localhost:8080/api/v1/ventas/semanales', { headers });
+    }
 }

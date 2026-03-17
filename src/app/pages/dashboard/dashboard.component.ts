@@ -137,8 +137,39 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // ── Gráfico ─────────────────────────────────────────────────────────────────
   private cargarDatosGrafico(): void {
-    // Placeholder chart data since old reportes are deleted for the new KPIs dashboard
-    setTimeout(() => this.initChart(['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'], [0, 0, 0, 0, 0, 0, 0]), 100);
+    const defaultLabels = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
+    const sub = this.salesService.obtenerVentasSemanales()
+      .pipe(catchError((err) => {
+        console.warn('⚠️ [Dashboard] Error cargando ventas semanales:', err);
+        return of([0, 0, 0, 0, 0, 0, 0]); // Fallback en caso de error
+      }))
+      .subscribe((res: any) => {
+        let values = [0, 0, 0, 0, 0, 0, 0];
+        let labels = defaultLabels;
+
+        if (Array.isArray(res)) {
+           if (res.length > 0 && typeof res[0] === 'number') {
+             values = res;
+           } else if (res.length > 0 && typeof res[0] === 'object') {
+             // Intenta extraer propiedades comunes como total, monto o valor
+             values = res.map(item => item.total ?? item.monto ?? item.valor ?? 0);
+             if (res[0].dia || res[0].label || res[0].nombre) {
+               // Toma los primeros 3 caracteres del día/label (Ej: Lunes -> Lun)
+               labels = res.map(item => String(item.dia || item.label || item.nombre).substring(0,3));
+             }
+           } else if (res.length === 0) {
+             values = [0, 0, 0, 0, 0, 0, 0];
+           }
+        } else if (res && typeof res === 'object') {
+           // Si el backend devuelve un objeto tipo { data: [...], labels: [...] }
+           if (Array.isArray(res.data)) values = res.data;
+           if (Array.isArray(res.labels)) labels = res.labels;
+        }
+
+        setTimeout(() => this.initChart(labels, values), 100);
+      });
+
+    this.subs.add(sub);
   }
 
   private initChart(labels: string[] = [], dataValues: number[] = []): void {
