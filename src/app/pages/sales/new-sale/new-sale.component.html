@@ -1,0 +1,328 @@
+<div class="pos-layout">
+
+  <!-- COLUMNA IZQUIERDA: PRODUCTOS (70%) -->
+  <div class="products-panel">
+
+    <!-- Header & Buscador -->
+    <div class="panel-header">
+
+      <div class="search-bar">
+        <input #barcodeInputRef type="text" class="clean-input search-input"
+          placeholder="🔍 Escanear código de barras o buscar producto..." [(ngModel)]="barcodeInput"
+          (input)="onSearchInput()" (keyup.enter)="escanearCodigo($event)" autocomplete="off">
+
+        <div class="search-icon">
+          <i class="bi bi-search" *ngIf="!isLoading"></i>
+          <span class="spinner-border spinner-border-sm text-primary" *ngIf="isLoading"></span>
+        </div>
+
+        <ul class="search-dropdown" *ngIf="showDropdown">
+          <!-- No Results State -->
+          <li class="no-results" *ngIf="!isLoading && searchFailed && searchResults.length === 0">
+            <i class="bi bi-search"></i>
+            <span>No se encontraron productos</span>
+          </li>
+
+          <!-- Results -->
+          <li *ngFor="let product of searchResults" (click)="selectProduct(product)">
+            <div class="dropdown-item-main">
+              <!-- ERROR 1 FIXED: Add Image to Search Result -->
+              <!-- ERROR 1 FIXED: Add Image to Search Result -->
+              <div class="flex items-center">
+                <!-- EXACT COPY FROM PRODUCT LIST -->
+                <div class="search-image-container" style="margin-right: 12px;">
+                  <div class="product-icon-circle">
+                    <img *ngIf="product.detalleProducto.imagen" [src]="product.detalleProducto.imagen" alt="Producto"
+                      class="search-product-image">
+                    <span *ngIf="!product.detalleProducto.imagen">💊</span>
+                  </div>
+                </div>
+                <div>
+                  <span class="item-name fw-bold fs-5">{{ product.detalleProducto.nombreComercial }}</span>
+                  <div class="item-details text-muted small">
+                    <span>💊 {{ product.detalleProducto.laboratorio }}</span>
+                    <span class="mx-1">|</span>
+                    <span>📦 {{ product.detalleProducto.presentacion }}</span>
+                    <span class="mx-1">|</span>
+                    <span><i class="bi bi-upc"></i> {{ product.detalleProducto.codigoBarras }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-item-meta text-end">
+              <div class="item-price text-success fw-bold fs-4">{{ product.detalleProducto.precioVentaTotal | currency
+                }}</div>
+              <span class="badge" [ngClass]="product.detalleProducto.stockTotal < 5 ? 'bg-danger' : 'bg-primary'">
+                Stock: {{ product.detalleProducto.stockTotal }}
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Tabla Clean -->
+    <div class="table-container">
+      <table class="clean-table">
+        <thead>
+          <tr>
+            <th class="w-40">Producto</th>
+            <th class="w-15 text-center">Tipo</th>
+            <th class="w-10 text-center">Cantidad</th>
+            <th class="w-20 text-center">Descuento</th>
+            <th class="w-10 text-end">Total</th>
+            <th class="w-5"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of cartItems; let i = index">
+            <td>
+              <div class="product-cell-content">
+                <!-- ERROR 2 FIXED: Correct Image Binding and Error Handling -->
+                <div class="table-image-container">
+                  <!-- FIXED: Twin Containers for Image and Emoji -->
+                  <div class="product-icon-circle" *ngIf="item.product.detalleProducto.imagen">
+                    <img [src]="item.product.detalleProducto.imagen" alt="Producto" class="product-image"
+                      (error)="onImageError($event)">
+                  </div>
+
+                  <div class="product-icon-circle" *ngIf="!item.product.detalleProducto.imagen">
+                    <span>💊</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="product-name">{{ item.product.detalleProducto.nombreComercial }}</div>
+                  <div class="product-subtitle">
+                    {{ item.product.detalleProducto.laboratorio }} - {{ item.product.detalleProducto.presentacion }}
+                  </div>
+                  <!-- Stock warning if low -->
+                  <div *ngIf="item.product.detalleProducto.stockTotal < 10" class="text-danger x-small">
+                    Quedan: {{ item.product.detalleProducto.stockTotal }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="text-center">
+              <select class="form-select form-select-sm" [ngModel]="item.tipoVenta"
+                (ngModelChange)="onTipoVentaChange(item, $event)"
+                [disabled]="!item.product.detalleProducto.esFraccionable && item.tipoVenta === 'CAJA'">
+                <option *ngFor="let tipo of tiposVenta" [value]="tipo"
+                  [disabled]="(!item.product.detalleProducto.esFraccionable && tipo !== 'CAJA') || !isValidPrice(tipo, item.product)">
+                  {{ tipo }} {{ !isValidPrice(tipo, item.product) ? '(N/A)' : '' }}
+                </option>
+              </select>
+            </td>
+            <td class="text-center">
+              <input type="number" class="clean-input qty-input"
+                [ngModel]="item.cantidad"
+                (ngModelChange)="updateQuantity(item, $event)"
+                (input)="clampQtyInput($event, item)"
+                min="1"
+                [max]="item.product.detalleProducto.stockTotal">
+            </td>
+            <td style="text-align: center; vertical-align: middle; min-width: 150px;">
+              <div
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%; height: 100%;">
+
+                <!-- Diseño de la Píldora de Descuento (Moderna y Exclusiva) -->
+                <div
+                  style="display: flex; align-items: center; justify-content: center; background-color: #ffffff; border-radius: 8px; padding: 4px 10px; width: fit-content; white-space: nowrap; margin: 0; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: box-shadow 0.2s ease-in-out;"
+                  onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'"
+                  onmouseout="this.style.boxShadow='0 1px 2px 0 rgba(0, 0, 0, 0.05)'"
+                  [style.borderColor]="((item.descuento || 0) > 100 || (item.descuento || 0) < 0) ? '#dc3545' : '#e5e7eb'">
+
+                  <!-- Textos de la Píldora (Izquierda) -->
+                  <span style="color: #6b7280; font-size: 0.85rem; margin-right: 6px; font-weight: 500;">Dcto</span>
+
+                  <!-- El Input de Descuento -->
+                  <input type="number" class="no-spinners"
+                    style="background: transparent; border: none; outline: none; width: 35px; text-align: center; color: #1f2937; font-weight: 600; font-size: 0.85rem; padding: 0; margin: 0;"
+                    [(ngModel)]="item.descuento" (ngModelChange)="onItemChange(item)" [readonly]="!isAdmin"
+                    [style.cursor]="!isAdmin ? 'not-allowed' : 'text'" title="Descuento (%)" placeholder="0" min="0"
+                    max="100">
+
+                  <!-- Textos de la Píldora (Derecha) -->
+                  <span style="color: #6b7280; font-size: 0.85rem; margin-left: 2px; font-weight: 500;">%</span>
+
+                </div>
+
+                <!-- Mensajes de Error -->
+                <small *ngIf="(item.descuento || 0) > 100" class="text-danger"
+                  style="font-size: 0.65rem; margin: 0; font-weight: 500;">Máx 100%</small>
+                <small *ngIf="(item.descuento || 0) < 0" class="text-danger"
+                  style="font-size: 0.65rem; margin: 0; font-weight: 500;">Mín 0%</small>
+
+              </div>
+            </td>
+            <td class="text-end font-bold text-slate-800">
+              {{ (item.precio * (1 - ((item.descuento || 0) / 100)) * item.cantidad) | currency }}
+            </td>
+            <td class="text-center">
+              <button class="delete-btn" (click)="removeItem(i)" title="Eliminar del carrito">
+                🗑️
+              </button>
+            </td>
+          </tr>
+
+          <!-- Empty State -->
+          <tr *ngIf="cartItems.length === 0">
+            <td colspan="6" class="empty-state">
+              <i class="bi bi-cart3"></i>
+              <p>Escanea un producto para comenzar</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COLUMNA DERECHA: TOTALES (30%) -->
+  <div class="totals-panel">
+    <div class="card-clean">
+
+      <div class="card-section" style="position: relative;">
+        <label class="label-clean">Cliente</label>
+        
+        <!-- Search Input (When NO client is selected, default is Consumidor Final) -->
+        <div *ngIf="cartService.clienteId == 1" class="client-search-wrapper mt-1">
+          <div class="flex items-center gap-2" style="width: 100%;">
+            <input type="text" class="clean-input" style="flex: 1; padding: 8px 12px; height: 38px;"
+              placeholder="🔍 Buscar por cédula o nombre..." 
+              [(ngModel)]="clienteSearchInput"
+              (input)="onClienteSearchInput()" autocomplete="off">
+            <button class="payment-btn" style="padding: 0 12px; height: 38px; white-space: nowrap; flex: none;" (click)="abrirModalCliente()">
+              <i class="bi bi-plus-lg" style="margin-right: 4px;"></i> Nuevo
+            </button>
+          </div>
+
+          <div class="search-icon" style="position: absolute; right: 90px; top: 38px;">
+            <span class="spinner-border spinner-border-sm text-primary" *ngIf="isSearchingCliente"></span>
+          </div>
+
+          <!-- Dropdown -->
+          <ul class="search-dropdown" *ngIf="showClienteDropdown" style="top: 100%; right: 0; left: 0; z-index: 1050; max-height: 200px; overflow-y: auto;">
+            <li class="no-results" *ngIf="!isSearchingCliente && clienteSearchFailed && clientesResultados.length === 0">
+              <i class="bi bi-search"></i>
+              <span>No se encontraron clientes</span>
+            </li>
+            <li *ngFor="let cliente of clientesResultados" (click)="seleccionarCliente(cliente)">
+              <div class="dropdown-item-main" style="font-size: 0.9rem;">{{ cliente.nombre }} {{ cliente.apellido }}</div>
+              <div class="dropdown-item-meta" style="font-size: 0.8rem;"><i class="bi bi-person-vcard" style="margin-right: 4px;"></i>{{ cliente.numeroIdentificacion || cliente.cedula || cliente.identificacion || 'N/A' }}</div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Selected Client Badge -->
+        <div *ngIf="cartService.clienteId != 1" style="display: flex; justify-content: space-between; align-items: center; background-color: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 8px;">
+          
+          <div style="display: flex; flex-direction: column; text-align: left;">
+            <span style="font-weight: 600; color: #1e293b; font-size: 14px;">{{ clienteNombre }}</span>
+            <span style="font-size: 12px; color: #64748b;">Cliente Seleccionado</span>
+          </div>
+
+          <button (click)="limpiarCliente()" style="background-color: #fee2e2; border: none; color: #ef4444; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; padding: 0;" title="Remover cliente">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+          </button>
+
+        </div>
+      </div>
+
+      <div class="card-section">
+        <label class="label-clean">Método de Pago</label>
+        <div class="payment-options">
+          <button class="payment-btn" [class.active]="metodoPago === 'EFECTIVO'"
+            (click)="setPaymentMethod('EFECTIVO')" style="padding: 8px 4px; font-size: 0.85rem;">
+            <span>💵</span> Efectivo
+          </button>
+          <button class="payment-btn" [class.active]="metodoPago === 'TARJETA'"
+            (click)="setPaymentMethod('TARJETA')" style="padding: 8px 4px; font-size: 0.85rem;">
+            <span style="filter: sepia(1) saturate(8) hue-rotate(5deg);">💳</span> Tarjeta
+          </button>
+          <button class="payment-btn" [class.active]="metodoPago === 'TRANSFERENCIA'"
+            (click)="setPaymentMethod('TRANSFERENCIA')" style="padding: 8px 4px; font-size: 0.85rem;">
+            <span>🔁</span> Transf.
+          </button>
+        </div>
+      </div>
+
+      <!-- Electronic Payment Reference -->
+      <div class="card-section mt-3" *ngIf="metodoPago !== 'EFECTIVO'">
+        <label class="label-clean text-danger" style="font-size: 0.8rem;">* Nro. de Comprobante / Voucher</label>
+        <input type="text" class="form-control form-control-sm border-slate-300" placeholder="Ej: 00492811"
+          [(ngModel)]="referenciaPago" [class.border-danger]="!referenciaPago.trim()">
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="totals-summary">
+        <!-- REWRITTEN FOR SIMPLICITY AND PURITY -->
+        <div class="flex justify-between items-center" style="margin-bottom: 12px;">
+          <span class="text-slate-600 font-medium" style="font-family: inherit;">Subtotal</span>
+          <span class="text-slate-800 font-bold" style="font-family: inherit;">{{ totalOriginal | currency }}</span>
+        </div>
+
+        <div class="flex justify-between items-center" style="margin-bottom: 12px;" *ngIf="ajusteRedondeo !== 0">
+          <span class="text-slate-600 font-medium" style="font-family: inherit;">Ajuste al peso:</span>
+          <span class="text-slate-800" style="font-family: inherit;"
+            [ngClass]="{'text-green-600 font-medium': ajusteRedondeo < 0, 'text-red-600 font-bold': ajusteRedondeo > 0}">{{
+            ajusteRedondeo | currency }}</span>
+        </div>
+
+        <div class="flex justify-between items-center border-t border-slate-100" style="padding-top: 12px; margin-top: 4px;">
+          <span class="text-slate-900 font-bold text-xl" style="font-family: inherit;">TOTAL</span>
+          <span class="text-green-600 font-bold text-3xl" style="font-family: inherit;">{{ totalAPagar | currency }}</span>
+        </div>
+      </div>
+
+      <div class="payment-calculation" *ngIf="metodoPago === 'EFECTIVO'">
+        <div class="input-group-clean">
+          <label>Recibido</label>
+          <input type="text" inputmode="numeric" class="clean-input amount-input"
+            [value]="formatMontoDisplay(montoRecibido)"
+            (input)="onMontoRecibidoInput($event)"
+            placeholder="0"
+            autocomplete="off">
+        </div>
+        <div class="change-display" [class.has-change]="cambio > 0">
+          <span>Cambio:</span>
+          <strong>{{ cambio | currency }}</strong>
+        </div>
+      </div>
+
+      <button class="btn-primary-action btn-dark-primary d-flex justify-content-center align-items-center"
+        (click)="processSale()"
+        [disabled]="cartItems.length === 0 || totalAPagar === 0 || (metodoPago === 'EFECTIVO' && montoRecibido < totalAPagar) || hasInvalidDiscounts || (metodoPago !== 'EFECTIVO' && !referenciaPago.trim()) || procesandoVenta">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 8px;"
+          *ngIf="procesandoVenta"></span>
+        {{ procesandoVenta ? 'Procesando...' : 'COBRAR' }}
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- TICKET MODAL -->
+<app-ticket-impresion *ngIf="mostrarModalTicket && ticketActual" [ticket]="ticketActual"
+  [mostrarModal]="mostrarModalTicket" (cerrar)="cerrarTicketYLimpiar()">
+</app-ticket-impresion>
+
+<!-- CLIENTE MODAL -->
+<div *ngIf="mostrarModalCliente" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.5); z-index: 1060; display: flex; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 40px 16px; box-sizing: border-box;">
+  <div style="max-width: 500px; width: 100%; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background-color: #ffffff; margin-top: auto; margin-bottom: auto;">
+    <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e2e8f0; background-color: #f8fafc; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0;">
+      <h5 style="margin: 0; font-weight: bold; color: #1e293b; font-size: 1.25rem;"><i class="bi bi-person-plus-fill" style="margin-right: 8px; color: #3b82f6;"></i>Registrar Nuevo Cliente</h5>
+      <button type="button" class="btn-close" (click)="cerrarModalCliente()"></button>
+    </div>
+    <div style="padding: 32px;">
+      <app-cliente-form 
+        [isModal]="true" 
+        (clienteGuardado)="onClienteGuardado($event)" 
+        (cancelar)="cerrarModalCliente()">
+      </app-cliente-form>
+    </div>
+  </div>
+</div>

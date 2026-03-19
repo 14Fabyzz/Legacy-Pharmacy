@@ -3,18 +3,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Altura mínima del viewport */
-  width: 100vw;      /* Ancho total del viewport */
+  min-height: 100vh;
+  /* Altura mínima del viewport */
+  width: 100vw;
+  /* Ancho total del viewport */
   font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   padding: 20px;
-  
+
   /* Fondo moderno con degradado profundo */
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  position: absolute; /* Posición absoluta para cubrir todo */
+  position: absolute;
+  /* Posición absoluta para cubrir todo */
   top: 0;
   left: 0;
   overflow: hidden;
-  box-sizing: border-box; /* Asegura que el padding no sume al ancho */
+  box-sizing: border-box;
+  /* Asegura que el padding no sume al ancho */
 }
 
 /* Elementos decorativos de fondo (Orbes de luz) */
@@ -25,19 +29,22 @@
   width: 300px;
   height: 300px;
   border-radius: 50%;
-  filter: blur(80px); /* Efecto difuminado */
+  filter: blur(80px);
+  /* Efecto difuminado */
   z-index: 0;
   opacity: 0.6;
 }
 
 .login-container::before {
-  background: #3b82f6; /* Azul brillante */
+  background: #3b82f6;
+  /* Azul brillante */
   top: -50px;
   left: -50px;
 }
 
 .login-container::after {
-  background: #8b5cf6; /* Violeta brillante */
+  background: #8b5cf6;
+  /* Violeta brillante */
   bottom: -50px;
   right: -50px;
 }
@@ -47,11 +54,15 @@
   width: 100%;
   max-width: 400px;
   padding: 40px;
-  background-color: rgba(30, 41, 59, 0.7); /* Fondo oscuro semitransparente */
-  backdrop-filter: blur(12px); /* Efecto de desenfoque detrás de la tarjeta */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  background-color: rgba(30, 41, 59, 0.7);
+  /* Fondo oscuro semitransparente */
+  backdrop-filter: blur(12px);
+  /* Efecto de desenfoque detrás de la tarjeta */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Borde sutil */
   border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Sombra profunda */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  /* Sombra profunda */
   text-align: center;
   position: relative;
   z-index: 1;
@@ -59,25 +70,25 @@
 
 /* --- Encabezado --- */
 .login-header {
-  margin-bottom: 35px;
+  margin-bottom: 25px;
 }
 
-.logo-placeholder {
-  display: inline-flex;
+.brand-container {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border-radius: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
-  color: white;
+  margin-bottom: -10px;
+  margin-top: -15px;
+  width: 100%;
 }
 
-.logo-placeholder svg {
-  width: 32px;
-  height: 32px;
+.brand-logo-image {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  /* Difuminando los bordes del logo para que se funda con el fondo de la tarjeta */
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 70%);
+  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 70%);
 }
 
 .login-header h2 {
@@ -89,72 +100,131 @@
 }
 
 .login-header p {
-  color: #94a3b8; /* Gris azulado claro */
+  color: #94a3b8;
+  /* Gris azulado claro */
   font-size: 0.95rem;
   margin: 0;
 }
 
 /* --- Formulario --- */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   text-align: left;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.label-row label {
+  margin-bottom: 0;
+  margin-left: 0;
 }
 
 .form-group label {
   display: block;
-  color: #cbd5e1; /* Texto claro */
+  color: #e2e8f0;
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: 8px;
   margin-left: 4px;
 }
 
-/* Inputs Modernos (Blancos para contraste) */
+.forgot-password {
+  color: #3b82f6;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+/* --- Contenedor de Inputs con Iconos --- */
+.input-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  color: #64748b;
+  font-size: 1.05rem;
+  z-index: 2;
+}
+
+/* Inputs Modernos (Blancos) */
 .form-control {
   width: 100%;
   padding: 14px 16px;
-  background-color: #f8fafc; /* Blanco casi puro */
+  background-color: #ffffff;
   border: 2px solid transparent;
   border-radius: 12px;
-  color: #1e293b; /* Texto oscuro */
-  font-size: 1rem;
+  color: #1e293b;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
   box-sizing: border-box;
+}
+
+.form-control.with-icon {
+  padding-left: 46px;
+}
+
+.form-control.with-icon-password {
+  padding-left: 46px;
+  padding-right: 48px;
 }
 
 .form-control:focus {
   outline: none;
   background-color: #ffffff;
-  border-color: #3b82f6; /* Borde azul al enfocar */
+  border-color: #3b82f6;
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-  transform: translateY(-2px); /* Pequeña elevación */
+  transform: translateY(-2px);
 }
 
 .form-control::placeholder {
-  color: #94a3b8;
+  color: #64748b;
 }
 
 /* --- Botón Principal --- */
 .btn-login {
   width: 100%;
   padding: 16px;
-  margin-top: 10px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  margin-top: 15px;
+  background: #3b82f6;
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 15px -3px rgba(59, 130, 246, 0.3);
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon {
+  margin-left: 8px;
+  font-size: 0.9rem;
 }
 
 .btn-login:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 25px -5px rgba(59, 130, 246, 0.5);
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 12px 20px -3px rgba(59, 130, 246, 0.4);
+  background: #2563eb;
 }
 
 .btn-login:active {
@@ -171,8 +241,10 @@
 
 /* --- Mensaje de Error --- */
 .login-error-message {
-  background-color: rgba(239, 68, 68, 0.1); /* Rojo muy transparente */
-  color: #fca5a5; /* Rojo claro */
+  background-color: rgba(239, 68, 68, 0.1);
+  /* Rojo muy transparente */
+  color: #fca5a5;
+  /* Rojo claro */
   border: 1px solid rgba(239, 68, 68, 0.2);
   padding: 12px;
   border-radius: 12px;
@@ -187,7 +259,53 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* --- Password Toggle --- */
+.password-container {
+  /* Using input-icon-wrapper instead for position logic, keeping this for additional targeting if needed */
+  width: 100%;
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.btn-toggle-password:hover {
+  color: #3b82f6;
+  /* Hover blue */
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.btn-toggle-password:focus {
+  color: #3b82f6;
+}
+
+.btn-toggle-password i {
+  font-size: 1.1rem;
 }

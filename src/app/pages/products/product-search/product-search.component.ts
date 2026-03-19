@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ProductService } from '../product.service';
-import { Producto } from '../../../core/models/inventory.model';
+import { Producto, ProductoConsulta } from '../../../core/models/product.model';
 
 @Component({
     selector: 'app-product-search',
@@ -13,20 +13,20 @@ export class ProductSearchComponent implements OnInit {
     @ViewChild('searchInput') searchInput!: ElementRef;
 
     searchTerm: string = '';
-    products: Producto[] = [];
-    filteredSuggestions: Producto[] = [];
-    selectedProduct: Producto | null = null;
+    products: any[] = [];
+    resultados: ProductoConsulta[] = [];
+    filteredSuggestions: any[] = [];
+    selectedProduct: ProductoConsulta | null = null;
     notFound: boolean = false;
 
     constructor(private productService: ProductService) { }
 
     ngOnInit(): void {
-        // Cargar productos en memoria para búsqueda rápida (en app real sería búsqueda server-side)
-        this.productService.getProducts().subscribe(data => {
+        // Cargar productos en memoria para búsqueda rápida
+        this.productService.getProductosAlmacen().subscribe(data => {
             this.products = data;
         });
 
-        // Auto-focus al iniciar
         setTimeout(() => this.focusInput(), 100);
     }
 
@@ -39,43 +39,41 @@ export class ProductSearchComponent implements OnInit {
     onSearch(event: any): void {
         const term = event.target.value.toLowerCase().trim();
         this.notFound = false;
-        this.selectedProduct = null;
+        // No limpiar selectedProduct aquí para evitar parpadeos si está escribiendo
+        // pero buscamos en local para sugerencias
 
         if (!term) {
             this.filteredSuggestions = [];
             return;
         }
 
-        // 1. Intentar búsqueda exacta por Código de Barras o Interno (Simulación escáner)
+        // 1. Intentar búsqueda exacta
         const exactMatch = this.products.find(p =>
-            p.codigo_barras === term || p.codigo_interno.toLowerCase() === term
+            p.codigoBarras === term || p.codigoInterno?.toLowerCase() === term
         );
 
         if (exactMatch) {
-            this.selectProduct(exactMatch);
-            this.searchTerm = ''; // Limpiar para siguiente escaneo
+            // Call API for details
+            this.fetchProductDetails(exactMatch.codigoBarras || exactMatch.nombreComercial);
+            this.searchTerm = '';
             this.filteredSuggestions = [];
             return;
         }
 
-        // 2. Si no es exacto, buscar coincidencias por nombre (Sugerencias)
+        // 2. Sugerencias
         this.filteredSuggestions = this.products.filter(p =>
-            p.nombre_comercial.toLowerCase().includes(term) ||
-            p.codigo_interno.toLowerCase().includes(term)
-        ).slice(0, 5); // Max 5 sugerencias
-
-        if (this.filteredSuggestions.length === 0) {
-            // Solo mostrar "No encontrado" si fue un enter explícito (evento keyup.enter en HTML)
-            // Opcional: manejar flag notFound aquí si se quiere instantáneo
-        }
+            p.nombreComercial.toLowerCase().includes(term) ||
+            p.codigoInterno?.toLowerCase().includes(term)
+        ).slice(0, 5);
     }
 
-    // Se llama al presionar Enter en el input
     onEnter(): void {
         if (this.filteredSuggestions.length > 0) {
-            // Seleccionar el primero si hay sugerencias
             this.selectProduct(this.filteredSuggestions[0]);
         } else {
+            // Try to fetch by term directly from API as a fallback? 
+            // Or just show not found if local search failed.
+            // For now, consistent with previous behavior:
             this.notFound = true;
             this.selectedProduct = null;
         }
@@ -83,11 +81,39 @@ export class ProductSearchComponent implements OnInit {
         this.filteredSuggestions = [];
     }
 
-    selectProduct(product: Producto): void {
-        this.selectedProduct = product;
-        this.notFound = false;
+    selectProduct(product: any): void {
+        this.fetchProductDetails(product.codigoBarras || product.nombreComercial);
         this.filteredSuggestions = [];
         this.searchTerm = '';
+    }
+
+    fetchProductDetails(term: string) {
+        this.productService.consultarPrecio(term).subscribe({
+            next: (data: ProductoConsulta[]) => {
+                // Lógica de respuesta Array
+                if (data.length === 0) {
+                    this.notFound = true;
+                    this.selectedProduct = null;
+                    this.resultados = [];
+                } else if (data.length === 1) {
+                    // Bingo: Escaneo exacto o solo 1 coincidencia
+                    this.selectedProduct = data[0];
+                    this.resultados = [];
+                    this.notFound = false;
+                } else {
+                    // Múltiples resultados: Mostrar lista
+                    this.resultados = data;
+                    this.selectedProduct = null;
+                    this.notFound = false;
+                }
+            },
+            error: (err) => {
+                console.error('Error fetching price details', err);
+                this.selectedProduct = null;
+                this.resultados = [];
+                this.notFound = true;
+            }
+        });
     }
 
     clearSearch(): void {

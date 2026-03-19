@@ -1,0 +1,448 @@
+.historial-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 80px);
+}
+
+.header-section {
+  margin-bottom: 24px;
+}
+
+.header-section h2 {
+  color: #1a2236;
+  /* Azul institucional */
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.header-section .subtitle {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  border-spacing: 0;
+}
+
+.modern-table th {
+  background-color: #e0f2fe;
+  /* Azul hielo/cyan más sólido para mayor peso visual y contraste */
+  color: #0f172a;
+  /* Azul marino muy oscuro */
+  font-weight: 600;
+  padding: 16px 24px;
+  /* Padding ajustado para mejor respiro horizontal */
+  font-size: 13px;
+  /* o 0.85rem */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #94a3b8;
+  /* Borde inferior reforzado para separación clara */
+  white-space: nowrap;
+}
+
+/* Redondeo de las esquinas superiores de la cabecera */
+.modern-table thead tr th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.modern-table thead tr th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.modern-table td {
+  padding: 16px 20px;
+  /* Increased padding */
+  border-bottom: 1px solid #f1f5f9;
+  /* Soft separator between rows */
+  color: #475569;
+  font-size: 14px;
+  vertical-align: middle;
+  /* Vertical centering */
+  transition: background-color 0.2s ease;
+}
+
+.modern-table tbody tr {
+  transition: background-color 0.15s ease-in-out;
+}
+
+.modern-table tbody tr:hover {
+  background-color: #f1f5f9;
+  /* Soft hover effect */
+}
+
+.modern-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.text-right {
+  text-align: right !important;
+  padding-right: 24px !important;
+  /* Asegura un buen espacio con el margen derecho en las columnas numéricas */
+}
+
+.text-center {
+  text-align: center !important;
+  /* El flex/justify-center abajo asegura que el contenido en línea (como los badges) se ponga exacto al medio */
+  display: table-cell;
+  vertical-align: middle;
+}
+
+/* Emphasize Total Column */
+.total-amount {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 15px;
+  /* Slightly larger */
+}
+
+/* De-emphasize other monetary values slightly */
+.text-muted-value {
+  color: #64748b;
+}
+
+.id-col {
+  color: #0a0a0a;
+  font-family: monospace;
+  padding-left: 16px !important;
+  padding-right: 8px !important;
+  width: 60px;
+}
+
+.col-id {
+  color: #0a0a0a;
+  width: 5%;
+  padding-left: 16px !important;
+  padding-right: 8px !important;
+  text-transform: none !important;
+}
+
+.col-fecha {
+  width: 15%;
+}
+
+.col-cliente {
+  width: 15%;
+}
+
+.col-productos {
+  width: 40%;
+  max-width: 0;
+  /* Necessary for text-overflow to work in table cells */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col-total {
+  width: 10%;
+  text-align: right;
+}
+
+.col-estado {
+  width: 10%;
+  text-align: center;
+}
+
+.col-acciones {
+  width: 15%;
+  text-align: center;
+}
+
+/* Ensure the table cell content truncates correctly */
+.modern-table td.col-productos {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Badges for payment methods */
+.badge {
+  padding: 6px 12px;
+  /* Balanced padding */
+  border-radius: 9999px;
+  /* Pill shape for modern look */
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: capitalize;
+  background-color: #f1f5f9;
+  color: #475569;
+  letter-spacing: 0.025em;
+}
+
+.badge.efectivo {
+  background-color: #dcfce7;
+  /* Pastel Green */
+  color: #166534;
+}
+
+.badge.tarjeta {
+  background-color: #dbeafe;
+  /* Pastel Blue */
+  color: #1e40af;
+}
+
+.badge.transferencia {
+  background-color: #fef3c7;
+  /* Pastel Yellow/Orange */
+  color: #92400e;
+}
+
+/* ── Estado pills: soft-color semantic badges ── */
+.estado-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.estado-completada {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.estado-parcial {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.estado-devuelta {
+  background-color: #ffedd5;
+  color: #9a3412;
+}
+
+.estado-anulada {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* ── Two-line date cell ── */
+.fecha-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fecha-dia {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.fecha-hora {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.loading-message,
+.empty-message {
+  padding: 32px !important;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Alert Warning Styles */
+.alert-warning {
+  display: flex;
+  align-items: flex-start;
+  background-color: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.alert-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: #f59e0b;
+  margin-right: 12px;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-title {
+  color: #92400e;
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0 0 4px 0;
+}
+
+.alert-text {
+  color: #b45309;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Products List Styles */
+.productos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Slightly more space for readability */
+}
+
+.producto-badge {
+  display: inline-block;
+  background-color: #f8fafc;
+  /* Softer background */
+  color: #475569;
+  /* Pleasant dark slate */
+  padding: 5px 10px;
+  /* Better breathing room */
+  border-radius: 6px;
+  /* Modern rounded corners, not fully pill */
+  font-size: 12.5px;
+  /* Refined font size */
+  line-height: 1.3;
+  border: 1px solid #e2e8f0;
+  white-space: normal;
+  word-break: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  /* Very subtle depth */
+}
+
+.text-muted {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Pagination Controls */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+  gap: 16px;
+}
+
+.btn-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: transparent;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-pagination svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-pagination:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.btn-pagination:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f8fafc;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Actions Column and Buttons */
+.actions-col {
+  white-space: nowrap;
+  min-width: 150px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.3rem;
+  margin-right: 0.5rem;
+  transition: transform 0.1s;
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+}
+
+.text-warning {
+  color: #f59e0b;
+}
+
+.text-warning:hover:not(:disabled) {
+  color: #d97706;
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+.btn-action-return {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: transparent;
+  border: 1px solid #f59e0b;
+  /* warning/orange */
+  color: #f59e0b;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-action-return i {
+  font-size: 14px;
+}
+
+.btn-action-return:hover:not(:disabled) {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.btn-action-return:disabled {
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  background-color: transparent;
+}

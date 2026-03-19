@@ -3,8 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,9 +15,10 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { ProductFormComponent } from './pages/products/product-form/product-form.component';
 import { ProductListComponent } from './pages/products/product-list/product-list.component';
-import { SearchPipe } from './shared/pipes/search.pipe'; 
+import { SearchPipe } from './shared/pipes/search.pipe';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { PurchaseEntryComponent } from './pages/purchases/purchase-entry/purchase-entry.component';
+import { ToastComponent } from './shared/components/toast/toast.component';
 
 
 // SidebarComponent es standalone, por lo que no se importa ni declara aquí.
@@ -26,32 +28,33 @@ import { PurchaseEntryComponent } from './pages/purchases/purchase-entry/purchas
   // HeaderComponent se quita de aquí
   declarations: [
     AppComponent,
-        
+
   ],
-  
+
   imports: [
     BrowserModule,
     AppRoutingModule,
     CommonModule,
     RouterModule,
     HeaderComponent,
-    LayoutComponent, 
+    LayoutComponent,
     DashboardComponent,
     ProductFormComponent,
     PurchaseEntryComponent,
     SearchPipe,
     HttpClientModule,
     ReactiveFormsModule,
- 
-   
-    
+    ToastComponent,
+
+
+
 
   ],
   providers: [
-  //Añade el provider para el interceptor
-  {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
-
-  ],  
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    provideCharts(withDefaultRegisterables())
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

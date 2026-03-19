@@ -1,50 +1,51 @@
 <div class="login-container">
   <div class="login-box">
-    
+
     <div class="login-header">
       <!-- Icono/Logo -->
-      <div class="logo-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <div class="brand-container">
+        <img src="assets/logo.png" alt="Regen Salud POS Logo" class="brand-logo-image">
       </div>
-      
-      <div class="brand-name">Legacy Pharmacy</div>
       <h2>Bienvenido de nuevo</h2>
-      <p>Ingrese sus credenciales para acceder al panel de control.</p>
+      <p>Inicia sesión para gestionar tu farmacia</p>
     </div>
-    
+
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-      
+
       <!-- Mensaje de error si existe -->
       <div *ngIf="loginError" class="login-error-message">
         {{ loginError }}
       </div>
 
       <div class="form-group">
-        <label>Nombre de Usuario o Correo Electrónico</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          placeholder="Ej. empleado" 
-          formControlName="username">
+        <label>Usuario o Correo Electrónico</label>
+        <div class="input-icon-wrapper">
+          <i class="fa-regular fa-user input-icon"></i>
+          <input type="text" class="form-control with-icon" placeholder="ej: jperez o jperez@correo.com"
+            formControlName="identifier">
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Contraseña</label>
-        <input 
-          type="password" 
-          class="form-control" 
-          placeholder="••••••••••" 
-          formControlName="password">
+        <div class="label-row">
+          <label>Contraseña</label>
+          <a href="javascript:void(0)" class="forgot-password">¿Olvidaste tu contraseña?</a>
+        </div>
+        <div class="password-container input-icon-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input [type]="showPassword ? 'text' : 'password'" class="form-control with-icon-password"
+            placeholder="••••••••" formControlName="password">
+          <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility()"
+            aria-label="Mostrar u ocultar contraseña">
+            <i [class]="showPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Eliminada la sección de "Olvidaste tu contraseña" -->
 
       <button type="submit" class="btn-login" [disabled]="loginForm.invalid">
-        Iniciar Sesión
+        Iniciar Sesión <i class="fa-solid fa-arrow-right btn-icon"></i>
       </button>
 
     </form>

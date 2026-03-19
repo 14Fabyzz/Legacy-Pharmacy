@@ -1,33 +1,9 @@
 <div class="page-container">
   <header class="page-header">
-    <h2>ENTRADA DE MERCANCÍA</h2>
+    <h2>🚚 ENTRADA DE MERCANCÍA</h2>
     <p>Registre los productos que ingresan al inventario físico.</p>
     <!-- Navegación Compartida -->
-    <nav class="tabs-nav">
-      <a routerLink="/app/productos/almacen" routerLinkActive="active">
-        <span class="nav-icon">📦</span> ALMACÉN
-      </a>
-
-      <a routerLink="/app/productos/consulta" routerLinkActive="active">
-        <span class="nav-icon">🔍</span> CONSULTA
-      </a>
-
-      <a routerLink="/app/productos/vencimientos" routerLinkActive="active">
-        <span class="nav-icon">🚨</span> MONITOR ALERTAS
-      </a>
-
-      <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">
-        <span class="nav-icon">🚚</span> ENTRADAS
-      </a>
-
-      <a routerLink="/app/productos/auditoria" routerLinkActive="active">
-        <span class="nav-icon">📋</span> AUDITORÍA
-      </a>
-
-      <a routerLink="/app/productos/nuevo" routerLinkActive="active">
-        <span class="nav-icon">✨</span> NUEVO
-      </a>
-    </nav>
+    <app-tabs-nav></app-tabs-nav>
   </header>
 
   <div class="entry-layout">
@@ -45,7 +21,11 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Observaciones / No. Factura</label>
+          <label>No. Documento / Factura / Acta *</label>
+          <input type="text" formControlName="documento" class="form-control" placeholder="Ej: FAC-001" required>
+        </div>
+        <div class="form-group">
+          <label>Observaciones</label>
           <textarea formControlName="observaciones" class="form-control" rows="2"></textarea>
         </div>
       </form>
@@ -54,25 +34,43 @@
 
       <!-- SECCIÓN ESCÁNER -->
       <div class="scanner-section" style="margin-bottom: 20px;">
-        <input type="text" id="scannerInput" class="form-control scanner-input"
+        <input type="text" #scannerInput id="scannerInput" class="form-control scanner-input"
           placeholder="🔫 Escanear Producto Aquí..." autofocus (keyup.enter)="onBarcodeScan($event)">
       </div>
 
       <h3>Agregar Producto</h3>
-      <form [formGroup]="itemForm" (ngSubmit)="addItem()">
+      <form [formGroup]="itemForm" (ngSubmit)="agregarItem()">
 
         <!-- Buscador de Producto -->
-        <div class="form-group">
-          <label>Buscar Producto (Nombre / Código)</label>
-          <input type="text" class="form-control search-input" placeholder="Escribe para buscar..."
-            formControlName="productoBusqueda">
+        <div class="form-group search-container">
+          <label>Buscar Producto (🔍 Escáner o Teclado)</label>
+          <input type="text" class="form-control search-input" placeholder="Escribe Nombre o Escanea Código..."
+            [(ngModel)]="terminoBusqueda" [ngModelOptions]="{standalone: true}" (ngModelChange)="onSearchChange($event)"
+            (keyup.enter)="onEnterKey(terminoBusqueda)" autocomplete="off">
 
-          <!-- Lista de sugerencias (simulada) -->
-          <div class="suggestions-list" *ngIf="showSuggestions && filteredProducts.length > 0">
-            <div *ngFor="let p of filteredProducts" (click)="selectProduct(p)" class="suggestion-item">
-              <strong>{{ p.nombre_comercial }}</strong> - {{ p.concentracion }}
-              <small>{{ p.laboratorio_nombre }}</small>
-            </div>
+          <p class="text-danger small" *ngIf="allProducts.length === 0">⚠️ Cargando productos o lista vacía...</p>
+
+          <!-- Sugerencias -->
+          <ul class="suggestions-dropdown" *ngIf="sugerencias.length > 0">
+            <li *ngFor="let p of sugerencias" (click)="seleccionarProducto(p)" class="suggestion-item">
+              <div class="suggestion-name">{{ p.nombreComercial }} <span *ngIf="p.concentracion">- {{ p.concentracion
+                  }}</span></div>
+              <div class="suggestion-meta">
+                <span>🏭 {{ p.laboratorio || 'N/A' }}</span>
+                <span>🔢 SKU: {{ p.codigoInterno }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Producto Seleccionado (Visual Feedback) -->
+        <div class="selected-product-card" *ngIf="productoSeleccionado"
+          style="background: #e3f2fd; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #90caf9;">
+          <h4 style="margin: 0; color: #1565c0;">{{ productoSeleccionado.nombreComercial }}</h4>
+          <div style="font-size: 0.9em; display: flex; gap: 15px; margin-top: 5px;">
+            <span>💊 {{ productoSeleccionado.concentracion }}</span>
+            <span>🏭 {{ productoSeleccionado.laboratorio }}</span>
+            <span>🔢 SKU: {{ productoSeleccionado.codigoInterno }}</span>
           </div>
         </div>
 
@@ -84,23 +82,41 @@
           </div>
           <div class="form-group">
             <label>Vence *</label>
-            <input type="date" formControlName="fechaVencimiento" class="form-control"
+            <input type="date" formControlName="fechaVencimiento" class="form-control" min="2024-01-01" max="2035-12-31"
               (keyup.enter)="addItemAndRefocus()">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Cantidad</label>
-            <input type="number" formControlName="cantidad" class="form-control" (keyup.enter)="addItemAndRefocus()">
+            <label>Cantidad (Cajas)</label>
+            <input type="number" formControlName="cantidad" #qtyInput class="form-control"
+              (keyup.enter)="addItemAndRefocus()">
+            <!-- Hint dinámico -->
+            <small class="text-muted" *ngIf="productoSeleccionado && itemForm.get('cantidad')?.value > 0">
+              ℹ️ Estás ingresando {{ itemForm.get('cantidad')?.value }} Cajas (x{{ productoSeleccionado.unidadesPorCaja
+              || productoSeleccionado.unidades_por_caja || 1 }} unds) =
+              <strong>{{ (itemForm.get('cantidad')?.value || 0) * (productoSeleccionado.unidadesPorCaja ||
+                productoSeleccionado.unidades_por_caja || 1) }} Unidades</strong> se sumarán al stock.
+            </small>
           </div>
           <div class="form-group">
-            <label>Costo Unitario ($)</label>
+            <label>Costo Compra (Caja) ($)</label>
             <input type="number" formControlName="costoCompra" class="form-control" (keyup.enter)="addItemAndRefocus()">
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block" [disabled]="itemForm.invalid || !selectedProduct">
+        <!-- INDICADOR TOTAL LÍNEA -->
+        <div class="form-group"
+          style="background-color: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 20px; border: 1px dashed #cbd5e1; text-align: center;">
+          <label style="margin: 0; color: #64748b; font-size: 0.85rem; display: block;">Total Línea (Verifique con
+            Factura)</label>
+          <div style="font-size: 1.5rem; font-weight: 700; color: #0284c7;">
+            {{ ( (itemForm.get('cantidad')?.value || 0) * (itemForm.get('costoCompra')?.value || 0) ) | currency }}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="itemForm.invalid || !productoSeleccionado">
           + Agregar a la Lista
         </button>
       </form>
@@ -126,7 +142,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of addedItems; let i = index">
+            <tr *ngFor="let item of itemsEntrada; let i = index">
               <td>
                 <div class="product-cell">
                   <span class="p-name">{{ item.nombreProducto }}</span>
@@ -143,10 +159,10 @@
               <td>{{ item.costoCompra | currency }}</td>
               <td>{{ item.subtotal | currency }}</td>
               <td>
-                <button class="btn-icon delete" (click)="removeItem(i)">🗑️</button>
+                <button class="btn-icon delete" (click)="eliminarItem(i)">🗑️</button>
               </td>
             </tr>
-            <tr *ngIf="addedItems.length === 0">
+            <tr *ngIf="itemsEntrada.length === 0">
               <td colspan="6" class="empty-state">No hay productos agregados a esta entrada.</td>
             </tr>
           </tbody>
@@ -154,7 +170,12 @@
       </div>
 
       <div class="summary-footer">
-        <button class="btn btn-success btn-lg btn-block" (click)="processEntry()" [disabled]="addedItems.length === 0">
+        <button class="btn btn-secondary btn-lg" (click)="cancelarEntrada()" [disabled]="itemsEntrada.length === 0"
+          style="margin-right: 10px;">
+          🗑️ Limpiar Lista
+        </button>
+        <button class="btn btn-success btn-lg btn-block" (click)="procesarEntrada()"
+          [disabled]="itemsEntrada.length === 0 || entryForm.invalid">
           ✅ Procesar Entrada al Inventario
         </button>
       </div>

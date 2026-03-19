@@ -2,7 +2,7 @@
   <header class="page-header">
     <div class="header-content">
       <div>
-        <h2>PRODUCTOS EN ALMACÉN</h2>
+        <h2>📦 PRODUCTOS EN ALMACÉN</h2>
         <p>Gestión general del inventario, precios y estado de productos.</p>
       </div>
       <div class="inventory-status-pill" [ngClass]="{
@@ -42,118 +42,157 @@
   </header>
 
   <!-- Navegación Compartida -->
-  <nav class="tabs-nav">
-    <a routerLink="/app/productos/almacen" routerLinkActive="active">
-      <span class="nav-icon">📦</span> ALMACÉN
-    </a>
-
-    <a routerLink="/app/productos/consulta" routerLinkActive="active">
-      <span class="nav-icon">🔍</span> CONSULTA
-    </a>
-
-    <a routerLink="/app/productos/vencimientos" routerLinkActive="active">
-      <span class="nav-icon">🚨</span> MONITOR ALERTAS
-    </a>
-
-    <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">
-      <span class="nav-icon">🚚</span> ENTRADAS
-    </a>
-
-    <a routerLink="/app/productos/auditoria" routerLinkActive="active">
-      <span class="nav-icon">📋</span> AUDITORÍA
-    </a>
-
-    <a routerLink="/app/productos/nuevo" routerLinkActive="active">
-      <span class="nav-icon">✨</span> NUEVO
-    </a>
-  </nav>
+  <app-tabs-nav></app-tabs-nav>
 
   <div class="search-container">
-    <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm">
+    <div class="search-row">
+      <div class="input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Buscar por nombre, código..." [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilter()">
+      </div>
+    </div>
+
+    <div class="filters-row">
+      <select class="filter-select" [(ngModel)]="selectedCategory" (ngModelChange)="applyFilter()">
+        <option value="">Todas las Categorías</option>
+        <option *ngFor="let cat of availableCategories" [value]="cat">{{ cat }}</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="selectedLaboratory" (ngModelChange)="applyFilter()">
+        <option value="">Todos los Laboratorios</option>
+        <option *ngFor="let lab of availableLaboratories" [value]="lab">{{ lab }}</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="selectedStockStatus" (ngModelChange)="applyFilter()">
+        <option value="">Todo el Stock</option>
+        <option value="OPTIMO">Óptimo</option>
+        <option value="SOBRESTOCK">Sobrestock</option>
+        <option value="BAJO">Stock Bajo</option>
+        <option value="CRITICO">Crítico / Agotado</option>
+      </select>
+    </div>
   </div>
 
-  <ng-container *ngIf="products$ | async | search:searchTerm as filteredProducts">
+  <!-- Loader -->
+  <div class="loading-state-container" *ngIf="isLoading">
+    <div class="spinner-ring"></div>
+    <p class="loading-text">Cargando productos...</p>
+  </div>
 
+  <div *ngIf="!isLoading">
     <div class="product-table-wrapper">
       <table class="custom-table">
         <thead>
           <tr>
             <th style="padding-left: 20px;">Producto</th>
-            <th>Referencia</th>
-            <th>Laboratorio</th>
             <th>Stock</th>
+            <th>Vencimiento</th>
             <th>Precio</th>
-            <th>Estado</th>
+            <th>Categoría</th>
             <th class="text-right" style="padding-right: 20px;">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of filteredProducts">
+          <tr *ngFor="let product of paginatedProducts">
 
-            <!-- 1. Producto (Icono + Nombre) -->
+            <!-- 1. Producto (Icono + Nombre + Badges de Seguridad) -->
             <td>
               <div class="product-cell-main">
                 <!-- Icono -->
-                <!-- Icono o Imagen -->
-                <div class="product-icon-circle" (click)="openImageModal(product)" title="Ver imagen">
-                  <img *ngIf="product.imagenUrl" [src]="product.imagenUrl" class="product-list-img" alt="Foto">
+                <!-- Icono -->
+                <div class="product-icon-circle" (click)="verImagen(product)" title="Ver imagen">
+                  <img *ngIf="product.imagenUrl" [src]="product.imagenUrl" alt="Producto" class="product-img-circle">
                   <span *ngIf="!product.imagenUrl">💊</span>
                 </div>
                 <div class="product-name-wrapper">
-                  <span class="product-name-text">{{ product.nombre_comercial }}</span>
-                  <small class="product-subtext">{{ product.concentracion }}</small>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="product-name-text">{{ product.nombreComercial }}</span>
+                    <!-- Badge Refrigerado -->
+                    <span *ngIf="product.refrigerado" title="Requiere refrigeración"
+                      style="font-size: 0.9rem;">❄️</span>
+                    <!-- Badge Controlado -->
+                    <span *ngIf="product.esControlado" title="Medicamento controlado"
+                      style="font-size: 0.9rem;">🔒</span>
+                  </div>
+                  <small class="product-subtext">{{ product.laboratorio }}</small>
+                  <!-- Badge Presentación -->
+                  <span class="status-badge-table"
+                    style="background-color: #f1f5f9; color: #64748b; font-size: 0.75rem; margin-top: 4px; align-self: flex-start;">
+                    {{ product.presentacion }}
+                  </span>
                 </div>
               </div>
             </td>
 
-            <!-- 2. Referencia (Código Barras) -->
-            <td>
-              <div class="code-cell">
-                <span class="barcode-text">
-                  <span class="barcode-icon">🏁</span> {{ product.codigo_barras }}
-                </span>
-                <small class="id-text">{{ product.codigo_interno }}</small>
-              </div>
-            </td>
+            <!-- 2. Laboratorio (Eliminado - ya está en nombre) -->
+            <!-- Removemos esta columna -->
 
-            <!-- 3. Laboratorio -->
-            <td>
-              <span class="lab-text">{{ product.laboratorio_nombre || 'N/A' }}</span>
-            </td>
-
-            <!-- 4. Stock Badge -->
+            <!-- 3. Stock Badge -->
             <td>
               <div class="stock-badge-container" [ngClass]="{
-                     'stock-low': (product.stock_actual || 0) < product.stock_minimo,
-                     'stock-ok': (product.stock_actual || 0) >= product.stock_minimo
+                     'stock-low': product.nivelStock === 'CRITICO' || product.nivelStock === 'BAJO',
+                     'stock-ok': product.nivelStock === 'OPTIMO' || product.nivelStock === 'ALTO'
                    }">
-                <span class="stock-value">{{ product.stock_actual || 0 }}</span>
-                <span class="stock-divider">/</span>
-                <span class="stock-min">{{ product.stock_minimo }} Min</span>
+                <span class="stock-value">{{ product.stockActual || product.stockTotal || 0 }}</span>
+                <span class="stock-label">uds</span>
               </div>
             </td>
 
-            <!-- 5. Precio -->
+            <!-- 4. Vencimiento (con alerta roja si < 3 meses) -->
             <td>
-              <span class="price-cell">{{ product.precio_venta_base | currency:'USD':'symbol':'1.0-0' }}</span>
+              <div *ngIf="product.proximoVencimiento; else noVencimiento">
+                <span class="vencimiento-text"
+                  [ngClass]="{'text-danger': isVencimientoCercano(product.proximoVencimiento)}">
+                  <span class="icon-clock">📅</span> {{ product.proximoVencimiento | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+              <ng-template #noVencimiento>
+                <span class="text-muted">N/A</span>
+              </ng-template>
             </td>
 
-            <!-- 6. Estado -->
+            <!-- 5. Precio Principal + Badge IVA + Blister -->
             <td>
-              <span class="status-badge-table" [class.active]="product.estado === 'ACTIVO'">
-                {{ product.estado === 'ACTIVO' ? 'ACTIVO' : 'INACTIVO' }}
+              <div class="price-container" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <!-- Precio Principal -->
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="price-cell" style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">
+                    {{ product.precioVentaTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
+                  </span>
+                  <!-- Badge IVA -->
+                  <span *ngIf="product.ivaPorcentaje > 0" class="badge-iva"
+                    style="background-color: #dbeafe; color: #1e40af; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600;">
+                    IVA {{ product.ivaPorcentaje }}%
+                  </span>
+                  <span *ngIf="product.ivaPorcentaje === 0" class="badge-exento"
+                    style="background-color: #f3f4f6; color: #6b7280; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">
+                    Exento
+                  </span>
+                </div>
+                <!-- Precio Blister (si aplica) -->
+                <div *ngIf="product.esFraccionable && product.precioVentaBlister"
+                  style="font-size: 0.85em; color: #059669;">
+                  Blíster: {{ product.precioVentaBlister | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </div>
+              </div>
+            </td>
+
+            <!-- 6. Categoría -->
+            <td>
+              <span class="status-badge-table">
+                {{ product.categoria }}
               </span>
             </td>
 
             <!-- 7. Acciones -->
             <td class="text-right">
               <div class="table-actions">
-                <button title="Ver Detalles" (click)="openDetailModal(product)" class="btn-icon">👁️</button>
-                <button title="Gestionar Imagen" (click)="openImageModal(product)" class="btn-icon">🖼️</button>
-                <button title="Kardex" [routerLink]="['/app/productos/kardex', product.id]" class="btn-icon">📊</button>
-                <button title="Editar" [routerLink]="['/app/productos/editar', product.id]"
-                  class="btn-icon edit">✏️</button>
-                <button title="Eliminar" (click)="openDeleteModal(product)" class="btn-icon delete">🗑️</button>
+                <button title="Ver Detalles (Lotes)" (click)="verDetalle(product)" class="btn-icon">👁️</button>
+                <button title="Ver Imagen" (click)="verImagen(product)" class="btn-icon">🖼️</button>
+                <button title="Kardex" (click)="verKardex(product)" class="btn-icon">📊</button>
+                <button title="Editar" (click)="editarProducto(product)" class="btn-icon edit">✏️</button>
+                <button title="Eliminar" (click)="eliminarProducto(product)" class="btn-icon delete">🗑️</button>
               </div>
             </td>
 
@@ -162,105 +201,41 @@
       </table>
     </div>
 
+
+
     <div class="no-results" *ngIf="filteredProducts.length === 0">
       <p>No se encontraron productos.</p>
     </div>
-  </ng-container>
 
-  <!-- ================= MODALES ================= -->
-
-  <!-- 1. MODAL ELIMINAR (Confirmación segura) -->
-  <div class="modal-overlay" *ngIf="showDeleteModal && selectedProduct">
-    <div class="modal-content danger">
-      <h3>⚠️ Desactivar Producto</h3>
-      <p>Estás a punto de desactivar <strong>{{ selectedProduct.nombre_comercial }}</strong>.</p>
-      <p class="warning-text">Esta acción sacará el producto de la venta. Para confirmar, escribe el nombre del producto
-        abajo:</p>
-
-      <input type="text" class="confirm-input" [(ngModel)]="deleteConfirmationName"
-        [placeholder]="selectedProduct.nombre_comercial">
-
-      <div class="modal-actions">
-        <button class="btn-cancel" (click)="closeModals()">Cancelar</button>
-        <button class="btn-confirm-delete" [disabled]="deleteConfirmationName !== selectedProduct.nombre_comercial"
-          (click)="confirmDelete()">
-          Confirmar Desactivación
+    <!-- Paginación -->
+    <div class="pagination-controls" *ngIf="filteredProducts.length > 0">
+      <span>
+        Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ getEndIndex() }} de {{ filteredProducts.length }}
+        productos
+      </span>
+      <div class="pagination-buttons">
+        <button class="btn-page" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+          Anterior
+        </button>
+        <span class="btn-page" style="cursor: default; background: #f8fafc;">
+          Página {{ currentPage }} de {{ totalPages }}
+        </span>
+        <button class="btn-page" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+          Siguiente
         </button>
       </div>
     </div>
+
+    <!-- MODAL SEMÁFORO -->
+    <app-expiration-semaphore *ngIf="showSemaphoreModal" (close)="closeModals()"></app-expiration-semaphore>
+
+    <!-- PANEL LATERAL DE DETALLE DE LOTES -->
+    <app-inventory-detail-panel [isVisible]="showDetailPanel" [data]="selectedProductData"
+      (close)="showDetailPanel = false">
+    </app-inventory-detail-panel>
+
   </div>
-
-  <!-- 2. MODAL DETALLES -->
-  <div class="modal-overlay" *ngIf="showDetailModal && selectedProduct">
-    <div class="modal-content">
-      <h3>Detalles del Producto</h3>
-      <div class="detail-list">
-        <p><strong>Nombre:</strong> {{ selectedProduct.nombre_comercial }}</p>
-        <p><strong>Código:</strong> {{ selectedProduct.codigo_interno }}</p>
-        <p><strong>Presentación:</strong> {{ selectedProduct.presentacion }}</p>
-        <p><strong>INVIMA:</strong> {{ selectedProduct.registro_invima || 'N/A' }}</p>
-        <p><strong>Controlado:</strong> {{ selectedProduct.es_controlado ? 'SÍ' : 'NO' }}</p>
-        <p><strong>Refrigerado:</strong> {{ selectedProduct.refrigerado ? 'SÍ' : 'NO' }}</p>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-primary" (click)="closeModals()">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. MODAL IMAGEN -->
-  <div class="modal-overlay" *ngIf="showImageModal && selectedProduct">
-    <div class="modal-content">
-      <h3>Gestionar Imagen</h3>
-      <div class="image-upload-area">
-        <div class="current-image">
-          <!-- Aquí iría la imagen real -->
-          <div class="image-placeholder large">💊</div>
-        </div>
-        <label class="btn-upload">
-          Subir Nueva Imagen
-          <input type="file" (change)="onImageSelected($event)" hidden accept="image/*">
-        </label>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-cancel" (click)="closeModals()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. MODAL KARDEX -->
-  <div class="modal-overlay" *ngIf="showKardexModal && selectedProduct">
-    <div class="modal-content large">
-      <h3>Kardex: {{ selectedProduct.nombre_comercial }}</h3>
-      <table class="kardex-table">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Movimiento</th>
-            <th>Detalle</th>
-            <th>Cant.</th>
-            <th>Saldo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let mov of kardexData">
-            <td>{{ mov.fecha }}</td>
-            <td><span class="badge" [class.in]="mov.tipo=='ENTRADA'" [class.out]="mov.tipo=='SALIDA'">{{ mov.tipo
-                }}</span></td>
-            <td>{{ mov.detalle }}</td>
-            <td>{{ mov.cantidad }}</td>
-            <td><strong>{{ mov.saldo }}</strong></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="modal-actions">
-        <button class="btn-primary" (click)="closeModals()">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- 5. MODAL SEMÁFORO -->
-  <app-expiration-semaphore *ngIf="showSemaphoreModal" (close)="closeModals()"></app-expiration-semaphore>
+  <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" accept="image/*">
+  <!-- Fin de ngIf="!isLoading" -->
 
 </div>

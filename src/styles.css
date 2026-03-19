@@ -1,42 +1,354 @@
-/* Global Typography - Inter Upgrade */
-body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #475569;
-    /* Slate-600 */
-    font-size: 15px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+/* ==============================================
+   REGEN SALUD POS DASHBOARD — Global Styles
+   Desktop-First: 1024px → 1366px → 1600px → 1920px+
+   ============================================== */
+
+/* --- Design Tokens & Desktop Breakpoints --- */
+:root {
+    /* Breakpoints de escritorio exclusivamente */
+    --bp-laptop: 1024px;
+    /* Laptop pequeña (13"-14") */
+    --bp-standard: 1366px;
+    /* Laptop/Monitor estándar */
+    --bp-hd: 1600px;
+    /* Monitor 1600p */
+    --bp-fullhd: 1920px;
+    /* Monitor Full HD */
+    --bp-ultrawide: 2560px;
+    /* Ultrawide / 2K / 4K */
+
+    /* Spacing fluido — se expande en monitores grandes */
+    --page-padding-x: clamp(1.25rem, 2vw, 2.5rem);
+    --page-padding-y: clamp(1rem, 1.5vw, 2rem);
+    --card-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+
+    /* Tipografía base */
+    --font-base: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Headings */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+/* --- Reset Seguro Global --- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* --- Body --- */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+body {
+    font-family: var(--font-base);
+    color: #475569;
+    font-size: clamp(0.875rem, 0.9vw + 0.5rem, 1rem);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-color: #f4f7fa;
+}
+
+/* --- Contenedor app-root --- */
+app-root {
+    display: block;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Headings: escalado fluido sin media queries --- */
+h1 {
+    /* De 1.4rem (laptop) a 2rem (ultrawide) */
+    font-size: clamp(1.25rem, 1.5vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
     color: #1e293b;
     /* Slate-800 */
-    font-weight: 600;
-    /* SemiBold */
     margin-bottom: 0.75rem;
 }
 
-h1 {
-    font-size: 1.75rem;
-    letter-spacing: -0.025em;
-}
-
 h2 {
-    font-size: 1.5rem;
+    font-size: clamp(1.1rem, 1.2vw, 1.75rem);
+    font-weight: 600;
     letter-spacing: -0.025em;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
 }
 
-/* Numeric Data Alignment */
+h3 {
+    font-size: clamp(1rem, 1vw, 1.4rem);
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+h4 {
+    font-size: clamp(0.9rem, 0.9vw, 1.2rem);
+    font-weight: 600;
+    color: #334155;
+}
+
+h5,
+h6 {
+    font-size: clamp(0.85rem, 0.8vw, 1rem);
+    font-weight: 600;
+    color: #334155;
+}
+
+/* --- Tablas: alineación numérica global --- */
 td,
 th,
 .tabular-nums,
 .price {
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
+}
+
+/* --- Utilidades de Tabla Segura (Desktop) --- */
+/* Evita que tablas anchas rompan el layout en laptops <1280px */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+}
+
+/* --- Escala en monitores grandes (1600px+) --- */
+@media (min-width: 1600px) {
+    body {
+        font-size: 15.5px;
+    }
+}
+
+@media (min-width: 1920px) {
+    body {
+        font-size: 16px;
+    }
+
+    /* Centra el contenido en monitores ultra-wide */
+    .layout-wrapper {
+        max-width: 2200px;
+        margin: 0 auto;
+    }
+}
+
+/* ==============================================
+   GLOBAL MODAL & RECEIPT STYLES
+   ============================================== */
+
+/* Modal Overlay & Box */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+    transition: color 0.2s;
+}
+
+.btn-close:hover {
+    color: #ef4444;
+}
+
+/* Modal Body / Receipt */
+.modal-body {
+    padding: 0 24px 24px 24px;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.receipt {
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.receipt-header h2 {
+    margin: 0 0 4px 0;
+    margin-top: 0;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #0f172a;
+}
+
+.receipt-header p {
+    margin: 2px 0;
+    font-size: 13px;
+    color: #475569;
+}
+
+.receipt-divider {
+    border-bottom: 1px dashed #cbd5e1;
+    margin: 16px 0;
+}
+
+.receipt-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.receipt-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.receipt-product {
+    color: #1e293b;
+}
+
+.receipt-totals {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #475569;
+}
+
+.total-row {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 4px 0;
+    padding-top: 4px;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.receipt-footer {
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 24px;
+}
+
+.receipt-footer p {
+    margin: 4px 0;
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    background-color: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-secondary,
+.btn-primary {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-primary svg {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-secondary {
+    background-color: white;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+}
+
+.btn-secondary:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.btn-primary {
+    background-color: #1a2236;
+    border: 1px solid #1a2236;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2c3a5e;
+}
+
+/* Print Specific Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .print-area,
+    .print-area * {
+        visibility: visible;
+    }
+
+    .print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 300px;
+        margin: 0;
+        padding: 0;
+    }
 }

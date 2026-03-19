@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ElementRef, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductService } from '../../products/product.service';
-import { Producto } from '../../../core/models/inventory.model';
-
+import { Producto } from '../../../core/models/product.model';
+import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
+import Swal from 'sweetalert2';
 
 interface EntradaItem {
   productoId: number;
@@ -20,7 +23,7 @@ interface EntradaItem {
 @Component({
   selector: 'app-purchase-entry',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, TabsNavComponent],
   templateUrl: './purchase-entry.component.html',
   styleUrls: ['./purchase-entry.component.css']
 })
@@ -28,24 +31,34 @@ export class PurchaseEntryComponent implements OnInit {
   entryForm!: FormGroup;
   itemForm!: FormGroup;
 
-  addedItems: EntradaItem[] = [];
-  products: Producto[] = [];
-  filteredProducts: Producto[] = [];
-  selectedProduct: Producto | null = null;
+  itemsEntrada: EntradaItem[] = []; // Array para la tabla de la derecha
 
-  // Control visibility of suggestions
-  showSuggestions = false;
+  // Productos y búsqueda
+  allProducts: any[] = [];
+  sugerencias: any[] = [];
+  productoSeleccionado: any | null = null;
+  terminoBusqueda: string = ''; // Modelo para el input
+  buscadorSubject = new Subject<string>();
 
   totalCompra = 0;
 
-  constructor(private fb: FormBuilder, private productService: ProductService) { }
+  @ViewChild('scannerInput') scannerInput!: ElementRef;
+
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   ngOnInit(): void {
+    // Formulario Header (Sucursal, Observaciones)
     this.entryForm = this.fb.group({
       sucursalId: [1, Validators.required],
+      documento: ['', Validators.required],
       observaciones: ['Entrada de Mercancía']
     });
 
+    // Formulario Item (Inputs)
     this.itemForm = this.fb.group({
       productoBusqueda: [''],
       numeroLote: ['', Validators.required],
@@ -54,65 +67,178 @@ export class PurchaseEntryComponent implements OnInit {
       costoCompra: [0, [Validators.required, Validators.min(0)]]
     });
 
-    this.loadProducts();
+    // 1. Carga Inicial de Productos (Blindada)
+    this.productService.getProductosAlmacen().subscribe({
+      next: (data) => {
+        this.allProducts = data;
 
-    this.itemForm.get('productoBusqueda')?.valueChanges.subscribe(value => {
-      this.filterProducts(value);
+      },
+      error: (err) => {
+        console.error('❌ Error cargando productos:', err);
+        Swal.fire('Error', 'No se pudieron cargar los productos.', 'error');
+      }
     });
+
+    // 2. Manejo reactivo de búsqueda (Dropdown)
+    this.buscadorSubject.pipe(
+      debounceTime(250),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.filtrarSugerencias(term);
+    });
+
+    // --- LOGIC: RESTORE DRAFT ---
+    this.restoreDraft();
   }
 
-  loadProducts() {
-    this.productService.getProducts().subscribe(data => {
-      this.products = data;
-    });
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
   }
 
-  filterProducts(value: string) {
-    // Reset selection if user types again
-    if (this.selectedProduct && value !== this.selectedProduct.nombre_comercial) {
-      this.selectedProduct = null;
+  onSearchChange(term: string) {
+    this.buscadorSubject.next(term);
+  }
+
+  filtrarSugerencias(termino: string) {
+    if (!termino) {
+      this.sugerencias = [];
+      return;
     }
+    const term = termino.toString().toLowerCase().trim();
+    this.sugerencias = this.allProducts.filter(p => {
+      const nombre = p.nombreComercial ? p.nombreComercial.toString().toLowerCase() : '';
+      const codeInterno = p.codigoInterno ? p.codigoInterno.toString().toLowerCase() : '';
+      const codeBarra = p.codigoBarras ? p.codigoBarras.toString().toLowerCase() : '';
+      return nombre.includes(term) || codeInterno.includes(term) || codeBarra.includes(term);
+    }).slice(0, 15);
+  }
 
-    if (!value || value.length < 2) {
-      this.filteredProducts = [];
-      this.showSuggestions = false;
+  onEnterKey(termino: string) {
+    if (!termino) return;
+    const term = termino.toString().toLowerCase().trim();
+
+    console.log('🔍 Enter presionado / Escáner:', term);
+
+    // 1. Intentar coincidencia EXACTA estricta
+    const exactMatch = this.allProducts.find(p => {
+      const codeBarra = p.codigoBarras ? p.codigoBarras.toString().toLowerCase() : '';
+      const codeInterno = p.codigoInterno ? p.codigoInterno.toString().toLowerCase() : '';
+      const nombre = p.nombreComercial ? p.nombreComercial.toString().toLowerCase() : '';
+      return codeBarra === term || codeInterno === term || nombre === term;
+    });
+
+    if (exactMatch) {
+      this.seleccionarProducto(exactMatch);
       return;
     }
 
-    const filterValue = value.toLowerCase();
-    this.filteredProducts = this.products.filter(product =>
-      product.nombre_comercial.toLowerCase().includes(filterValue) ||
-      product.codigo_interno.toLowerCase().includes(filterValue) ||
-      (product.codigo_barras && product.codigo_barras.toLowerCase().includes(filterValue))
-    );
-    this.showSuggestions = this.filteredProducts.length > 0;
+    // 2. Si no hay coincidencia exacta pero tenemos sugerencias, tomar la primera asumiendo que es la que quiere
+    if (this.sugerencias.length > 0) {
+      this.seleccionarProducto(this.sugerencias[0]);
+      return;
+    }
+
+    // 3. Fallback: buscar el primero que contenga el texto (comportamiento original parcial)
+    const partialMatch = this.allProducts.find(p => {
+      const codeBarra = p.codigoBarras ? p.codigoBarras.toString().toLowerCase() : '';
+      const codeInterno = p.codigoInterno ? p.codigoInterno.toString().toLowerCase() : '';
+      const nombre = p.nombreComercial ? p.nombreComercial.toString().toLowerCase() : '';
+      return codeBarra.includes(term) || codeInterno.includes(term) || nombre.includes(term);
+    });
+
+    if (partialMatch) {
+      this.seleccionarProducto(partialMatch);
+    }
   }
 
-  selectProduct(product: Producto) {
-    this.selectedProduct = product;
-    // Evitamos emitir evento para que no se dispare valueChanges y reabra la lista
+  seleccionarProducto(producto: any) {
+    this.productoSeleccionado = producto;
+    this.sugerencias = [];
+
+    // Limpiamos el input de búsqueda para que quede limpio
     this.itemForm.patchValue({
-      productoBusqueda: product.nombre_comercial,
-      costoCompra: product.precio_compra_referencia || 0
-    }, { emitEvent: false });
+      costoCompra: 0
+    });
+    this.terminoBusqueda = ''; // Clear ngModel
+    this.buscadorSubject.next(''); // Reset subject
 
-    this.showSuggestions = false;
+    // Focus en Lote
+    if (this.isBrowser()) {
+      setTimeout(() => {
+        const inputLote = document.getElementById('campoLote');
+        if (inputLote) inputLote.focus();
+      }, 100);
+    }
   }
 
-  addItem() {
-    if (this.itemForm.invalid || !this.selectedProduct) {
+  // Escáner Input (Line 34 HTML) call this
+  onBarcodeScan(event: any) {
+    this.onEnterKey(event.target.value);
+  }
+
+  // --- ESCÁNER ---
+
+
+
+  // --- PERSISTENCE LOGIC ---
+
+  private restoreDraft() {
+    if (!this.isBrowser()) return;
+
+    const draft = localStorage.getItem('draft_entrada_mercancia');
+    if (draft) {
+      try {
+        this.itemsEntrada = JSON.parse(draft);
+        this.calculateTotal();
+
+        // Pequeña notificación visual (usando Swal Toast o console)
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+        Toast.fire({
+          icon: 'info',
+          title: 'Borrador restaurado'
+        });
+      } catch (e) {
+        console.error('Error parsing draft', e);
+      }
+    }
+  }
+
+  private guardarBorrador() {
+    if (this.isBrowser()) {
+      localStorage.setItem('draft_entrada_mercancia', JSON.stringify(this.itemsEntrada));
+    }
+  }
+
+  // --- AGREGAR ITEM A LA LISTA TEMPORAL ---
+
+  agregarItem() {
+    // 1. Validaciones básicas
+    if (!this.productoSeleccionado) {
+      Swal.fire('Atención', 'Seleccione un producto primero.', 'warning');
+      return;
+    }
+
+    if (this.itemForm.invalid) {
       this.itemForm.markAllAsTouched();
       return;
     }
 
     const formVal = this.itemForm.value;
 
-    // Check if item already exists (optional logic, but good for UX - here we allow duplicates with different lots)
+    // Validar lógicamente > 0 (aunque el validator lo haga, doble check)
+    if (formVal.cantidad <= 0) return;
 
-    const newItem: EntradaItem = {
-      productoId: this.selectedProduct.id,
-      nombreProducto: this.selectedProduct.nombre_comercial,
-      codigo: this.selectedProduct.codigo_interno,
+    // 2. Crear objeto
+    const nuevoItem: EntradaItem = {
+      productoId: this.productoSeleccionado.id,
+      nombreProducto: this.productoSeleccionado.nombreComercial,
+      codigo: this.productoSeleccionado.codigoInterno,
       numeroLote: formVal.numeroLote,
       fechaVencimiento: formVal.fechaVencimiento,
       cantidad: formVal.cantidad,
@@ -120,97 +246,129 @@ export class PurchaseEntryComponent implements OnInit {
       subtotal: formVal.cantidad * formVal.costoCompra
     };
 
-    this.addedItems.push(newItem);
+    // 3. Push al array
+    this.itemsEntrada.push(nuevoItem);
+    this.guardarBorrador();
+
+    // 4. Calcular Total
     this.calculateTotal();
 
-    // Reset item fields but keep product search cleared
+    // 5. Limpiar inputs (Lote, Vence, Cant, Costo) 
+    // PERO mantener foco en el buscador para seguir agregando rápido.
     this.itemForm.patchValue({
-      cantidad: 1,
-      costoCompra: 0,
       numeroLote: '',
       fechaVencimiento: '',
-      productoBusqueda: ''
+      cantidad: 1,
+      costoCompra: 0
     });
-    this.selectedProduct = null;
-    this.showSuggestions = false;
-    this.filteredProducts = [];
+    this.terminoBusqueda = ''; // Clear ngModel
+    this.productoSeleccionado = null;
+
+
+    // Regresar foco al Buscador (o Escáner si se prefiere, aquí al buscador del form)
+    // El usuario pidió: "mantén el foco en el buscador para seguir agregando rápido"
+    // Asumimos que es el del formulario porque es donde se escribe.
+    // Si usaron el scanner "externo", podrían querer volver allí.
+    // Haremos foco en el scanerInput si existe, si no al input de búsqueda.
+    if (this.isBrowser()) {
+      setTimeout(() => {
+        if (this.scannerInput) {
+          this.scannerInput.nativeElement.focus();
+        }
+      }, 100);
+    }
   }
 
-  removeItem(index: number) {
-    this.addedItems.splice(index, 1);
+  // Enter en inputs finales para agregar rápido
+  addItemAndRefocus() {
+    this.agregarItem();
+  }
+
+  // --- ELIMINAR ITEM ---
+
+  eliminarItem(index: number) {
+    this.itemsEntrada.splice(index, 1);
+    this.guardarBorrador(); // Save state
     this.calculateTotal();
   }
 
   calculateTotal() {
-    this.totalCompra = this.addedItems.reduce((acc, item) => acc + item.subtotal, 0);
+    this.totalCompra = this.itemsEntrada.reduce((acc, item) => acc + item.subtotal, 0);
   }
 
-  onBarcodeScan(event: any) {
-    const code = event.target.value;
-    if (!code) return;
+  // --- ACTIONS ---
 
-    // 1. Buscar producto
-    const product = this.products.find(p =>
-      p.codigo_barras === code ||
-      p.codigo_interno === code
-    );
+  cancelarEntrada() {
+    if (this.itemsEntrada.length === 0) return;
 
-    if (product) {
-      // 2. Seleccionar y auto-llenar
-      this.selectedProduct = product;
-      this.itemForm.patchValue({
-        productoBusqueda: product.nombre_comercial,
-        cantidad: 1,
-        costoCompra: product.precio_compra_referencia || 0,
-        // Limpiamos lote y fecha para obligar a capturarlos
-        numeroLote: '',
-        fechaVencimiento: ''
-      });
-
-      // 3. Foco inteligente al campo Lote
-      setTimeout(() => {
-        const loteInput = document.getElementById('campoLote');
-        if (loteInput) loteInput.focus();
-      }, 100);
-
-      // 4. Limpiar escáner
-      event.target.value = '';
-    } else {
-      // No encontrado
-      alert('⚠️ Producto no encontrado con ese código.');
-      event.target.value = '';
-    }
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Se perderán todos los ítems agregados a la lista.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, borrar todo'
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        this.itemsEntrada = [];
+        this.calculateTotal();
+        if (this.isBrowser()) {
+          localStorage.removeItem('draft_entrada_mercancia');
+        }
+        Swal.fire('¡Borrado!', 'La lista ha sido limpiada.', 'success');
+      }
+    });
   }
 
-  addItemAndRefocus() {
-    // Intentar agregar (validará si faltan datos)
-    this.addItem();
+  // --- PROCESAR ENTRADA (BOTÓN VERDE) ---
 
-    // Si se agregó con éxito (el formulario se resetea en addItem), volver al escáner
-    // Verificamos si se reseteó selectedProduct como señal de éxito
-    if (!this.selectedProduct) {
-      setTimeout(() => {
-        const scannerInput = document.getElementById('scannerInput');
-        if (scannerInput) scannerInput.focus();
-      }, 100);
-    }
-  }
+  procesarEntrada() {
+    if (this.itemsEntrada.length === 0) return;
 
-  processEntry() {
-    if (this.addedItems.length === 0) return;
+    // Preparamos los datos para enviar
+    // El backend espera una lista de items, y tal vez datos de cabecera en cada item
+    // o un wrap. Según LoteController snippet: recibe List<EntradaItemRequest>
+    // Asumiremos que mandamos el array directo mapeado.
 
-    const requestData = {
-      header: this.entryForm.value,
-      items: this.addedItems
-    };
+    const requestData = this.itemsEntrada.map(item => ({
+      productoId: item.productoId,
+      numeroLote: item.numeroLote,
+      fechaVencimiento: item.fechaVencimiento,
+      cantidad: item.cantidad,
+      // REGLA API v2.0: costoCompra debe ser el VALOR TOTAL de la línea (Cantidad * Costo Unitario)
+      costoCompra: item.cantidad * item.costoCompra,
+      sucursalId: this.entryForm.get('sucursalId')?.value,
+      documento: this.entryForm.get('documento')?.value,
+      documentoRef: this.entryForm.get('documento')?.value,
+      numeroDocumento: this.entryForm.get('documento')?.value,
+      observaciones: this.entryForm.get('observaciones')?.value
+    }));
 
-    console.log('📦 ENVIANDO AL BACKEND:', requestData);
-    alert('✅ Entrada de mercancía procesada correctamente (Simulación)');
+    this.productService.procesarEntradaMasiva(requestData).subscribe({
+      next: (res) => {
+        Swal.fire({
+          title: '¡Entrada Exitosa!',
+          text: 'Entrada registrada correctamente en el inventario.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
 
-    this.addedItems = [];
-    this.calculateTotal();
-    this.entryForm.reset({ sucursalId: 1, observaciones: 'Entrada de Mercancía' });
-    this.itemForm.reset({ cantidad: 1 });
-    this.selectedProduct = null;
+        // Limpiar todo y BORRAR STORAGE
+        this.itemsEntrada = [];
+        this.calculateTotal();
+        if (this.isBrowser()) {
+          localStorage.removeItem('draft_entrada_mercancia');
+        }
+
+        this.entryForm.reset({ sucursalId: 1, documento: '', observaciones: 'Entrada de Mercancía' });
+        this.itemForm.reset({ cantidad: 1, costoCompra: 0 });
+        this.productoSeleccionado = null;
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'Hubo un problema al procesar la entrada.', 'error');
+      }
+    });
   }
 }

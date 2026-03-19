@@ -1,87 +1,111 @@
 <div class="page-container">
   <header class="page-header">
-    <h2 *ngIf="!isEditMode">NUEVO PRODUCTO</h2>
-    <h2 *ngIf="isEditMode">ACTUALIZAR PRODUCTO</h2>
-    <p>Registre la ficha técnica del medicamento. El stock y los lotes se gestionan en el módulo de "Compras".</p>
+    <h2 *ngIf="!isEditMode">✨ NUEVO PRODUCTO</h2>
+    <h2 *ngIf="isEditMode">✏️ ACTUALIZAR PRODUCTO</h2>
+    <p>Complete la ficha técnica del medicamento. El stock y los lotes se gestionan en el módulo de "Compras".</p>
   </header>
 
-  <nav class="tabs-nav">
-    <a routerLink="/app/productos/almacen" routerLinkActive="active">
-      <span class="nav-icon">📦</span> ALMACÉN
-    </a>
-
-    <a routerLink="/app/productos/consulta" routerLinkActive="active">
-      <span class="nav-icon">🔍</span> CONSULTA
-    </a>
-
-    <a routerLink="/app/productos/vencimientos" routerLinkActive="active">
-      <span class="nav-icon">🚨</span> MONITOR ALERTAS
-    </a>
-
-    <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">
-      <span class="nav-icon">🚚</span> ENTRADAS
-    </a>
-
-    <a routerLink="/app/productos/auditoria" routerLinkActive="active">
-      <span class="nav-icon">📋</span> AUDITORÍA
-    </a>
-
-    <a routerLink="/app/productos/nuevo" routerLinkActive="active">
-      <span class="nav-icon">✨</span> NUEVO
-    </a>
-  </nav>
+  <!-- Navegación Compartida -->
+  <app-tabs-nav></app-tabs-nav>
 
   <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="product-form">
 
     <!-- SECCIÓN 1: Identificación -->
     <fieldset class="form-section">
-      <legend>Identificación</legend>
+      <legend>📋 Identificación</legend>
       <div class="form-row">
-        <div class="form-group">
-          <label>Código Interno / SKU *</label>
-          <input type="text" formControlName="codigo_interno" placeholder="Ej: DOLEX-500">
+        <div class="form-group required">
+          <label>Código Interno / SKU</label>
+          <input type="text" formControlName="codigoInterno" placeholder="Ej: DOLEX-500" (blur)="validateInternalCode()"
+            (keyup.enter)="validateInternalCode()"
+            [ngClass]="{'is-invalid': productForm.get('codigoInterno')?.invalid && (productForm.get('codigoInterno')?.dirty || productForm.get('codigoInterno')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('codigoInterno')?.hasError('required') && productForm.get('codigoInterno')?.touched">
+            El código del producto es obligatorio.
+          </div>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('codigoInterno')?.hasError('pattern') && productForm.get('codigoInterno')?.touched">
+            El código contiene caracteres no permitidos. Use solo letras y números.
+          </div>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('codigoInterno')?.hasError('duplicate')">
+            El código de producto ya existe. Por favor, ingrese un código único.
+          </div>
         </div>
-        <div class="form-group">
+
+        <div class="form-group required">
           <label>Código de Barras</label>
           <div class="input-with-icon">
-            <input type="text" formControlName="codigo_barras" #barcodeInput (change)="validateBarcode()"
-              (keyup.enter)="validateBarcode()">
-            <button type="button" class="btn-icon-inside" (click)="focusBarcodeInput()" title="Escanear">
+            <input type="text" formControlName="codigoBarras" #barcodeInput (change)="validateBarcode()"
+              (keyup.enter)="validateBarcode()" placeholder="Escanee o ingrese"
+              [ngClass]="{'is-invalid': productForm.get('codigoBarras')?.invalid && (productForm.get('codigoBarras')?.dirty || productForm.get('codigoBarras')?.touched)}">
+            <button type="button" class="btn-icon-inside" (click)="focusBarcodeInput()"
+              title="Activar lector de código">
               <span class="icon-barcode">|||</span>
             </button>
           </div>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('codigoBarras')?.hasError('required') && productForm.get('codigoBarras')?.touched">
+            El código de barras es obligatorio.
+          </div>
         </div>
-        <div class="form-group full-width">
-          <label>Nombre Comercial *</label>
-          <input type="text" formControlName="nombre_comercial" placeholder="Ej: Dolex Forte">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width required">
+          <label>Nombre Comercial</label>
+          <input type="text" formControlName="nombreComercial" placeholder="Ej: Dolex Forte"
+            [ngClass]="{'is-invalid': productForm.get('nombreComercial')?.invalid && (productForm.get('nombreComercial')?.dirty || productForm.get('nombreComercial')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('nombreComercial')?.hasError('required') && productForm.get('nombreComercial')?.touched">
+            El nombre del producto es obligatorio.
+          </div>
         </div>
       </div>
     </fieldset>
 
     <!-- SECCIÓN 2: Datos Farmacéuticos -->
     <fieldset class="form-section">
-      <legend>Detalles Farmacéuticos</legend>
+      <legend>💊 Detalles Farmacéuticos</legend>
+
       <div class="form-row">
-        <div class="form-group">
-          <label>Principio Activo *</label>
-          <select formControlName="principio_activo_id">
-            <option [ngValue]="null">Seleccione...</option>
+        <div class="form-group required">
+          <label>Principio Activo</label>
+          <select formControlName="principioActivoId"
+            [ngClass]="{'is-invalid': productForm.get('principioActivoId')?.invalid && (productForm.get('principioActivoId')?.dirty || productForm.get('principioActivoId')?.touched)}">
+            <option [ngValue]="null">Seleccione un principio activo...</option>
             <option *ngFor="let pa of principiosActivos" [value]="pa.id">{{ pa.nombre }}</option>
           </select>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('principioActivoId')?.hasError('required') && productForm.get('principioActivoId')?.touched">
+            Debe seleccionar un principio activo.
+          </div>
         </div>
-        <div class="form-group">
-          <label>Laboratorio *</label>
-          <select formControlName="laboratorio_id">
-            <option [ngValue]="null">Seleccione...</option>
+
+        <div class="form-group required">
+          <label>Laboratorio</label>
+          <select formControlName="laboratorioId"
+            [ngClass]="{'is-invalid': productForm.get('laboratorioId')?.invalid && (productForm.get('laboratorioId')?.dirty || productForm.get('laboratorioId')?.touched)}">
+            <option [ngValue]="null">Seleccione un laboratorio...</option>
             <option *ngFor="let lab of laboratorios" [value]="lab.id">{{ lab.nombre }}</option>
           </select>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('laboratorioId')?.hasError('required') && productForm.get('laboratorioId')?.touched">
+            Debe seleccionar un Laboratorio.
+          </div>
         </div>
-        <div class="form-group">
-          <label>Categoría *</label>
-          <select formControlName="categoria_id">
-            <option [ngValue]="null">Seleccione...</option>
+
+        <div class="form-group required">
+          <label>Categoría</label>
+          <select formControlName="categoriaId"
+            [ngClass]="{'is-invalid': productForm.get('categoriaId')?.invalid && (productForm.get('categoriaId')?.dirty || productForm.get('categoriaId')?.touched)}">
+            <option [ngValue]="null">Seleccione una categoría...</option>
             <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
           </select>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('categoriaId')?.hasError('required') && productForm.get('categoriaId')?.touched">
+            Debe seleccionar una Categoría.
+          </div>
         </div>
       </div>
 
@@ -90,51 +114,215 @@
           <label>Concentración</label>
           <input type="text" formControlName="concentracion" placeholder="Ej: 500mg">
         </div>
+
         <div class="form-group">
           <label>Presentación</label>
           <input type="text" formControlName="presentacion" placeholder="Ej: Caja x 10 Tabletas">
         </div>
+
         <div class="form-group">
           <label>Registro INVIMA</label>
-          <input type="text" formControlName="registro_invima">
+          <input type="text" formControlName="registroInvima" placeholder="Ej: INVIMA 2023M-0012345">
         </div>
       </div>
     </fieldset>
 
     <!-- SECCIÓN 3: Comercial y Control -->
     <fieldset class="form-section">
-      <legend>Comercial y Control</legend>
+      <legend>💰 Comercial y Control</legend>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Costo de Compra ($)</label>
+          <input type="number" formControlName="precioCompraReferencia" placeholder="0" min="0" step="100"
+            [ngClass]="{'is-invalid': productForm.get('precioCompraReferencia')?.invalid && (productForm.get('precioCompraReferencia')?.dirty || productForm.get('precioCompraReferencia')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('precioCompraReferencia')?.hasError('required') && productForm.get('precioCompraReferencia')?.touched">
+            El costo es obligatorio.
+          </div>
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('precioCompraReferencia')?.hasError('min') && productForm.get('precioCompraReferencia')?.touched">
+            El costo no puede ser negativo.
+          </div>
+        </div>
+
+        <div class="form-group required">
+          <label>Margen de Ganancia (%)</label>
+          <input type="number" formControlName="porcentajeGanancia" placeholder="30" min="0" step="1"
+            [ngClass]="{'is-invalid': productForm.get('porcentajeGanancia')?.invalid && (productForm.get('porcentajeGanancia')?.dirty || productForm.get('porcentajeGanancia')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('porcentajeGanancia')?.hasError('required') && productForm.get('porcentajeGanancia')?.touched">
+            El margen es obligatorio.
+          </div>
+        </div>
+
+        <div class="form-group required">
+          <label>IVA (%)</label>
+          <input type="number" formControlName="ivaPorcentaje" placeholder="19" min="0" max="100" step="1"
+            [ngClass]="{'is-invalid': productForm.get('ivaPorcentaje')?.invalid && (productForm.get('ivaPorcentaje')?.dirty || productForm.get('ivaPorcentaje')?.touched)}">
+          <div class="invalid-feedback text-danger small mt-1"
+            *ngIf="productForm.get('ivaPorcentaje')?.hasError('required') && productForm.get('ivaPorcentaje')?.touched">
+            El IVA es obligatorio.
+          </div>
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
-          <label>Precio Venta Base ($) *</label>
-          <input type="number" formControlName="precio_venta_base">
-        </div>
-        <div class="form-group">
-          <label>IVA (%)</label>
-          <input type="number" formControlName="iva_porcentaje">
-        </div>
-        <div class="form-group">
           <label>Stock Mínimo (Alerta)</label>
-          <input type="number" formControlName="stock_minimo">
+          <input type="number" formControlName="stockMinimo" placeholder="10" min="0">
         </div>
       </div>
 
       <div class="form-row checkboxes-row">
         <div class="checkbox-group">
-          <input type="checkbox" id="es_controlado" formControlName="es_controlado">
-          <label for="es_controlado">Es Medicamento Controlado</label>
+          <input type="checkbox" id="esControlado" formControlName="esControlado">
+          <label for="esControlado">🔐 Es Medicamento Controlado</label>
         </div>
+
         <div class="checkbox-group">
           <input type="checkbox" id="refrigerado" formControlName="refrigerado">
-          <label for="refrigerado">Requiere Refrigeración</label>
+          <label for="refrigerado">❄️ Requiere Refrigeración</label>
+        </div>
+
+        <div class="custom-switch-container">
+          <label class="custom-switch">
+            <input type="checkbox" formControlName="estadoActivo">
+            <span class="switch-slider"></span>
+          </label>
+          <div class="switch-text-container">
+            <span class="switch-main-label">Estado del Producto</span>
+            <span class="switch-label"
+              [ngClass]="{'text-success font-weight-bold': productForm.get('estadoActivo')?.value, 'text-muted': !productForm.get('estadoActivo')?.value}">
+              {{ productForm.get('estadoActivo')?.value ? '✅ Producto Activo' : '❌ Producto Inactivo' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista Previa de Precios Calculados -->
+      <div
+        style="margin-top: 24px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <h4
+            style="margin: 0; font-size: 0.8rem; color: #475569; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+            📊 Vista Previa de Precios
+          </h4>
+          <span style="font-size: 0.7rem; color: #94a3b8; font-style: italic;">Estimado</span>
+        </div>
+
+        <!-- Grid de Precios Compacto -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+
+          <!-- Precio Base -->
+          <div style="background: white; border-radius: 8px; padding: 12px; border-left: 3px solid #94a3b8;">
+            <div
+              style="font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">
+              Sin IVA
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #1e293b;">
+              {{ calcularPreciosPreview().precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+          </div>
+
+          <!-- Precio Total -->
+          <div
+            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 8px; padding: 12px; border-left: 3px solid #2563eb;">
+            <div
+              style="font-size: 0.65rem; color: #1e40af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">
+              Con IVA (Caja)
+            </div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: #1e3a8a;">
+              {{ calcularPreciosPreview().precioVentaTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+          </div>
+
+          <!-- Precio Unidad (si aplica) -->
+          <div *ngIf="productForm.get('esFraccionable')?.value"
+            style="background: white; border-radius: 8px; padding: 12px; border-left: 3px solid #10b981;">
+            <div
+              style="font-size: 0.65rem; color: #047857; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">
+              Por Unidad
+            </div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #065f46;">
+              {{ calcularPreciosPreview().precioVentaUnidad | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+          </div>
+
+          <!-- Precio Blister (si aplica) -->
+          <div *ngIf="productForm.get('esFraccionable')?.value && productForm.get('unidadesPorBlister')?.value"
+            style="background: white; border-radius: 8px; padding: 12px; border-left: 3px solid #f59e0b;">
+            <div
+              style="font-size: 0.65rem; color: #92400e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">
+              Por Blister
+            </div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #78350f;">
+              {{ calcularPreciosPreview().precioVentaBlister | currency:'COP':'symbol-narrow':'1.0-0' }}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Nota informativa -->
+        <div
+          style="margin-top: 12px; padding: 8px; background: rgba(59, 130, 246, 0.05); border-radius: 6px; border-left: 2px solid #3b82f6;">
+          <small style="font-size: 0.7rem; color: #475569; display: flex; align-items: center; gap: 6px;">
+            <span style="color: #3b82f6;">ℹ️</span>
+            El backend calculará los valores finales al guardar
+          </small>
+        </div>
+
+      </div>
+    </fieldset>
+
+    <!-- SECCIÓN 4: Fraccionamiento (Opcional) -->
+    <fieldset class="form-section">
+      <legend>📦 Configuración de Fraccionamiento</legend>
+
+      <!-- Switch de Venta Fraccionada -->
+      <div class="checkboxes-row" style="margin-bottom: 20px;">
+        <div class="checkbox-group">
+          <input type="checkbox" id="esFraccionable" formControlName="esFraccionable">
+          <label for="esFraccionable">📊 Habilitar Venta Fraccionada (por unidad/blister)</label>
+        </div>
+      </div>
+
+      <!-- Campos de Fraccionamiento (solo si está habilitado) -->
+      <div *ngIf="productForm.get('esFraccionable')?.value" style="animation: fadeIn 0.3s ease-in-out;">
+        <div class="form-row">
+          <div class="form-group required">
+            <label>Unidades por Caja</label>
+            <input type="number" formControlName="unidadesPorCaja" placeholder="Ej: 10" min="1" step="1"
+              [ngClass]="{'is-invalid': productForm.get('unidadesPorCaja')?.invalid && (productForm.get('unidadesPorCaja')?.dirty || productForm.get('unidadesPorCaja')?.touched)}">
+            <small class="helper-text">Número de unidades que contiene una caja completa</small>
+            <div class="invalid-feedback text-danger small mt-1"
+              *ngIf="productForm.get('unidadesPorCaja')?.hasError('required') && productForm.get('unidadesPorCaja')?.touched">
+              Debe especificar las unidades por caja.
+            </div>
+            <div class="invalid-feedback text-danger small mt-1"
+              *ngIf="productForm.get('unidadesPorCaja')?.hasError('min') && productForm.get('unidadesPorCaja')?.touched">
+              Debe ser al menos 1 unidad.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Unidades por Blister</label>
+            <input type="number" formControlName="unidadesPorBlister" placeholder="Opcional" min="1" step="1">
+            <small class="helper-text">Si el producto usa blisters para agrupar unidades</small>
+          </div>
         </div>
       </div>
     </fieldset>
 
+    <!-- Acciones del Formulario -->
     <div class="form-actions">
-      <button type="button" class="btn btn-secondary" (click)="limpiarFormulario()">Limpiar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">
-        {{ isEditMode ? 'Actualizar Ficha' : 'Crear Ficha Técnica' }}
+      <button type="button" class="btn btn-secondary" (click)="limpiarFormulario()">
+        🔄 Limpiar
+      </button>
+
+      <button type="submit" class="btn btn-primary">
+        {{ isEditMode ? '💾 Actualizar Ficha' : '✅ Crear Ficha Técnica' }}
       </button>
     </div>
   </form>

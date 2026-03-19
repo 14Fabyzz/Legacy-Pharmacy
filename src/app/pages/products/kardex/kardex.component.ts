@@ -1,188 +1,208 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs'; // For empty search
+import { ProductoInventarioDTO } from '../../../core/services/inventory.service';
 
-interface MovimientoKardex {
-    fecha: Date;
-    tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE';
-    cantidad: number;
-    saldo_resultante: number;
-    documento_ref: string;
-    usuario: string;
-    // Detalle extra
-    motivo?: string;
-    proveedor?: string;
-    cliente?: string;
-    notas?: string;
-    usuario_autoriza?: string;
-    lote?: string;
-}
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { ProductService } from '../product.service';
+import { InventoryService } from '../../../core/services/inventory.service';
+import { MovimientoKardex, Producto } from '../../../core/models/product.model';
 
 @Component({
     selector: 'app-kardex',
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule],
     templateUrl: './kardex.component.html',
     styleUrls: ['./kardex.component.css']
 })
 export class KardexComponent implements OnInit {
     productId: number | null = null;
-    product: any = null; // Mock product info
+    product: Producto | null = null;
     movimientos: MovimientoKardex[] = [];
-    selectedMovement: MovimientoKardex | null = null;
 
-    constructor(private route: ActivatedRoute) { }
+    cargando = false;
+
+    // Search & Filter
+    searchControl = new FormControl('');
+    searchResults: ProductoInventarioDTO[] = [];
+    showResults = false;
+    isGlobalMode = false;
+
+    // Local Filtering
+    allMovements: MovimientoKardex[] = [];
+    startDate: string = '';
+    endDate: string = '';
+
+    constructor(
+        private route: ActivatedRoute,
+        private productService: ProductService,
+        private inventoryService: InventoryService,
+        @Inject(PLATFORM_ID) private platformId: Object
+    ) { }
 
     ngOnInit(): void {
+        // Setup local search filter on the existing control
+        this.searchControl.valueChanges.subscribe(() => {
+            this.applyFilters();
+        });
+
         this.route.params.subscribe(params => {
-            // Si viene parámetro, lo usamos. Si no (desde sidebar), usamos ID 15 por defecto para demo.
-            this.productId = params['id'] ? +params['id'] : 15;
-            this.loadKardexData(this.productId);
+            const id = params['id'];
+
+            if (id) {
+                // ESCENARIO A: Vista Producto Específico
+                this.isGlobalMode = false;
+                this.productId = +id;
+
+                if (isPlatformBrowser(this.platformId)) {
+                    this.loadKardexData(this.productId);
+                }
+            } else {
+                // ESCENARIO B: Vista Global (Auditoría)
+                this.isGlobalMode = true;
+                this.productId = null;
+                this.product = null;
+                this.movimientos = [];
+                this.allMovements = [];
+
+                // Limpiamos buscador
+                this.searchControl.setValue('', { emitEvent: false });
+
+                if (isPlatformBrowser(this.platformId)) {
+                    this.loadGlobalHistory();
+                }
+            }
         });
     }
 
+    // REMOVED: setupSearch() - We now use local filtering, or we keep it?
+    // User wanted "simple". Local filtering of loaded list is simplest.
+    // If we want to search *other* products to switch to them, we need the dropdown.
+    // But the user complained "search doesn't work".
+    // Let's Keep the dropdown ONLY for Global Mode maybe? Or just use the filter?
+    // User said: "hagamos que podamos filtarar por fecha" and "buscando... no sirve".
+    // I will implement PURE FILTERING on the current list as requested.
+    // If they want to switch product, they can go back or we can add a specific "Find Product" button later.
+    // For now, the input will filter the CURRENT list.
+
+    applyFilters() {
+        let filtered = [...this.allMovements];
+
+        // 1. Text Filter
+        const term = (this.searchControl.value || '').trim().toLowerCase();
+        if (term) {
+            filtered = filtered.filter(m =>
+                (m.nombre_producto && m.nombre_producto.toLowerCase().includes(term)) ||
+                (m.documento_ref && m.documento_ref.toLowerCase().includes(term)) ||
+                (m.usuario && m.usuario.toLowerCase().includes(term)) ||
+                (m.lote && m.lote.toLowerCase().includes(term))
+            );
+        }
+
+        // 2. Date Range Filter
+        if (this.startDate) {
+            const start = new Date(this.startDate);
+            start.setHours(0, 0, 0, 0);
+            filtered = filtered.filter(m => new Date(m.fecha) >= start);
+        }
+
+        if (this.endDate) {
+            const end = new Date(this.endDate);
+            end.setHours(23, 59, 59, 999);
+            filtered = filtered.filter(m => new Date(m.fecha) <= end);
+        }
+
+        this.movimientos = filtered;
+        this.currentPage = 1; // Reset pagination
+    }
+
+    selectProduct(producto: ProductoInventarioDTO) {
+        // ... kept for compatibility if needed, but UI might hide it
+        this.productId = producto.productoId;
+    }
+
+    loadGlobalHistory() {
+        this.cargando = true;
+        this.inventoryService.obtenerUltimosMovimientos()
+            .pipe(finalize(() => this.cargando = false))
+            .subscribe({
+                next: (data) => {
+                    this.allMovements = data; // Save backup
+                    // Sort descending
+                    this.allMovements.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+                    this.applyFilters(); // Populate movimientos
+                },
+                error: (err) => console.error('Error loading global history', err)
+            });
+    }
+
     loadKardexData(id: number) {
-        // Mock Data Simulation
-        this.product = {
-            id: id,
-            nombre: 'Acetaminofén 500mg', // Mock name
-            codigo_barras: '77020356894', // Mock barcode
-            stock_actual: 150
-        };
+        this.cargando = true;
 
-        // Generating mock movements
-        this.movimientos = [
-            {
-                fecha: new Date('2025-10-25T08:30:00'),
-                tipo: 'ENTRADA',
-                cantidad: 100,
-                saldo_resultante: 100,
-                documento_ref: 'FAC-001',
-                usuario: 'Admin',
-                proveedor: 'Laboratorios MK',
-                lote: 'L-2023001',
-                notas: 'Entrada inicial de inventario.'
+        forkJoin({
+            product: this.productService.getProductById(id),
+            kardex: this.inventoryService.obtenerKardex(id)
+        }).pipe(
+            finalize(() => this.cargando = false)
+        ).subscribe({
+            next: (response) => {
+                this.product = response.product;
+                this.allMovements = response.kardex; // Save backup
+
+                // Sort descending
+                this.allMovements.sort((a, b) => {
+                    const dateA = new Date(a.fecha).getTime();
+                    const dateB = new Date(b.fecha).getTime();
+                    return dateB - dateA;
+                });
+
+                this.applyFilters(); // Populate movimientos
             },
-            {
-                fecha: new Date('2025-10-26T14:15:00'),
-                tipo: 'SALIDA',
-                cantidad: 20,
-                saldo_resultante: 80,
-                documento_ref: 'VTA-102',
-                usuario: 'Vendedor 1',
-                cliente: 'Juan Pérez',
-                motivo: 'Venta Mostrador'
-            },
-            {
-                fecha: new Date('2025-10-28T09:00:00'),
-                tipo: 'ENTRADA',
-                cantidad: 50,
-                saldo_resultante: 130,
-                documento_ref: 'FAC-005',
-                usuario: 'Admin',
-                proveedor: 'Drogería Principal',
-                lote: 'L-2023999'
-            },
-            {
-                fecha: new Date('2025-10-30T11:45:00'),
-                tipo: 'AJUSTE',
-                cantidad: 5,
-                saldo_resultante: 125,
-                documento_ref: 'AJ-001',
-                usuario: 'Supervisor',
-                motivo: 'Avería en transporte',
-                notas: 'Se rompieron 5 cajas durante la descarga.',
-                usuario_autoriza: 'Gerente'
-            },
-            {
-                fecha: new Date('2025-11-01T16:20:00'),
-                tipo: 'SALIDA',
-                cantidad: 15,
-                saldo_resultante: 110,
-                documento_ref: 'VTA-155',
-                usuario: 'Vendedor 2',
-                cliente: 'María López'
+            error: (err) => {
+                console.error('Error loading Kardex data', err);
             }
-        ];
-
-        // Sort descending by date (newest first)
-        this.movimientos.sort((a, b) => b.fecha.getTime() - a.fecha.getTime());
+        });
     }
 
-    openDetail(movement: MovimientoKardex) {
-        this.selectedMovement = movement;
+
+    // Pagination
+    currentPage = 1;
+    itemsPerPage = 10;
+
+    get totalPages(): number {
+        return Math.ceil(this.movimientos.length / this.itemsPerPage);
     }
 
-    closeDetail() {
-        this.selectedMovement = null;
+    get paginatedMovimientos(): MovimientoKardex[] {
+        const start = (this.currentPage - 1) * this.itemsPerPage;
+        const end = start + this.itemsPerPage;
+        return this.movimientos.slice(start, end);
     }
 
-    simulateMovement() {
-        const types: ('ENTRADA' | 'SALIDA' | 'AJUSTE')[] = ['ENTRADA', 'SALIDA', 'SALIDA', 'SALIDA', 'AJUSTE']; // Más probabilidad de venta
-        const type = types[Math.floor(Math.random() * types.length)];
-
-        let cantidad = 0;
-        let documento = '';
-        let saldo = this.movimientos[0]?.saldo_resultante || 0; // Usar último saldo conocido
-        let detailData: any = {};
-
-        if (type === 'ENTRADA') {
-            cantidad = Math.floor(Math.random() * 50) + 10;
-            saldo += cantidad;
-            documento = `FAC-SIM-${Math.floor(Math.random() * 9000)}`;
-            detailData = {
-                proveedor: 'Distribuidora Simulación SAS',
-                lote: `L-SIM-${Math.floor(Math.random() * 999)}`,
-                notas: 'Movimiento generado automáticamente por simulación.'
-            };
-        } else if (type === 'SALIDA') {
-            cantidad = Math.floor(Math.random() * 5) + 1; // Ventas pequeñas
-            saldo -= cantidad;
-            documento = `VTA-SIM-${Math.floor(Math.random() * 9000)}`;
-            detailData = {
-                cliente: 'Cliente Mostrador (Simulado)',
-                motivo: 'Venta Directa'
-            };
-        } else {
-            // Ajuste
-            cantidad = Math.floor(Math.random() * 3) + 1;
-            // Ajuste negativo (pérdida) o positivo: simularemos negativo
-            const esPerdida = Math.random() > 0.5;
-            if (esPerdida) {
-                saldo -= cantidad;
-                detailData = {
-                    motivo: 'Avería simulada',
-                    notas: 'Producto dañado en estantería',
-                    usuario_autoriza: 'Supervisor'
-                };
-            } else {
-                saldo += cantidad;
-                detailData = {
-                    motivo: 'Hallazgo de inventario',
-                    notas: 'Sobrante encontrado'
-                };
-            }
-            documento = `AJ-SIM-${Math.floor(Math.random() * 9000)}`;
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
         }
-
-        const newMovement: MovimientoKardex = {
-            fecha: new Date(),
-            tipo: type,
-            cantidad: cantidad,
-            saldo_resultante: saldo,
-            documento_ref: documento,
-            usuario: 'Sistema (Bot)',
-            ...detailData
-        };
-
-        // Add to top
-        this.movimientos.unshift(newMovement);
-
-        // Update product stock display
-        if (this.product) {
-            this.product.stock_actual = saldo;
-        }
-
-        // Show toast/alert (optional, let's just highlight the row in future)
     }
+
+    prevPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+        }
+    }
+
+    goToPage(page: number) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+        }
+    }
+
+    abs(val: number): number {
+        return Math.abs(val);
+    }
+
 }

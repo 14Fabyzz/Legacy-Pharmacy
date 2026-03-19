@@ -1,0 +1,144 @@
+<!-- Overlay Backdrop -->
+<div class="overlay-backdrop" *ngIf="isVisible" (click)="onClose()"></div>
+
+<!-- Slide-over Panel -->
+<div class="slide-panel" [class.open]="isVisible">
+
+    <!-- Header -->
+    <div class="panel-header">
+        <div class="header-content" *ngIf="data && data.detalleProducto">
+            <h2>{{ data.detalleProducto.nombreComercial }}</h2>
+            <p>
+                Código: {{ data.detalleProducto.codigoInterno }}
+            </p>
+        </div>
+        <button class="close-btn" (click)="onClose()" title="Cerrar panel">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div class="panel-body" *ngIf="data && data.detalleProducto">
+
+        <!-- Stats Summary -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="label">Total Stock</span>
+                <span class="value">{{ data.detalleProducto.stockTotal || 0 }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">Lotes Activos</span>
+                <span class="value">{{ data.lotes.length || 0 }}</span>
+            </div>
+        </div>
+
+        <!-- Información de Precios -->
+        <div style="margin-top: 1.5rem;">
+            <h3 class="table-section-title" style="margin-bottom: 1rem;">
+                💰 Información de Precios
+            </h3>
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
+                <div class="stat-card"
+                    style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 3px solid #0ea5e9;">
+                    <span class="label" style="color: #0369a1; font-weight: 600;">Costo</span>
+                    <span class="value" style="color: #0f172a; font-size: 1.1rem;">
+                        {{ data.detalleProducto.precioCompraReferencia | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </span>
+                </div>
+                <div class="stat-card"
+                    style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 3px solid #f59e0b;">
+                    <span class="label" style="color: #92400e; font-weight: 600;">Margen</span>
+                    <span class="value" style="color: #0f172a; font-size: 1.1rem;">
+                        {{ data.detalleProducto.porcentajeGanancia || 0 }}%
+                    </span>
+                </div>
+                <div class="stat-card"
+                    style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-left: 3px solid #6b7280;">
+                    <span class="label" style="color: #374151; font-weight: 600;">Precio sin IVA</span>
+                    <span class="value" style="color: #0f172a; font-size: 1.1rem;">
+                        {{ data.detalleProducto.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </span>
+                </div>
+                <div class="stat-card"
+                    style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 3px solid #10b981;">
+                    <span class="label" style="color: #065f46; font-weight: 600;">Precio Final</span>
+                    <span class="value" style="color: #0f172a; font-size: 1.25rem; font-weight: 700;">
+                        {{ data.detalleProducto.precioVentaTotal | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </span>
+                    <small style="display: block; color: #6b7280; font-size: 0.7rem; margin-top: 2px;">
+                        IVA {{ data.detalleProducto.ivaPorcentaje || 0 }}% incluido
+                    </small>
+                </div>
+                <!-- Tarjeta ADICIONAL: Precio por Unidad (solo si existe) -->
+                <div class="stat-card" *ngIf="data.detalleProducto.precioVentaUnidad"
+                    style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 3px solid #f59e0b;">
+                    <span class="label" style="color: #92400e; font-weight: 600;">Precio Unidad</span>
+                    <span class="value" style="color: #0f172a; font-size: 1.1rem;">
+                        {{ data.detalleProducto.precioVentaUnidad | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </span>
+                </div>
+                <!-- Tarjeta ADICIONAL: Precio por Blister (solo si existe) -->
+                <div class="stat-card" *ngIf="data.detalleProducto.precioVentaBlister"
+                    style="background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-left: 3px solid #8b5cf6;">
+                    <span class="label" style="color: #6b21a8; font-weight: 600;">Precio Blister</span>
+                    <span class="value" style="color: #0f172a; font-size: 1.1rem;">
+                        {{ data.detalleProducto.precioVentaBlister | currency:'COP':'symbol-narrow':'1.0-0' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lotes Table Section -->
+        <div>
+            <h3 class="table-section-title">
+                📊 Detalle de Lotes en Inventario
+            </h3>
+
+            <div *ngIf="!data.lotes || data.lotes.length === 0" class="empty-state">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
+                <p>No hay lotes registrados para este producto.</p>
+            </div>
+
+            <div class="table-container" *ngIf="data.lotes && data.lotes.length > 0">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lote</th>
+                            <th>Vencimiento</th>
+                            <th class="text-right">Cantidad</th>
+                            <th class="text-right">Costo Compra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let lote of data.lotes">
+                            <td>
+                                <strong>{{ lote.numeroLote }}</strong>
+                            </td>
+                            <td>
+                                <div *ngIf="isNearExpiry(lote.fechaVencimiento); else normalDate">
+                                    <span style="color: #dc2626; font-weight: 700;">{{ lote.fechaVencimiento |
+                                        date:'dd/MM/yyyy' }}</span>
+                                    <span class="expiry-badge danger" style="margin-left: 0.5rem;">Expira pronto</span>
+                                </div>
+                                <ng-template #normalDate>
+                                    {{ lote.fechaVencimiento | date:'dd/MM/yyyy' }}
+                                </ng-template>
+                            </td>
+                            <td class="text-right font-medium" style="font-size: 1.1rem;">
+                                {{ lote.cantidadActual }}
+                            </td>
+                            <td class="text-right text-gray-600">
+                                {{ lote.costoCompra | currency:'COP':'symbol-narrow' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

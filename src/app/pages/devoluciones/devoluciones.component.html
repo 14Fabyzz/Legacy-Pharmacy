@@ -1,0 +1,204 @@
+<div class="devoluciones-container">
+
+  <!-- STEP 1: BUSCADOR -->
+  <div class="premium-step-card" [ngClass]="{'step-completed': ventaActual}">
+    <div class="step-content">
+      <h3 class="step-title">Buscar Transacción</h3>
+      <p class="step-subtitle">Localiza la venta usando el ID numérico del ticket.</p>
+
+      <div class="search-box-wrapper">
+        <div class="premium-search-input">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Ej: 99" [(ngModel)]="ventaIdBuscada" (keyup.enter)="buscarVenta()">
+        </div>
+        <button class="premium-btn primary" (click)="buscarVenta()" [disabled]="isLoadingSearch">
+          <i class="fas fa-circle-notch fa-spin" *ngIf="isLoadingSearch"></i>
+          <span *ngIf="!isLoadingSearch">Cargar Ticket</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: TICKET INTERACTIVO -->
+  <div class="premium-step-card mt-4" [ngClass]="{'step-active': ventaActual, 'step-waiting': !ventaActual}">
+    <div class="step-content w-100">
+      <h3 class="step-title" *ngIf="!ventaActual">Procesar Devolución</h3>
+      <p class="step-subtitle" *ngIf="!ventaActual">El ticket aparecerá aquí una vez localizado.</p>
+
+      <!-- EMPTY STATE -->
+      <div class="waiting-state" *ngIf="!ventaActual && !isLoadingSearch">
+        <div class="waiting-icon">
+          <i class="fas fa-receipt"></i>
+        </div>
+        <h4>El panel está inactivo</h4>
+        <p>Busca un ticket válido en el paso anterior para continuar.</p>
+      </div>
+
+      <!-- LOADED STATE -->
+      <div class="venta-loaded-grid fade-in vector-ui-panel" *ngIf="ventaActual" style="padding: 1.5rem;">
+
+        <!-- Left Data -->
+        <div class="ticket-details-panel">
+
+          <!-- Header info -->
+          <div class="ticket-header-grid">
+            <div class="info-block">
+              <span class="lbl-min">Identificación del Ticket</span>
+              <span class="val-bold">#{{ ventaActual.id }}</span>
+            </div>
+            <div class="info-block">
+              <span class="lbl-min">Fecha Emitida</span>
+              <span class="val-bold">{{ ventaActual.fechaVenta | date:'short' }}</span>
+            </div>
+            <div class="info-block" *ngIf="ventaActual.vendedorNombre">
+              <span class="lbl-min">Vendedor</span>
+              <span class="val-bold">{{ ventaActual.vendedorNombre }}</span>
+            </div>
+            <div class="info-block">
+              <span class="lbl-min">Estado Original</span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="premium-status-badge"
+                  [ngClass]="ventaActual.estado === 'ANULADA' || ventaActual.estado === 'DEVUELTA' ? 'status-red' : 'status-green'">
+                  {{ ventaActual.estado || 'REALIZADA' }}
+                </span>
+
+                <span *ngIf="isVentaDevuelta" class="badge bg-danger rounded-pill px-2 py-1"
+                  style="font-size: 0.70rem;">
+                  <i class="fas fa-exclamation-triangle"></i> VENTA DEVUELTA
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="premium-table-container mt-4">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>
+                    <div class="vector-th">
+                      <div class="vector-icon-circle bg-yellow-soft">
+                        <i class="fas fa-box-open text-yellow-vibrant"></i>
+                      </div>
+                      ARTÍCULO
+                    </div>
+                  </th>
+                  <th class="text-center">
+                    <div class="vector-th justify-content-center">
+                      <div class="vector-icon-circle bg-purple-soft">
+                        <i class="fas fa-layer-group text-purple-vibrant"></i>
+                      </div>
+                      CANT. ORIGINAL
+                    </div>
+                  </th>
+                  <th class="text-center">
+                    <div class="vector-th justify-content-center">
+                      <div class="vector-icon-circle bg-green-soft">
+                        <i class="fas fa-tags text-green-vibrant"></i>
+                      </div>
+                      PRECIO UD.
+                    </div>
+                  </th>
+                  <th class="text-center">
+                    <div class="vector-th justify-content-center">
+                      <div class="vector-icon-circle bg-red-soft">
+                        <i class="fas fa-undo-alt text-red-vibrant"></i>
+                      </div>
+                      DEVOLVER
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of itemsDevolucion">
+                  <td style="vertical-align: middle;">
+                    <div class="d-flex flex-column gap-2 align-items-center justify-content-center text-center">
+                      <div class="item-name-col">
+                        <span class="itm-name">{{ item.nombreProducto }}</span>
+                        <span class="itm-id" *ngIf="item.nombreProducto !== 'Producto ID: ' + item.productoId">Ref #{{
+                          item.productoId }}</span>
+                      </div>
+                    </div>
+
+
+                  </td>
+                  <td class="text-center" style="vertical-align: middle;">
+                    <div class="vector-qty-display d-flex align-items-center justify-content-center mx-auto">{{
+                      item.cantidadComprada }}</div>
+                  </td>
+                  <td class="text-center" style="vertical-align: middle;">
+                    <div class="d-flex justify-content-center">
+                      <div class="vector-price-badge d-flex align-items-center justify-content-center mx-auto">{{
+                        item.precio |
+                        currency }}</div>
+                    </div>
+                  </td>
+                  <td class="text-center" style="vertical-align: middle;">
+                    <div class="d-flex justify-content-center">
+                      <div class="vector-qty-selector mx-auto">
+                        <button (click)="disminuirDevolucion(item)"
+                          [disabled]="item.cantidadADevolver <= 0 || isVentaDevuelta"><i
+                            class="fas fa-minus"></i></button>
+                        <span class="qty-val d-flex align-items-center justify-content-center"
+                          [class.active-qty]="item.cantidadADevolver > 0">{{ item.cantidadADevolver
+                          }}</span>
+                        <button (click)="aumentarDevolucion(item)"
+                          [disabled]="item.cantidadADevolver >= item.cantidadComprada || isVentaDevuelta"><i
+                            class="fas fa-plus"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right Data (Summary) -->
+        <div class="ticket-summary-panel">
+          <div class="summary-box">
+            <h4>Resumen Contable</h4>
+
+            <div class="summary-line">
+              <span class="s-lbl">Valor Original Venta</span>
+              <span class="s-val">{{ ventaActual.total | currency }}</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-line highlight-line">
+              <span class="s-lbl">Total a Reintegrar</span>
+              <span class="s-val text-danger">{{ resumenTotalADevolver | currency }}</span>
+            </div>
+
+            <div class="warning-text mt-3 mb-4">
+              <i class="fas fa-info-circle"></i>
+              <span>El sistema retirará este monto de la caja activa y restaurará el inventario.</span>
+            </div>
+
+            <div class="actions-stack">
+              <button class="premium-btn action-partial" (click)="iniciarDevolucionParcial()"
+                [disabled]="isProcessing || !tieneItemsParaDevolver || isVentaDevuelta">
+                <i class="fas fa-exchange-alt me-2" *ngIf="!isProcessing"></i>
+                <i class="fas fa-circle-notch fa-spin me-2" *ngIf="isProcessing"></i>
+                Ejecutar Dev. Parcial
+              </button>
+
+              <button class="premium-btn action-total" (click)="iniciarAnulacionTotal()"
+                [disabled]="isProcessing || isVentaDevuelta">
+                <i class="fas fa-ban me-2" *ngIf="!isProcessing"></i>
+                <i class="fas fa-circle-notch fa-spin me-2" *ngIf="isProcessing"></i>
+                Anular Ticket Completo
+              </button>
+
+              <button class="premium-btn action-ghost mt-2" (click)="limpiarVista()" [disabled]="isProcessing">
+                Cancelar y Salir
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- End Loaded State -->
+    </div>
+  </div>
+</div>

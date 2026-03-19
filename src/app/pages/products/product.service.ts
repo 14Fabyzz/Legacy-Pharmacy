@@ -1,168 +1,278 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
-// Importamos la interfaz correcta
-import { Producto } from '../../core/models/inventory.model';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import {
+  Producto,
+  ProductoRequest,
+  Categoria,
+  Laboratorio,
+  PrincipioActivo,
+  ProductoCard,
+  Lote,
+  MovimientoKardex,
+  ProductoConsulta,
+  ProductoConLotesResponse,
+  DetalleProducto
+} from '../../core/models/product.model';
+import { environment } from '../../../environments/environment';
+
+export interface LoteAlerta {
+  id: number;
+  producto: string;
+  lote: string;
+  fecha: string;
+  cantidad: number;
+  diasRestantes: number; // Puede ser negativo si ya venció
+  imagenUrl: string;
+}
+
+export interface ProductoBajoStock {
+  id: number;
+  nombre: string;
+  stockActual: number;
+  stockMinimo: number;
+  imagenUrl?: string;
+}
+
+/** @deprecated Use DashboardAlertas */
+export type DashboardResponse = DashboardAlertas;
+
+export interface DashboardAlertas {
+  totalRojo: number;      // <= 90 días (incluye vencidos)
+  totalAmarillo: number;  // 91 a 180 días
+  totalVerde: number;     // > 180 días
+  totalStockBajo: number;
+  rojo: LoteAlerta[];       // Lotes críticos (<= 90 días, diasRestantes puede ser negativo)
+  amarillo: LoteAlerta[];   // Lotes en prevención (91-180 días)
+  verde: any[];             // Siempre [] por rendimiento — usar solo totalVerde
+  stockBajo: ProductoBajoStock[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  // private apiUrl = 'http://localhost:8080';
+  // El Gateway traduce:
+  // /api/inventario -> http://localhost:8081/api/v1/inventario
+  private apiUrl = environment.apiUrl + '/api/inventario';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
-  // Cambiamos 'any[]' por 'Producto[]' para asegurar que los datos sean correctos
-  getProducts(): Observable<Producto[]> {
-    const mockProducts: Producto[] = [
-      {
-        id: 1,
-        codigo_interno: 'PROD-001',
-        codigo_barras: '7701001001',
-        nombre_comercial: 'Dolex',
-        concentracion: '500mg',
-        presentacion: 'Caja x 20 Tab',
-        laboratorio_nombre: 'GSK',
-        precio_venta_base: 8000,
-        iva_porcentaje: 0,
-        stock_minimo: 10,
-        stock_actual: 15, // Test value
-        es_controlado: false,
-        refrigerado: false,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2024-04-15',
-        imagenUrl: 'https://unidrogas.vtexassets.com/arquivos/ids/436978/7707397792626.jpg?v=638891176625900000', // Caja
-
-        categoria_id: 1,
-        laboratorio_id: 1,
-        precio_compra_referencia: 5000
-      },
-      {
-        id: 2,
-        codigo_interno: 'PROD-002',
-        codigo_barras: '7701001002',
-        nombre_comercial: 'Advil',
-        concentracion: '400mg',
-        presentacion: 'Caja x 10 Caps',
-        laboratorio_nombre: 'Pfizer',
-        precio_venta_base: 15200,
-        iva_porcentaje: 19,
-        stock_minimo: 5,
-        stock_actual: 50, // Test value
-        es_controlado: false,
-        refrigerado: false,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2024-09-01',
-        imagenUrl: 'https://ortopedicosfuturoco.vtexassets.com/arquivos/ids/159679/DOLEX-TABL-FORT-NF-500-MG-X8-81000212-1.jpg?v=638153041774300000', // Transparente
-
-        categoria_id: 1,
-        laboratorio_id: 2,
-        precio_compra_referencia: 11000
-      },
-      {
-        id: 3,
-        codigo_interno: 'PROD-003',
-        codigo_barras: '7701001003',
-        nombre_comercial: 'Vitamina C',
-        concentracion: '1g',
-        presentacion: 'Frasco x 30 Tab',
-        laboratorio_nombre: 'MK',
-        precio_venta_base: 22000,
-        iva_porcentaje: 5,
-        stock_minimo: 20,
-        stock_actual: 0, // Test value
-        es_controlado: false,
-        refrigerado: false,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2025-12-31',
-        imagenUrl: 'https://olimpica.vtexassets.com/arquivos/ids/1247197/7703363005554_1.jpg?v=638374772257700000', // Bote Alto
-
-        categoria_id: 2,
-        laboratorio_id: 3,
-        precio_compra_referencia: 15000
-      },
-      {
-        id: 4,
-        codigo_interno: 'PROD-004',
-        codigo_barras: '7701001004',
-        nombre_comercial: 'Acetaminofén',
-        concentracion: '500mg',
-        presentacion: 'Caja x 100 Tab',
-        laboratorio_nombre: 'La Santé',
-        precio_venta_base: 12000,
-        iva_porcentaje: 0,
-        stock_minimo: 50,
-        stock_actual: 100, // Test value
-        es_controlado: false,
-        refrigerado: false,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2023-12-01',
-        imagenUrl: 'https://placehold.co/100x100?text=Sin+Foto', // Placeholder
-
-        categoria_id: 1,
-        laboratorio_id: 4,
-        precio_compra_referencia: 8000
-      },
-      {
-        id: 5,
-        codigo_interno: 'PROD-005',
-        codigo_barras: '7701001005',
-        nombre_comercial: 'Insulina Glargina',
-        concentracion: '100 UI/ml',
-        presentacion: 'Lapicero Prellenado',
-        laboratorio_nombre: 'Sanofi',
-        precio_venta_base: 85000,
-        iva_porcentaje: 0,
-        stock_minimo: 5,
-        stock_actual: 25, // Test value
-        es_controlado: false,
-        refrigerado: true,
-        estado: 'ACTIVO',
-        proximo_vencimiento: '2024-07-20',
-        imagenUrl: 'https://placehold.co/100x100?text=Sin+Foto',
-
-        categoria_id: 3,
-        laboratorio_id: 5,
-        precio_compra_referencia: 60000
+  /**
+   * Helper privado para obtener Headers con Token de forma segura en SSR.
+   * Si no hay token o estamos en el servidor, retorna NULL.
+   */
+  private getHeaders(): HttpHeaders | null {
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+      if (token && token !== 'undefined' && token !== 'null') {
+        return new HttpHeaders({
+          'Authorization': `Bearer ${token}`
+        });
       }
-    ];
-
-    return of(mockProducts).pipe(delay(100));
+    }
+    return null;
   }
 
+  // --- DASHBOARD / VISTAS (Lista Principal) ---
+
+  getDashboardAlertas(): Observable<DashboardAlertas> {
+    const headers = this.getHeaders();
+    if (!headers) {
+      return of({
+        totalRojo: 0,
+        totalAmarillo: 0,
+        totalVerde: 0,
+        totalStockBajo: 0,
+        rojo: [],
+        amarillo: [],
+        verde: [],
+        stockBajo: []
+      });
+    }
+    return this.http.get<DashboardAlertas>(`${this.apiUrl}/dashboard/alertas`, { headers });
+  }
+
+  getProductosAlmacen(busqueda?: string): Observable<ProductoCard[]> {
+    const headers = this.getHeaders();
+    if (!headers) {
+
+      return of([]);
+    }
+
+    let params = new HttpParams();
+    if (busqueda) {
+      params = params.set('busqueda', busqueda);
+    }
+
+    // Endpoint: http://localhost:8080/api/inventario/dashboard/cards
+    // Usamos apiUrl para pasar por el Gateway correctamente
+    console.log('🚀 [ProductService] Requesting:', `${this.apiUrl}/dashboard/cards`, params.toString());
+
+    return this.http.get<ProductoCard[]>(`${this.apiUrl}/dashboard/cards`, { headers, params }).pipe(
+      catchError(err => {
+        console.error('Error fetching dashboard cards', err);
+        return of([]);
+      })
+    );
+  }
+
+  // --- PRODUCTOS CRUD (Detallado) ---
+
+  getProducts(): Observable<Producto[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+
+    return this.http.get<Producto[]>(`${this.apiUrl}/productos`, { headers });
+  }
 
   getProductById(id: number): Observable<Producto> {
-    // Simulamos un producto individual con la estructura correcta
-    return of({
-      id: id,
-      codigo_interno: 'PROD-' + id,
-      codigo_barras: '77000' + id,
-      nombre_comercial: 'Producto Simulado ' + id,
-      concentracion: 'N/A',
-      presentacion: 'Unidad',
-      laboratorio_nombre: 'Genérico',
-      principio_activo_id: 1,
-      laboratorio_id: 1,
-      categoria_id: 1,
-      precio_venta_base: 12000,
-      iva_porcentaje: 19,
-      margen_minimo_porcentaje: 30,
-      stock_minimo: 5,
-      stock_actual: 20, // Test value
-      es_controlado: false,
-      refrigerado: false,
-      estado: 'ACTIVO'
-    });
+    const headers = this.getHeaders();
+    if (!headers) return throwError(() => new Error('No authenticated'));
+
+    return this.http.get<Producto>(`${this.apiUrl}/productos/${id}`, { headers });
   }
 
-  // Lógica de Negocio: Semáforo de Vencimientos
+  createProduct(product: ProductoRequest): Observable<Producto> {
+    const headers = this.getHeaders();
+    if (!headers) throw new Error('No authenticated');
+
+    return this.http.post<Producto>(`${this.apiUrl}/productos`, product, { headers });
+  }
+
+  updateProduct(id: number, product: ProductoRequest): Observable<Producto> {
+    const headers = this.getHeaders();
+    if (!headers) throw new Error('No authenticated');
+
+    return this.http.put<Producto>(`${this.apiUrl}/productos/${id}`, product, { headers });
+  }
+
+  toggleEstado(id: number, nuevoEstado: 'ACTIVO' | 'INACTIVO'): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) throw new Error('No authenticated');
+
+    return this.http.patch(`${this.apiUrl}/productos/${id}/estado`, { nuevoEstado }, { headers });
+  }
+
+  deleteProduct(id: number): Observable<void> {
+    const headers = this.getHeaders();
+    if (!headers) {
+      console.warn('No headers for delete');
+      return of(void 0);
+    }
+
+    return this.http.delete<void>(`${this.apiUrl}/productos/${id}`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Error deleting product', error);
+        return of(void 0);
+      })
+    );
+  }
+
+  searchProducts(term: string): Observable<Producto[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+
+    const params = new HttpParams().set('nombre', term);
+    return this.http.get<Producto[]>(`${this.apiUrl}/productos/buscar`, { headers, params });
+  }
+
+  // --- SMART PRICE CHECKER ---
+  consultarPrecio(termino: string): Observable<ProductoConsulta[]> {
+    const headers = this.getHeaders();
+    if (!headers) throw new Error('No authenticated');
+
+    const params = new HttpParams().set('query', termino);
+    return this.http.get<ProductoConsulta[]>(`${this.apiUrl}/productos/busqueda-publica`, { headers, params });
+  }
+
+  // --- AUXILIARES (Selectores) ---
+
+  getCategorias(): Observable<Categoria[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<Categoria[]>(`${this.apiUrl}/categorias`, { headers });
+  }
+
+  getLaboratorios(): Observable<Laboratorio[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<Laboratorio[]>(`${this.apiUrl}/laboratorios`, { headers });
+  }
+
+  getPrincipiosActivos(): Observable<PrincipioActivo[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<PrincipioActivo[]>(`${this.apiUrl}/principios-activos`, { headers });
+  }
+
+  // --- OTROS (Imágenes, Kardex) ---
+
+  uploadImage(id: number, file: File): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) return of(null);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/productos/${id}/imagen`, formData, { headers });
+  }
+
+  deleteProductImage(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) return of(null);
+    return this.http.delete(`${this.apiUrl}/productos/${id}/imagen`, { headers });
+  }
+
+  getProductKardex(id: number): Observable<MovimientoKardex[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<MovimientoKardex[]>(`${this.apiUrl}/productos/${id}/kardex`, { headers });
+  }
+
+  // --- LOGICA DE NEGOCIO (Frontend Side) ---
+
+  getLotesDisponibles(productoId: number): Observable<ProductoConLotesResponse> {
+    const headers = this.getHeaders();
+    if (!headers) return of({ detalleProducto: null as any, lotes: [] });
+    // Ajustar endpoint según tu backend real
+    return this.http.get<ProductoConLotesResponse>(`${this.apiUrl}/lotes/disponibles/${productoId}`, { headers });
+  }
+
+  // --- VENCIMIENTOS REALES (Endpoints del Usuario) ---
+
+  getLotesVencidos(): Observable<any[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<any[]>(`${this.apiUrl}/lotes/vencidos`, { headers });
+  }
+
+  getLotesPorVencer(): Observable<any[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<any[]>(`${this.apiUrl}/lotes/por-vencer`, { headers });
+  }
+
+
+
+  darDeBajaLote(loteId: number): Observable<void> {
+    const headers = this.getHeaders();
+    if (!headers) return of(void 0);
+    return this.http.delete<void>(`${this.apiUrl}/lotes/${loteId}`, { headers });
+  }
+
+  procesarEntradaMasiva(items: any[]): Observable<any> {
+    const headers = this.getHeaders();
+    if (!headers) return of(null);
+    return this.http.post(`${this.apiUrl}/lotes/entrada-masiva`, items, { headers });
+  }
+
   classifyByExpiration(products: Producto[]): { vencidos: Producto[], porVencer: Producto[], seguros: Producto[] } {
     const now = new Date();
-    // Normalizamos 'hoy' a media noche para comparaciones de fecha pura si fuera necesario,
-    // pero para vencimiento suele importar el momento exacto o final del día. 
-    // Usaremos la fecha actual simple.
-
     const result = {
       vencidos: [] as Producto[],
       porVencer: [] as Producto[],
@@ -170,30 +280,22 @@ export class ProductService {
     };
 
     products.forEach(p => {
-      // Si no tiene fecha, lo consideramos seguro o lo ignoramos. 
-      // Asumiremos que si no tiene fecha, no aplica vencimiento (seguro).
       if (!p.proximo_vencimiento) {
         result.seguros.push(p);
         return;
       }
 
       const expiryDate = new Date(p.proximo_vencimiento);
-      // Calculamos la diferencia en milisegundos
       const diffTime = expiryDate.getTime() - now.getTime();
-      // Convertimos a días
       const diffDays = diffTime / (1000 * 3600 * 24);
 
-      // Calculamos días restantes redondeado para UI (helper)
       p.daysUntilExpiry = Math.ceil(diffDays);
 
       if (diffDays < 0) {
-        // ROJO: Ya pasó la fecha (Vencido)
         result.vencidos.push(p);
       } else if (diffDays <= 30) {
-        // AMARILLO: Hoy o en los próximos 30 días
         result.porVencer.push(p);
       } else {
-        // VERDE: Más de 30 días
         result.seguros.push(p);
       }
     });
@@ -201,30 +303,37 @@ export class ProductService {
     return result;
   }
 
-  // Soft Delete: Cambiar estado a DESCONTINUADO o INACTIVO
-  deleteProduct(id: number): Observable<any> {
-    console.log(`Servicio: Desactivando producto ID ${id} (Soft Delete)`);
-    // Aquí harías: return this.http.delete(...) o put(...)
-    return of({ success: true });
-  }
+  mapToCard(p: Producto): ProductoCard {
+    return {
+      id: p.id,
+      nombreComercial: p.nombre_comercial,
+      presentacion: p.presentacion || '',
+      laboratorio: p.laboratorio?.nombre || 'N/A',
+      categoria: p.categoria?.nombre || 'N/A',
 
-  // Gestionar Imagen
-  updateProductImage(id: number, file: File): Observable<any> {
-    console.log(`Servicio: Subiendo imagen para producto ID ${id}`, file);
-    return of({ success: true, imageUrl: 'nueva-url.jpg' });
-  }
+      // Precios
+      precioVentaTotal: p.precio_venta_total,
+      precioVentaBlister: p.precio_venta_blister,
+      ivaPorcentaje: p.iva_porcentaje || 0,
 
-  // Obtener Kardex (Movimientos)
-  getProductKardex(id: number): Observable<any[]> {
-    console.log(`Servicio: Obteniendo kardex del producto ID ${id}`);
-    // Mock de movimientos
-    return of([
-      { fecha: '2024-10-20', tipo: 'ENTRADA', cantidad: 50, saldo: 50, detalle: 'Compra Fact. 123' },
-      { fecha: '2024-10-21', tipo: 'SALIDA', cantidad: 5, saldo: 45, detalle: 'Venta #998' },
-      { fecha: '2024-10-22', tipo: 'SALIDA', cantidad: 10, saldo: 35, detalle: 'Venta #1002' }
-    ]);
-  }
+      // Stock
+      nivelStock: p.stock_actual <= p.stock_minimo ? 'CRITICO' : (p.stock_actual <= p.stock_minimo * 1.5 ? 'BAJO' : 'OPTIMO'),
+      stockTotal: p.stock_actual,
 
-  createProduct(product: Producto): Observable<any> { return of(true); }
-  updateProduct(id: number, product: Producto): Observable<any> { return of(true); }
+      // Venta Fraccionada
+      esFraccionable: p.esFraccionable || false,
+
+      // Alertas de Seguridad
+      refrigerado: p.refrigerado || false,
+      esControlado: p.es_controlado || false,
+
+      // Vencimiento
+      proximoVencimiento: p.proximo_vencimiento ? p.proximo_vencimiento.toString() : undefined,
+
+      // Identificadores
+      codigoBarras: p.codigo_barras,
+      codigoInterno: p.codigo_interno,
+      imagenUrl: p.imagenUrl
+    };
+  }
 }

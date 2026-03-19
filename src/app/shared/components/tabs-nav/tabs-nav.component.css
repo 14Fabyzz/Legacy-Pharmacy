@@ -1,0 +1,93 @@
+.tabs-nav {
+    display: flex;
+    gap: 32px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 24px;
+    padding-bottom: 0;
+    position: relative;
+    z-index: 10;
+    /* Responsive settings */
+    overflow-x: auto;
+    /* Permite scroll horizontal */
+    overflow-y: hidden;
+    white-space: nowrap;
+    /* Evita que los tabs caigan a la siguiente línea */
+    -webkit-overflow-scrolling: touch;
+    /* Scroll suave en iOS */
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: #cbd5e1 transparent;
+    /* Firefox */
+}
+
+/* Scrollbar personalizado para navegadores Webkit (Chrome, Safari) */
+.tabs-nav::-webkit-scrollbar {
+    height: 4px;
+    /* Barra muy delgada para no molestar visualmente */
+}
+
+.tabs-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tabs-nav::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+}
+
+.tabs-nav a {
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #64748b;
+    padding: 0 4px 16px 4px;
+    /* Padding lateral para ampliar área clickeable */
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    position: relative;
+    /* Asegura que el link esté sobre otros elementos */
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.tabs-nav a:hover {
+    color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.06);
+    /* Tinte azul sutil, sin caja blanca */
+    border-radius: 4px 4px 0 0;
+}
+
+.tabs-nav a.active {
+    color: #3b82f6;
+    border-bottom: 3px solid #3b82f6;
+}
+
+.nav-icon {
+    font-size: 1.4rem;
+}
+
+/* === RESPONSIVE AJUSTES === */
+@media screen and (max-width: 768px) {
+    .tabs-nav {
+        gap: 20px;
+        /* Reduce the gap on smaller screens */
+        padding-bottom: 2px;
+        /* Slight padding to avoid cutting off bottom borders on scroll */
+    }
+
+    .tabs-nav a {
+        font-size: 0.95rem;
+        /* Slightly smaller text */
+        padding: 0 4px 12px 4px;
+    }
+
+    .nav-icon {
+        font-size: 1.2rem;
+    }
+}

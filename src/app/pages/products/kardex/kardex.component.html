@@ -12,7 +12,7 @@
     <div class="prod-identity" *ngIf="product">
         <div class="prod-icon">💊</div>
         <div>
-            <h1>{{ product.nombre }}</h1>
+            <h1>{{ product.nombre_comercial }}</h1>
             <span class="badge">{{ product.codigo_barras }}</span>
         </div>
     </div>
@@ -21,140 +21,158 @@
         <!-- Aquí podrían ir KPIs resumen si se desean -->
     </div>
 
-    <div class="filters-toolbar">
-        <div class="filter-group">
-            <div class="input-wrapper">
-                <label>Desde:</label>
-                <input type="date" class="date-input">
+    <div class="filters-toolbar"
+        style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <!-- Search Input -->
+        <div class="search-container" style="flex: 1; min-width: 250px;">
+            <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 4px;">Buscar</label>
+            <input type="text" [formControl]="searchControl" class="search-input form-control"
+                placeholder="Filtrar por producto, lote, doc..." style="width: 100%;">
+        </div>
+
+        <!-- Date Range -->
+        <div style="display: flex; gap: 10px;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 4px;">Desde</label>
+                <input type="date" class="form-control date-input" [(ngModel)]="startDate" (change)="applyFilters()">
             </div>
-            <div class="input-wrapper">
-                <label>Hasta:</label>
-                <input type="date" class="date-input">
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 4px;">Hasta</label>
+                <input type="date" class="form-control date-input" [(ngModel)]="endDate" (change)="applyFilters()">
             </div>
-            <div class="input-wrapper">
-                <label>Tipo:</label>
-                <select class="select-input">
-                    <option value="ALL">Todos los Movimientos</option>
-                    <option value="ENTRADA">Entradas / Compras</option>
-                    <option value="SALIDA">Salidas / Ventas</option>
-                    <option value="AJUSTE">Ajustes / Pérdidas</option>
-                </select>
-            </div>
-            <button class="btn-filter">Filtrar</button>
-            <div class="separator-vertical"></div>
-            <button class="btn-simulate" (click)="simulateMovement()">⚡ Simular Movimiento</button>
         </div>
     </div>
 
-    <div class="product-summary-card">
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>Fecha / Hora</th>
-                    <th>Tipo Mov.</th>
-                    <th>Documento</th>
-                    <th>Entrada</th>
-                    <th>Salida</th>
-                    <th>Saldo</th>
-                    <th>Usuario</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let m of movimientos" (click)="openDetail(m)" style="cursor: pointer;">
-                    <td>
-                        <div class="date-cell">
-                            <strong>{{ m.fecha | date:'dd MMM yyyy' }}</strong>
-                            <small>{{ m.fecha | date:'shortTime' }}</small>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="type-badge" [ngClass]="m.tipo.toLowerCase()">{{ m.tipo }}</span>
-                    </td>
-                    <td class="doc-ref">#{{ m.documento_ref }}</td>
-
-                    <td class="text-green">{{ m.tipo === 'ENTRADA' ? '+' + m.cantidad : '-' }}</td>
-                    <td class="text-red">{{ m.tipo === 'SALIDA' ? '-' + m.cantidad : '-' }}</td>
-
-                    <td class="font-bold">{{ m.saldo_resultante }}</td>
-                    <td class="user-cell">👤 {{ m.usuario }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- PLACEHOLDER STATE (Only if not global mode and no product selected) -->
+    <div class="empty-state" *ngIf="!product && !cargando && !isGlobalMode">
+        <div class="empty-icon">🔍</div>
+        <h3>Selecciona un producto</h3>
+        <p>Utiliza el buscador superior para encontrar el producto y ver su auditoría.</p>
     </div>
-</div>
 
+    <!-- RESULT STATE (Global or Product) -->
+    <div class="product-summary-card" *ngIf="product || isGlobalMode || cargando">
 
-<!-- DETALLE MODAL -->
-<div class="modal-overlay" *ngIf="selectedMovement" (click)="closeDetail()">
-    <div class="detail-card" (click)="$event.stopPropagation()">
-
-        <header class="detail-header" [ngClass]="selectedMovement.tipo.toLowerCase()">
-            <div class="header-icon">
-                <span *ngIf="selectedMovement.tipo === 'ENTRADA'">📥</span>
-                <span *ngIf="selectedMovement.tipo === 'SALIDA'">📤</span>
-                <span *ngIf="selectedMovement.tipo === 'AJUSTE'">🔧</span>
+        <!-- HEADER: Global vs Product -->
+        <div class="kardex-header" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+            <div *ngIf="isGlobalMode">
+                <h2 style="margin:0; font-size: 1.5rem; color: #1e293b;">🔍 Movimientos de Inventario</h2>
+                <p style="margin:5px 0 0 0; color: #64748b;">Últimos movimientos registrados en el sistema</p>
             </div>
 
-            <div class="header-texts">
-                <h3 class="mov-type">{{ selectedMovement.tipo }} DE INVENTARIO</h3>
-                <h2 class="prod-name">{{ product?.nombre }}</h2>
-                <p class="mov-date">{{ selectedMovement.fecha | date:'fullDate' }} — {{ selectedMovement.fecha |
-                    date:'mediumTime' }}</p>
-            </div>
-
-            <button class="btn-close-modal" (click)="closeDetail()">✕</button>
-        </header>
-
-        <div class="detail-body">
-
-            <div class="detail-row highlight">
+            <div *ngIf="!isGlobalMode && (product || movimientos.length > 0)"
+                style="display: flex; gap: 15px; align-items: center;">
+                <div class="prod-icon" style="width: 50px; height: 50px; font-size: 1.5rem;">📦</div>
                 <div>
-                    <label>Documento Ref.</label>
-                    <strong>#{{ selectedMovement.documento_ref }}</strong>
-                </div>
-                <div class="text-right">
-                    <label>Cantidad</label>
-                    <strong class="qty-text"
-                        [ngClass]="selectedMovement.tipo === 'ENTRADA' ? 'text-green' : 'text-red'">
-                        {{ selectedMovement.tipo === 'ENTRADA' ? '+' : '-' }}{{ selectedMovement.cantidad }} u.
-                    </strong>
+                    <!-- H1 prefers Product object, fallback to first movement -->
+                    <h1 style="margin:0; font-size: 1.3rem;">
+                        {{ product?.nombre_comercial || (movimientos.length > 0 ? movimientos[0].nombre_producto : '')
+                        }}
+                    </h1>
+                    <span class="badge">
+                        Código: {{ product?.codigo_barras || (movimientos.length > 0 ? movimientos[0].codigo_barras :
+                        '') }}
+                    </span>
+                    <span class="badge" style="margin-left:8px;">
+                        Stock Actual: {{ (movimientos.length > 0 ? (movimientos[0].saldo_historico ??
+                        movimientos[0].saldo_resultante) : 0) }} Und.
+                    </span>
                 </div>
             </div>
+        </div>
 
-            <hr class="divider">
+        <div *ngIf="cargando; else dataTable" class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando movimientos...</p>
+        </div>
 
-            <div class="info-grid">
+        <ng-template #dataTable>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Fecha / Hora</th>
+                        <th *ngIf="isGlobalMode">Producto</th>
+                        <th>Tipo Mov.</th>
+                        <th>Documento</th>
+                        <th>Lote</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                        <th class="text-center">Saldo</th>
+                        <th>Responsable</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="movimientos.length === 0">
+                        <td [attr.colspan]="isGlobalMode ? 9 : 8" class="text-center py-8 text-gray-500">
+                            No hay movimientos registrados.
+                        </td>
+                    </tr>
+                    <tr *ngFor="let m of paginatedMovimientos">
+                        <td>
+                            <div class="date-cell">
+                                <strong>{{ m.fecha | date:'dd MMM yyyy' }}</strong>
+                                <small>{{ m.fecha | date:'HH:mm' }}</small>
+                            </div>
+                        </td>
+                        <td *ngIf="isGlobalMode">
+                            <strong>{{ m.nombre_producto || 'N/A' }}</strong>
+                        </td>
+                        <td>
+                            <span class="type-badge" [ngClass]="m.tipo | lowercase">{{ m.tipo }}</span>
+                        </td>
+                        <td class="doc-ref">
+                            <span *ngIf="m.documento_ref">{{ m.documento_ref }}</span>
+                            <span *ngIf="!m.documento_ref"
+                                style="color: #94a3b8; font-style: italic; font-size: 0.85em;">Sin Documento</span>
+                        </td>
 
-                <div class="info-box" *ngIf="selectedMovement.tipo === 'SALIDA'">
-                    <label>Cliente / Destino</label>
-                    <p>{{ selectedMovement.cliente || 'Cliente Mostrador' }}</p>
+                        <!-- Lote Column -->
+                        <td>
+                            <span *ngIf="m.lote" style="opacity: 0.7; margin-right: 4px;">🏷️</span>
+                            {{ m.lote || '---' }}
+                        </td>
+
+                        <td class="text-green">{{ m.tipo === 'ENTRADA' ? '+' + m.cantidad : '-' }}</td>
+                        <td class="text-red">{{ m.tipo === 'SALIDA' ? m.cantidad : '-' }}</td>
+
+                        <!-- Saldo Column -->
+                        <td class="text-center">
+                            <span style="font-weight: 800; color: #1e293b;">
+                                {{ m.saldo_historico !== null && m.saldo_historico !== undefined ? m.saldo_historico :
+                                '--' }}
+                            </span>
+                            <small style="color: #94a3b8; margin-left: 2px;">Und.</small>
+                        </td>
+
+                        <!-- Responsable Column with Icon -->
+                        <td class="user-cell">
+                            👤 {{ m.usuario }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- PAGINATION CONTROLS (ELEGANT DESIGN) -->
+            <div class="pagination-controls" *ngIf="movimientos.length > itemsPerPage">
+                <span class="pagination-info">
+                    Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} -
+                    {{ currentPage * itemsPerPage > movimientos.length ? movimientos.length : currentPage * itemsPerPage
+                    }}
+                    de {{ movimientos.length }} resultados
+                </span>
+
+                <div class="pagination-buttons">
+                    <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">
+                        Anterior
+                    </button>
+
+                    <span class="page-current">Página {{ currentPage }} de {{ totalPages }}</span>
+
+                    <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                        Siguiente
+                    </button>
                 </div>
-
-                <div class="info-box" *ngIf="selectedMovement.tipo === 'ENTRADA'">
-                    <label>Proveedor</label>
-                    <p>{{ selectedMovement.proveedor || 'Laboratorios X' }}</p>
-                </div>
-
-                <div class="info-box" *ngIf="selectedMovement.tipo === 'ENTRADA'">
-                    <label>Lote Ingresado</label>
-                    <p class="batch-tag">{{ selectedMovement.lote || 'N/A' }}</p>
-                </div>
-
-                <div class="info-box">
-                    <label>Responsable</label>
-                    <p>👤 {{ selectedMovement.usuario }}</p>
-                </div>
-
-                <div class="info-box full-width" *ngIf="selectedMovement.notas">
-                    <label>Notas / Observaciones</label>
-                    <p class="notes-box">"{{ selectedMovement.notas }}"</p>
-                </div>
-
             </div>
-        </div>
-        <div class="detail-footer">
-            <button class="btn-secondary" style="margin-right: 10px;">📄 Ver Factura Completa</button>
-            <button class="btn-print">🖨️ Imprimir Comprobante</button>
-        </div>
+        </ng-template>
     </div>
 </div>

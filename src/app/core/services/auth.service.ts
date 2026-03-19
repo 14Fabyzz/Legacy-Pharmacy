@@ -1,18 +1,47 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 // 1. Importamos 'of' para crear respuestas falsas
-import { Observable, BehaviorSubject, tap, of } from 'rxjs'; 
+import { Observable, BehaviorSubject, tap, of, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+
+export interface LoginRequest {
+  identifier: string; // Acepta username O correo electrónico
+  password: string;
+}
+
+export interface User {
+  id: number;
+  nombreCompleto: string;
+  rolNombre: string;
+  rol?: string; // Campo opcional para compatibilidad
+  login: string;
+  sucursalId: number;
+  estado: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user?: User;
+  // Estructura plana para compatibilidad con el backend actual
+  id?: number;
+  nombreCompleto?: string;
+  rolNombre?: string;
+  rol?: string; // Posible campo alternativo del backend
+  login?: string;
+  sucursalId?: number;
+  estado?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // private apiUrl = 'http://localhost:8080'; // No la necesitamos por ahora
+  private apiUrl = environment.apiUrl + '/api/usuarios';
   private isBrowser: boolean;
 
-  private currentUserSubject = new BehaviorSubject<any | null>(null);
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(
@@ -21,7 +50,7 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
-    
+
     // Mantiene la sesión si refrescas la página
     if (this.isBrowser) {
       const user = localStorage.getItem('currentUser');
@@ -31,41 +60,37 @@ export class AuthService {
     }
   }
 
-  /**
-   * SIMULACIÓN DE LOGIN (Backend desconectado)
-   */
-  login(credentials: { username: string, password: string }): Observable<any> {
-    
-    // --- CÓDIGO REAL COMENTADO ---
-    /*
-    return this.http.post(`${this.apiUrl}/api/auth/login`, credentials).pipe(
-      tap((response: any) => {
-        if (response && response.token && response.user) {
+  login(credentials: LoginRequest): Observable<AuthResponse> {
+    // Esto hará POST a: http://localhost:8080/api/usuarios/login
+    // El Gateway lo transformará a: http://localhost:8082/api/login
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+      tap(response => {
+        if (response && response.token) {
           this.saveToken(response.token);
-          this.saveUser(response.user);
+          if (response.user) {
+            this.saveUser(response.user);
+          } else if (response.nombreCompleto) {
+            console.log('Respuesta de login (flat):', response); // Debug para ver qué campos llegan
+            const userFromFlat: User = {
+              id: response.id || 0,
+              nombreCompleto: response.nombreCompleto,
+              // Intenta leer rolNombre, luego rol, y finalmente 'USUARIO'
+              rolNombre: response.rolNombre || response.rol || 'USUARIO',
+              login: response.login || '',
+              sucursalId: response.sucursalId || 1,
+              estado: response.estado || 'ACTIVO'
+            };
+            this.saveUser(userFromFlat);
+          }
         }
+      }),
+      catchError(error => {
+        return throwError(() => error);
       })
     );
-    */
-
-    // --- CÓDIGO SIMULADO (MOCK) ---
-    const mockResponse = {
-      token: 'token-falso-simulado-123456',
-      user: {
-        // Aquí pones los datos que quieres ver en el sidebar
-        nombre_completo: 'Fabian Benjumea (Mock)', 
-        rol: 'ADMINISTRADOR',
-        email: 'fabian@ejemplo.com'
-      }
-    };
-
-    // Guardamos los datos falsos como si el servidor nos los hubiera enviado
-    this.saveToken(mockResponse.token);
-    this.saveUser(mockResponse.user);
-
-    // Retornamos la respuesta falsa como un Observable
-    return of(mockResponse);
   }
+
+
 
   // --- El resto de métodos se mantienen igual ---
 
@@ -75,11 +100,22 @@ export class AuthService {
     }
   }
 
-  saveUser(user: any): void {
+  saveUser(user: User): void {
     if (this.isBrowser) {
       localStorage.setItem('currentUser', JSON.stringify(user));
     }
     this.currentUserSubject.next(user);
+  }
+
+  getRole(): string | null {
+    const user = this.currentUserSubject.value;
+    if (!user) return null;
+    return user.rolNombre || (user as any).rol || null;
+  }
+
+  isAdmin(): boolean {
+    const role = this.getRole();
+    return role === 'ADMIN' || role === 'ADMINISTRADOR';
   }
 
   getToken(): string | null {

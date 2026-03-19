@@ -1,0 +1,487 @@
+/* Layout & Page Container */
+.page-container {
+    padding: 24px;
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header p {
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+/* Form Container */
+.product-form {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border: 1px solid #e2e8f0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Form Sections */
+.form-section {
+    border: none;
+    padding: 0;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.form-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.form-section legend {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+    width: 100%;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-section legend::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-radius: 2px;
+}
+
+/* Form Rows */
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    font-size: 0.85rem;
+    /* Increased from 0.75rem */
+}
+
+/* Input Styles */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select {
+    padding: 12px 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #1e293b;
+    background-color: #ffffff;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="date"]:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background-color: #ffffff;
+}
+
+.form-group input[readonly] {
+    background-color: #f1f5f9;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    padding-right: 40px;
+}
+
+/* Checkbox Groups */
+.checkboxes-row {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    padding: 16px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #3b82f6;
+}
+
+.checkbox-group label {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Radio Groups */
+.radio-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Barcode Input Styles */
+.input-with-icon {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+}
+
+.input-with-icon input {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    flex: 1;
+    border-right: none;
+}
+
+.btn-icon-inside {
+    background-color: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-left: none;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 0 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-icon-inside:hover {
+    background-color: #e2e8f0;
+}
+
+.icon-barcode {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 1.3rem;
+    letter-spacing: -2px;
+    transform: scaleX(0.8);
+    display: inline-block;
+    color: #475569;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.btn {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.btn-primary:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e8f0;
+    color: #334155;
+}
+
+
+/* Required Field Indicator */
+.form-group label::after {
+    content: '';
+}
+
+.form-group.required label::after {
+    content: ' *';
+    color: #ef4444;
+    font-weight: 700;
+}
+
+/* Helper Text */
+.helper-text {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 16px;
+    }
+
+    .product-form {
+        padding: 24px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .checkboxes-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   VALIDACIONES VISUALES (MODERNAS & PRO)
+   ========================================================================== */
+.form-group {
+
+    /* Estado Inválido: Borde Rojo Elegante + Fondo Sutil */
+    input.is-invalid,
+    select.is-invalid {
+        border-color: #E74C3C !important;
+        /* Alizarin Red */
+        background-color: #FEF9F9;
+        /* Fondo rojo muy tenue */
+        transition: all 0.2s ease-in-out;
+
+        &:focus {
+            border-color: #E74C3C !important;
+            /* Resplandor (Box Shadow) Rojo Suave y Difuminado */
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2) !important;
+            outline: none;
+        }
+    }
+
+    /* Mensaje de Feedback con Icono */
+    .invalid-feedback {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-top: 8px;
+        /* Separación superior */
+        font-size: 0.875rem;
+        /* Tamaño optimizado */
+        color: #E74C3C;
+        font-weight: 500;
+        animation: fadeIn 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+        /* Icono de alerta antes del texto */
+        &::before {
+            content: '⚠️';
+            margin-right: 6px;
+            font-size: 0.95rem;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+        }
+    }
+}
+
+/* ==========================================================================
+   MODERN TOGGLE SWITCH (ESTADO PRODUCTO)
+   ========================================================================== */
+.custom-switch-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.custom-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    margin: 0;
+}
+
+.custom-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e2e8f0;
+    /* Gris claro inactivo */
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 34px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Sombra 3D elegante */
+}
+
+/* Estado Activo */
+.custom-switch input:checked+.switch-slider {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    /* Verde moderno */
+}
+
+.custom-switch input:focus+.switch-slider {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.custom-switch input:checked+.switch-slider:before {
+    transform: translateX(22px);
+}
+
+/* Textos asociados al switch */
+.switch-text-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.switch-main-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    margin: 0 0 2px 0;
+}
+
+.switch-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.text-success {
+    color: #059669 !important;
+}
+
+.text-muted {
+    color: #64748b !important;
+}

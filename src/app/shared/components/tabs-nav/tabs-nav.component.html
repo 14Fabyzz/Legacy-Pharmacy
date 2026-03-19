@@ -1,0 +1,7 @@
+<nav class="tabs-nav">
+    <a *ngFor="let item of navItems" [routerLink]="item.link" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
+        <span class="nav-icon">{{ item.icon }}</span>
+        {{ item.label }}
+    </a>
+</nav>

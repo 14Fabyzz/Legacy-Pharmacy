@@ -8,7 +8,6 @@ import { PurchaseEntryComponent } from '../purchases/purchase-entry/purchase-ent
 import { ExpirationDashboardComponent } from './expiration-dashboard/expiration-dashboard.component';
 import { ProductSearchComponent } from './product-search/product-search.component';
 import { KardexComponent } from './kardex/kardex.component';
-import { MovementsHistoryComponent } from './movements-history/movements-history.component';
 
 
 const routes: Routes = [
@@ -37,9 +36,11 @@ const routes: Routes = [
     path: 'consulta',
     component: ProductSearchComponent
   },
+  // La ruta 'auditoria' y el componente MovementsHistoryComponent han sido eliminados por redundancia.
+  // La funcionalidad ahora reside en KardexComponent (/kardex o /productos)
   {
-    path: 'auditoria',
-    component: MovementsHistoryComponent
+    path: 'productos', // Mapea /app/kardex/productos -> KardexComponent
+    component: KardexComponent
   },
   {
     path: 'kardex',

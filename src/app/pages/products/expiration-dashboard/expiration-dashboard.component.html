@@ -2,86 +2,76 @@
     <header class="page-header">
         <div class="header-content">
             <div>
-                <h2>CENTRO DE ALERTAS E INVENTARIO</h2>
-                <p>Gestión integral de vencimientos, stock crítico y alertas sanitarias.</p>
+                <h2>🚨 CENTRO DE ALERTAS E INVENTARIO</h2>
+                <p>Gestión integral de vencimientos conforme a la normativa de semaforización farmacéutica colombiana.</p>
             </div>
         </div>
     </header>
 
     <!-- Navegación Compartida -->
-    <nav class="tabs-nav">
-        <a routerLink="/app/productos/almacen" routerLinkActive="active">
-            <span class="nav-icon">📦</span> ALMACÉN
-        </a>
+    <app-tabs-nav></app-tabs-nav>
 
-        <a routerLink="/app/productos/consulta" routerLinkActive="active">
-            <span class="nav-icon">🔍</span> CONSULTA
-        </a>
+    <!-- Loader -->
+    <div class="loading-state-container" *ngIf="loading">
+        <div class="spinner-ring"></div>
+        <p class="loading-text">Analizando inventario...</p>
+    </div>
 
-        <a routerLink="/app/productos/vencimientos" routerLinkActive="active">
-            <span class="nav-icon">🚨</span> MONITOR ALERTAS
-        </a>
+    <!-- Error -->
+    <div class="error-state" *ngIf="!loading && error">
+        <p>⚠️ {{ error }}</p>
+    </div>
 
-        <a routerLink="/app/productos/entrada-mercancia" routerLinkActive="active">
-            <span class="nav-icon">🚚</span> ENTRADAS
-        </a>
-
-        <a routerLink="/app/productos/auditoria" routerLinkActive="active">
-            <span class="nav-icon">📋</span> AUDITORÍA
-        </a>
-
-        <a routerLink="/app/productos/nuevo" routerLinkActive="active">
-            <span class="nav-icon">✨</span> NUEVO
-        </a>
-    </nav>
-
-    <div class="dashboard-content" *ngIf="!loading">
+    <div class="dashboard-content" *ngIf="!loading && !error">
 
         <!-- KPI CARDS SUMMARY -->
         <div class="kpi-grid">
-            <!-- 1. Vencidos -->
+            <!-- 1. Semáforo Rojo (Crítico / <= 90 días) -->
             <div class="kpi-card critical" [class.active]="activeTab === 'critical'" (click)="setActiveTab('critical')">
-                <div class="kpi-icon">🚨</div>
+                <div class="kpi-icon">🔴</div>
                 <div class="kpi-info">
-                    <span class="kpi-value">{{ expiredProducts.length }}</span>
-                    <span class="kpi-label">Vencidos</span>
+                    <span class="kpi-value">{{ stats?.totalRojo || 0 }}</span>
+                    <span class="kpi-label">Rojo (≤ 90 días)</span>
                 </div>
             </div>
 
-            <!-- 2. Por Vencer -->
+            <!-- 2. Semáforo Amarillo (Prevención / 91-180 días) -->
             <div class="kpi-card warning" [class.active]="activeTab === 'alert'" (click)="setActiveTab('alert')">
-                <div class="kpi-icon">⚠️</div>
+                <div class="kpi-icon">🟡</div>
                 <div class="kpi-info">
-                    <span class="kpi-value">{{ soonExpiringProducts.length }}</span>
-                    <span class="kpi-label">Por Vencer</span>
+                    <span class="kpi-value">{{ stats?.totalAmarillo || 0 }}</span>
+                    <span class="kpi-label">Amarillo (91-180 días)</span>
                 </div>
             </div>
 
-            <!-- 3. Stock Bajo (NUEVO) -->
+            <!-- 3. Stock Bajo -->
             <div class="kpi-card lowstock" [class.active]="activeTab === 'lowstock'" (click)="setActiveTab('lowstock')">
                 <div class="kpi-icon">📉</div>
                 <div class="kpi-info">
-                    <span class="kpi-value">{{ bajoStock.length }}</span>
+                    <span class="kpi-value">{{ stats?.totalStockBajo || 0 }}</span>
                     <span class="kpi-label">Stock Bajo</span>
                 </div>
             </div>
 
-            <!-- 4. Seguros -->
+            <!-- 4. Semáforo Verde (Saludable / > 180 días) -->
             <div class="kpi-card healthy" [class.active]="activeTab === 'healthy'" (click)="setActiveTab('healthy')">
-                <div class="kpi-icon">✅</div>
+                <div class="kpi-icon">🟢</div>
                 <div class="kpi-info">
-                    <span class="kpi-value">OK</span>
-                    <span class="kpi-label">Saludables</span>
+                    <span class="kpi-value">{{ stats?.totalVerde || 0 }}</span>
+                    <span class="kpi-label">Verde (> 180 días)</span>
                 </div>
             </div>
         </div>
 
 
-        <!-- SECCIÓN 1: VENCIDOS (CRÍTICO) -->
+        <!-- ═══════════════════════════════════════════════════
+             SECCIÓN 1: SEMÁFORO ROJO — Crítico (≤ 90 días)
+             Incluye lotes ya vencidos (diasRestantes < 0)
+        ═══════════════════════════════════════════════════ -->
         <div class="expiration-section critical-section" *ngIf="activeTab === 'critical'">
             <div class="section-header">
-                <h3>🚨 Productos Vencidos</h3>
-                <p>Retirar inmediatamente de estantería.</p>
+                <h3>🔴 Semáforo Rojo — Crítico (≤ 90 días)</h3>
+                <p>Lotes vencidos o a punto de vencer. Requieren acción inmediata conforme al Decreto 677 de 1995.</p>
             </div>
 
             <div class="table-card">
@@ -97,49 +87,55 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let p of expiredProducts">
+                        <tr *ngFor="let lote of listaRojo">
                             <td>
                                 <div class="product-info">
                                     <div class="product-icon-circle small">
-                                        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" alt="img">
-                                        <span *ngIf="!p.imagenUrl">💊</span>
+                                        <img *ngIf="lote.imagenUrl" [src]="lote.imagenUrl" alt="img">
+                                        <span *ngIf="!lote.imagenUrl" class="icon-fallback">💊</span>
                                     </div>
                                     <div>
-                                        <strong>{{ p.nombre_comercial }}</strong>
-                                        <small>{{ p.concentracion }} - {{ p.laboratorio_nombre }}</small>
+                                        <strong>{{ lote.producto }}</strong>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="ref-text">{{ p.codigo_interno }}</span>
+                                <span class="ref-text">{{ lote.lote }}</span>
                             </td>
                             <td class="date-cell">
-                                {{ p.proximo_vencimiento | date:'dd/MM/yyyy' }}
+                                {{ lote.fecha | date:'dd/MM/yyyy' }}
                             </td>
                             <td>
-                                <span class="status-tag expired">Vencido hace {{ (p.daysUntilExpiry || 0) * -1 }}
-                                    días</span>
+                                <!-- Badge dinámico según diasRestantes -->
+                                <span *ngIf="isVencido(lote)" class="badge-vencido">
+                                    Vencido hace {{ lote.diasRestantes * -1 }} días
+                                </span>
+                                <span *ngIf="!isVencido(lote)" class="badge-por-vencer rojo">
+                                    Vence en {{ lote.diasRestantes }} días
+                                </span>
                             </td>
                             <td class="stock-cell">
-                                <strong>{{ p.stock_actual }}</strong> unds
+                                <strong>{{ lote.cantidad }}</strong> unds
                             </td>
                             <td class="text-right">
-                                <button class="btn-action danger">Dar de Baja</button>
+                                <button class="btn-action danger" (click)="darDeBaja(lote.id)">Dar de Baja</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="empty-tab" *ngIf="expiredProducts.length === 0">
-                    <p>No hay productos vencidos. ¡Excelente!</p>
+                <div class="empty-tab" *ngIf="listaRojo.length === 0">
+                    <p>✅ No hay lotes en zona roja. ¡Excelente gestión!</p>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN 2: POR VENCER (ALERTA) -->
+        <!-- ═══════════════════════════════════════════════════
+             SECCIÓN 2: SEMÁFORO AMARILLO — Prevención (91-180 días)
+        ═══════════════════════════════════════════════════ -->
         <div class="expiration-section warning-section" *ngIf="activeTab === 'alert'">
             <div class="section-header">
-                <h3>⚠️ Próximos a Vencer (30 días)</h3>
-                <p>Acciones recomendadas: Gestión de precio o promoción.</p>
+                <h3>🟡 Semáforo Amarillo — Prevención (91-180 días)</h3>
+                <p>Acciones recomendadas: rotación FEFO, descuentos profilácticos o alertar al área de compras.</p>
             </div>
 
             <div class="table-card">
@@ -155,44 +151,47 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let p of soonExpiringProducts">
+                        <tr *ngFor="let lote of listaAmarillo">
                             <td>
                                 <div class="product-info">
                                     <div class="product-icon-circle small">
-                                        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" alt="img">
-                                        <span *ngIf="!p.imagenUrl">💊</span>
+                                        <img *ngIf="lote.imagenUrl" [src]="lote.imagenUrl" alt="img">
+                                        <span *ngIf="!lote.imagenUrl" class="icon-fallback">💊</span>
                                     </div>
                                     <div>
-                                        <strong>{{ p.nombre_comercial }}</strong>
-                                        <small>{{ p.concentracion }} - {{ p.laboratorio_nombre }}</small>
+                                        <strong>{{ lote.producto }}</strong>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="ref-text">{{ p.codigo_interno }}</span>
+                                <span class="ref-text">{{ lote.lote }}</span>
                             </td>
                             <td class="date-cell">
-                                {{ p.proximo_vencimiento | date:'dd/MM/yyyy' }}
+                                {{ lote.fecha | date:'dd/MM/yyyy' }}
                             </td>
                             <td>
-                                <span class="status-tag warning">{{ p.daysUntilExpiry }} días</span>
+                                <span class="badge-por-vencer amarillo">
+                                    Vence en {{ lote.diasRestantes }} días
+                                </span>
                             </td>
                             <td class="stock-cell">
-                                <strong>{{ p.stock_actual }}</strong> unds
+                                <strong>{{ lote.cantidad }}</strong> unds
                             </td>
                             <td class="text-right">
-                                <button class="btn-action promo">Promocionar</button>
+                                <span class="text-muted small">Revisar rotación</span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="empty-tab" *ngIf="soonExpiringProducts.length === 0">
-                    <p>No hay alertas de vencimiento próximo.</p>
+                <div class="empty-tab" *ngIf="listaAmarillo.length === 0">
+                    <p>No hay alertas en zona amarilla.</p>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN 3: STOCK BAJO (NUEVO) -->
+        <!-- ═══════════════════════════════════════════════════
+             SECCIÓN 3: STOCK BAJO
+        ═══════════════════════════════════════════════════ -->
         <div class="expiration-section lowstock-section" *ngIf="activeTab === 'lowstock'">
             <div class="section-header">
                 <h3>📉 Reposición de Inventario</h3>
@@ -200,38 +199,48 @@
             </div>
 
             <div class="cards-grid-view">
-                <!-- Carta de Reabastecimiento -->
-                <div class="restock-card" *ngFor="let p of bajoStock">
+                <div class="restock-card" *ngFor="let p of listaStockBajo">
                     <div class="restock-icon">
-                        📦
+                        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" alt="img"
+                            style="width:100%; height:100%; object-fit:contain; mix-blend-mode: multiply;">
+                        <span *ngIf="!p.imagenUrl">📦</span>
                     </div>
                     <div class="restock-info">
-                        <h4>{{ p.nombre_comercial }}</h4>
-                        <p class="sub-info">{{ p.concentracion }} - {{ p.laboratorio_nombre }}</p>
+                        <h4>{{ p.nombre }}</h4>
                         <div class="stock-metrics">
-                            <span class="badge-min">Min: {{ p.stock_minimo }}</span>
-                            <span class="stock-current-red">Actual: <strong>{{ p.stock_actual }}</strong></span>
+                            <span class="badge-min">Min: {{ p.stockMinimo }}</span>
+                            <span class="stock-current-red">Actual: <span class="text-danger fw-bold">{{ p.stockActual }}</span></span>
                         </div>
                     </div>
                     <div class="restock-alert">
-                        <span class="missing-text">Faltan {{ p.stockDiff }} un.</span>
+                        <span class="missing-text">Faltan {{ p.stockMinimo - p.stockActual }} un.</span>
                         <button class="btn-restock">Reabastecer</button>
                     </div>
                 </div>
             </div>
-            <div class="empty-tab" *ngIf="bajoStock.length === 0">
-                <p>Todo el inventario tiene niveles óptimos.</p>
+            <div class="empty-tab" *ngIf="listaStockBajo.length === 0">
+                <div class="text-center p-3 border rounded bg-light">
+                    <p class="mb-0 fw-bold text-success">¡Excelente! No hay productos con stock bajo.</p>
+                </div>
             </div>
         </div>
 
-        <!-- SECCIÓN 4: HEALTHY (Solo Informativo) -->
+        <!-- ═══════════════════════════════════════════════════
+             SECCIÓN 4: SEMÁFORO VERDE — Solo KPI
+             El array verde[] siempre llega vacío por rendimiento.
+             Solo se muestra el total como resumen.
+        ═══════════════════════════════════════════════════ -->
         <div class="expiration-section healthy-section" *ngIf="activeTab === 'healthy'">
-            <div class="empty-state">
-                <div class="empty-icon">✅</div>
-                <h3>Sistema Saludable</h3>
-                <p>Selecciona una alerta arriba para ver detalles si existen.</p>
+            <div class="healthy-kpi-card">
+                <div class="healthy-icon">🟢</div>
+                <div class="healthy-content">
+                    <h3>Semáforo Verde — Lotes Saludables</h3>
+                    <p class="healthy-total">{{ stats?.totalVerde || 0 }}</p>
+                    <p class="healthy-desc">Lotes con más de 180 días hasta su vencimiento. Sin acciones requeridas.</p>
+                </div>
             </div>
         </div>
 
     </div>
+
 </div>

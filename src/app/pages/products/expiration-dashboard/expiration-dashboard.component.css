@@ -7,14 +7,24 @@
 }
 
 .page-header {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
 }
 
 .page-header h2 {
-    font-size: 1.5rem;
+    margin: 0 0 8px 0;
+    font-size: 1.75rem;
     font-weight: 700;
-    color: #1e293b;
-    color: #1e293b;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header p {
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 24px;
 }
 
 .kpi-grid {
@@ -190,34 +200,7 @@
 }
 
 /* Tabs Navigation (Copiado de Product List para consistencia) */
-.tabs-nav {
-    display: flex;
-    gap: 24px;
-    border-bottom: 2px solid #e2e8f0;
-    margin-bottom: 32px;
-    padding-bottom: 0;
-}
 
-.tabs-nav a {
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #64748b;
-    padding-bottom: 12px;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    margin-bottom: -2px;
-    /* Para solapar la línea */
-}
-
-.tabs-nav a:hover {
-    color: #3b82f6;
-}
-
-.tabs-nav a.active {
-    color: #3b82f6;
-    border-bottom-color: #3b82f6;
-}
 
 /* Sections */
 .expiration-section {
@@ -294,7 +277,7 @@
 .product-icon-circle {
     width: 72px;
     height: 72px;
-    
+
     background-color: #f1f5f9;
     display: flex;
     align-items: center;
@@ -304,10 +287,19 @@
     overflow: hidden;
 }
 
+.product-icon-circle.small {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    border-radius: 8px;
+    /* Consistent with other views */
+}
+
 .product-icon-circle img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    mix-blend-mode: multiply;
 }
 
 .product-info small {
@@ -368,6 +360,54 @@
     color: #2563eb;
 }
 
+/* ═══════════════════════════════════════════
+   BADGES LEGALES — Semaforización Colombia
+   Rojo:     #fee2e2 / #991b1b
+   Amarillo: #fef3c7 / #92400e
+   Verde:    #dcfce7 / #166534
+═══════════════════════════════════════════ */
+.badge-vencido {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.badge-por-vencer {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge-por-vencer.rojo {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.badge-por-vencer.amarillo {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.badge-saludable {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;
@@ -387,7 +427,81 @@
     color: #1e293b;
 }
 
-.empty-state p {
+/* Healthy (Verde) KPI card — solo resumen numérico, sin tabla */
+.healthy-kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #bbf7d0;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 4px 6px -1px rgba(22, 101, 52, 0.08);
+}
+
+.healthy-icon {
+    font-size: 4rem;
+    line-height: 1;
+}
+
+.healthy-content h3 {
+    margin: 0 0 8px 0;
+    color: #166534;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.healthy-total {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #15803d;
+    line-height: 1;
+    margin: 0 0 8px 0;
+    letter-spacing: -1px;
+}
+
+.healthy-desc {
+    font-size: 0.9rem;
+    color: #166534;
+    margin: 0;
+    opacity: 0.8;
+}
+
+
+/* Loading States (Copied from Product List for consistency) */
+.loading-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    margin-top: 24px;
+    text-align: center;
+}
+
+.spinner-ring {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #0f172a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+}
+
+.loading-text {
+    font-size: 1rem;
+    font-weight: 500;
     color: #64748b;
     margin: 0;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

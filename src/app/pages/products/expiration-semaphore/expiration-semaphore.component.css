@@ -110,45 +110,36 @@
     font-weight: 700;
 }
 
-/* --- PALETA DE COLORES ESPECÍFICA --- */
+/* --- PALETA DE COLORES — Semaforización Legal Colombia --- */
 
-/* 🔴 Zona Vencidos */
-.vencidos {
+/* 🔴 Zona Roja (<= 90 días) */
+.rojo {
     background-color: #FEF2F2;
-    /* Red-50 */
     border: 1px solid #FECACA;
-    /* Red-200 */
 }
 
-.vencidos .column-title {
+.rojo .column-title {
     color: #991B1B;
-    /* Red-800 */
 }
 
-/* 🟡 Zona Por Vencer */
-.por-vencer {
+/* 🟡 Zona Amarilla (91-180 días) */
+.amarillo {
     background-color: #FFFBEB;
-    /* Amber-50 */
     border: 1px solid #FDE68A;
-    /* Amber-200 */
 }
 
-.por-vencer .column-title {
+.amarillo .column-title {
     color: #92400E;
-    /* Amber-800 */
 }
 
-/* 🟢 Zona Segura */
-.seguros {
-    background-color: #ECFDF5;
-    /* Emerald-50 */
-    border: 1px solid #A7F3D0;
-    /* Emerald-200 */
+/* 🟢 Zona Verde (> 180 días) — Colores legales */
+.verde {
+    background-color: #F0FDF4;
+    border: 1px solid #BBF7D0;
 }
 
-.seguros .column-title {
-    color: #065F46;
-    /* Emerald-800 */
+.verde .column-title {
+    color: #166534;
 }
 
 
@@ -175,20 +166,69 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Card Border Colors matching column theme */
-.vencidos .product-card {
+/* Card Border Colors */
+.rojo .product-card {
     border-left-color: #EF4444;
-    /* Red-500 */
 }
 
-.por-vencer .product-card {
+.amarillo .product-card {
     border-left-color: #F59E0B;
-    /* Amber-500 */
 }
 
-.seguros .product-card {
-    border-left-color: #10B981;
-    /* Emerald-500 */
+.verde .product-card {
+    border-left-color: #22C55E;
+}
+
+/* Card image thumbnail */
+.card-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    background: #f1f5f9;
+}
+
+.card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+/* === BADGES MODALES === */
+.badge-modal {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 6px;
+    margin-bottom: 4px;
+}
+
+.badge-modal.vencido {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.badge-modal.critico {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.badge-modal.prevencion {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.badge-modal.saludable {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
 }
 
 /* Text Styles inside Card */
@@ -242,13 +282,69 @@
     font-weight: 500;
 }
 
-.empty-msg {
+/* Verde KPI Card — resumen numérico */
+.verde-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
     text-align: center;
-    color: #94A3B8;
-    /* Slate-400 */
-    font-style: italic;
-    margin-top: 2rem;
-    font-size: 0.9rem;
+    padding: 2rem 1rem;
+    gap: 8px;
+}
+
+.verde-total {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #15803d;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -2px;
+}
+
+.verde-desc {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #166534;
+    margin: 0;
+}
+
+.verde-hint {
+    font-size: 0.8rem;
+    color: #4ade80;
+    margin: 4px 0 0 0;
+    color: #16a34a;
+    opacity: 0.85;
+    max-width: 220px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* Modal Loading State */
+.modal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 12px;
+    color: #64748b;
+}
+
+.spinner-mini {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin-mini 0.7s linear infinite;
+}
+
+@keyframes spin-mini {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Scrollbar Styling - Soft & Thin */
@@ -269,4 +365,38 @@
 .column::-webkit-scrollbar-thumb:hover {
     background: #94A3B8;
     /* Slate-400 */
+}
+
+/* --- BUTTON STYLES --- */
+.btn-dar-baja {
+    background-color: #fee2e2;
+    /* Red-100 */
+    color: #b91c1c;
+    /* Red-700 */
+    border: 1px solid #fecaca;
+    /* Red-200 */
+    padding: 0.3rem 0.6rem;
+    /* Reduced padding */
+    border-radius: 4px;
+    /* Slightly smaller radius */
+    font-size: 0.75rem;
+    /* Smaller font */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+    /* Reduced margin */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.btn-dar-baja:hover {
+    background-color: #ef4444;
+    /* Red-500 */
+    color: white;
+    box-shadow: 0 1px 2px rgba(220, 38, 38, 0.2);
+    border-color: #ef4444;
 }

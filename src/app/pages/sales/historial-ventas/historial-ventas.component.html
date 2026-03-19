@@ -1,0 +1,112 @@
+<div class="historial-container">
+  <div class="header-section">
+    <h2>Historial de Ventas</h2>
+    <p class="subtitle">Consulta todas las ventas registradas en el sistema</p>
+  </div>
+
+  <div class="alert-warning" *ngIf="mensajeError">
+    <div class="alert-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+    <div class="alert-content">
+      <h3 class="alert-title">Atención</h3>
+      <p class="alert-text">{{ mensajeError }}</p>
+    </div>
+  </div>
+
+  <div class="table-card" *ngIf="!mensajeError">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th translate="no" class="col-id">Id</th>
+            <th class="col-fecha">Fecha</th>
+            <th class="col-cliente">Cliente</th>
+            <th class="col-productos">Productos</th>
+            <th class="col-estado text-center">Estado</th>
+            <th class="col-total text-right">Total Venta</th>
+            <th class="col-acciones text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="isLoading">
+            <td colspan="7" class="text-center loading-message">Cargando historial...</td>
+          </tr>
+          <tr *ngIf="!isLoading && historial.length === 0">
+            <td colspan="7" class="text-center empty-message">No se encontraron ventas registradas en este turno.</td>
+          </tr>
+          <tr *ngFor="let venta of historialPaginado">
+            <td class="col-id id-col">
+              <span style="color: #0f172a; font-weight: 600;">#{{ venta.id }}</span>
+            </td>
+            <td class="col-fecha">
+              <div style="display:flex; flex-direction:column; gap:2px;">
+                <span style="font-size:13px; font-weight:500; color:#374151;">{{ venta.fechaVenta | date:'dd/MMM/yyyy' }}</span>
+                <span style="font-size:12px; color:#6b7280;">{{ venta.fechaVenta | date:'shortTime' }}</span>
+              </div>
+            </td>
+            <td class="col-cliente" [title]="venta.clienteNombre || 'Consumidor Final'">
+              {{ venta.clienteNombre || 'Consumidor Final' }}
+            </td>
+            <td class="col-productos" [title]="venta.resumenProductos?.join(', ') || 'Sin detalle'">
+              <ng-container *ngIf="venta.items && venta.items.length > 0">
+                <ng-container *ngFor="let item of venta.items; let i = index; let last = last">
+                  {{ item | formatProduct : venta.resumenProductos?.[i] }}<span *ngIf="!last">, </span>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!venta.items || venta.items.length === 0">
+                {{ venta.resumenProductos?.join(', ') || 'Sin detalle' }}
+              </ng-container>
+            </td>
+            <td class="col-estado text-center">
+              <span
+                style="padding:4px 12px; border-radius:9999px; font-size:12px; font-weight:600; display:inline-block; text-transform:uppercase; letter-spacing:0.03em; white-space:nowrap;"
+                [style.background-color]="(venta.estado === 'DEVUELTA') ? '#ffedd5' : (venta.estado === 'ANULADA') ? '#fee2e2' : (venta.estado === 'PARCIALMENTE_DEVUELTA') ? '#fef3c7' : '#d1fae5'"
+                [style.color]="(venta.estado === 'DEVUELTA') ? '#9a3412' : (venta.estado === 'ANULADA') ? '#991b1b' : (venta.estado === 'PARCIALMENTE_DEVUELTA') ? '#92400e' : '#065f46'"
+              >
+                {{ venta.estado || 'COMPLETADA' }}
+              </span>
+            </td>
+            <td class="col-total text-right total-amount">{{ venta.total | currency }}</td>
+            <td class="col-acciones text-center actions-col">
+              <button class="btn-icon text-info" (click)="abrirModalFactura(venta)" title="Ver Detalle">
+                👁️
+              </button>
+
+              <button class="btn-icon text-warning ms-2"
+                [disabled]="venta.estado === 'DEVUELTA' || venta.estado === 'ANULADA'"
+                (click)="irADevoluciones(venta.id)" title="Procesar Devolución">
+                ↩️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pagination-container" *ngIf="!mensajeError && historial.length > itemsPorPagina">
+    <button class="btn-pagination" (click)="paginaAnterior()" [disabled]="paginaActual === 1">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Anterior
+    </button>
+    <span class="pagination-info">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+    <button class="btn-pagination" (click)="siguientePagina()"
+      [disabled]="paginaActual === totalPaginas || totalPaginas === 0">
+      Siguiente
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Modal Factura (Tirilla de Caja) -->
+<app-ticket-impresion *ngIf="mostrarModal && ventaSeleccionada" [ticket]="ventaSeleccionada"
+  [mostrarModal]="mostrarModal" (cerrar)="cerrarModal()">
+</app-ticket-impresion>

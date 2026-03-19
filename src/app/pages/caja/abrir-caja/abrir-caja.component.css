@@ -1,0 +1,270 @@
+.caja-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+    padding: 20px;
+    background-color: var(--slate-50, #f8fafc);
+}
+
+/* Transformación a "Tarjeta de Acción" */
+.centered-card {
+    max-width: 500px;
+    width: 100%;
+    padding: 40px;
+    background: white;
+    border-radius: 12px; /* Más redondeado */
+    box-shadow: 0 4px 12px rgba(0, 50, 100, 0.08); /* Sombra suave */
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.centered-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 50, 100, 0.12);
+}
+
+.card-header-clean {
+    margin-bottom: 2rem;
+}
+
+.header-icon-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    color: #0284c7;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-clean h2 {
+    color: var(--slate-800, #1e293b);
+    margin-bottom: 12px;
+    font-weight: 800; /* Fuente más robusta */
+    letter-spacing: -0.025em;
+    font-size: 1.8rem;
+}
+
+.subtitle {
+    color: var(--slate-500, #64748b);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+.status-badge-container {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.status-text {
+    font-size: 0.875rem;
+    color: var(--slate-600);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.badge-danger {
+    background-color: #fee2e2;
+    color: #ef4444;
+    box-shadow: 0 0 0 1px #fecaca;
+}
+
+.badge-success {
+    background-color: #dcfce7;
+    color: #16a34a;
+    box-shadow: 0 0 0 1px #bbf7d0;
+}
+
+/* Input Styles */
+.input-group-clean {
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 16px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #94a3b8;
+    z-index: 10;
+    transition: color 0.2s;
+}
+
+.large-input {
+    width: 100%;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    padding: 16px 16px 16px 40px !important; /* Padding ajustado para el icono */
+    text-align: center;
+    color: #1e293b !important;
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.large-input:focus {
+    border-color: #0ea5e9; /* Color de acento al foco */
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+}
+
+.input-with-icon:focus-within .currency-symbol {
+    color: #0ea5e9;
+}
+
+.input-hint {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Botón "Abrir Caja" */
+.btn-primary-action {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%); /* Degradado Azul a Aguamarina */
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-primary-action:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary-action:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: #cbd5e1;
+}
+
+/* Info Alert — Tarjeta de bloqueo moderna */
+.caja-info-alert {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-top: 4px;
+}
+
+.alert-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.12);
+}
+
+.alert-icon-wrapper i {
+    font-size: 2rem;
+    color: #1e40af;
+    display: block;
+}
+
+.alert-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.01em;
+}
+
+.alert-body {
+    font-size: 0.95rem;
+    color: #334155;
+    margin: 0 0 6px 0;
+    line-height: 1.6;
+}
+
+.alert-hint {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+}
+
+/* Botón CTA sólido del estado bloqueado */
+.btn-cta-solid {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 28px;
+    background: transparent;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    text-decoration: none;
+}
+
+.btn-cta-solid:hover {
+    background: #3b82f6;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3);
+}
+
+.btn-cta-solid:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
