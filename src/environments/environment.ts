@@ -1,4 +1,3 @@
 export const environment = {
-develop
-  apiUrl: 'http://regensaludpos.com:8080'
+  apiUrl: 'http://regensaludpos.com/api'
 };
