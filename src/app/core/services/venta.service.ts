@@ -3,16 +3,17 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CrearVentaDTO, VentaResponseDTO, ProductoInventarioDTO, AperturaCajaDTO, CierreCajaDTO, TurnoCaja } from '../models/venta.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class VentaService {
 
-    // Endpoints base
-    private ventasUrl = 'http://localhost:8080/api/ventas'; // Gateway o directo
-    private inventarioUrl = 'http://localhost:8080/api/inventario';
-    private cajaUrl = 'http://localhost:8080/api/ventas/caja'; // Ajustado según TurnoCajaController está en MS-ventas tambien
+    // Endpoints base — usando environment.apiUrl para dev/prod automático
+    private ventasUrl = environment.apiUrl + '/api/ventas';
+    private inventarioUrl = environment.apiUrl + '/api/inventario';
+    private cajaUrl = environment.apiUrl + '/api/ventas/caja';
 
     private getAuthHeaders() {
         let headers = {};
