@@ -1,3 +1,4 @@
 export const environment = {
-  apiUrl: 'http://regensaludpos.com'
+    production: false,
+    apiUrl: 'http://localhost:8080'
 };
