@@ -20,7 +20,7 @@ export class LaboratorioService {
 
     /** GET /api/laboratorios/activos — Solo los activos */
     getActivos(): Observable<Laboratorio[]> {
-        return this.http.get<Laboratorio[]>(`${this.apiUrl}/activas`);
+        return this.http.get<Laboratorio[]>(`${this.apiUrl}/activos`);
     }
 
     /** POST /api/laboratorios — Crear nuevo laboratorio */

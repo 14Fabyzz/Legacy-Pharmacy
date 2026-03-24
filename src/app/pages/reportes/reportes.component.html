@@ -1,48 +1,269 @@
 <div class="reportes-dashboard" *ngIf="isReportesHome">
-  <div class="dashboard-header text-center py-4">
-    <h2 class="fw-bold text-dark">Métricas y Análisis</h2>
-    <p class="text-secondary">Seleccione un módulo para visualizar los indicadores clave y reportes de Inteligencia Artificial.</p>
+  
+  <!-- Encabezado -->
+  <div class="dashboard-header">
+    <div class="header-titles">
+      <h2 class="fw-bold text-dark mb-1">Métricas y Reportes</h2>
+      <p class="text-secondary mb-0">Panel central de indicadores y análisis estratégico.</p>
+    </div>
   </div>
 
-  <div class="cards-grid px-3 pb-5">
-    <!-- Tarjeta 1 (IA) -->
-    <div class="reporte-card" routerLink="./resumen-inteligente">
-      <div class="icon-wrapper ia-theme"><i class="bi bi-stars"></i></div>
-      <div class="card-content">
-        <h3>Resumen Inteligente (IA)</h3>
-        <p>Análisis ejecutivo y recomendaciones generadas por Google Gemini.</p>
+  <!-- ZONA DESTACADA: Resumen Inteligente IA -->
+  <div class="ai-summary-section mb-5">
+    <div class="ai-card">
+      <div class="ai-card-header d-flex flex-wrap justify-content-between align-items-center gap-4 mb-4">
+        <div class="d-flex align-items-center gap-4">
+           <div class="ai-icon-pulse">
+               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" fill="currentColor" fill-opacity="0.2"></path>
+                 <path d="M20 3v4M22 5h-4" opacity="0.8"></path>
+               </svg>
+           </div>
+           <h3 class="fw-bold mb-0 me-3">Resumen Inteligente IA</h3>
+           <button *ngIf="dataIA && !loadingIA" class="btn btn-outline-secondary btn-sm shadow-sm px-3 text-nowrap fade-in" (click)="descargarPDF()">
+            <i class="bi bi-file-earmark-pdf me-1"></i> Descargar PDF
+          </button>
+        </div>
+        <div class="d-flex justify-content-end text-nowrap">
+          <button class="btn btn-primary btn-sm shadow-sm px-4 py-2 text-nowrap" (click)="generarIA()" [disabled]="loadingIA">
+            <span *ngIf="!loadingIA"><i class="bi bi-robot me-1"></i> Generar Análisis</span>
+            <span *ngIf="loadingIA" class="spinner-border spinner-border-sm"></span>
+          </button>
+        </div>
       </div>
-      <div class="card-action text-primary fw-bold">
-        <span>Ver Análisis <i class="bi bi-arrow-right-short"></i></span>
+      <div class="ai-card-body">
+        <p class="ai-insight-text text-secondary" *ngIf="!dataIA && !errorIA && !loadingIA">
+          Haz clic en generar análisis para enviar las métricas del periodo actual a Google Gemini.
+        </p>
+        <p class="ai-insight-text" *ngIf="loadingIA">
+           <span class="spinner-grow spinner-grow-sm text-primary me-2"></span> Analizando el negocio... Un momento.
+        </p>
+        <p class="ai-insight-text text-danger" *ngIf="errorIA">
+           <i class="bi bi-exclamation-triangle"></i> Error al conectar con la Inteligencia Artificial (Microservicio ms-reportes no responde).
+        </p>
+        <div id="ai-pdf-content" class="ai-insight-text text-dark" *ngIf="dataIA && !loadingIA">
+           <div [innerHTML]="dataIA?.resumenGenerado"></div>
+        </div>
       </div>
     </div>
-
-    <!-- Tarjeta 2 (Inventario) -->
-    <div class="reporte-card" routerLink="./pulso-inventario">
-      <div class="icon-wrapper inv-theme"><i class="bi bi-box-seam"></i></div>
-      <div class="card-content">
-        <h3>Pulso de Inventario</h3>
-        <p>Métricas de rotación, retorno de inversión y cobertura de stock.</p>
-      </div>
-      <div class="card-action text-success fw-bold">
-        <span>Ver Pulso <i class="bi bi-arrow-right-short"></i></span>
-      </div>
-    </div>
-
-    <!-- Tarjeta 3 (Ventas) -->
-    <div class="reporte-card" routerLink="./motor-ventas">
-      <div class="icon-wrapper vent-theme"><i class="bi bi-cart3"></i></div>
-      <div class="card-content">
-        <h3>Motor de Ventas</h3>
-        <p>Análisis de ticket promedio, conversión y comportamiento del cliente.</p>
-      </div>
-      <div class="card-action text-info fw-bold">
-        <span>Ver Motor <i class="bi bi-arrow-right-short"></i></span>
-      </div>
-    </div>
-
-
   </div>
+
+  <!-- SECCIÓN 1: Métricas de Negocio (El Pulso) -->
+  <div class="section-container mb-5">
+    <h3 class="section-title">Métricas de negocio</h3>
+    <div class="cards-grid">
+      <!-- Tarjeta 1 (Inventario) -->
+      <div class="reporte-card" routerLink="./pulso-inventario">
+        <div class="card-header-flex">
+          <div class="icon-wrapper inv-theme m-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+        </div>
+        <div class="card-content mt-3">
+          <h3>Pulso de Inventario</h3>
+          
+          <div *ngIf="loadingInventario" class="mt-3">
+             <span class="spinner-border text-success spinner-border-sm"></span> Cargando datos...
+          </div>
+          <div *ngIf="errorInventario" class="text-danger small mt-2"><i class="bi bi-exclamation-circle"></i> No se pudo cargar el inventario.</div>
+          
+          <p *ngIf="!loadingInventario && !errorInventario" class="text-center flex-wrap d-flex justify-content-center gap-1">
+             <span class="badge text-bg-light text-secondary mt-2 border border-secondary-subtle" title="IRI">
+               IRI: {{ dataInventario?.rotacionInventarioIri != null ? (dataInventario?.rotacionInventarioIri | number:'1.2-2') : '--' }}
+             </span>
+             <span class="badge text-bg-light text-secondary mt-2 ms-1 border border-secondary-subtle" title="GMROI">
+               GMROI: {{ dataInventario?.gmroi != null ? (dataInventario?.gmroi | number:'1.2-2') : '--' }}
+             </span>
+             <span class="badge text-bg-light text-secondary mt-2 ms-1 border border-secondary-subtle" title="Sell-Through">
+               STR: {{ dataInventario?.sellThroughRate != null ? ((dataInventario.sellThroughRate / 100) | percent) : '--' }}
+             </span>
+          </p>
+          <div class="card-action text-success fw-bold">
+            <span>Ver Pulso <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2 (Ventas) -->
+      <div class="reporte-card" routerLink="./motor-ventas">
+        <div class="card-header-flex">
+          <div class="icon-wrapper vent-theme m-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="card-content mt-3">
+          <h3>Motor de Ventas</h3>
+          
+          <div *ngIf="loadingVentas" class="mt-3">
+             <span class="spinner-border text-primary spinner-border-sm"></span> Cargando datos...
+          </div>
+          <div *ngIf="errorVentas" class="text-danger small mt-2"><i class="bi bi-exclamation-circle"></i> No se pudo cargar ventas.</div>
+          
+          <p *ngIf="!loadingVentas && !errorVentas" class="text-center flex-wrap d-flex justify-content-center gap-1">
+             <span class="badge text-bg-light text-secondary mt-2 border border-secondary-subtle" title="Ticket Promedio">
+               TICKET: {{ dataVentas?.ticketPromedio != null ? (dataVentas?.ticketPromedio | currency:'COP':'symbol-narrow':'1.0-0') : '--' }}
+             </span>
+             <span class="badge text-bg-light text-secondary mt-2 ms-1 border border-secondary-subtle" title="Margen Bruto">
+               MARGEN: {{ dataVentas?.margenUtilidadBruta != null ? ((dataVentas.margenUtilidadBruta / 100) | percent) : '--' }}
+             </span>
+             <span class="badge text-bg-light text-secondary mt-2 ms-1 border border-secondary-subtle" title="UPT">
+               UPT: {{ dataVentas?.unitsPerTransactionUpt != null ? (dataVentas?.unitsPerTransactionUpt | number:'1.1-2') : '--' }}
+             </span>
+          </p>
+          <div class="card-action text-info fw-bold">
+            <span>Ver Motor <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: Reportes Analíticos (Análisis Profundo) -->
+  <div class="section-container pb-5">
+    <h3 class="section-title">Reportes del negocio</h3>
+    
+    <!-- Categoría: Análisis de Ventas -->
+    <h4 class="category-title mt-4 mb-3">Análisis de Ventas</h4>
+    <div class="analytics-grid">
+      <!-- Ventas por Cliente -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Ventas por Cliente')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <!-- Filtros eliminados a petición para mantener interfaz limpia -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Ventas por Cliente</h5>
+          <p>Consulta interactiva de ventas segmentadas por cliente.</p>
+        </div>
+      </div>
+      
+      <!-- Venta por Cliente y Producto -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Venta por Cliente y Producto')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <!-- Filtros eliminados -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Venta por Cliente y Producto</h5>
+          <p>Consulta detallada de la adquisición de productos por cliente.</p>
+        </div>
+      </div>
+
+      <!-- Consolidado de Ventas -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Consolidado de Ventas')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+          </div>
+          <!-- Filtros eliminados -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Consolidado de Ventas</h5>
+          <p>Consulta de operaciones totales y volumen de ventas.</p>
+        </div>
+      </div>
+
+      <!-- Comparativo Mes a Mes -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Comparativo de Ventas Mensuales')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <!-- Filtros eliminados -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Comparativo de Ventas Mensuales</h5>
+          <p>Gráficos de ventas mes a mes para análisis y comparación.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categoría: Rendimiento de Inventario -->
+    <h4 class="category-title mt-5 mb-3">Rendimiento de Inventario</h4>
+    <div class="analytics-grid">
+      <!-- Mejores Productos -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Top 10 Productos')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0 text-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="7"></circle>
+              <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+            </svg>
+          </div>
+          <!-- Filtros eliminados a petición -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Top 10: Mejores Productos</h5>
+          <p>Listado de los productos con mayor volumen y margen.</p>
+        </div>
+      </div>
+
+      <!-- Baja Rotación -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Baja Rotación')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0 text-danger">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+              <polyline points="17 18 23 18 23 12"></polyline>
+            </svg>
+          </div>
+          <!-- Filtros eliminados a petición -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Productos de Baja Rotación</h5>
+          <p>Listado de inventario estancado o de poco movimiento.</p>
+        </div>
+      </div>
+
+      <!-- Comparativo por Producto -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Comparativo por Producto')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0 text-info">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+              <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+          </div>
+          <!-- Filtros eliminados a petición -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Comparativo por Producto</h5>
+          <p>Tablas comparativas de cifras entre distintas referencias.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
-
 <router-outlet></router-outlet>

@@ -1,0 +1,109 @@
+<div class="reportes-dashboard">
+  
+  <!-- Encabezado con botón Volver -->
+  <div class="dashboard-header">
+    <div class="header-titles">
+      <h2>{{ tituloReporte }}</h2>
+      <p>{{ descripcionReporte }}</p>
+    </div>
+    <button class="btn-back" (click)="router.navigate(['/app/reportes'])">
+      <i class="bi bi-arrow-left"></i> Regresar a reportes
+    </button>
+  </div>
+
+  <!-- Selector de Filtros (Aislado, con estética Pulso Inventario / Motor Ventas) -->
+  <div class="filter-section card">
+    <div class="filter-row">
+      <div class="form-group">
+        <label>Fecha Inicio:</label>
+        <input type="date" class="form-control-custom" #inicioInput (change)="fechaInicioForm = inicioInput.value" [value]="fechaInicioForm">
+      </div>
+      <div class="form-group">
+        <label>Fecha Fin:</label>
+        <input type="date" class="form-control-custom" #finInput (change)="fechaFinForm = finInput.value" [value]="fechaFinForm">
+      </div>
+
+      <!-- Filtros Dinámicos (Solo actúan en Top 10) -->
+      <ng-container *ngIf="tipoSlug === 'top-10-productos'">
+        <div class="form-group">
+          <label>Categoría (Opcional):</label>
+          <select class="form-control-custom" #catInput (change)="filtroCategoria = catInput.value === 'null' ? null : +catInput.value; consultarFechaManual()">
+            <option value="null" [selected]="filtroCategoria === null">Todas las categorías</option>
+            <option *ngFor="let cat of categorias" [value]="cat.id" [selected]="filtroCategoria === cat.id">{{ cat.nombre }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Laboratorio (Opcional):</label>
+          <select class="form-control-custom" #labInput (change)="filtroLaboratorio = labInput.value === 'null' ? null : +labInput.value; consultarFechaManual()">
+            <option value="null" [selected]="filtroLaboratorio === null">Todos los laboratorios</option>
+            <option *ngFor="let lab of laboratorios" [value]="lab.id" [selected]="filtroLaboratorio === lab.id">{{ lab.nombre }}</option>
+          </select>
+        </div>
+      </ng-container>
+
+      <div class="form-group btn-group-custom">
+        <button class="btn-search-custom" (click)="consultarFechaManual()" [disabled]="reporteLoading">
+          <i class="bi bi-search"></i> {{ reporteLoading ? 'Consultando...' : 'Consultar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="reporte-container-card">
+    
+    <!-- Loader -->
+    <div *ngIf="reporteLoading" class="text-center py-5">
+      <div class="spinner-grow text-primary mb-3" role="status" style="width: 3.5rem; height: 3.5rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <h5 class="mt-2 text-secondary fw-bold">Procesando conjunto de datos...</h5>
+      <p class="text-muted small mb-0">Consultando registros históricos en tiempo real</p>
+    </div>
+    
+    <!-- Errores y Vacíos -->
+    <div *ngIf="reporteError" class="visual-alert alert-error-custom">
+      <i class="bi bi-exclamation-octagon fs-3"></i>
+      <span>Ocurrió un error de conexión al tratar de obtener la información del servidor.</span>
+    </div>
+    
+    <div *ngIf="!reporteLoading && !reporteError && reporteData.length === 0" class="visual-alert alert-warning-custom">
+      <i class="bi bi-inbox fs-3"></i>
+      <span>No existen operaciones registradas que coincidan con los criterios de este reporte.</span>
+    </div>
+    
+    <!-- Tabla de Datos -->
+    <div class="table-responsive" *ngIf="!reporteLoading && !reporteError && reporteData.length > 0">
+      <table class="table-modern">
+        <thead>
+          <tr>
+            <th *ngFor="let col of reporteColumnas" 
+                [class.text-start-forced]="col.toLowerCase() === 'cliente' || col.toLowerCase() === 'producto'"
+                [class.col-dato-numerico]="col.toLowerCase() !== 'cliente' && col.toLowerCase() !== 'producto'">
+              {{ col }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of reporteData">
+            <td *ngFor="let col of reporteColumnas" 
+                [class.text-start-forced]="col.toLowerCase() === 'cliente' || col.toLowerCase() === 'producto' || col.toLowerCase() === 'presentacion'"
+                [class.col-dato-numerico]="col.toLowerCase() !== 'cliente' && col.toLowerCase() !== 'producto' && col.toLowerCase() !== 'presentacion'">
+              <ng-container *ngIf="col === 'total' || col === 'subtotal' || col === 'margen' || col === 'ventas' || col === 'ventas_a' || col === 'ventas_b' || col === 'variacion_ventas'; else regularCol">
+                <span class="text-highlight">{{ row[col] | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+              </ng-container>
+              <ng-template #regularCol>
+                <span [class.fw-semibold]="col === 'cliente' || col === 'producto' || col === 'presentacion' || col === 'fecha' || col === 'mes' || col === 'tendencia'"
+                      [class.text-success]="col === 'tendencia' && row[col]?.includes('📈')"
+                      [class.text-danger]="col === 'tendencia' && row[col]?.includes('📉')"
+                      [class.text-muted]="col === 'tendencia' && row[col]?.includes('➖')">
+                  {{ row[col] != null ? row[col] : '--' }}
+                </span>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
+</div>
