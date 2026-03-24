@@ -44,6 +44,7 @@ export class ProductListComponent implements OnInit {
   // Variables para Detalle de Inventario (Panel Lateral)
   showDetailPanel = false;
   selectedProductData: ProductoConLotesResponse | null = null;
+  selectedProduct: ProductoCard | null = null;
 
   // Filtros adicionales
   availableCategories: string[] = [];
@@ -58,19 +59,32 @@ export class ProductListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loadCatalogs();
     this.loadProducts();
   }
 
-  loadProducts() {
+  loadCatalogs() {
+    this.productService.getCategorias().subscribe({
+      next: (cats) => {
+        this.availableCategories = cats.map(c => c.nombre).sort();
+      },
+      error: (err) => console.error('Error cargando categorías', err)
+    });
+
+    this.productService.getLaboratorios().subscribe({
+      next: (labs) => {
+        this.availableLaboratories = labs.map(l => l.nombre).sort();
+      },
+      error: (err) => console.error('Error cargando laboratorios', err)
+    });
+  }
+
+  loadProducts(estado?: string) {
     this.isLoading = true; // [INICIO]
-    this.productService.getProductosAlmacen().subscribe({
+    this.productService.getProductosAlmacen(undefined, estado).subscribe({
       next: (products) => {
         this.isLoading = false; // [FIN EXITOSO]
         this.allProducts = products;
-
-        // Extraer categorías y laboratorios únicos
-        this.availableCategories = [...new Set(this.allProducts.map(p => p.categoria).filter(c => c))].sort();
-        this.availableLaboratories = [...new Set(this.allProducts.map(p => p.laboratorio).filter(l => l))].sort();
 
         // Ordenar Alfabéticamente por Nombre Comercial
         this.allProducts.sort((a, b) => a.nombreComercial.localeCompare(b.nombreComercial));
@@ -86,6 +100,21 @@ export class ProductListComponent implements OnInit {
   }
 
   // --- LÓGICA DE FILTRADO Y PAGINACIÓN ---
+
+  /**
+   * Llamado desde el select combinado de Stock+Estado.
+   * Si el valor es un filtro de ESTADO, recarga desde el backend.
+   * Si es un filtro de stock, solo filtra localmente.
+   */
+  onStockOrEstadoChange() {
+    if (this.selectedStockStatus === 'ESTADO_ACTIVO') {
+      this.loadProducts('ACTIVO');
+    } else if (this.selectedStockStatus === 'ESTADO_INACTIVO') {
+      this.loadProducts('INACTIVO');
+    } else {
+      this.loadProducts();
+    }
+  }
 
   applyFilter() {
     const term = this.searchTerm.toLowerCase().trim();
@@ -114,8 +143,15 @@ export class ProductListComponent implements OnInit {
       // 3. Filtro por Laboratorio
       const matchesLaboratory = this.selectedLaboratory ? product.laboratorio === this.selectedLaboratory : true;
 
-      // 4. Filtro por Estado de Stock
-      const matchesStock = this.selectedStockStatus ? product.nivelStock === this.selectedStockStatus : true;
+      // 4. Filtro por Stock o Estado (mismo select)
+      let matchesStock = true;
+      if (this.selectedStockStatus === 'ESTADO_ACTIVO') {
+        matchesStock = product.estado === 'ACTIVO';
+      } else if (this.selectedStockStatus === 'ESTADO_INACTIVO') {
+        matchesStock = product.estado === 'INACTIVO';
+      } else if (this.selectedStockStatus) {
+        matchesStock = product.nivelStock === this.selectedStockStatus;
+      }
 
       return matchesSearch && matchesCategory && matchesLaboratory && matchesStock;
     });
@@ -158,6 +194,7 @@ export class ProductListComponent implements OnInit {
     this.productService.getLotesDisponibles(product.id).subscribe({
       next: (data: ProductoConLotesResponse) => {
         Swal.close();
+        this.selectedProduct = product;
         this.selectedProductData = data;
         this.showDetailPanel = true;
       },
@@ -165,6 +202,65 @@ export class ProductListComponent implements OnInit {
         Swal.close();
         console.error(err);
         Swal.fire('Error', 'No se pudieron cargar los lotes', 'error');
+      }
+    });
+  }
+
+  // 1b. 🗑️ Manejar Baja de Lote (Desde Panel Lateral)
+  handleDecommission(event: { loteId: number, product: ProductoCard }) {
+    Swal.fire({
+      title: 'Formalizar Baja de Lote',
+      text: '¿Desea retirar este lote? Seleccione el motivo legal:',
+      icon: 'warning',
+      input: 'select',
+      inputOptions: {
+        'VENCIMIENTO': 'Vencimiento',
+        'DAÑO_FISICO': 'Daño Físico',
+        'ROBO': 'Robo',
+        'OTRO': 'Otro'
+      },
+      inputPlaceholder: 'Seleccione un motivo',
+      showCancelButton: true,
+      confirmButtonText: 'Dar de Baja',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc2626',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Debe seleccionar un motivo para continuar';
+        }
+        return null;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const motivo = result.value;
+
+        Swal.fire({
+          title: 'Procesando...',
+          didOpen: () => Swal.showLoading(),
+          allowOutsideClick: false
+        });
+
+        this.productService.darDeBajaLote(event.loteId, motivo).subscribe({
+          next: (res) => {
+            Swal.fire({
+              title: 'Lote de Baja Correcta',
+              html: `Operación exitosa.<br><b>Motivo:</b> ${res.motivo}<br><b>Stock ajustado:</b> ${res.cantidadAjustada} unidades`,
+              icon: 'success'
+            });
+
+            // Refrescar los lotes del producto actual sin cerrar el panel
+            this.productService.getLotesDisponibles(event.product.id).subscribe(data => {
+              this.selectedProductData = data;
+
+              // También refrescar la lista general para ver el stock actualizado
+              this.loadProducts();
+            });
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Error', 'No se pudo procesar la baja del lote. Asegúrate de que el lote tenga existencias.', 'error');
+          }
+        });
       }
     });
   }
@@ -325,27 +421,27 @@ export class ProductListComponent implements OnInit {
     }
   }
 
-  // 5. 🗑️ Eliminar
-  eliminarProducto(product: ProductoCard) {
+  // 5. 🗑️ Desactivar (Soft Delete)
+  desactivarProducto(product: ProductoCard) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Vas a eliminar ${product.nombreComercial}. Esta acción no se puede deshacer.`,
+      text: `Vas a desactivar ${product.nombreComercial}. Ya no estará disponible para la venta.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, desactivar',
       cancelButtonText: 'Cancelar'
     }).then((result: any) => {
       if (result.isConfirmed) {
-        this.productService.deleteProduct(product.id).subscribe({
+        this.productService.toggleEstado(product.id, 'INACTIVO').subscribe({
           next: () => {
-            Swal.fire('Eliminado!', 'El producto ha sido eliminado.', 'success');
+            Swal.fire('Desactivado!', 'El producto ha sido desactivado.', 'success');
             this.loadProducts(); // Recargar tabla
           },
           error: (err) => {
             console.error(err);
-            Swal.fire('Error', 'No se pudo eliminar el producto.', 'error');
+            Swal.fire('Error', 'No se pudo desactivar el producto.', 'error');
           }
         });
       }
