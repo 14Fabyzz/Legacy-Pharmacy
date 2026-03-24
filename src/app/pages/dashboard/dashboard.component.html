@@ -62,16 +62,17 @@
 
         <ng-container *ngIf="transactionList.length > 0; else noTransacciones">
           <div class="transaction-item" *ngFor="let tx of transactionList">
-
             <div class="tx-icon" [ngClass]="{
-              'sub': tx.tipo === 'ENTRADA' || tx.tipo === 'AJUSTE',
-              'add': tx.tipo === 'SALIDA',
+              'add': tx.cantidad > 0 && tx.tipo !== 'DEVOLUCION',
+              'sub': tx.cantidad < 0 || tx.tipo === 'SALIDA',
               'card-pay': tx.tipo === 'DEVOLUCION'
             }">
               <i class="fas" [ngClass]="{
-                'fa-box': tx.tipo === 'ENTRADA' || tx.tipo === 'AJUSTE',
-                'fa-money-bill-wave': tx.tipo === 'SALIDA',
-                'fa-exchange-alt': tx.tipo === 'DEVOLUCION'
+                'fa-plus': tx.cantidad > 0 && tx.tipo !== 'DEVOLUCION',
+                'fa-minus': tx.cantidad < 0 || tx.tipo === 'SALIDA',
+                'fa-box': tx.tipo === 'ENTRADA',
+                'fa-exchange-alt': tx.tipo === 'DEVOLUCION',
+                'fa-trash': tx.tipo === 'AJUSTE' || tx.detalle === 'BAJA'
               }"></i>
             </div>
 
@@ -83,10 +84,10 @@
             </div>
 
             <div class="tx-amount" [ngClass]="{
-              'negative': tx.tipo === 'ENTRADA' || tx.tipo === 'AJUSTE',
-              'positive': tx.tipo === 'SALIDA' || tx.tipo === 'DEVOLUCION'
+              'positive': tx.cantidad > 0,
+              'negative': tx.cantidad < 0
             }">
-              {{ (tx.tipo === 'SALIDA' ? '-' : '+') }}{{ tx.cantidad }} uds
+              {{ (tx.cantidad > 0 ? '+' : '') }}{{ tx.cantidad }} uds
             </div>
           </div>
         </ng-container>

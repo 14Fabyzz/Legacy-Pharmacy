@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 import { ProductService, DashboardAlertas, LoteAlerta, ProductoBajoStock } from '../product.service';
 
 @Component({
@@ -79,11 +80,53 @@ export class ExpirationDashboardComponent implements OnInit, OnDestroy {
     }
 
     darDeBaja(loteId: number): void {
-        if (confirm('¿Estás seguro de dar de baja este lote vencido?')) {
-            this.productService.darDeBajaLote(loteId).subscribe(() => {
-                alert('Lote dado de baja correctamente.');
-                this.loadDashboardData();
-            });
-        }
+        Swal.fire({
+            title: 'Dar de Baja Lote',
+            text: 'Seleccione el motivo de la baja formal (se ajustará el stock a 0)',
+            icon: 'warning',
+            input: 'select',
+            inputOptions: {
+                'VENCIMIENTO': 'Vencimiento',
+                'DAÑO_FISICO': 'Daño Físico',
+                'ROBO': 'Robo',
+                'OTRO': 'Otro'
+            },
+            inputPlaceholder: 'Seleccione un motivo',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar Baja',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc2626',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Debes seleccionar un motivo';
+                }
+                return null;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const motivo = result.value;
+                
+                Swal.fire({
+                    title: 'Procesando...',
+                    didOpen: () => Swal.showLoading(),
+                    allowOutsideClick: false
+                });
+
+                this.productService.darDeBajaLote(loteId, motivo).subscribe({
+                    next: (res) => {
+                        Swal.fire({
+                            title: 'Lote de Baja',
+                            html: `El lote ha sido retirado correctamente.<br><b>Motivo:</b> ${res.motivo}<br><b>Stock ajustado:</b> ${res.cantidadAjustada} unidades`,
+                            icon: 'success'
+                        });
+                        this.loadDashboardData();
+                    },
+                    error: (err) => {
+                        console.error('Error al dar de baja el lote:', err);
+                        Swal.fire('Error', 'No se pudo procesar la baja del lote. Verifique el estado.', 'error');
+                    }
+                });
+            }
+        });
     }
 }

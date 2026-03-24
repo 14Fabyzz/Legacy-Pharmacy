@@ -13,9 +13,17 @@ export class InventoryDetailPanelComponent {
     @Input() isVisible = false;
     @Input() data: ProductoConLotesResponse | null = null;
     @Output() close = new EventEmitter<void>();
+    @Output() decommission = new EventEmitter<{ loteId: number, product: ProductoCard }>();
+    @Input() product: ProductoCard | null = null; // We need the product info for refresh context
 
     onClose() {
         this.close.emit();
+    }
+
+    onDecommission(loteId: number) {
+        if (this.product) {
+            this.decommission.emit({ loteId, product: this.product });
+        }
     }
 
     isNearExpiry(dateStr: string | Date): boolean {
