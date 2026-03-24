@@ -14,7 +14,9 @@ import {
   MovimientoKardex,
   ProductoConsulta,
   ProductoConLotesResponse,
-  DetalleProducto
+  DetalleProducto,
+  BajaLoteRequest,
+  BajaLoteResponse
 } from '../../core/models/product.model';
 import { environment } from '../../../environments/environment';
 
@@ -98,7 +100,7 @@ export class ProductService {
     return this.http.get<DashboardAlertas>(`${this.apiUrl}/dashboard/alertas`, { headers });
   }
 
-  getProductosAlmacen(busqueda?: string): Observable<ProductoCard[]> {
+  getProductosAlmacen(busqueda?: string, estado?: string): Observable<ProductoCard[]> {
     const headers = this.getHeaders();
     if (!headers) {
 
@@ -108,6 +110,9 @@ export class ProductService {
     let params = new HttpParams();
     if (busqueda) {
       params = params.set('busqueda', busqueda);
+    }
+    if (estado) {
+      params = params.set('estado', estado);
     }
 
     // Endpoint: http://localhost:8080/api/inventario/dashboard/cards
@@ -259,10 +264,14 @@ export class ProductService {
 
 
 
-  darDeBajaLote(loteId: number): Observable<void> {
+  darDeBajaLote(loteId: number, motivo: string): Observable<BajaLoteResponse> {
     const headers = this.getHeaders();
-    if (!headers) return of(void 0);
-    return this.http.delete<void>(`${this.apiUrl}/lotes/${loteId}`, { headers });
+    if (!headers) return throwError(() => new Error('No authenticated'));
+    
+    const request: BajaLoteRequest = { motivo };
+    
+    // Endpoint: http://localhost:8080/api/inventario/lotes/{id_lote}/baja
+    return this.http.patch<BajaLoteResponse>(`${this.apiUrl}/lotes/${loteId}/baja`, request, { headers });
   }
 
   procesarEntradaMasiva(items: any[]): Observable<any> {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CrearVentaDTO, VentaResponseDTO, ProductoBusquedaResponse } from '../models/sales.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -13,7 +14,7 @@ export class SalesService {
     // El controlador Java tiene @RequestMapping("/ventas"). 
     // Asumiremos prefijo /api/ventas si pasa por Gateway o solo /ventas si es directo local.
     // Usaré /api/ventas alineado con la doc técnica dada por el usuario.
-    private apiUrl = 'http://localhost:8080/api/ventas';
+    private apiUrl = environment.apiUrl + '/api/ventas';
 
     // Fecha actual para el ticket
     get fecha(): Date {
@@ -50,14 +51,14 @@ export class SalesService {
      */
     buscarProductos(term: string): Observable<ProductoBusquedaResponse[]> {
         // Endpoint optimizado: GET /api/inventario/busqueda-pos?termino=...
-        return this.http.get<ProductoBusquedaResponse[]>(`http://localhost:8080/api/inventario/busqueda-pos?termino=${term}`);
+        return this.http.get<ProductoBusquedaResponse[]>(`${environment.apiUrl}/api/inventario/busqueda-pos?termino=${term}`);
     }
 
     /**
      * Consulta stock exacto de un producto y sus precios unitarios (Hybrid flow)
      */
     consultarStock(id: number, sucursalId: number = 1): Observable<any> {
-        return this.http.get<any>(`http://localhost:8080/api/inventario/productos/${id}/stock?sucursalId=${sucursalId}`);
+        return this.http.get<any>(`${environment.apiUrl}/api/inventario/productos/${id}/stock?sucursalId=${sucursalId}`);
     }
 
     /**
@@ -81,7 +82,7 @@ export class SalesService {
             headers = { 'Authorization': `Bearer ${token}` };
         }
 
-        return this.http.get<any>('http://localhost:8080/api/ventas/caja/turno-activo', { headers });
+        return this.http.get<any>(`${environment.apiUrl}/api/ventas/caja/turno-activo`, { headers });
     }
 
     /**
@@ -96,8 +97,21 @@ export class SalesService {
         if (token) {
             headers = { 'Authorization': `Bearer ${token}` };
         }
-        return this.http.get<any>('http://localhost:8080/api/v1/ventas/caja/estado', { headers });
+        return this.http.get<any>(`${environment.apiUrl}/api/v1/ventas/caja/estado`, { headers });
     }
 
     // TODO: Agregar métodos de caja y clientes según se necesiten
+
+    /**
+     * Consulta las ventas de la semana actual.
+     * Endpoint: GET /api/v1/ventas/semanales
+     */
+    obtenerVentasSemanales(): Observable<any> {
+        const token = localStorage.getItem('authToken');
+        let headers = {};
+        if (token) {
+            headers = { 'Authorization': `Bearer ${token}` };
+        }
+        return this.http.get<any>(`${environment.apiUrl}/api/v1/ventas/semanales`, { headers });
+    }
 }
