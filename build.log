@@ -1,0 +1,1346 @@
+
+> mi-dashboard@0.0.0 build
+> ng build --progress=false
+
+[35mPrerendered 0 static routes.[39m
+Application bundle generation failed. [7.174 seconds]
+
+Ô£ÿ [ERROR] NG2: This kind of expression is always truthy. [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:65:70:
+      65 Ôöé ... dataInventario?.rotacionInventarioIri | number:'1.2-2' || '--' }}
+         ÔòÁ                                                    ~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG2: This kind of expression is always truthy. [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:68:56:
+      68 Ôöé ...       GMROI: {{ dataInventario?.gmroi | number:'1.2-2' || '--' }}
+         ÔòÁ                                                    ~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:71:15:
+      71 Ôöé ...          STR: {{ (dataInventario?.sellThroughRate / 100) | per...
+         ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:84:48:
+      84 Ôöé ...  <div class="widget-controls" (click)="$event.stopPropagation()">
+         ÔòÁ                                            ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:85:57:
+      85 Ôöé ..."widget-date-select" (change)="setFiltro('filtroVentas', $event)">
+         ÔòÁ                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:86:22:
+      86 Ôöé ...       <option *ngFor="let op of opcionesBloque1" [value]="op" ...
+         ÔòÁ                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:86:66:
+      86 Ôöé ...p of opcionesBloque1" [value]="op" [selected]="op === filtroVen...
+         ÔòÁ                                   ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:86:82:
+      86 Ôöé ...1" [value]="op" [selected]="op === filtroVentas">{{ op }}</option>
+         ÔòÁ                                ~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:86:103:
+      86 Ôöé ...1" [value]="op" [selected]="op === filtroVentas">{{ op }}</option>
+         ÔòÁ                                                     ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:93:15:
+      93 Ôöé           <div *ngIf="loadingVentas" class="mt-3">
+         ÔòÁ                ~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:96:15:
+      96 Ôöé           <div *ngIf="errorVentas" class="text-danger small mt-2">...
+         ÔòÁ                ~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:98:13:
+      98 Ôöé           <p *ngIf="!loadingVentas && !errorVentas">
+         ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:100:15:
+      100 Ôöé ...          TICKET: {{ dataVentas?.ticketPromedio | currency:'CO...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG2: This kind of expression is always truthy. [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:100:86:
+      100 Ôöé ...icketPromedio | currency:'COP':'symbol-narrow':'1.0-0' || '--' }}
+          ÔòÁ                                                   ~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:103:15:
+      103 Ôöé ...          MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) |...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:103:15:
+      103 Ôöé ...          MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) |...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:106:15:
+      106 Ôöé ...          UPT: {{ dataVentas?.unitsPerTransactionUpt | number:...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:106:15:
+      106 Ôöé ...          UPT: {{ dataVentas?.unitsPerTransactionUpt | number:...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG2: This kind of expression is always truthy. [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:106:67:
+      106 Ôöé ...{{ dataVentas?.unitsPerTransactionUpt | number:'1.1-2' || '--' }}
+          ÔòÁ                                                   ~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:129:57:
+      129 Ôöé ...date-select" (change)="setFiltro('filtroVentasCliente', $event)">
+          ÔòÁ                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:129:57:
+      129 Ôöé ...date-select" (change)="setFiltro('filtroVentasCliente', $event)">
+          ÔòÁ                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:130:22:
+      130 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:130:22:
+      130 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:130:66:
+      130 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroVen...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:130:66:
+      130 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroVen...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:130:82:
+      130 Ôöé ...e]="op" [selected]="op === filtroVentasCliente">{{ op }}</option>
+          ÔòÁ                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:130:82:
+      130 Ôöé ...e]="op" [selected]="op === filtroVentasCliente">{{ op }}</option>
+          ÔòÁ                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:130:110:
+      130 Ôöé ...e]="op" [selected]="op === filtroVentasCliente">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:130:110:
+      130 Ôöé ...e]="op" [selected]="op === filtroVentasCliente">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:132:67:
+      132 Ôöé ... (click)="refrescarReporte('Ventas por Cliente'); $event.stopP...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:132:67:
+      132 Ôöé ... (click)="refrescarReporte('Ventas por Cliente'); $event.stopP...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:148:57:
+      148 Ôöé ...-select" (change)="setFiltro('filtroVentasClienteProd', $event)">
+          ÔòÁ                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:148:57:
+      148 Ôöé ...-select" (change)="setFiltro('filtroVentasClienteProd', $event)">
+          ÔòÁ                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:149:22:
+      149 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:149:22:
+      149 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:149:66:
+      149 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroVen...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:149:66:
+      149 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroVen...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:149:82:
+      149 Ôöé ...op" [selected]="op === filtroVentasClienteProd">{{ op }}</option>
+          ÔòÁ                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:149:82:
+      149 Ôöé ...op" [selected]="op === filtroVentasClienteProd">{{ op }}</option>
+          ÔòÁ                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:149:114:
+      149 Ôöé ...op" [selected]="op === filtroVentasClienteProd">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:149:114:
+      149 Ôöé ...op" [selected]="op === filtroVentasClienteProd">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:151:67:
+      151 Ôöé ... (click)="refrescarReporte('Venta por Cliente y Producto'); $e...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:151:67:
+      151 Ôöé ... (click)="refrescarReporte('Venta por Cliente y Producto'); $e...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:167:57:
+      167 Ôöé ...t-date-select" (change)="setFiltro('filtroConsolidado', $event)">
+          ÔòÁ                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:167:57:
+      167 Ôöé ...t-date-select" (change)="setFiltro('filtroConsolidado', $event)">
+          ÔòÁ                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:168:22:
+      168 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:168:22:
+      168 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:168:66:
+      168 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroCon...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:168:66:
+      168 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroCon...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:168:82:
+      168 Ôöé ...lue]="op" [selected]="op === filtroConsolidado">{{ op }}</option>
+          ÔòÁ                          ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:168:82:
+      168 Ôöé ...lue]="op" [selected]="op === filtroConsolidado">{{ op }}</option>
+          ÔòÁ                          ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:168:108:
+      168 Ôöé ...lue]="op" [selected]="op === filtroConsolidado">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:168:108:
+      168 Ôöé ...lue]="op" [selected]="op === filtroConsolidado">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:170:67:
+      170 Ôöé ... (click)="refrescarReporte('Consolidado de Ventas'); $event.st...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:170:67:
+      170 Ôöé ... (click)="refrescarReporte('Consolidado de Ventas'); $event.st...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:186:57:
+      186 Ôöé ...-select" (change)="setFiltro('filtroComparativoVentas', $event)">
+          ÔòÁ                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:186:57:
+      186 Ôöé ...-select" (change)="setFiltro('filtroComparativoVentas', $event)">
+          ÔòÁ                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:187:22:
+      187 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:187:22:
+      187 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:187:66:
+      187 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroCom...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:187:66:
+      187 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroCom...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:187:82:
+      187 Ôöé ...op" [selected]="op === filtroComparativoVentas">{{ op }}</option>
+          ÔòÁ                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:187:82:
+      187 Ôöé ...op" [selected]="op === filtroComparativoVentas">{{ op }}</option>
+          ÔòÁ                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:187:114:
+      187 Ôöé ...op" [selected]="op === filtroComparativoVentas">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:187:114:
+      187 Ôöé ...op" [selected]="op === filtroComparativoVentas">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:189:67:
+      189 Ôöé ... (click)="refrescarReporte('Comparativo Mes a Mes'); $event.st...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:189:67:
+      189 Ôöé ... (click)="refrescarReporte('Comparativo Mes a Mes'); $event.st...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:209:57:
+      209 Ôöé ...-date-select" (change)="setFiltro('filtroTopProductos', $event)">
+          ÔòÁ                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:209:57:
+      209 Ôöé ...-date-select" (change)="setFiltro('filtroTopProductos', $event)">
+          ÔòÁ                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:210:22:
+      210 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:210:22:
+      210 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:210:66:
+      210 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroTop...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:210:66:
+      210 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroTop...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:210:82:
+      210 Ôöé ...ue]="op" [selected]="op === filtroTopProductos">{{ op }}</option>
+          ÔòÁ                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:210:82:
+      210 Ôöé ...ue]="op" [selected]="op === filtroTopProductos">{{ op }}</option>
+          ÔòÁ                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:210:109:
+      210 Ôöé ...ue]="op" [selected]="op === filtroTopProductos">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:210:109:
+      210 Ôöé ...ue]="op" [selected]="op === filtroTopProductos">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:212:67:
+      212 Ôöé ... (click)="refrescarReporte('Top 10 Productos'); $event.stopPro...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:212:67:
+      212 Ôöé ... (click)="refrescarReporte('Top 10 Productos'); $event.stopPro...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:228:57:
+      228 Ôöé ...-date-select" (change)="setFiltro('filtroBajaRotacion', $event)">
+          ÔòÁ                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:228:57:
+      228 Ôöé ...-date-select" (change)="setFiltro('filtroBajaRotacion', $event)">
+          ÔòÁ                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:229:22:
+      229 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:229:22:
+      229 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:229:66:
+      229 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroBaj...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:229:66:
+      229 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroBaj...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:229:82:
+      229 Ôöé ...ue]="op" [selected]="op === filtroBajaRotacion">{{ op }}</option>
+          ÔòÁ                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:229:82:
+      229 Ôöé ...ue]="op" [selected]="op === filtroBajaRotacion">{{ op }}</option>
+          ÔòÁ                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:229:109:
+      229 Ôöé ...ue]="op" [selected]="op === filtroBajaRotacion">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:229:109:
+      229 Ôöé ...ue]="op" [selected]="op === filtroBajaRotacion">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:231:67:
+      231 Ôöé ... (click)="refrescarReporte('Baja Rotaci├│n'); $event.stopPropa...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:231:67:
+      231 Ôöé ... (click)="refrescarReporte('Baja Rotaci├│n'); $event.stopPropa...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:247:57:
+      247 Ôöé ...te-select" (change)="setFiltro('filtroComparativoProd', $event)">
+          ÔòÁ                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:247:57:
+      247 Ôöé ...te-select" (change)="setFiltro('filtroComparativoProd', $event)">
+          ÔòÁ                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:248:22:
+      248 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:248:22:
+      248 Ôöé ...      <option *ngFor="let op of opcionesBloque2" [value]="op" ...
+          ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:248:66:
+      248 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroCom...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:248:66:
+      248 Ôöé ... of opcionesBloque2" [value]="op" [selected]="op === filtroCom...
+          ÔòÁ                                  ~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:248:82:
+      248 Ôöé ...="op" [selected]="op === filtroComparativoProd">{{ op }}</option>
+          ÔòÁ                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:248:82:
+      248 Ôöé ...="op" [selected]="op === filtroComparativoProd">{{ op }}</option>
+          ÔòÁ                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:248:112:
+      248 Ôöé ...="op" [selected]="op === filtroComparativoProd">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:248:112:
+      248 Ôöé ...="op" [selected]="op === filtroComparativoProd">{{ op }}</option>
+          ÔòÁ                                                    ~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ MARGEN: {{ (dataVentas?.margenUtilidadBruta / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@102:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:250:67:
+      250 Ôöé ... (click)="refrescarReporte('Comparativo por Producto'); $event...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Ô£ÿ [ERROR] NG5002: Parser Error: Unexpected token '||' at column 52 in [ STR: {{ (dataInventario?.sellThroughRate / 100) | percent || '--' }} ] in D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\src\app\pages\reportes\reportes.component.html@70:15 [plugin angular-compiler]
+
+    src/app/pages/reportes/reportes.component.html:250:67:
+      250 Ôöé ... (click)="refrescarReporte('Comparativo por Producto'); $event...
+          ÔòÁ              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component ReportesComponent.
+
+    src/app/pages/reportes/reportes.component.ts:8:17:
+      8 Ôöé     templateUrl: './reportes.component.html',
+        ÔòÁ                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

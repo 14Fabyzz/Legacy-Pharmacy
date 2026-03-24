@@ -1,0 +1,237 @@
+[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+[35mBrowser bundles[39m      
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-ZAVCK2R4.js[39m    [2m | [22m[2m-[22m                     [2m | [22m[36m309.73 kB[39m[2m | [22m               [36m83.70 kB[39m
+[32mmain-TIBIMRBR.js[39m     [2m | [22m[2mmain[22m                  [2m | [22m[36m287.52 kB[39m[2m | [22m               [36m80.65 kB[39m
+[32mchunk-ATVZCPG3.js[39m    [2m | [22m[2m-[22m                     [2m | [22m [36m79.55 kB[39m[2m | [22m               [36m18.72 kB[39m
+[32mchunk-ZTUO5TWD.js[39m    [2m | [22m[2m-[22m                     [2m | [22m [36m58.89 kB[39m[2m | [22m               [36m13.11 kB[39m
+[32mchunk-S7HZDYHB.js[39m    [2m | [22m[2m-[22m                     [2m | [22m [36m45.13 kB[39m[2m | [22m                [36m9.05 kB[39m
+[32mpolyfills-B6TNHZQ6.js[39m[2m | [22m[2mpolyfills[22m             [2m | [22m [36m34.58 kB[39m[2m | [22m               [36m11.32 kB[39m
+[32mchunk-GUSEIOFI.js[39m    [2m | [22m[2m-[22m                     [2m | [22m  [36m4.86 kB[39m[2m | [22m                [36m1.46 kB[39m
+[32mstyles-H7KBGDDJ.css[39m  [2m | [22m[2mstyles[22m                [2m | [22m  [36m3.92 kB[39m[2m | [22m                [36m1.16 kB[39m
+[32mchunk-KOVCJFB6.js[39m    [2m | [22m[2m-[22m                     [2m | [22m  [36m2.70 kB[39m[2m | [22m                [36m1.01 kB[39m
+[32mchunk-UV57IDHW.js[39m    [2m | [22m[2m-[22m                     [2m | [22m  [36m1.60 kB[39m[2m | [22m              [36m434 bytes[39m
+[32mchunk-7YKH4PDI.js[39m    [2m | [22m[2m-[22m                     [2m | [22m  [36m1.59 kB[39m[2m | [22m              [36m685 bytes[39m
+[32mchunk-RHC2PXKS.js[39m    [2m | [22m[2m-[22m                     [2m | [22m  [36m1.57 kB[39m[2m | [22m              [36m696 bytes[39m
+[32mchunk-GABVENEX.js[39m    [2m | [22m[2m-[22m                     [2m | [22m  [36m1.19 kB[39m[2m | [22m              [36m453 bytes[39m
+[32mchunk-FDERIQAA.js[39m    [2m | [22m[2m-[22m                     [2m | [22m  [36m1.11 kB[39m[2m | [22m              [36m514 bytes[39m
+[32mchunk-WYY2TWNJ.js[39m    [2m | [22m[2m-[22m                     [2m | [22m[36m613 bytes[39m[2m | [22m              [36m613 bytes[39m
+[32mchunk-3R3FOXBL.js[39m    [2m | [22m[2m-[22m                     [2m | [22m[36m597 bytes[39m[2m | [22m              [36m597 bytes[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m         [2m | [22m[1m[93m835.14 kB[39m[22m[2m | [22m              [1m224.17 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-HBX4TGVR.js[39m    [2m | [22m[2mreportes-module[22m       [2m | [22m[36m501.71 kB[39m[2m | [22m              [36m133.51 kB[39m
+[32mchunk-BRBLKDSZ.js[39m    [2m | [22m[2m-[22m                     [2m | [22m[36m203.11 kB[39m[2m | [22m               [36m38.56 kB[39m
+[32mchunk-WKAFQXQ7.js[39m    [2m | [22m[2mindex-es[22m              [2m | [22m[36m158.90 kB[39m[2m | [22m               [36m46.78 kB[39m
+[32mchunk-UPEBANBU.js[39m    [2m | [22m[2mproducts-module[22m       [2m | [22m[36m117.24 kB[39m[2m | [22m               [36m22.46 kB[39m
+[32mchunk-F2RIRBNW.js[39m    [2m | [22m[2msales-module[22m          [2m | [22m [36m71.06 kB[39m[2m | [22m               [36m16.93 kB[39m
+[32mchunk-7IECQ6JG.js[39m    [2m | [22m[2mcaja-module[22m           [2m | [22m [36m35.33 kB[39m[2m | [22m                [36m7.51 kB[39m
+[32mchunk-SQTPJGCX.js[39m    [2m | [22m[2mdevoluciones-component[22m[2m | [22m [36m28.65 kB[39m[2m | [22m                [36m7.00 kB[39m
+[32mchunk-DCWLI6RL.js[39m    [2m | [22m[2m-[22m                     [2m | [22m [36m28.36 kB[39m[2m | [22m                [36m6.63 kB[39m
+[32mchunk-QPONWVWP.js[39m    [2m | [22m[2musers-module[22m          [2m | [22m [36m27.43 kB[39m[2m | [22m                [36m6.76 kB[39m
+[32mchunk-QXSLYJU6.js[39m    [2m | [22m[2mpurify-es[22m             [2m | [22m [36m22.37 kB[39m[2m | [22m                [36m7.75 kB[39m
+[32mchunk-MZHFHQN4.js[39m    [2m | [22m[2mcategorias-module[22m     [2m | [22m [36m12.74 kB[39m[2m | [22m                [36m3.81 kB[39m
+[32mchunk-UY4J4WSU.js[39m    [2m | [22m[2mlaboratorios-module[22m   [2m | [22m [36m12.09 kB[39m[2m | [22m                [36m3.64 kB[39m
+[32mchunk-Q42L6KR2.js[39m    [2m | [22m[2m-[22m                     [2m | [22m  [36m1.27 kB[39m[2m | [22m              [36m537 bytes[39m
+[32mchunk-UGC3O72M.js[39m    [2m | [22m[2mclientes-module[22m       [2m | [22m[36m209 bytes[39m[2m | [22m              [36m209 bytes[39m
+[32mchunk-E66BORZQ.js[39m    [2m | [22m[2mhtml2canvas[22m           [2m | [22m [36m83 bytes[39m[2m | [22m               [36m83 bytes[39m
+
+
+[35mServer bundles[39m       
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m
+[32mserver.mjs[39m           [2m | [22m[2mserver[22m                [2m | [22m  [36m1.33 MB[39m[2m | [22m                       
+[32mmain.server.mjs[39m      [2m | [22m[2mmain.server[22m           [2m | [22m[36m735.17 kB[39m[2m | [22m                       
+[32mchunk-IPH4ZIAO.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m324.10 kB[39m[2m | [22m                       
+[32mpolyfills.server.mjs[39m [2m | [22m[2mpolyfills.server[22m      [2m | [22m[36m266.08 kB[39m[2m | [22m                       
+[32mchunk-CUVT6DSY.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m [36m79.19 kB[39m[2m | [22m                       
+[32mchunk-Z23PXYGP.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m [36m58.73 kB[39m[2m | [22m                       
+[32mchunk-BGKUOG3R.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m [36m45.17 kB[39m[2m | [22m                       
+[32mchunk-BAJEAE57.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m4.89 kB[39m[2m | [22m                       
+[32mchunk-H4UZCO6D.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m2.92 kB[39m[2m | [22m                       
+[32mchunk-K4KOIJT3.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m2.73 kB[39m[2m | [22m                       
+[32mchunk-UQWEF7J2.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m1.63 kB[39m[2m | [22m                       
+[32mchunk-TJOQQ5ZH.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m1.63 kB[39m[2m | [22m                       
+[32mchunk-CS4BDHQT.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m1.60 kB[39m[2m | [22m                       
+[32mchunk-GFUZYSQG.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m1.24 kB[39m[2m | [22m                       
+[32mchunk-7EFV5EQJ.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m1.22 kB[39m[2m | [22m                       
+[32mchunk-ZFZ2Y2XW.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m647 bytes[39m[2m | [22m                       
+[32mchunk-AIADTJVG.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m631 bytes[39m[2m | [22m                       
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m
+[32mchunk-JMCUMMWK.mjs[39m   [2m | [22m[2mreportes-module[22m       [2m | [22m[36m991.06 kB[39m[2m | [22m                       
+[32mchunk-64SIH5TB.mjs[39m   [2m | [22m[2mproducts-module[22m       [2m | [22m[36m117.10 kB[39m[2m | [22m                       
+[32mchunk-YIGWHOV4.mjs[39m   [2m | [22m[2msales-module[22m          [2m | [22m [36m71.11 kB[39m[2m | [22m                       
+[32mchunk-XNSMXRE5.mjs[39m   [2m | [22m[2mcaja-module[22m           [2m | [22m [36m35.38 kB[39m[2m | [22m                       
+[32mchunk-6GCV7RCO.mjs[39m   [2m | [22m[2mdevoluciones-component[22m[2m | [22m [36m28.59 kB[39m[2m | [22m                       
+[32mchunk-OQNVEWMN.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m [36m28.41 kB[39m[2m | [22m                       
+[32mchunk-OSLOVABH.mjs[39m   [2m | [22m[2musers-module[22m          [2m | [22m [36m27.48 kB[39m[2m | [22m                       
+[32mchunk-3RS4QIY7.mjs[39m   [2m | [22m[2mcategorias-module[22m     [2m | [22m [36m12.68 kB[39m[2m | [22m                       
+[32mchunk-EJSJJTUO.mjs[39m   [2m | [22m[2mxhr2[22m                  [2m | [22m [36m12.14 kB[39m[2m | [22m                       
+[32mchunk-5WAYVMQQ.mjs[39m   [2m | [22m[2mxhr2[22m                  [2m | [22m [36m12.07 kB[39m[2m | [22m                       
+[32mchunk-H672DBVN.mjs[39m   [2m | [22m[2mlaboratorios-module[22m   [2m | [22m [36m12.03 kB[39m[2m | [22m                       
+[32mchunk-2QCDTW6G.mjs[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m1.30 kB[39m[2m | [22m                       
+[32mchunk-25NCVISM.mjs[39m   [2m | [22m[2mclientes-module[22m       [2m | [22m[36m248 bytes[39m[2m | [22m                       
+
+[35mPrerendered 0 static routes.[39m
+Application bundle generation complete. [11.923 seconds]
+
+Ôû▓ [WARNING] bundle initial exceeded maximum budget. Budget 500.00 kB was not met by 335.14 kB with a total of 835.14 kB.
+
+
+Ôû▓ [WARNING] src/app/shared/components/chatbot-floating/chatbot-floating.component.css exceeded maximum budget. Budget 4.00 kB was not met by 7.76 kB with a total of 11.76 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/dashboard/dashboard.component.css exceeded maximum budget. Budget 4.00 kB was not met by 3.60 kB with a total of 7.60 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/products/expiration-semaphore/expiration-semaphore.component.css exceeded maximum budget. Budget 4.00 kB was not met by 555 bytes with a total of 4.55 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/products/product-search/product-search.component.css exceeded maximum budget. Budget 4.00 kB was not met by 3.13 kB with a total of 7.13 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/sales/new-sale/new-sale.component.css exceeded maximum budget. Budget 4.00 kB was not met by 4.35 kB with a total of 8.35 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/products/kardex/kardex.component.css exceeded maximum budget. Budget 4.00 kB was not met by 6.08 kB with a total of 10.08 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/caja/abrir-caja/abrir-caja.component.css exceeded maximum budget. Budget 4.00 kB was not met by 51 bytes with a total of 4.05 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/caja/cerrar-caja/cerrar-caja.component.css exceeded maximum budget. Budget 4.00 kB was not met by 1.80 kB with a total of 5.80 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/reportes/reportes.component.css exceeded maximum budget. Budget 4.00 kB was not met by 784 bytes with a total of 4.78 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/caja/estado-caja/estado-caja.component.css exceeded maximum budget. Budget 4.00 kB was not met by 497 bytes with a total of 4.50 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/products/expiration-dashboard/expiration-dashboard.component.css exceeded maximum budget. Budget 4.00 kB was not met by 2.00 kB with a total of 6.00 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/purchases/purchase-entry/purchase-entry.component.css exceeded maximum budget. Budget 4.00 kB was not met by 2.40 kB with a total of 6.40 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/sales/historial-ventas/historial-ventas.component.css exceeded maximum budget. Budget 4.00 kB was not met by 1.18 kB with a total of 5.18 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/products/product-list/product-list.component.css exceeded maximum budget. Budget 4.00 kB was not met by 7.96 kB with a total of 11.96 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/devoluciones/devoluciones.component.css exceeded maximum budget. Budget 4.00 kB was not met by 4.69 kB with a total of 8.69 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/users/users-list/users-list.component.css exceeded maximum budget. Budget 4.00 kB was not met by 1.82 kB with a total of 5.82 kB.
+
+
+Ôû▓ [WARNING] src/app/pages/products/product-form/product-form.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 2.56 kB with a total of 6.56 kB.
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.promise.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.string.match.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.string.replace.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.string.starts-with.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.array.iterator.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/web.dom-collections.iterator.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.array.reduce.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.string.ends-with.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.string.split.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'raf' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.string.trim.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'rgbcolor' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.array.index-of.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.string.includes.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.array.reverse.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'core-js/modules/es.regexp.to-string.js' used by 'node_modules/canvg/lib/index.es.js' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module 'jspdf' used by 'src/app/pages/reportes/resumen-inteligente/resumen-inteligente.component.ts' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Output location: D:\Proyectos\LegacyPharmacy\Desarrollo\develop\Legacy-Pharmacy\dist\mi-dashboard
+
