@@ -1,0 +1,226 @@
+/* Container & Header */
+.reportes-dashboard {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.dashboard-header {
+  margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 1.5rem;
+}
+.header-titles h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #1e293b, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.header-titles p {
+  color: #64748b;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Back Button */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #ffffff;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  cursor: pointer;
+}
+.btn-back:hover {
+  background-color: #f8fafc;
+  color: #2563eb;
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+.btn-back i {
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+.btn-back:hover i {
+  transform: translateX(-4px);
+}
+
+/* Card & Table Container */
+.reporte-container-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  overflow: hidden;
+  position: relative;
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modern Data Table */
+.table-modern {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.table-modern thead {
+  background: #f8fafc;
+}
+.table-modern thead th {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+.table-modern tbody tr {
+  transition: all 0.2s ease;
+}
+.table-modern tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+.table-modern tbody tr:hover {
+  background-color: #f1f5f9;
+  transform: scale(1.001);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02) inset;
+}
+.table-modern tbody td {
+  padding: 1.1rem 1.5rem;
+  font-size: 0.95rem;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+.table-modern tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Cell Highlights */
+.fw-semibold { font-weight: 600 !important; color: #0f172a !important; }
+.text-highlight { 
+  font-weight: 700;
+  color: #16a34a; 
+  background: #dcfce7;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.1);
+}
+
+/* Alerts and Loaders */
+.visual-alert {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 12px;
+  margin: 2rem;
+}
+.alert-warning-custom { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.alert-error-custom { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+/* Alineación forzada de tablas según requerimiento de Gemini */
+.col-dato-numerico {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+.text-start-forced {
+    text-align: left !important;
+}
+
+/* =========================================
+   Estilos IDÉNTICOS a Pulso Inventario 
+   ========================================= */
+.filter-section {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+}
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+.form-control-custom {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  width: 100%;
+}
+.form-control-custom:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+.btn-group-custom {
+  display: flex;
+  align-items: flex-end;
+}
+.btn-search-custom {
+  padding: 0.56rem 1.2rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+.btn-search-custom:hover:not([disabled]) {
+  background-color: #2563eb;
+}
+.btn-search-custom[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .table-modern thead th, .table-modern tbody td { padding: 0.75rem 1rem; }
+}

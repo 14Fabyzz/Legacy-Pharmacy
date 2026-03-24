@@ -1,0 +1,87 @@
+<div class="reportes-dashboard">
+  
+  <!-- Encabezado con botón Volver -->
+  <div class="dashboard-header">
+    <div class="header-titles">
+      <h2>{{ tituloReporte }}</h2>
+      <p>Vista detallada del reporte seleccionado en Regen Salud POS.</p>
+    </div>
+    <button class="btn-back" (click)="router.navigate(['/app/reportes'])">
+      <i class="bi bi-arrow-left"></i> Regresar a reportes
+    </button>
+  </div>
+
+  <!-- Selector de Fecha Manual (Aislado, con estilo Pulso Inventario) -->
+  <div class="filter-section">
+    <div class="filter-row">
+      <div class="form-group">
+        <label><i class="bi bi-calendar-event me-1"></i> Fecha Inicio:</label>
+        <input type="date" class="form-control-custom" #inicioInput (change)="fechaInicioForm = inicioInput.value" [value]="fechaInicioForm">
+      </div>
+      <div class="form-group">
+        <label><i class="bi bi-calendar-event me-1"></i> Fecha Fin:</label>
+        <input type="date" class="form-control-custom" #finInput (change)="fechaFinForm = finInput.value" [value]="fechaFinForm">
+      </div>
+      <div class="form-group btn-group-custom">
+        <button class="btn-search-custom mt-2" (click)="consultarFechaManual()" [disabled]="reporteLoading">
+          <i class="bi bi-search me-1"></i> {{ reporteLoading ? 'Consultando...' : 'Consultar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="reporte-container-card">
+    
+    <!-- Loader -->
+    <div *ngIf="reporteLoading" class="text-center py-5">
+      <div class="spinner-grow text-primary mb-3" role="status" style="width: 3.5rem; height: 3.5rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <h5 class="mt-2 text-secondary fw-bold">Procesando conjunto de datos...</h5>
+      <p class="text-muted small mb-0">Consultando registros históricos en tiempo real</p>
+    </div>
+    
+    <!-- Errores y Vacíos -->
+    <div *ngIf="reporteError" class="visual-alert alert-error-custom">
+      <i class="bi bi-exclamation-octagon fs-3"></i>
+      <span>Ocurrió un error de conexión al tratar de obtener la información del servidor.</span>
+    </div>
+    
+    <div *ngIf="!reporteLoading && !reporteError && reporteData.length === 0" class="visual-alert alert-warning-custom">
+      <i class="bi bi-inbox fs-3"></i>
+      <span>No existen operaciones registradas que coincidan con los criterios de este reporte.</span>
+    </div>
+    
+    <!-- Tabla de Datos -->
+    <div class="table-responsive" *ngIf="!reporteLoading && !reporteError && reporteData.length > 0">
+      <table class="table-modern">
+        <thead>
+          <tr>
+            <th *ngFor="let col of reporteColumnas" 
+                [class.text-start-forced]="col.toLowerCase() === 'cliente' || col.toLowerCase() === 'producto'"
+                [class.col-dato-numerico]="col.toLowerCase() !== 'cliente' && col.toLowerCase() !== 'producto'">
+              {{ col }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of reporteData">
+            <td *ngFor="let col of reporteColumnas" 
+                [class.text-start-forced]="col.toLowerCase() === 'cliente' || col.toLowerCase() === 'producto'"
+                [class.col-dato-numerico]="col.toLowerCase() !== 'cliente' && col.toLowerCase() !== 'producto'">
+              <ng-container *ngIf="col === 'total' || col === 'subtotal' || col === 'margen'; else regularCol">
+                <span class="text-highlight">{{ row[col] | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+              </ng-container>
+              <ng-template #regularCol>
+                <span [class.fw-semibold]="col === 'cliente' || col === 'producto' || col === 'fecha' || col === 'mes'">
+                  {{ row[col] != null ? row[col] : '--' }}
+                </span>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
+</div>

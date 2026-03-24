@@ -1,48 +1,236 @@
 <div class="reportes-dashboard" *ngIf="isReportesHome">
-  <div class="dashboard-header text-center py-4">
-    <h2 class="fw-bold text-dark">Métricas y Análisis</h2>
-    <p class="text-secondary">Seleccione un módulo para visualizar los indicadores clave y reportes de Inteligencia Artificial.</p>
+  
+  <!-- Encabezado -->
+  <div class="dashboard-header">
+    <div class="header-titles">
+      <h2 class="fw-bold text-dark mb-1">Métricas y Reportes</h2>
+      <p class="text-secondary mb-0">Panel central de indicadores y análisis estratégico.</p>
+    </div>
   </div>
 
-  <div class="cards-grid px-3 pb-5">
-    <!-- Tarjeta 1 (IA) -->
-    <div class="reporte-card" routerLink="./resumen-inteligente">
-      <div class="icon-wrapper ia-theme"><i class="bi bi-stars"></i></div>
-      <div class="card-content">
-        <h3>Resumen Inteligente (IA)</h3>
-        <p>Análisis ejecutivo y recomendaciones generadas por Google Gemini.</p>
+  <!-- ZONA DESTACADA: Resumen Inteligente IA -->
+  <div class="ai-summary-section mb-5">
+    <div class="ai-card">
+      <div class="ai-card-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+           <div class="ai-icon-pulse"><i class="bi bi-stars"></i></div>
+           <h3 class="fw-bold mb-0">Resumen Inteligente IA</h3>
+        </div>
+        <button class="btn btn-primary btn-sm shadow-sm px-3" (click)="generarIA()" [disabled]="loadingIA">
+          <span *ngIf="!loadingIA"><i class="bi bi-robot me-1"></i> Generar Análisis de Negocio</span>
+          <span *ngIf="loadingIA" class="spinner-border spinner-border-sm"></span>
+        </button>
       </div>
-      <div class="card-action text-primary fw-bold">
-        <span>Ver Análisis <i class="bi bi-arrow-right-short"></i></span>
-      </div>
-    </div>
-
-    <!-- Tarjeta 2 (Inventario) -->
-    <div class="reporte-card" routerLink="./pulso-inventario">
-      <div class="icon-wrapper inv-theme"><i class="bi bi-box-seam"></i></div>
-      <div class="card-content">
-        <h3>Pulso de Inventario</h3>
-        <p>Métricas de rotación, retorno de inversión y cobertura de stock.</p>
-      </div>
-      <div class="card-action text-success fw-bold">
-        <span>Ver Pulso <i class="bi bi-arrow-right-short"></i></span>
-      </div>
-    </div>
-
-    <!-- Tarjeta 3 (Ventas) -->
-    <div class="reporte-card" routerLink="./motor-ventas">
-      <div class="icon-wrapper vent-theme"><i class="bi bi-cart3"></i></div>
-      <div class="card-content">
-        <h3>Motor de Ventas</h3>
-        <p>Análisis de ticket promedio, conversión y comportamiento del cliente.</p>
-      </div>
-      <div class="card-action text-info fw-bold">
-        <span>Ver Motor <i class="bi bi-arrow-right-short"></i></span>
+      <div class="ai-card-body">
+        <p class="ai-insight-text text-secondary" *ngIf="!dataIA && !errorIA && !loadingIA">
+          Haz clic en generar análisis para enviar las métricas del periodo actual a Google Gemini.
+        </p>
+        <p class="ai-insight-text" *ngIf="loadingIA">
+           <span class="spinner-grow spinner-grow-sm text-primary me-2"></span> Analizando el negocio... Un momento.
+        </p>
+        <p class="ai-insight-text text-danger" *ngIf="errorIA">
+           <i class="bi bi-exclamation-triangle"></i> Error al conectar con la Inteligencia Artificial (Microservicio ms-reportes no responde).
+        </p>
+        <p class="ai-insight-text text-dark" *ngIf="dataIA && !loadingIA">
+           <strong>Conclusión:</strong> {{ dataIA?.resumenGenerado }}
+        </p>
       </div>
     </div>
-
-
   </div>
+
+  <!-- SECCIÓN 1: Métricas de Negocio (El Pulso) -->
+  <div class="section-container mb-5">
+    <h3 class="section-title">Métricas de negocio</h3>
+    <div class="cards-grid">
+      <!-- Tarjeta 1 (Inventario) -->
+      <div class="reporte-card" routerLink="./pulso-inventario">
+        <div class="card-header-flex">
+          <div class="icon-wrapper inv-theme m-0"><i class="bi bi-box-seam"></i></div>
+          <div class="widget-controls" (click)="$event.stopPropagation()">
+            <select class="widget-date-select" (change)="setFiltro('filtroInventario', $event)">
+              <option *ngFor="let op of opcionesBloque1" [value]="op" [selected]="op === filtroInventario">{{ op }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-content mt-3">
+          <h3>Pulso de Inventario</h3>
+          
+          <div *ngIf="loadingInventario" class="mt-3">
+             <span class="spinner-border text-success spinner-border-sm"></span> Cargando datos...
+          </div>
+          <div *ngIf="errorInventario" class="text-danger small mt-2"><i class="bi bi-exclamation-circle"></i> No se pudo cargar el inventario.</div>
+          
+          <p *ngIf="!loadingInventario && !errorInventario" class="text-center flex-wrap d-flex justify-content-center gap-1">
+             <span class="badge text-bg-light text-secondary mt-2 border border-secondary-subtle" title="IRI">
+               IRI: {{ dataInventario?.rotacionInventarioIri != null ? (dataInventario?.rotacionInventarioIri | number:'1.2-2') : '--' }}
+             </span>
+             <span class="badge text-bg-light text-secondary mt-2 ms-1 border border-secondary-subtle" title="GMROI">
+               GMROI: {{ dataInventario?.gmroi != null ? (dataInventario?.gmroi | number:'1.2-2') : '--' }}
+             </span>
+             <span class="badge text-bg-light text-secondary mt-2 ms-1 border border-secondary-subtle" title="Sell-Through">
+               STR: {{ dataInventario?.sellThroughRate != null ? ((dataInventario.sellThroughRate / 100) | percent) : '--' }}
+             </span>
+          </p>
+          <div class="card-action text-success fw-bold">
+            <span>Ver Pulso <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2 (Ventas) -->
+      <div class="reporte-card" routerLink="./motor-ventas">
+        <div class="card-header-flex">
+          <div class="icon-wrapper vent-theme m-0"><i class="bi bi-cart3"></i></div>
+          <div class="widget-controls" (click)="$event.stopPropagation()">
+            <select class="widget-date-select" (change)="setFiltro('filtroVentas', $event)">
+              <option *ngFor="let op of opcionesBloque1" [value]="op" [selected]="op === filtroVentas">{{ op }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-content mt-3">
+          <h3>Motor de Ventas</h3>
+          
+          <div *ngIf="loadingVentas" class="mt-3">
+             <span class="spinner-border text-primary spinner-border-sm"></span> Cargando datos...
+          </div>
+          <div *ngIf="errorVentas" class="text-danger small mt-2"><i class="bi bi-exclamation-circle"></i> No se pudo cargar ventas.</div>
+          
+          <p *ngIf="!loadingVentas && !errorVentas" class="text-center flex-wrap d-flex justify-content-center gap-1">
+             <span class="badge text-bg-light text-secondary mt-2 border border-secondary-subtle" title="Ticket Promedio">
+               TICKET: {{ dataVentas?.ticketPromedio != null ? (dataVentas?.ticketPromedio | currency:'COP':'symbol-narrow':'1.0-0') : '--' }}
+             </span>
+             <span class="badge text-bg-light text-secondary mt-2 ms-1 border border-secondary-subtle" title="Margen Bruto">
+               MARGEN: {{ dataVentas?.margenUtilidadBruta != null ? ((dataVentas.margenUtilidadBruta / 100) | percent) : '--' }}
+             </span>
+             <span class="badge text-bg-light text-secondary mt-2 ms-1 border border-secondary-subtle" title="UPT">
+               UPT: {{ dataVentas?.unitsPerTransactionUpt != null ? (dataVentas?.unitsPerTransactionUpt | number:'1.1-2') : '--' }}
+             </span>
+          </p>
+          <div class="card-action text-info fw-bold">
+            <span>Ver Motor <i class="bi bi-arrow-right-short"></i></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: Reportes Analíticos (Análisis Profundo) -->
+  <div class="section-container pb-5">
+    <h3 class="section-title">Reportes del negocio</h3>
+    
+    <!-- Categoría: Análisis de Ventas -->
+    <h4 class="category-title mt-4 mb-3">Análisis de Ventas</h4>
+    <div class="analytics-grid">
+      <!-- Ventas por Cliente -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Ventas por Cliente')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0"><i class="bi bi-person-lines-fill text-primary"></i></div>
+          <!-- Filtros eliminados a petición para mantener interfaz limpia -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Ventas por Cliente</h5>
+          <p>Consulta interactiva de ventas segmentadas por cliente.</p>
+        </div>
+      </div>
+      
+      <!-- Venta por Cliente y Producto -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Venta por Cliente y Producto')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0"><i class="bi bi-bag-check text-primary"></i></div>
+          <!-- Filtros eliminados -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Venta por Cliente y Producto</h5>
+          <p>Consulta detallada de la adquisición de productos por cliente.</p>
+        </div>
+      </div>
+
+      <!-- Consolidado de Ventas -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Consolidado de Ventas')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0"><i class="bi bi-graph-up text-primary"></i></div>
+          <!-- Filtros eliminados -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Consolidado de Ventas</h5>
+          <p>Consulta de operaciones totales y volumen de ventas.</p>
+        </div>
+      </div>
+
+      <!-- Comparativo Mes a Mes -->
+      <div class="analytic-card flex-column" (click)="abrirReporteAnalitico('Comparativo de Ventas Mensuales')" style="cursor: pointer;">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0"><i class="bi bi-bar-chart-steps text-primary"></i></div>
+          <!-- Filtros eliminados -->
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Comparativo de Ventas Mensuales</h5>
+          <p>Gráficos de ventas mes a mes para análisis y comparación.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categoría: Rendimiento de Inventario -->
+    <h4 class="category-title mt-5 mb-3">Rendimiento de Inventario</h4>
+    <div class="analytics-grid">
+      <!-- Mejores Productos -->
+      <div class="analytic-card flex-column">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0"><i class="bi bi-trophy text-warning"></i></div>
+          <div class="widget-controls">
+            <select class="widget-date-select" (change)="setFiltro('filtroTopProductos', $event)">
+              <option *ngFor="let op of opcionesBloque2" [value]="op" [selected]="op === filtroTopProductos">{{ op }}</option>
+            </select>
+            <button class="btn-refresh" title="Refrescar" (click)="refrescarReporte('Top 10 Productos'); $event.stopPropagation()">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Top 10: Mejores Productos</h5>
+          <p>Listado de los productos con mayor volumen y margen.</p>
+        </div>
+      </div>
+
+      <!-- Baja Rotación -->
+      <div class="analytic-card flex-column">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0"><i class="bi bi-arrow-down-circle text-danger"></i></div>
+          <div class="widget-controls">
+            <select class="widget-date-select" (change)="setFiltro('filtroBajaRotacion', $event)">
+              <option *ngFor="let op of opcionesBloque2" [value]="op" [selected]="op === filtroBajaRotacion">{{ op }}</option>
+            </select>
+            <button class="btn-refresh" title="Refrescar" (click)="refrescarReporte('Baja Rotación'); $event.stopPropagation()">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Productos de Baja Rotación</h5>
+          <p>Listado de inventario estancado o de poco movimiento.</p>
+        </div>
+      </div>
+
+      <!-- Comparativo por Producto -->
+      <div class="analytic-card flex-column">
+        <div class="analytic-toolbar">
+          <div class="analytic-icon m-0"><i class="bi bi-pie-chart text-info"></i></div>
+          <div class="widget-controls">
+            <select class="widget-date-select" (change)="setFiltro('filtroComparativoProd', $event)">
+              <option *ngFor="let op of opcionesBloque2" [value]="op" [selected]="op === filtroComparativoProd">{{ op }}</option>
+            </select>
+            <button class="btn-refresh" title="Refrescar" (click)="refrescarReporte('Comparativo por Producto'); $event.stopPropagation()">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+        <div class="analytic-info w-100">
+          <h5>Comparativo por Producto</h5>
+          <p>Tablas comparativas de cifras entre distintas referencias.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
-
 <router-outlet></router-outlet>

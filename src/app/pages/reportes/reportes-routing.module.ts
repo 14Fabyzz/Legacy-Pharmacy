@@ -5,6 +5,8 @@ import { ResumenInteligenteComponent } from './resumen-inteligente/resumen-intel
 import { PulsoInventarioComponent } from './pulso-inventario/pulso-inventario.component';
 import { MotorVentasComponent } from './motor-ventas/motor-ventas.component';
 
+import { DetalleReporteComponent } from './detalle-reporte/detalle-reporte.component';
+
 const routes: Routes = [
     {
         path: '',
@@ -12,7 +14,8 @@ const routes: Routes = [
     },
     { path: 'resumen-inteligente', component: ResumenInteligenteComponent },
     { path: 'pulso-inventario', component: PulsoInventarioComponent },
-    { path: 'motor-ventas', component: MotorVentasComponent }
+    { path: 'motor-ventas', component: MotorVentasComponent },
+    { path: 'analitico/:tipo', component: DetalleReporteComponent }
 ];
 
 @NgModule({

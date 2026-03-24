@@ -12,36 +12,48 @@ import {
   providedIn: 'root'
 })
 export class ReportesService {
-
-  private apiUrl = environment.apiUrl + '/api/v1/reportes/metricas';
+  private apiUrl = environment.apiUrl + '/api/v1/reportes';
 
   constructor(private http: HttpClient) { }
 
-  obtenerPulsoInventario(fechaInicio: string, fechaFin: string, sucursalId: number): Observable<GestionInventarioMetricas> {
-    let params = new HttpParams()
-      .set('fechaInicio', fechaInicio)
-      .set('fechaFin', fechaFin)
-      .set('sucursalId', sucursalId.toString());
-    return this.http.get<GestionInventarioMetricas>(`${this.apiUrl}/inventario`, { params });
+  obtenerPulsoInventario(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<GestionInventarioMetricas> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<GestionInventarioMetricas>(`${this.apiUrl}/dashboard/inventario`, { params });
   }
 
-  obtenerMotorVentas(fechaInicio: string, fechaFin: string, sucursalId: number): Observable<VentasClientesMetricas> {
-    let params = new HttpParams()
-      .set('fechaInicio', fechaInicio)
-      .set('fechaFin', fechaFin)
-      .set('sucursalId', sucursalId.toString());
-    return this.http.get<VentasClientesMetricas>(`${this.apiUrl}/ventas-clientes`, { params });
+  obtenerMotorVentas(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<VentasClientesMetricas> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<VentasClientesMetricas>(`${this.apiUrl}/dashboard/ventas`, { params });
   }
 
-  /**
-   * Obtiene el resumen inteligente generado por IA.
-   * GET /api/v1/reportes/metricas/resumen-ia
-   */
-  generarResumenInteligente(fechaInicio: string, fechaFin: string, sucursalId: number): Observable<ResumenInteligenteResponse> {
-    let params = new HttpParams()
-      .set('fechaInicio', fechaInicio)
-      .set('fechaFin', fechaFin)
-      .set('sucursalId', sucursalId.toString());
-    return this.http.get<ResumenInteligenteResponse>(`${this.apiUrl}/resumen-ia`, { params });
+  generarResumenInteligente(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<ResumenInteligenteResponse> {
+    const payload = { fechaInicio, fechaFin, sucursalId };
+    return this.http.post<ResumenInteligenteResponse>(`${this.apiUrl}/resumen-inteligente`, payload);
+  }
+
+  obtenerVentasCliente(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<any[]> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/analitico/ventas-cliente`, { params });
+  }
+
+  obtenerVentasClienteProducto(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<any[]> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/analitico/ventas-cliente-producto`, { params });
+  }
+
+  obtenerConsolidado(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<any[]> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/analitico/consolidado`, { params });
+  }
+
+  obtenerComparativo(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<any[]> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/analitico/comparativo`, { params });
   }
 }
