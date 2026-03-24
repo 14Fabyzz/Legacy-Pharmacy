@@ -111,6 +111,7 @@
                             <th>Vencimiento</th>
                             <th class="text-right">Cantidad</th>
                             <th class="text-right">Costo Compra</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -133,6 +134,18 @@
                             </td>
                             <td class="text-right text-gray-600">
                                 {{ lote.costoCompra | currency:'COP':'symbol-narrow' }}
+                            </td>
+                            <td class="text-center">
+                                <button class="action-btn-small" (click)="onDecommission(lote.id)" title="Dar de baja este lote"
+                                    style="padding: 4px 8px; border-radius: 4px; border: 1px solid #fee2e2; background-color: #fef2f2; color: #dc2626; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 6h18"></path>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                    </svg>
+                                    Baja
+                                </button>
                             </td>
                         </tr>
                     </tbody>

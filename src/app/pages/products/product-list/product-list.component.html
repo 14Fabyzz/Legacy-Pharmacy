@@ -64,12 +64,15 @@
         <option *ngFor="let lab of availableLaboratories" [value]="lab">{{ lab }}</option>
       </select>
 
-      <select class="filter-select" [(ngModel)]="selectedStockStatus" (ngModelChange)="applyFilter()">
+      <select class="filter-select" [(ngModel)]="selectedStockStatus" (ngModelChange)="onStockOrEstadoChange()">
         <option value="">Todo el Stock</option>
         <option value="OPTIMO">Óptimo</option>
         <option value="SOBRESTOCK">Sobrestock</option>
         <option value="BAJO">Stock Bajo</option>
         <option value="CRITICO">Crítico / Agotado</option>
+        <option disabled>──────────</option>
+        <option value="ESTADO_ACTIVO">✅ Solo Activos</option>
+        <option value="ESTADO_INACTIVO">❌ Solo Inactivos</option>
       </select>
     </div>
   </div>
@@ -192,7 +195,7 @@
                 <button title="Ver Imagen" (click)="verImagen(product)" class="btn-icon">🖼️</button>
                 <button title="Kardex" (click)="verKardex(product)" class="btn-icon">📊</button>
                 <button title="Editar" (click)="editarProducto(product)" class="btn-icon edit">✏️</button>
-                <button title="Eliminar" (click)="eliminarProducto(product)" class="btn-icon delete">🗑️</button>
+                <button title="Desactivar" (click)="desactivarProducto(product)" class="btn-icon delete">🗑️</button>
               </div>
             </td>
 
@@ -230,8 +233,8 @@
     <app-expiration-semaphore *ngIf="showSemaphoreModal" (close)="closeModals()"></app-expiration-semaphore>
 
     <!-- PANEL LATERAL DE DETALLE DE LOTES -->
-    <app-inventory-detail-panel [isVisible]="showDetailPanel" [data]="selectedProductData"
-      (close)="showDetailPanel = false">
+    <app-inventory-detail-panel [isVisible]="showDetailPanel" [data]="selectedProductData" [product]="selectedProduct"
+      (close)="showDetailPanel = false" (decommission)="handleDecommission($event)">
     </app-inventory-detail-panel>
 
   </div>

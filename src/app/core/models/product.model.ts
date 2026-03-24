@@ -142,6 +142,7 @@ export interface ProductoCard {
     codigoBarras?: string;
     codigoInterno?: string;
     imagenUrl?: string;
+    estado?: string; // 'ACTIVO' | 'INACTIVO'
 }
 
 export interface Lote {
@@ -208,4 +209,16 @@ export interface ProductoConsulta {
     cantidadDisponible: number;
     estado: string;                // Ej: "STOCK_BAJO"
     imagenUrl?: string;            // Para visualización
+}
+
+export interface BajaLoteRequest {
+  motivo: string;
+}
+
+export interface BajaLoteResponse {
+  estado: string;
+  mensaje: string;
+  loteId: number;
+  cantidadAjustada: number;
+  motivo: string;
 }
