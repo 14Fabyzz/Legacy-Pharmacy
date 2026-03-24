@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { ReportesService } from '../../core/services/reportes.service';
 
 @Component({
@@ -8,7 +11,7 @@ import { ReportesService } from '../../core/services/reportes.service';
     templateUrl: './reportes.component.html',
     styleUrls: ['./reportes.component.css']
 })
-export class ReportesComponent implements OnInit {
+export class ReportesComponent implements OnInit, OnDestroy {
 
     // Filtros
     filtroInventario: string = 'Mes';
@@ -39,6 +42,8 @@ export class ReportesComponent implements OnInit {
     dataVentas: any = null;
     dataIA: any = null;
 
+    private destroy$ = new Subject<void>();
+
     // Modal logic removed, delegated to DetalleReporteComponent
 
     constructor(
@@ -49,6 +54,41 @@ export class ReportesComponent implements OnInit {
 
     get isReportesHome(): boolean {
         return this.router.url === '/app/reportes';
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    descargarPDF() {
+        const data = document.getElementById('ai-pdf-content');
+        if (data) {
+            const originalBg = data.style.backgroundColor;
+            data.style.backgroundColor = '#ffffff';
+
+            html2canvas(data, { scale: 2, useCORS: true }).then(canvas => {
+                const imgWidth = 210;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                const contentDataURL = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+
+                pdf.setFontSize(22);
+                pdf.setTextColor(30, 41, 59);
+                pdf.text('Reporte Analítico de Negocio', 14, 20);
+
+                pdf.setFontSize(11);
+                pdf.setTextColor(100, 116, 139);
+                pdf.text(`Generado por Legacy Pharmacy AI - ${new Date().toLocaleDateString()}`, 14, 28);
+
+                pdf.setDrawColor(226, 232, 240);
+                pdf.line(14, 32, 196, 32);
+
+                pdf.addImage(contentDataURL, 'PNG', 14, 40, imgWidth - 28, imgHeight * ((imgWidth - 28) / imgWidth));
+                data.style.backgroundColor = originalBg;
+                pdf.save('Resumen_Inteligente_Farmacia.pdf');
+            });
+        }
     }
 
     ngOnInit(): void {
@@ -133,6 +173,9 @@ export class ReportesComponent implements OnInit {
         else if (tipoReporte === 'Venta por Cliente y Producto') slug = 'ventas-cliente-producto';
         else if (tipoReporte === 'Consolidado de Ventas') slug = 'consolidado';
         else if (tipoReporte === 'Comparativo de Ventas Mensuales') slug = 'comparativo';
+        else if (tipoReporte === 'Top 10 Productos') slug = 'top-10-productos';
+        else if (tipoReporte === 'Baja Rotación') slug = 'baja-rotacion';
+        else if (tipoReporte === 'Comparativo por Producto') slug = 'comparativo-producto';
         
         this.router.navigate(['./analitico', slug], { 
             relativeTo: this.route

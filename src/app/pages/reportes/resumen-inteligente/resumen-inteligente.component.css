@@ -110,7 +110,10 @@
 
 .filter-actions {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .btn-primary-action {
@@ -216,4 +219,42 @@
 
 .text-justify {
   text-align: justify;
+}
+
+/* AI TABLE BEAUTIFICATION (Gemini Response) */
+.analisis-content table.table-modern {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+.analisis-content table.table-modern th {
+  background: #f8fafc;
+  color: #a18cd1;
+  font-weight: 700;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #e2e8f0;
+}
+.analisis-content table.table-modern td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
+}
+.analisis-content table.table-modern tr:last-child td {
+  border-bottom: none;
+}
+.analisis-content table.table-modern tr:hover {
+  background-color: #f8fafc;
+}
+.analisis-content h4.text-success {
+  color: #10b981 !important;
+  font-weight: 700;
+  border-left: 4px solid #10b981;
+  padding-left: 0.75rem;
+  margin-top: 2rem !important;
 }

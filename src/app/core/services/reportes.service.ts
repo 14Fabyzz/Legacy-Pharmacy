@@ -56,4 +56,27 @@ export class ReportesService {
     if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
     return this.http.get<any[]>(`${this.apiUrl}/analitico/comparativo`, { params });
   }
+
+  // ----------------------------------------------------
+  // REPORTES INVENTARIO DETALLADOS
+  // ----------------------------------------------------
+  obtenerTop10Productos(fechaInicio: string, fechaFin: string, sucursalId: number | null, categoriaId?: number | null, laboratorioId?: number | null): Observable<any[]> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    if (categoriaId) params = params.set('categoriaId', categoriaId.toString());
+    if (laboratorioId) params = params.set('laboratorioId', laboratorioId.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/analitico/top-10-productos`, { params });
+  }
+
+  obtenerBajaRotacion(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<any[]> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/analitico/baja-rotacion`, { params });
+  }
+
+  obtenerComparativoProducto(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<any[]> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/analitico/comparativo-producto`, { params });
+  }
 }
