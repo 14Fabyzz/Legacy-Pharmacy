@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 import { MovimientoKardex } from '../models/product.model';
 
 export interface ProductoInventarioDTO {
@@ -23,7 +23,7 @@ export interface ProductoInventarioDTO {
 export class InventoryService {
 
     // Basado en doc: /api/inventario
-    private apiUrl = 'http://localhost:8080/api/inventario';
+    private apiUrl = environment.apiUrl + '/api/inventario';
 
     constructor(private http: HttpClient) { }
 

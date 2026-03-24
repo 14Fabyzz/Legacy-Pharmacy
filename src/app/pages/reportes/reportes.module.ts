@@ -9,13 +9,15 @@ import { ResumenInteligenteComponent } from './resumen-inteligente/resumen-intel
 import { MarkdownBoldPipe } from '../../shared/pipes/markdown-bold.pipe';
 import { PulsoInventarioComponent } from './pulso-inventario/pulso-inventario.component';
 import { MotorVentasComponent } from './motor-ventas/motor-ventas.component';
+import { DetalleReporteComponent } from './detalle-reporte/detalle-reporte.component';
 
 @NgModule({
     declarations: [
         ReportesComponent,
         ResumenInteligenteComponent,
         PulsoInventarioComponent,
-        MotorVentasComponent
+        MotorVentasComponent,
+        DetalleReporteComponent
     ],
     imports: [
         CommonModule,
