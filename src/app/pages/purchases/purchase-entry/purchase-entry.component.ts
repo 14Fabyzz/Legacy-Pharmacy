@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductService } from '../../products/product.service';
-import { Producto } from '../../../core/models/product.model';
+import { Producto, Sucursal } from '../../../core/models/product.model';
 import { TabsNavComponent } from '../../../shared/components/tabs-nav/tabs-nav.component';
 import Swal from 'sweetalert2';
 
@@ -35,6 +35,7 @@ export class PurchaseEntryComponent implements OnInit {
 
   // Productos y búsqueda
   allProducts: any[] = [];
+  sucursales: Sucursal[] = [];
   sugerencias: any[] = [];
   productoSeleccionado: any | null = null;
   terminoBusqueda: string = ''; // Modelo para el input
@@ -53,9 +54,23 @@ export class PurchaseEntryComponent implements OnInit {
   ngOnInit(): void {
     // Formulario Header (Sucursal, Observaciones)
     this.entryForm = this.fb.group({
-      sucursalId: [1, Validators.required],
+      sucursalId: [null, Validators.required],
       documento: ['', Validators.required],
       observaciones: ['Entrada de Mercancía']
+    });
+
+    // Carga de Sucursales
+    this.productService.getSucursales().subscribe({
+      next: (data) => {
+        this.sucursales = data.filter(s => s.activa);
+        // Si hay sucursales, seleccionar la primera por defecto si el form está vacío
+        if (this.sucursales.length > 0 && !this.entryForm.get('sucursalId')?.value) {
+          this.entryForm.patchValue({ sucursalId: this.sucursales[0].id });
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error cargando sucursales:', err);
+      }
     });
 
     // Formulario Item (Inputs)
@@ -361,7 +376,8 @@ export class PurchaseEntryComponent implements OnInit {
           localStorage.removeItem('draft_entrada_mercancia');
         }
 
-        this.entryForm.reset({ sucursalId: 1, documento: '', observaciones: 'Entrada de Mercancía' });
+        const defaultSucId = this.sucursales.length > 0 ? this.sucursales[0].id : null;
+        this.entryForm.reset({ sucursalId: defaultSucId, documento: '', observaciones: 'Entrada de Mercancía' });
         this.itemForm.reset({ cantidad: 1, costoCompra: 0 });
         this.productoSeleccionado = null;
       },

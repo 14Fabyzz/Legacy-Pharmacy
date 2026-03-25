@@ -16,7 +16,8 @@ import {
   ProductoConLotesResponse,
   DetalleProducto,
   BajaLoteRequest,
-  BajaLoteResponse
+  BajaLoteResponse,
+  Sucursal
 } from '../../core/models/product.model';
 import { environment } from '../../../environments/environment';
 
@@ -214,6 +215,12 @@ export class ProductService {
     const headers = this.getHeaders();
     if (!headers) return of([]);
     return this.http.get<PrincipioActivo[]>(`${this.apiUrl}/principios-activos`, { headers });
+  }
+
+  getSucursales(): Observable<Sucursal[]> {
+    const headers = this.getHeaders();
+    if (!headers) return of([]);
+    return this.http.get<Sucursal[]>(`${this.apiUrl}/sucursales`, { headers });
   }
 
   // --- OTROS (Imágenes, Kardex) ---

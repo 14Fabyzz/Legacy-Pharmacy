@@ -21,6 +21,14 @@ export interface PrincipioActivo {
     activo: boolean;
 }
 
+export interface Sucursal {
+    id: number;
+    nombre: string;
+    ciudad: string;
+    direccion: string;
+    activa: boolean;
+}
+
 // Para LISTAR (GET): El backend devuelve objetos anidados
 // Mantenemos snake_case si el backend antiguo lo usaba, o actualizamos si es necesario.
 // El prompt no pidió explícitamente cambiar "Producto" (detailed), pero sí "ProductoRequest".
