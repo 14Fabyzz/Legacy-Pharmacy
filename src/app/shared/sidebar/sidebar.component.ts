@@ -27,6 +27,17 @@ export class SidebarComponent {
   menuItems = [
     { path: '/app/dashboard', title: 'Dashboard', active: false, subMenu: [] },
     {
+      path: '/app/ventas',
+      title: 'Ventas',
+      active: false,
+      subMenu: [
+        { path: '/app/ventas/nueva', title: 'Nueva Venta (POS)' },
+        { path: '/app/ventas/historial', title: 'Historial de Ventas' }
+      ]
+    },
+
+    
+    {
       path: '/app/caja',
       title: 'Cajas',
       active: false,
@@ -36,8 +47,7 @@ export class SidebarComponent {
         { path: '/app/caja/estado', title: 'Estado de Caja' }
       ]
     },
-    { path: '/app/users', title: 'Usuarios', active: false, subMenu: [] },
-    { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },
+    { path: '/app/devoluciones', title: 'Devoluciones', active: false, subMenu: [] },
     {
       path: '/app/productos',
       title: 'Productos',
@@ -52,30 +62,21 @@ export class SidebarComponent {
         { path: '/app/laboratorios', title: 'Laboratorios' }
       ]
     },
-    {
-      path: '/app/ventas',
-      title: 'Ventas',
-      active: false,
-      subMenu: [
-        { path: '/app/ventas/nueva', title: 'Nueva Venta (POS)' },
-        { path: '/app/ventas/historial', title: 'Historial de Ventas' }
-      ]
-    },
-    { path: '/app/movimientos', title: 'Movimientos en cajas', active: false, subMenu: [] },
-    { path: '/app/devoluciones', title: 'Devoluciones', active: false, subMenu: [] },
-
+    
     {
       path: '/app/kardex', title: 'Kardex', active: false, subMenu: [
         { path: '/app/kardex/productos', title: 'Kardex de productos' },
       ]
     },
-
+    
+    { path: '/app/clientes', title: 'Clientes', active: false, subMenu: [] },
+    { path: '/app/users', title: 'Usuarios', active: false, subMenu: [] },
 
     {
       path: '/app/reportes', title: 'Reportes', active: false,
       subMenu: []
     },
-    { path: '/app/configuraciones', title: 'Configuraciones', active: false, subMenu: [] }
+ 
   ];
 
 
