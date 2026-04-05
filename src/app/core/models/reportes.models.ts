@@ -1,4 +1,4 @@
-export type Periodicidad = 'DIARIO' | 'SEMANAL' | 'MENSUAL';
+export type Periodicidad = 'DIARIO' | 'SEMANAL' | 'MENSUAL' | 'PERSONALIZADO';
 
 export interface ReporteVentasFiltros {
   fechaInicio: string;
@@ -12,6 +12,7 @@ export interface GestionInventarioMetricas {
   gmroi: number;
   sellThroughRate: number;
   weeksOfSupplyWos: number;
+  isRealData?: boolean;
 }
 
 export interface VentasClientesMetricas {

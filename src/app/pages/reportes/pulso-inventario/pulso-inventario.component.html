@@ -30,6 +30,11 @@
     {{ errorMensaje }}
   </div>
 
+  <div *ngIf="datosInventario && datosInventario.isRealData === false" class="alert alert-warning shadow-sm border-0 border-start border-warning border-4 mt-3">
+    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> 
+    <strong>Modo Degradado:</strong> Mostrando estimaciones basadas en histórico por indisponibilidad temporal del inventario.
+  </div>
+
   <div *ngIf="datosInventario && !isLoading" class="kpi-cards-grid mt-4">
     <div class="kpi-card">
       <div class="kpi-icon"><i class="bi bi-arrow-repeat"></i></div>

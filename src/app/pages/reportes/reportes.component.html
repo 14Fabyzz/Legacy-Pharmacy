@@ -32,6 +32,31 @@
         </div>
       </div>
       <div class="ai-card-body">
+        <form [formGroup]="filtrosIAForm" class="ai-filter-bar mb-4" *ngIf="!dataIA && !loadingIA">
+          <!-- 1. Período -->
+          <div class="filter-item">
+            <label for="periodicidad">Período Analítico</label>
+            <div class="select-wrapper">
+              <select id="periodicidad" class="ai-input" formControlName="periodicidad">
+                <option *ngFor="let p of opcionesPeriodicidad" [value]="p">{{ p | titlecase }}</option>
+              </select>
+              <i class="bi bi-chevron-down select-icon"></i>
+            </div>
+          </div>
+
+          <!-- 2. Fecha Inicio -->
+          <div class="filter-item">
+            <label for="fechaInicio">Fecha Inicio</label>
+            <input type="date" id="fechaInicio" formControlName="fechaInicio" class="ai-input ai-date-ux" [class.ai-disabled]="filtrosIAForm.get('periodicidad')?.value !== 'PERSONALIZADO'" />
+          </div>
+
+          <!-- 3. Fecha Fin -->
+          <div class="filter-item">
+            <label for="fechaFin">Fecha Fin</label>
+            <input type="date" id="fechaFin" formControlName="fechaFin" class="ai-input ai-date-ux" [class.ai-disabled]="filtrosIAForm.get('periodicidad')?.value !== 'PERSONALIZADO'" />
+          </div>
+        </form>
+
         <p class="ai-insight-text text-secondary" *ngIf="!dataIA && !errorIA && !loadingIA">
           Haz clic en generar análisis para enviar las métricas del periodo actual a Google Gemini.
         </p>

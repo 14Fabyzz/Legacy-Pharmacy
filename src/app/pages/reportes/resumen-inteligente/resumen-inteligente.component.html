@@ -17,7 +17,24 @@
   <!-- Panel de Filtros -->
   <div class="filters-card mb-4">
     <form [formGroup]="filtrosForm" (ngSubmit)="generarAnalisis()">
-      <div class="filters-grid">
+      <div class="filters-grid form-flex-container">
+        <!-- 1. Período (Movido al inicio) -->
+        <div class="filter-group">
+          <label for="periodicidad"
+            >PERÍODO <span class="required">*</span></label
+          >
+          <select
+            id="periodicidad"
+            class="form-control select-minimal"
+            formControlName="periodicidad"
+          >
+            <option *ngFor="let p of opcionesPeriodicidad" [value]="p">
+              {{ p | titlecase }}
+            </option>
+          </select>
+        </div>
+
+        <!-- 2. Fecha Inicio -->
         <div class="filter-group">
           <label for="fechaInicio"
             >FECHA INICIO <span class="required">*</span></label
@@ -27,7 +44,8 @@
               type="date"
               id="fechaInicio"
               formControlName="fechaInicio"
-              class="form-control"
+              class="form-control date-ux"
+              [class.input-disabled]="filtrosForm.get('periodicidad')?.value !== 'PERSONALIZADO'"
               [class.is-invalid]="
                 filtrosForm.get('fechaInicio')?.invalid &&
                 filtrosForm.get('fechaInicio')?.touched
@@ -36,6 +54,7 @@
           </div>
         </div>
 
+        <!-- 3. Fecha Fin -->
         <div class="filter-group">
           <label for="fechaFin"
             >FECHA FIN <span class="required">*</span></label
@@ -45,7 +64,8 @@
               type="date"
               id="fechaFin"
               formControlName="fechaFin"
-              class="form-control"
+              class="form-control date-ux"
+              [class.input-disabled]="filtrosForm.get('periodicidad')?.value !== 'PERSONALIZADO'"
               [class.is-invalid]="
                 filtrosForm.get('fechaFin')?.invalid &&
                 filtrosForm.get('fechaFin')?.touched
@@ -54,26 +74,12 @@
           </div>
         </div>
 
-        <div class="filter-group">
-          <label for="periodicidad"
-            >PERÍODO <span class="required">*</span></label
-          >
-          <select
-            id="periodicidad"
-            class="form-control"
-            formControlName="periodicidad"
-          >
-            <option *ngFor="let p of opcionesPeriodicidad" [value]="p">
-              {{ p | titlecase }}
-            </option>
-          </select>
-        </div>
-
+        <!-- 4. Sucursal -->
         <div class="filter-group">
           <label for="sucursal">SUCURSAL</label>
           <select
             id="sucursal"
-            class="form-control"
+            class="form-control select-minimal"
             formControlName="sucursalId"
           >
             <option [ngValue]="null">Todas las sucursales</option>
@@ -81,37 +87,38 @@
           </select>
         </div>
 
-        <div class="filter-group">
-          <label for="limite">LÍMITE MOSTRAR</label>
-          <select id="limite" class="form-control" formControlName="limite">
-            <option [value]="'Top 5'">Top 5</option>
-            <option [value]="'Top 10'">Top 10</option>
-            <option [value]="'Top 20'">Top 20</option>
-            <option [value]="'Todos'">Todos</option>
-          </select>
-        </div>
+        <!-- 5. Opciones Adicionales y Acciones -->
+        <div class="filter-actions-container">
+          <div class="filter-group limite-group">
+            <select id="limite" class="form-control select-minimal" formControlName="limite" title="Límite Mostrar">
+              <option [value]="'Top 5'">Top 5</option>
+              <option [value]="'Top 10'">Top 10</option>
+              <option [value]="'Top 20'">Top 20</option>
+              <option [value]="'Todos'">Todos</option>
+            </select>
+          </div>
 
-        <div class="filter-actions">
-          <button
-            type="submit"
-            class="btn-primary-action"
-            [disabled]="isAnalyzing"
-          >
-            <i class="fas fa-search" *ngIf="!isAnalyzing"></i>
-            <i class="fas fa-spinner fa-spin" *ngIf="isAnalyzing"></i>
-            Generar Reporte
-          </button>
-
-          <button
-            type="button"
-            class="btn btn-outline-secondary btn-pdf"
-            (click)="exportarPDF()"
-            [disabled]="!resumenData || isAnalyzing"
-            title="Descargar PDF"
-          >
-            <i class="fas fa-file-pdf"></i>
-            Descargar PDF
-          </button>
+          <div class="filter-actions">
+            <button
+              type="submit"
+              class="btn-primary-action"
+              [disabled]="isAnalyzing"
+            >
+              <i class="fas fa-magic" *ngIf="!isAnalyzing"></i>
+              <i class="fas fa-spinner fa-spin" *ngIf="isAnalyzing"></i>
+              Generar Análisis
+            </button>
+  
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-pdf"
+              (click)="exportarPDF()"
+              [disabled]="!resumenData || isAnalyzing"
+              title="Descargar PDF"
+            >
+              <i class="fas fa-file-pdf"></i>
+            </button>
+          </div>
         </div>
       </div>
     </form>
@@ -171,6 +178,9 @@
           <div class="col-md-6" *ngIf="resumenData.metricasInventario">
             <div class="card bg-light border-0 p-3 h-100">
               <h6 class="text-success"><i class="bi bi-box-seam me-2"></i>Inventario</h6>
+              <div *ngIf="resumenData.metricasInventario.isRealData === false" class="text-warning mb-2" style="font-size: 0.8em; font-weight: bold;">
+                  <i class="fas fa-exclamation-triangle me-1"></i> Estimaciones basadas en histórico
+              </div>
               <div class="small">
                 <div><strong>Rotación (IRI):</strong> {{ resumenData.metricasInventario.rotacionInventarioIri | number:'1.1-2' }}</div>
                 <div><strong>WOS:</strong> {{ resumenData.metricasInventario.weeksOfSupplyWos | number:'1.1-2' }}</div>

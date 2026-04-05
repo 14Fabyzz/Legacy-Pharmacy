@@ -32,7 +32,7 @@ export class ResumenInteligenteComponent implements OnInit {
   };
   public doughnutChartData: ChartData<'doughnut'> | null = null;
 
-  opcionesPeriodicidad: Periodicidad[] = ['DIARIO', 'SEMANAL', 'MENSUAL'];
+  opcionesPeriodicidad: Periodicidad[] = ['DIARIO', 'SEMANAL', 'MENSUAL', 'PERSONALIZADO'];
 
   constructor(
     private fb: FormBuilder,
@@ -42,15 +42,46 @@ export class ResumenInteligenteComponent implements OnInit {
 
   ngOnInit(): void {
     const hoy = new Date();
-    const haceUnMes = new Date();
-    haceUnMes.setMonth(hoy.getMonth() - 1);
+    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
 
     this.filtrosForm = this.fb.group({
-      fechaInicio: [this.formatDate(haceUnMes), Validators.required],
-      fechaFin: [this.formatDate(hoy), Validators.required],
+      fechaInicio: [{ value: this.formatDate(inicioMes), disabled: true }, Validators.required],
+      fechaFin: [{ value: this.formatDate(hoy), disabled: true }, Validators.required],
       periodicidad: ['MENSUAL', Validators.required],
       sucursalId: [1],
       limite: ['Top 5']
+    });
+
+    this.filtrosForm.get('periodicidad')?.valueChanges.subscribe(val => {
+      const fechaActual = new Date();
+      if (val === 'DIARIO') {
+        this.filtrosForm.patchValue({
+          fechaInicio: this.formatDate(fechaActual),
+          fechaFin: this.formatDate(fechaActual)
+        });
+        this.filtrosForm.get('fechaInicio')?.disable();
+        this.filtrosForm.get('fechaFin')?.disable();
+      } else if (val === 'SEMANAL') {
+        const inicioSemana = new Date();
+        inicioSemana.setDate(fechaActual.getDate() - 7);
+        this.filtrosForm.patchValue({
+          fechaInicio: this.formatDate(inicioSemana),
+          fechaFin: this.formatDate(fechaActual)
+        });
+        this.filtrosForm.get('fechaInicio')?.disable();
+        this.filtrosForm.get('fechaFin')?.disable();
+      } else if (val === 'MENSUAL') {
+        const iMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1);
+        this.filtrosForm.patchValue({
+          fechaInicio: this.formatDate(iMes),
+          fechaFin: this.formatDate(fechaActual)
+        });
+        this.filtrosForm.get('fechaInicio')?.disable();
+        this.filtrosForm.get('fechaFin')?.disable();
+      } else if (val === 'PERSONALIZADO') {
+        this.filtrosForm.get('fechaInicio')?.enable();
+        this.filtrosForm.get('fechaFin')?.enable();
+      }
     });
   }
 
@@ -64,7 +95,7 @@ export class ResumenInteligenteComponent implements OnInit {
     this.resumenData = undefined;
     this.errorMensaje = null;
 
-    const filtros = this.filtrosForm.value;
+    const filtros = this.filtrosForm.getRawValue();
 
     this.reportesService.generarResumenInteligente(
       filtros.fechaInicio, 
