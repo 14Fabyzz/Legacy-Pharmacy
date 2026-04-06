@@ -29,8 +29,8 @@ export class ReportesComponent implements OnInit, OnDestroy {
     opcionesBloque2: string[] = ['Hoy', 'Mes', 'Rango Manual'];
 
     // Filtros IA
-    filtrosIAForm!: FormGroup;
-    opcionesPeriodicidad: string[] = ['DIARIO', 'SEMANAL', 'MENSUAL', 'PERSONALIZADO'];
+    filtroIAFechaInicio: string = '';
+    filtroIAFechaFin: string = '';
 
     // Loaders
     loadingInventario = false;
@@ -98,47 +98,13 @@ export class ReportesComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.initForm();
         this.fetchInventario();
         this.fetchVentas();
     }
 
-    initForm() {
-        const hoy = new Date();
-        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-        
-        this.filtrosIAForm = this.fb.group({
-            periodicidad: ['MENSUAL', Validators.required],
-            fechaInicio: [{ value: inicioMes.toISOString().split('T')[0], disabled: true }, Validators.required],
-            fechaFin: [{ value: hoy.toISOString().split('T')[0], disabled: true }, Validators.required]
-        });
-
-        this.filtrosIAForm.get('periodicidad')?.valueChanges.subscribe(value => {
-            const fechaInicioControl = this.filtrosIAForm.get('fechaInicio');
-            const fechaFinControl = this.filtrosIAForm.get('fechaFin');
-            const newHoy = new Date();
-            let newInicio = new Date();
-
-            if (value === 'PERSONALIZADO') {
-                fechaInicioControl?.enable();
-                fechaFinControl?.enable();
-                return;
-            }
-
-            fechaInicioControl?.disable();
-            fechaFinControl?.disable();
-
-            if (value === 'DIARIO') {
-                newInicio = new Date();
-            } else if (value === 'SEMANAL') {
-                newInicio.setDate(newHoy.getDate() - 7);
-            } else if (value === 'MENSUAL') {
-                newInicio = new Date(newHoy.getFullYear(), newHoy.getMonth(), 1);
-            }
-
-            fechaInicioControl?.setValue(newInicio.toISOString().split('T')[0]);
-            fechaFinControl?.setValue(newHoy.toISOString().split('T')[0]);
-        });
+    onAIFilterChange(event: {fechaInicio: string, fechaFin: string}) {
+        this.filtroIAFechaInicio = event.fechaInicio;
+        this.filtroIAFechaFin = event.fechaFin;
     }
 
     getFechasData(rango: string) {
@@ -200,9 +166,8 @@ export class ReportesComponent implements OnInit, OnDestroy {
         this.loadingIA = true;
         this.errorIA = false;
         
-        const controles = this.filtrosIAForm.getRawValue();
-        const fechaInicio = controles.fechaInicio;
-        const fechaFin = controles.fechaFin;
+        const fechaInicio = this.filtroIAFechaInicio;
+        const fechaFin = this.filtroIAFechaFin;
         
         this.reportesService.generarResumenInteligente(fechaInicio, fechaFin, null).subscribe({
             next: (data) => {

@@ -10,6 +10,7 @@ import { MarkdownBoldPipe } from '../../shared/pipes/markdown-bold.pipe';
 import { PulsoInventarioComponent } from './pulso-inventario/pulso-inventario.component';
 import { MotorVentasComponent } from './motor-ventas/motor-ventas.component';
 import { DetalleReporteComponent } from './detalle-reporte/detalle-reporte.component';
+import { FilterBarComponent } from './components/filter-bar/filter-bar.component';
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { DetalleReporteComponent } from './detalle-reporte/detalle-reporte.compo
         ResumenInteligenteComponent,
         PulsoInventarioComponent,
         MotorVentasComponent,
-        DetalleReporteComponent
+        DetalleReporteComponent,
+        FilterBarComponent
     ],
     imports: [
         CommonModule,
