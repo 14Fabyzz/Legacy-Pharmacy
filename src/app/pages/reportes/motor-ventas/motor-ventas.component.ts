@@ -21,12 +21,12 @@ export class MotorVentasComponent implements OnInit {
   constructor(private reportesService: ReportesService) { }
 
   ngOnInit(): void {
-    const hoy = new Date();
-    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    
-    this.fechaInicio = this.formatDate(inicioMes);
-    this.fechaFin = this.formatDate(hoy);
-    
+    // Relegado al (filterChanged) emitido por FilterBarComponent en la inicialización
+  }
+
+  onFilterChange(event: {fechaInicio: string, fechaFin: string}) {
+    this.fechaInicio = event.fechaInicio;
+    this.fechaFin = event.fechaFin;
     this.consultarMetricas();
   }
 

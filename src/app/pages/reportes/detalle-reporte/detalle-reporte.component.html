@@ -1,50 +1,35 @@
 <div class="reportes-dashboard">
   
-  <!-- Encabezado con botón Volver -->
-  <div class="dashboard-header">
+  <!-- Encabezado -->
+  <div class="dashboard-header mb-2 d-flex justify-content-between align-items-start">
     <div class="header-titles">
       <h2>{{ tituloReporte }}</h2>
       <p>{{ descripcionReporte }}</p>
     </div>
-    <button class="btn-back" (click)="router.navigate(['/app/reportes'])">
-      <i class="bi bi-arrow-left"></i> Regresar a reportes
-    </button>
+    <a routerLink="/app/reportes" class="btn-regresar" title="Regresar a Reportes">
+      <i class="bi bi-arrow-left me-1"></i> Regresar a reportes
+    </a>
   </div>
 
-  <!-- Selector de Filtros (Aislado, con estética Pulso Inventario / Motor Ventas) -->
-  <div class="filter-section card">
-    <div class="filter-row">
+  <!-- Filtro Global UX -->
+  <app-filter-bar (filterChanged)="onFilterChange($event)"></app-filter-bar>
+
+  <!-- Filtros Dinámicos (Solo actúan en Top 10) -->
+  <div class="filter-section card mt-3 px-4 py-3" *ngIf="tipoSlug === 'top-10-productos'">
+    <div class="filter-row align-items-end">
       <div class="form-group">
-        <label>Fecha Inicio:</label>
-        <input type="date" class="form-control-custom" #inicioInput (change)="fechaInicioForm = inicioInput.value" [value]="fechaInicioForm">
+        <label class="fw-bold text-secondary mb-1" style="font-size: 0.75rem; text-transform: uppercase;">Categoría (Opcional):</label>
+        <select class="form-control-custom shadow-sm border-0 bg-light" #catInput (change)="filtroCategoria = catInput.value === 'null' ? null : +catInput.value; cargarReporte()">
+          <option value="null" [selected]="filtroCategoria === null">Todas las categorías</option>
+          <option *ngFor="let cat of categorias" [value]="cat.id" [selected]="filtroCategoria === cat.id">{{ cat.nombre }}</option>
+        </select>
       </div>
       <div class="form-group">
-        <label>Fecha Fin:</label>
-        <input type="date" class="form-control-custom" #finInput (change)="fechaFinForm = finInput.value" [value]="fechaFinForm">
-      </div>
-
-      <!-- Filtros Dinámicos (Solo actúan en Top 10) -->
-      <ng-container *ngIf="tipoSlug === 'top-10-productos'">
-        <div class="form-group">
-          <label>Categoría (Opcional):</label>
-          <select class="form-control-custom" #catInput (change)="filtroCategoria = catInput.value === 'null' ? null : +catInput.value; consultarFechaManual()">
-            <option value="null" [selected]="filtroCategoria === null">Todas las categorías</option>
-            <option *ngFor="let cat of categorias" [value]="cat.id" [selected]="filtroCategoria === cat.id">{{ cat.nombre }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Laboratorio (Opcional):</label>
-          <select class="form-control-custom" #labInput (change)="filtroLaboratorio = labInput.value === 'null' ? null : +labInput.value; consultarFechaManual()">
-            <option value="null" [selected]="filtroLaboratorio === null">Todos los laboratorios</option>
-            <option *ngFor="let lab of laboratorios" [value]="lab.id" [selected]="filtroLaboratorio === lab.id">{{ lab.nombre }}</option>
-          </select>
-        </div>
-      </ng-container>
-
-      <div class="form-group btn-group-custom">
-        <button class="btn-search-custom" (click)="consultarFechaManual()" [disabled]="reporteLoading">
-          <i class="bi bi-search"></i> {{ reporteLoading ? 'Consultando...' : 'Consultar' }}
-        </button>
+        <label class="fw-bold text-secondary mb-1" style="font-size: 0.75rem; text-transform: uppercase;">Laboratorio (Opcional):</label>
+        <select class="form-control-custom shadow-sm border-0 bg-light" #labInput (change)="filtroLaboratorio = labInput.value === 'null' ? null : +labInput.value; cargarReporte()">
+          <option value="null" [selected]="filtroLaboratorio === null">Todos los laboratorios</option>
+          <option *ngFor="let lab of laboratorios" [value]="lab.id" [selected]="filtroLaboratorio === lab.id">{{ lab.nombre }}</option>
+        </select>
       </div>
     </div>
   </div>
