@@ -214,7 +214,7 @@
                     </div>
                     <div class="restock-alert">
                         <span class="missing-text">Faltan {{ p.stockMinimo - p.stockActual }} un.</span>
-                        <button class="btn-restock">Reabastecer</button>
+                        <button class="btn-restock" (click)="reabastecerProducto(p.id)">Reabastecer</button>
                     </div>
                 </div>
             </div>

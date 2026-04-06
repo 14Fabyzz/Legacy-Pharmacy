@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductService } from '../../products/product.service';
@@ -48,6 +48,7 @@ export class PurchaseEntryComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -87,6 +88,12 @@ export class PurchaseEntryComponent implements OnInit {
       next: (data) => {
         this.allProducts = data;
 
+        // Si venimos desde "Reabastecer" con un productoId en la URL, preseleccionar
+        const productoId = this.route.snapshot.queryParamMap.get('productoId');
+        if (productoId) {
+          const producto = this.allProducts.find(p => p.id === +productoId);
+          if (producto) this.seleccionarProducto(producto);
+        }
       },
       error: (err) => {
         console.error('❌ Error cargando productos:', err);

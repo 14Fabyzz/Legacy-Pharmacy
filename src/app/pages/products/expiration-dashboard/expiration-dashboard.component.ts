@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ProductService, DashboardAlertas, LoteAlerta, ProductoBajoStock } from '../product.service';
@@ -28,7 +29,7 @@ export class ExpirationDashboardComponent implements OnInit, OnDestroy {
 
     private sub!: Subscription;
 
-    constructor(private productService: ProductService) { }
+    constructor(private productService: ProductService, private router: Router) { }
 
     ngOnInit(): void {
         this.loadDashboardData();
@@ -77,6 +78,12 @@ export class ExpirationDashboardComponent implements OnInit, OnDestroy {
     /** Retorna true si el lote ya está vencido (diasRestantes negativo) */
     isVencido(lote: LoteAlerta): boolean {
         return lote.diasRestantes < 0;
+    }
+
+    reabastecerProducto(productoId: number): void {
+        this.router.navigate(['/app/purchases/purchase-entry'], {
+            queryParams: { productoId }
+        });
     }
 
     darDeBaja(loteId: number): void {
