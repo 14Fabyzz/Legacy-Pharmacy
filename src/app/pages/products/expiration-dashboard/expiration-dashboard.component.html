@@ -80,9 +80,9 @@
                         <tr>
                             <th>Producto</th>
                             <th>Lote / Ref</th>
-                            <th>Fecha Vencimiento</th>
-                            <th>Estado</th>
-                            <th>Stock Actual</th>
+                            <th class="text-center">Fecha Vencimiento</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Stock Actual</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -102,10 +102,10 @@
                             <td>
                                 <span class="ref-text">{{ lote.lote }}</span>
                             </td>
-                            <td class="date-cell">
+                            <td class="date-cell text-center">
                                 {{ lote.fecha | date:'dd/MM/yyyy' }}
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <!-- Badge dinámico según diasRestantes -->
                                 <span *ngIf="isVencido(lote)" class="badge-vencido">
                                     Vencido hace {{ lote.diasRestantes * -1 }} días
@@ -114,7 +114,7 @@
                                     Vence en {{ lote.diasRestantes }} días
                                 </span>
                             </td>
-                            <td class="stock-cell">
+                            <td class="stock-cell text-center">
                                 <strong>{{ lote.cantidad }}</strong> unds
                             </td>
                             <td class="text-center">
@@ -144,9 +144,9 @@
                         <tr>
                             <th>Producto</th>
                             <th>Lote / Ref</th>
-                            <th>Fecha Vencimiento</th>
-                            <th>Días Restantes</th>
-                            <th>Stock Actual</th>
+                            <th class="text-center">Fecha Vencimiento</th>
+                            <th class="text-center">Días Restantes</th>
+                            <th class="text-center">Stock Actual</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -166,19 +166,19 @@
                             <td>
                                 <span class="ref-text">{{ lote.lote }}</span>
                             </td>
-                            <td class="date-cell">
+                            <td class="date-cell text-center">
                                 {{ lote.fecha | date:'dd/MM/yyyy' }}
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <span class="badge-por-vencer amarillo">
                                     Vence en {{ lote.diasRestantes }} días
                                 </span>
                             </td>
-                            <td class="stock-cell">
+                            <td class="stock-cell text-center">
                                 <strong>{{ lote.cantidad }}</strong> unds
                             </td>
-                            <td class="text-right">
-                                <span class="text-muted small">Revisar rotación</span>
+                            <td class="text-center">
+                                <span class="text-muted small" style="white-space: nowrap;">Revisar rotación</span>
                             </td>
                         </tr>
                     </tbody>

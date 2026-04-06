@@ -252,7 +252,12 @@
     letter-spacing: 0.05em;
     padding: 16px;
     text-align: left;
+    vertical-align: middle;
     border-bottom: 1px solid #e2e8f0;
+}
+
+.expiration-table th.text-center {
+    text-align: center;
 }
 
 .expiration-table td {
