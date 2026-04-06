@@ -1,0 +1,21 @@
+<form [formGroup]="filtrosIAForm" class="ai-filter-bar shadow-sm mb-4">
+  <div class="filter-item">
+    <label for="periodicidad">Período Analítico</label>
+    <div class="select-wrapper">
+      <select id="periodicidad" class="ai-input" formControlName="periodicidad">
+        <option *ngFor="let p of opcionesPeriodicidad" [value]="p">{{ p | titlecase }}</option>
+      </select>
+      <i class="bi bi-chevron-down select-icon"></i>
+    </div>
+  </div>
+
+  <div class="filter-item">
+    <label for="fechaInicio">Fecha Inicio</label>
+    <input type="date" id="fechaInicio" formControlName="fechaInicio" class="ai-input ai-date-ux" [class.ai-disabled]="filtrosIAForm.get('periodicidad')?.value !== 'PERSONALIZADO'" (change)="aplicarFiltroSeleccionado()" />
+  </div>
+
+  <div class="filter-item">
+    <label for="fechaFin">Fecha Fin</label>
+    <input type="date" id="fechaFin" formControlName="fechaFin" class="ai-input ai-date-ux" [class.ai-disabled]="filtrosIAForm.get('periodicidad')?.value !== 'PERSONALIZADO'" (change)="aplicarFiltroSeleccionado()" />
+  </div>
+</form>

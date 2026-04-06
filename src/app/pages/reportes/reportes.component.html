@@ -32,6 +32,8 @@
         </div>
       </div>
       <div class="ai-card-body">
+        <app-filter-bar (filterChanged)="onAIFilterChange($event)" *ngIf="!dataIA && !loadingIA"></app-filter-bar>
+
         <p class="ai-insight-text text-secondary" *ngIf="!dataIA && !errorIA && !loadingIA">
           Haz clic en generar análisis para enviar las métricas del periodo actual a Google Gemini.
         </p>

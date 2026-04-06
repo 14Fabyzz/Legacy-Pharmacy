@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -27,6 +28,10 @@ export class ReportesComponent implements OnInit, OnDestroy {
     opcionesBloque1: string[] = ['Hoy', 'Mes'];
     opcionesBloque2: string[] = ['Hoy', 'Mes', 'Rango Manual'];
 
+    // Filtros IA
+    filtroIAFechaInicio: string = '';
+    filtroIAFechaFin: string = '';
+
     // Loaders
     loadingInventario = false;
     loadingVentas = false;
@@ -49,7 +54,8 @@ export class ReportesComponent implements OnInit, OnDestroy {
     constructor(
         public router: Router,
         private route: ActivatedRoute,
-        private reportesService: ReportesService
+        private reportesService: ReportesService,
+        private fb: FormBuilder
     ) {}
 
     get isReportesHome(): boolean {
@@ -94,6 +100,11 @@ export class ReportesComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.fetchInventario();
         this.fetchVentas();
+    }
+
+    onAIFilterChange(event: {fechaInicio: string, fechaFin: string}) {
+        this.filtroIAFechaInicio = event.fechaInicio;
+        this.filtroIAFechaFin = event.fechaFin;
     }
 
     getFechasData(rango: string) {
@@ -154,7 +165,10 @@ export class ReportesComponent implements OnInit, OnDestroy {
     generarIA(): void {
         this.loadingIA = true;
         this.errorIA = false;
-        const { fechaInicio, fechaFin } = this.getFechasData('Mes');
+        
+        const fechaInicio = this.filtroIAFechaInicio;
+        const fechaFin = this.filtroIAFechaFin;
+        
         this.reportesService.generarResumenInteligente(fechaInicio, fechaFin, null).subscribe({
             next: (data) => {
                 this.dataIA = data;

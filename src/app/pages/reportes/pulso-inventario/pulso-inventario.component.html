@@ -1,33 +1,25 @@
 <div class="reportes-dashboard">
-  <div class="dashboard-header">
-    <h2>Pulso de Inventario</h2>
-    <p>Monitorea la rotación y eficiencia del inventario.</p>
+  <!-- Encabezado -->
+  <div class="dashboard-header d-flex justify-content-between align-items-start">
+    <div class="header-titles">
+      <h2>Pulso de Inventario</h2>
+      <p>Monitorea la rotación y eficiencia del inventario.</p>
+    </div>
+    <a routerLink="/app/reportes" class="btn-regresar mt-2 mt-md-0" title="Regresar a Reportes">
+      <i class="bi bi-arrow-left me-1"></i> Regresar a reportes
+    </a>
   </div>
 
-  <div class="filter-section card">
-    <div class="filter-row">
-      <div class="form-group">
-        <label>Fecha Inicio:</label>
-        <input type="date" [(ngModel)]="fechaInicio" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>Fecha Fin:</label>
-        <input type="date" [(ngModel)]="fechaFin" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>Sucursal (ID):</label>
-        <input type="number" [(ngModel)]="sucursalId" class="form-control" min="1">
-      </div>
-      <div class="form-group btn-group">
-        <button class="btn btn-primary" (click)="consultarMetricas()" [disabled]="isLoading">
-          <i class="bi bi-search"></i> {{ isLoading ? 'Cargando...' : 'Consultar' }}
-        </button>
-      </div>
-    </div>
-  </div>
+  <!-- Filtro Global UX -->
+  <app-filter-bar (filterChanged)="onFilterChange($event)"></app-filter-bar>
 
   <div *ngIf="errorMensaje" class="alert alert-danger mt-3">
     {{ errorMensaje }}
+  </div>
+
+  <div *ngIf="datosInventario && datosInventario.isRealData === false" class="alert alert-warning shadow-sm border-0 border-start border-warning border-4 mt-3">
+    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> 
+    <strong>Modo Degradado:</strong> Mostrando estimaciones basadas en histórico por indisponibilidad temporal del inventario.
   </div>
 
   <div *ngIf="datosInventario && !isLoading" class="kpi-cards-grid mt-4">

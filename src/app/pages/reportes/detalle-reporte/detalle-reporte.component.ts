@@ -37,18 +37,12 @@ export class DetalleReporteComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const hoy = new Date();
-    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    
-    this.fechaInicioForm = inicioMes.toISOString().split('T')[0];
-    this.fechaFinForm = hoy.toISOString().split('T')[0];
-
     this.route.paramMap.subscribe(params => {
       this.tipoSlug = params.get('tipo') || '';
       if (this.tipoSlug === 'top-10-productos') {
         this.cargarCatalogos();
       }
-      this.cargarReporte();
+      // Report starts empty or is triggered by initially emitted variables from the FilterBar
     });
   }
 
@@ -57,9 +51,13 @@ export class DetalleReporteComponent implements OnInit {
     this.laboratorioService.getActivos().subscribe(res => this.laboratorios = res);
   }
 
-  consultarFechaManual() {
-    if (!this.fechaInicioForm || !this.fechaFinForm) return;
-    this.cargarReporte();
+  onFilterChange(event: {fechaInicio: string, fechaFin: string}) {
+    this.fechaInicioForm = event.fechaInicio;
+    this.fechaFinForm = event.fechaFin;
+    // Ya tenemos el slug si se ha inicializado el route. ParamMap ya nos dijo la vista.
+    if (this.tipoSlug) {
+      this.cargarReporte();
+    }
   }
 
   cargarReporte() {
