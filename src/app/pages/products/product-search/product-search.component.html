@@ -61,7 +61,7 @@
                         <!-- 3. Caja (Siempre) -->
                         <div class="price-tag box">
                             <span class="price-label">Caja</span>
-                            <span class="price-value">{{ p.precioVentaBase | currency:'COP':'symbol-narrow':'1.0-0'
+                            <span class="price-value">{{ p.precioVentaTotal | currency:'COP':'symbol-narrow':'1.0-0'
                                 }}</span>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                         <span class="price-label">PRECIO CAJA / PAQUETE</span>
                         <div class="price-value-container">
                             <span class="currency">$</span>
-                            <span class="main-price">{{ selectedProduct.precioVentaBase | number:'1.0-0' }}</span>
+                            <span class="main-price">{{ selectedProduct.precioVentaTotal | number:'1.0-0' }}</span>
                         </div>
                     </div>
 
