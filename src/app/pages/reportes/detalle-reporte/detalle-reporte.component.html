@@ -6,9 +6,16 @@
       <h2>{{ tituloReporte }}</h2>
       <p>{{ descripcionReporte }}</p>
     </div>
-    <a routerLink="/app/reportes" class="btn-regresar" title="Regresar a Reportes">
-      <i class="bi bi-arrow-left me-1"></i> Regresar a reportes
-    </a>
+    <div class="d-flex align-items-center gap-3">
+      <button *ngIf="!reporteLoading && !reporteError && reporteData.length > 0" 
+              class="btn btn-primary shadow-sm fade-in d-flex align-items-center gap-2 px-3 py-2"
+              (click)="descargarCSV()">
+        <i class="bi bi-file-earmark-spreadsheet"></i> Descargar CSV
+      </button>
+      <a routerLink="/app/reportes" class="btn-regresar" title="Regresar a Reportes">
+        <i class="bi bi-arrow-left me-1"></i> Regresar a reportes
+      </a>
+    </div>
   </div>
 
   <!-- Filtro Global UX -->
@@ -64,7 +71,7 @@
             <th *ngFor="let col of reporteColumnas" 
                 [class.text-start-forced]="col.toLowerCase() === 'cliente' || col.toLowerCase() === 'producto'"
                 [class.col-dato-numerico]="col.toLowerCase() !== 'cliente' && col.toLowerCase() !== 'producto'">
-              {{ col }}
+              {{ getColumnLabel(col) }}
             </th>
           </tr>
         </thead>
@@ -73,8 +80,10 @@
             <td *ngFor="let col of reporteColumnas" 
                 [class.text-start-forced]="col.toLowerCase() === 'cliente' || col.toLowerCase() === 'producto' || col.toLowerCase() === 'presentacion'"
                 [class.col-dato-numerico]="col.toLowerCase() !== 'cliente' && col.toLowerCase() !== 'producto' && col.toLowerCase() !== 'presentacion'">
-              <ng-container *ngIf="col === 'total' || col === 'subtotal' || col === 'margen' || col === 'ventas' || col === 'ventas_a' || col === 'ventas_b' || col === 'variacion_ventas'; else regularCol">
-                <span class="text-highlight">{{ row[col] | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+              <ng-container *ngIf="col === 'total' || col === 'subtotal' || col === 'margen' || col === 'ventas' || col === 'ventas_a' || col === 'ventas_b' || col === 'variacion_ventas' || col === 'totalVentasTeorico' || col === 'totalEfectivoReal' || col === 'saldoInicial' || col === 'diferencia'; else regularCol">
+                <span class="text-highlight" [class.text-danger]="col === 'diferencia' && row[col] < 0" [class.text-success]="col === 'diferencia' && row[col] >= 0">
+                  {{ row[col] | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </span>
               </ng-container>
               <ng-template #regularCol>
                 <span [class.fw-semibold]="col === 'cliente' || col === 'producto' || col === 'presentacion' || col === 'fecha' || col === 'mes' || col === 'tendencia'"

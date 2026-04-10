@@ -190,6 +190,8 @@ export class ReportesComponent implements OnInit, OnDestroy {
         else if (tipoReporte === 'Top 10 Productos') slug = 'top-10-productos';
         else if (tipoReporte === 'Baja Rotación') slug = 'baja-rotacion';
         else if (tipoReporte === 'Comparativo por Producto') slug = 'comparativo-producto';
+        else if (tipoReporte === 'Cierre de Turno Integral') slug = 'cierre-turnos';
+        else slug = tipoReporte;
         
         this.router.navigate(['./analitico', slug], { 
             relativeTo: this.route

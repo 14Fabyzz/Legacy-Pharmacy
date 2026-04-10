@@ -26,3 +26,32 @@ export interface ResumenInteligenteResponse {
   metricasInventario?: GestionInventarioMetricas;
   metricasVentas?: VentasClientesMetricas;
 }
+
+export interface CierreTurnoConciliacionDTO {
+  id: number;
+  usuarioId: string;
+  sucursalId: number;
+  estado: string;
+  fechaApertura: string;
+  fechaCierre: string;
+  saldoInicial: number;
+  totalVentasTeorico: number;
+  totalEfectivoReal: number;
+  totalEgresos: number;
+  diferencia: number;
+  observacionesCierre: string;
+}
+
+export interface MovimientoTurnoDTO {
+  id: number;
+  fecha: string;
+  tipo: string;
+  monto: number;
+  referencia: string;
+  descripcion: string;
+}
+
+export interface CierreTurnoIntegralDTO {
+  encabezado: CierreTurnoConciliacionDTO;
+  movimientos: MovimientoTurnoDTO[];
+}

@@ -28,6 +28,22 @@ export class DetalleReporteComponent implements OnInit {
   reporteData: any[] = [];
   reporteColumnas: string[] = [];
 
+  columnLabels: Record<string, string> = {
+    'id': 'ID',
+    'estado': 'ESTADO',
+    'fechaApertura': 'APERTURA',
+    'fechaCierre': 'CIERRE',
+    'usuarioId': 'USUARIO',
+    'totalVentasTeorico': 'TOTAL VENTAS TEÓRICO',
+    'totalEfectivoReal': 'TOTAL EFECTIVO REAL',
+    'diferencia': 'DIFERENCIA',
+    'saldoInicial': 'SALDO INICIAL'
+  };
+
+  getColumnLabel(col: string): string {
+    return this.columnLabels[col] || col.replace(/_/g, ' ').toUpperCase();
+  }
+
   constructor(
     private route: ActivatedRoute,
     public router: Router,
@@ -105,6 +121,11 @@ export class DetalleReporteComponent implements OnInit {
       this.descripcionReporte = 'Analiza la tendencia temporal cruzando el Periodo actual seleccionado contra su periodo previo inmediato de equivalente duración.';
       ob$ = this.reportesService.obtenerComparativoProducto(fechaInicio, fechaFin, null);
       this.reporteColumnas = ['producto', 'unidades_a', 'ventas_a', 'unidades_b', 'ventas_b', 'variacion_unidades', 'variacion_ventas', 'tendencia'];
+    } else if (this.tipoSlug === 'cierre-turnos') {
+      this.tituloReporte = 'Cierres de Turno';
+      this.descripcionReporte = 'Agrupación temporal de la conciliación de caja en cada turno registrado.';
+      ob$ = this.reportesService.obtenerCierresTurnoRango(fechaInicio, fechaFin, null);
+      this.reporteColumnas = ['id', 'estado', 'fechaApertura', 'fechaCierre', 'usuarioId', 'totalVentasTeorico', 'totalEfectivoReal', 'diferencia'];
     } else {
       this.reporteError = true;
       this.reporteLoading = false;
@@ -124,5 +145,40 @@ export class DetalleReporteComponent implements OnInit {
         }
       });
     }
+  }
+
+  descargarCSV() {
+    if (!this.reporteData || this.reporteData.length === 0) return;
+
+    const separator = ',';
+    const keys = this.reporteColumnas;
+    
+    const csvContent = [
+      // Encabezados con validación de mayúsculas (opcional pero lo dejamos raw keys por ahora)
+      keys.map(k => k.toUpperCase().replace(/_/g, ' ')).join(separator),
+      // Filas
+      ...this.reporteData.map(row => keys.map(k => {
+        let cell = row[k] === null || row[k] === undefined ? '' : row[k];
+        cell = cell instanceof Date ? cell.toLocaleString() : cell.toString();
+        // Escapar comillas dobles
+        cell = cell.replace(/"/g, '""');
+        // Envolver en comillas si hay comas, saltos de línea o comillas
+        if (cell.search(/("|,|\n)/g) >= 0) {
+          cell = `"${cell}"`;
+        }
+        return cell;
+      }).join(separator))
+    ].join('\n');
+
+    // BOM para que Excel detecte UTF-8 sin problemas
+    const blob = new Blob(["\ufeff", csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    const filename = `${this.tituloReporte.replace(/\s+/g, '_').toLowerCase()}_${new Date().getTime()}.csv`;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }

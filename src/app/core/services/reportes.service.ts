@@ -5,7 +5,8 @@ import { environment } from '../../../environments/environment';
 import {
   GestionInventarioMetricas,
   ResumenInteligenteResponse,
-  VentasClientesMetricas
+  VentasClientesMetricas,
+  CierreTurnoIntegralDTO
 } from '../models/reportes.models';
 
 @Injectable({
@@ -78,5 +79,18 @@ export class ReportesService {
     let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
     if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
     return this.http.get<any[]>(`${this.apiUrl}/analitico/comparativo-producto`, { params });
+  }
+
+  // ----------------------------------------------------
+  // CIERRE DE TURNO
+  // ----------------------------------------------------
+  obtenerCierreTurnoIntegral(turnoId: number): Observable<CierreTurnoIntegralDTO> {
+    return this.http.get<CierreTurnoIntegralDTO>(`${this.apiUrl}/cierre-turno/${turnoId}`);
+  }
+
+  obtenerCierresTurnoRango(fechaInicio: string, fechaFin: string, sucursalId: number | null): Observable<any[]> {
+    let params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    if (sucursalId) params = params.set('sucursalId', sucursalId.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/cierre-turno/rango`, { params });
   }
 }
